@@ -1,5 +1,11 @@
+var version = "0.0.1";
 var tracer = new AniTrace();
 
-function loaded() {
-    tracer.trace('animation', 0, 2000, 'easeInOutQuad');
+function init() {
+    tracer.trace("loading-animation", 0, 2000, "easeInOutQuad");
+    displayVersion();
+}
+
+function displayVersion() {
+    $("#version-number").text("version " + version);
 }

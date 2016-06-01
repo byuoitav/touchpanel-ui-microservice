@@ -6,7 +6,7 @@ body {
     background-color: #111111;
 }
 
-#animation {
+#loading-animation {
     position   : absolute;
     left       : 50%;
     top        : 50%;
@@ -23,4 +23,13 @@ body {
     stroke-linecap   : round;
     stroke-linejoin  : round;
     stroke-miterlimit: 10;
+}
+
+#version-number {
+    position : absolute;
+    right    : 0;
+    bottom   : 0;
+    color    : #ddd;
+    font-size: 14px;
+    padding  : 10px;
 }
