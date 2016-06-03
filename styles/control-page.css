@@ -1,0 +1,37 @@
+#control-page #navigation {
+    margin-top: 15px;
+}
+
+#control-page #navigation .btn {
+    background-color: rgba(255, 255, 255, 0.85);
+    font-weight     : bold;
+    width           : 100%;
+}
+
+#control-page #navigation .btn span.glyphicon {
+    font-size: 20px;
+}
+
+#control-page #navigation .btn.active {
+    background-color: rgba(255, 255, 255, 0.65);
+}
+
+#control-page #navigation .btn-group {
+    width: 100%;
+}
+
+#control-page #navigation .btn-group .btn {
+    width: 33.3%;
+}
+
+#control-page #control-column .row {
+    height : 20%;
+    padding: 0;
+}
+
+#control-page #control-column span {
+    width     : 100%;
+    color     : rgba(255, 255, 255, 0.5);
+    font-size : 25px;
+    text-align: center;
+}

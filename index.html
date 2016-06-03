@@ -2,21 +2,89 @@
 
 <head>
     <title>Raspberry Pi Touchpanel Interface</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+
+    <link href="styles/font-awesome.min.css" rel="stylesheet" type="text/css" />
     <link href="styles/bootstrap.min.css" rel="stylesheet" type="text/css" />
     <link href="styles/main.css" rel="stylesheet" type="text/css" />
-    <script src="scripts/jquery-2.2.3.min.js"></script>
-    <script src="scripts/anitrace.min.js"></script>
+    <link href="styles/idle-page.css" rel="stylesheet" type="text/css" />
+    <link href="styles/loading-page.css" rel="stylesheet" type="text/css" />
+    <link href="styles/control-page.css" rel="stylesheet" type="text/css" />
+
+    <script src="scripts/jquery-2.2.4.min.js"></script>
     <script src="scripts/bootstrap.min.js"></script>
+    <script src="scripts/bootpage.js"></script>
     <script src="scripts/main.js"></script>
 </head>
 
 <body onload="init()">
-    <div id="loading-animation" style="visibility: hidden">
-        <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 500 500" style="enable-background:new 0 0 500 500;" xml:space="preserve">
-            <path class="svg" d="M323.3,263.3L390,136.7h60L336.7,363.3L190,76.7 M310,423.3L163.3,136.7L50,363.3h60l53.3-100H190" />
-        </svg>
+    <div id="idle-page" style="display: none" onclick="wakeSystem()">
+        <div id="message">Touch here to operate system</div>
+        <div class="version-number"></div>
     </div>
-    <div id="version-number"></div>
+    <div id="loading-page" style="display: none">
+        <div id="loading-animation">
+            <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 500 500" style="enable-background:new 0 0 500 500;" xml:space="preserve">
+                <path class="svg" d="M323.3,263.3L390,136.7h60L336.7,363.3L190,76.7 M310,423.3L163.3,136.7L50,363.3h60l53.3-100H190" />
+            </svg>
+        </div>
+        <div class="version-number"></div>
+    </div>
+    <div id="control-page" class="container-fluid" style="display: none">
+        <div class="row">
+            <div class="col-xs-11">
+                <div id="navigation" class="row">
+                    <div class="col-xs-2">
+                        <button type="button" class="btn btn-default"><span class="glyphicon glyphicon-education" aria-hidden="true"></span>
+                        </button>
+                    </div>
+                    <div class="col-xs-8">
+                        <div class="btn-group" role="group" aria-label="...">
+                            <button type="button" class="btn btn-default">Device Control</button>
+                            <button type="button" class="btn btn-default active">Display</button>
+                            <button type="button" class="btn btn-default">Audio Control</button>
+                        </div>
+                    </div>
+                    <div class="col-xs-2">
+                        <button type="button" class="btn btn-default"><span class="glyphicon glyphicon-volume-up" aria-hidden="true"></span>
+                        </button>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-6 col-xs-offset-3">
+                        <center>
+                            <h3>Main Display</h3>
+                            <div class="well well-lg"><span class="glyphicon glyphicon-blackboard"></span>
+                                <br>Blank</div>
+                        </center>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-12">
+                        <span class="glyphicon glyphicon-volume-up" aria-hidden="true"></span>
+                    </div>
+                </div>
+            </div>
+            <div id="control-column" class="col-xs-1">
+                <div class="row">
+                    <div class="col-xs-12"><span class="glyphicon glyphicon-off"></span></div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-12"><span class="glyphicon glyphicon-home"></span></div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-12"><span class="glyphicon glyphicon-flash"></span></div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-12"><span class="glyphicon glyphicon-triangle-top"></span></div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-12"><span class="glyphicon glyphicon-triangle-bottom"></span></div>
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
 
 </html>

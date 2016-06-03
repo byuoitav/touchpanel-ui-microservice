@@ -3,33 +3,20 @@ body {
     min-height      : 550px;
     margin          : 0;
     padding         : 0;
-    background-color: #111111;
+    background-color: #1f2b34;
 }
 
-#loading-animation {
-    position   : absolute;
-    left       : 50%;
-    top        : 50%;
-    width      : 500px;
-    height     : 500px;
-    margin-left: -250px;
-    margin-top : -250px;
+h1,
+h2,
+h3 {
+    color: rgba(255, 255, 255, 0.75);
 }
 
-.svg {
-    fill             : none;
-    stroke           : #ffffff;
-    stroke-width     : 9;
-    stroke-linecap   : round;
-    stroke-linejoin  : round;
-    stroke-miterlimit: 10;
-}
-
-#version-number {
+.version-number {
     position : absolute;
     right    : 0;
     bottom   : 0;
-    color    : #ddd;
+    color    : #889ba9;
     font-size: 14px;
     padding  : 10px;
 }

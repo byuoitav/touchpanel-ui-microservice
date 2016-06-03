@@ -1,0 +1,18 @@
+#loading-animation {
+    position   : absolute;
+    left       : 50%;
+    top        : 50%;
+    width      : 500px;
+    height     : 500px;
+    margin-left: -250px;
+    margin-top : -250px;
+}
+
+.svg {
+    fill             : none;
+    stroke           : #ffffff;
+    stroke-width     : 9;
+    stroke-linecap   : round;
+    stroke-linejoin  : round;
+    stroke-miterlimit: 10;
+}

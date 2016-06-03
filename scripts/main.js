@@ -1,11 +1,19 @@
 var version = "0.0.1";
-var tracer = new AniTrace();
+var loadTime = 500;
 
 function init() {
-    tracer.trace("loading-animation", 0, 2000, "easeInOutQuad");
     displayVersion();
+    bootpage.switch("idle-page");
+}
+
+function wakeSystem() {
+    bootpage.switch("loading-page");
+
+    setTimeout(function() {
+        bootpage.fade("control-page");
+    }, loadTime);
 }
 
 function displayVersion() {
-    $("#version-number").text("version " + version);
+    $(".version-number").text("version " + version);
 }
