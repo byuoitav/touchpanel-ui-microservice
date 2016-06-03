@@ -6,13 +6,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
 
     <link href="styles/font-awesome.min.css" rel="stylesheet" type="text/css" />
+    <link href="styles/sweetalert.css" rel="stylesheet" type="text/css" />
     <link href="styles/bootstrap.min.css" rel="stylesheet" type="text/css" />
     <link href="styles/main.css" rel="stylesheet" type="text/css" />
     <link href="styles/idle-page.css" rel="stylesheet" type="text/css" />
     <link href="styles/loading-page.css" rel="stylesheet" type="text/css" />
     <link href="styles/control-page.css" rel="stylesheet" type="text/css" />
+    <link href="styles/help-page.css" rel="stylesheet" type="text/css" />
 
     <script src="scripts/jquery-2.2.4.min.js"></script>
+    <script src="scripts/sweetalert.min.js"></script>
     <script src="scripts/bootstrap.min.js"></script>
     <script src="scripts/bootpage.js"></script>
     <script src="scripts/main.js"></script>
@@ -72,13 +75,13 @@
             </div>
             <div id="control-column" class="col-xs-1 control-column">
                 <div class="row">
-                    <div class="col-xs-12"><span class="glyphicon glyphicon-off"></span></div>
+                    <div class="col-xs-12"><span class="glyphicon glyphicon-off" onclick="confirmPowerOff()"></span></div>
                 </div>
                 <div class="row">
-                    <div class="col-xs-12"><span class="glyphicon glyphicon-home"></span></div>
+                    <div class="col-xs-12"><span class="glyphicon glyphicon-home" onclick="showControlPage()"></span></div>
                 </div>
                 <div class="row">
-                    <div class="col-xs-12"><span class="glyphicon glyphicon-flash"></span></div>
+                    <div class="col-xs-12"><span class="glyphicon glyphicon-flash" onclick="showHelpPage()"></span></div>
                 </div>
                 <div class="row">
                     <div class="col-xs-12"><span class="glyphicon glyphicon-volume-up"></span></div>
@@ -92,6 +95,45 @@
                 <div class="row">
                     <div class="col-xs-12"><span class="glyphicon glyphicon-volume-off"></span></div>
                 </div>
+            </div>
+        </div>
+    </div>
+    <div id="help-page" class="container" style="display: none">
+        <div class="row">
+            <div class="col-xs-12">
+                <h2>Instructions</h2>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12">
+                To display a video source, press the "DISPLAY" tab at the top of the page, select the desired display (if more than one) then press the source to display.
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12">
+                To blank the screen, press "Blank". Select a source to unblank.
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12">
+                To control a device, press the "DEVICE CONTROL" tab at the top of the page. Press the icon of the device to be controlled. Press the control buttons as needed.
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12">
+                To select an audio source, press the "AUDIO CONTROL" tab at the top[ of the page. Press the icon of the desirec audio source. The audio source automatically follows the last-pressed video source under the "DISPLAY" tab.
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12">
+                To adjust microphone volume (if available), press the "MICROPHONE CONTROL" tab at the top of the page. Adjust levels as needed.
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12">
+                <center>
+                    <button type="button" class="btn btn-default" onclick="showControlPage()">Close</button>
+                </center>
             </div>
         </div>
     </div>
