@@ -35,38 +35,55 @@
         <div class="row">
             <div class="col-xs-11">
                 <div id="navigation" class="row">
-                    <div class="col-xs-2">
-                        <button type="button" class="btn btn-default"><span class="glyphicon glyphicon-education" aria-hidden="true"></span>
-                        </button>
-                    </div>
-                    <div class="col-xs-8">
-                        <div class="btn-group" role="group" aria-label="...">
-                            <button type="button" class="btn btn-default">Device Control</button>
-                            <button type="button" class="btn btn-default active">Display</button>
-                            <button type="button" class="btn btn-default">Audio Control</button>
-                        </div>
-                    </div>
-                    <div class="col-xs-2">
-                        <button type="button" class="btn btn-default"><span class="glyphicon glyphicon-volume-up" aria-hidden="true"></span>
-                        </button>
+                    <div class="col-xs-12">
+                        <ul class="nav nav-tabs nav-justified">
+                            <li><a href="#">Device Control</a></li>
+                            <li class="active"><a href="#">Display</a></li>
+                            <li><a href="#">Audio Control</a></li>
+                            <li><a href="#">Microphone Control</a></li>
+                        </ul>
                     </div>
                 </div>
-                <div class="row">
+                <div id="source-well" class="row">
                     <div class="col-xs-6 col-xs-offset-3">
                         <center>
                             <h3>Main Display</h3>
-                            <div class="well well-lg"><span class="glyphicon glyphicon-blackboard"></span>
-                                <br>Blank</div>
+                            <div class="well well-lg">
+                                <div id="source-well-icon"><span class="glyphicon glyphicon-blackboard"></span></div>
+                                <div id="source-well-title">Blank</div>
+                            </div>
                         </center>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-xs-12">
-                        <span class="glyphicon glyphicon-volume-up" aria-hidden="true"></span>
+                        <center>
+                            <button type="button" class="btn btn-default">Blank</button>
+                            <button type="button" class="btn btn-default">Apple TV</button>
+                            <button type="button" class="btn btn-default">Test</button>
+                        </center>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-12">
+                        <img src="images/vga.png">
+                        <center>
+                            <button type="button" class="btn btn-default">VGA/Audio</button>
+                            <button type="button" class="btn btn-default">HDMI Cable</button>
+                            <button type="button" class="btn btn-default">HDMI Jack</button>
+                            <button type="button" class="btn btn-default">A/V Jack</button>
+                            <button type="button" class="btn btn-default">Blu-ray/DVD</button>
+                            <button type="button" class="btn btn-default">IPTV</button>
+                        </center>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-12">
+                        <div class="version-number"></div>
                     </div>
                 </div>
             </div>
-            <div id="control-column" class="col-xs-1">
+            <div id="control-column" class="col-xs-1 control-column">
                 <div class="row">
                     <div class="col-xs-12"><span class="glyphicon glyphicon-off"></span></div>
                 </div>
@@ -77,10 +94,16 @@
                     <div class="col-xs-12"><span class="glyphicon glyphicon-flash"></span></div>
                 </div>
                 <div class="row">
-                    <div class="col-xs-12"><span class="glyphicon glyphicon-triangle-top"></span></div>
+                    <div class="col-xs-12"><span class="glyphicon glyphicon-volume-up"></span></div>
                 </div>
                 <div class="row">
-                    <div class="col-xs-12"><span class="glyphicon glyphicon-triangle-bottom"></span></div>
+                    <div class="col-xs-12"><span>100%<span></div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-12"><span class="glyphicon glyphicon-volume-down"></span></div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-12"><span class="glyphicon glyphicon-volume-off"></span></div>
                 </div>
             </div>
         </div>
