@@ -11,7 +11,7 @@
     <link href="styles/main.css" rel="stylesheet" type="text/css" />
     <link href="styles/idle-splash.css" rel="stylesheet" type="text/css" />
     <link href="styles/loading-splash.css" rel="stylesheet" type="text/css" />
-    <link href="styles/control-page.css" rel="stylesheet" type="text/css" />
+    <link href="styles/display-page.css" rel="stylesheet" type="text/css" />
     <link href="styles/help-page.css" rel="stylesheet" type="text/css" />
 
     <script src="scripts/jquery-2.2.4.min.js"></script>
@@ -48,39 +48,57 @@
                     </div>
                 </div>
                 <div id="display-page" class="row" style="display: none">
-                    <div class="col-xs-8 col-xs-offset-2">
-                        <div id="source-well" class="row">
-                            <div class="col-xs-12">
-                                <center>
-                                    <h3>Main Display</h3>
-                                    <div class="well well-lg">
-                                        <div id="source-well-icon"><span class="glyphicon glyphicon-blackboard"></span></div>
-                                        <div id="source-well-title">Blank</div>
-                                    </div>
-                                </center>
+                    <div class="row">
+                        <div class="col-xs-8 col-xs-offset-2">
+                            <div id="source-well" class="row">
+                                <div class="col-xs-12">
+                                    <center>
+                                        <h3>Main Display</h3>
+                                        <div class="well well-lg">
+                                            <div id="source-well-icon"><span class="glyphicon glyphicon-blackboard"></span></div>
+                                            <div id="source-well-title">Blank</div>
+                                        </div>
+                                    </center>
+                                </div>
                             </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-xs-12">
-                                <div class="progress">
-                                    <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100" style="width: 45%">
-                                        <span class="sr-only">45% Complete</span>
+                            <div class="row">
+                                <div class="col-xs-12">
+                                    <div class="progress">
+                                        <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100" style="width: 45%"></div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div class="row">
-                        <div class="col-xs-12">
+                    <div id="input-select">
+                        <div class="input-icon">
                             <center>
-                                <button type="button" class="btn btn-default">Blank</button>
-                                <button type="button" class="btn btn-default">Apple TV</button>
-                                <button type="button" class="btn btn-default">VGA/Audio</button>
-                                <button type="button" class="btn btn-default">HDMI Cable</button>
-                                <button type="button" class="btn btn-default">HDMI Jack</button>
-                                <button type="button" class="btn btn-default">A/V Jack</button>
-                                <button type="button" class="btn btn-default">Blu-ray/DVD</button>
-                                <button type="button" class="btn btn-default">IPTV</button>
+                                <img src="images/vga-audio.svg">
+                            </center>
+                        </div>
+                        <div class="input-icon">
+                            <center>
+                                <img src="images/hdmi.svg">
+                            </center>
+                        </div>
+                        <div class="input-icon">
+                            <center>
+                                <img src="images/hdmi-port.svg">
+                            </center>
+                        </div>
+                        <div class="input-icon">
+                            <center>
+                                <img src="images/av-port.svg">
+                            </center>
+                        </div>
+                        <div class="input-icon">
+                            <center>
+                                <img src="images/blu-ray.svg">
+                            </center>
+                        </div>
+                        <div class="input-icon">
+                            <center>
+                                <img src="images/iptv.svg">
                             </center>
                         </div>
                     </div>
