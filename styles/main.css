@@ -4,6 +4,7 @@ body {
     margin          : 0;
     padding         : 0;
     background-color: #404a54;
+    overflow        : hidden;
 }
 
 h1,
@@ -19,4 +20,83 @@ h3 {
     color    : #889ba9;
     font-size: 14px;
     padding  : 10px;
+}
+
+#navigation,
+#navigation a {
+    padding-top     : 15px;
+    background-color: #4a555f;
+    color           : rgba(255, 255, 255, 0.35);
+    font-weight     : bold;
+    text-transform  : uppercase;
+}
+
+#navigation .col-xs-12 {
+    padding: 0;
+}
+
+#navigation .nav-tabs a {
+    border       : none;
+    border-bottom: solid 1px #4b565f;
+    box-shadow   : inset 0 -7px 9px -7px rgba(0,0,0,0.4);
+}
+
+#navigation .nav-tabs .active a {
+    background-color: #404a54;
+    color           : #ffffff;
+    border-top      : solid 1px #4b565f;
+    border-bottom   : solid 1px #404a54;
+    box-shadow      : 0 -7px 9px -7px rgba(0,0,0,0.4);
+}
+
+#navigation .btn {
+    background-color: rgba(255, 255, 255, 0.85);
+    font-weight     : bold;
+    width           : 100%;
+}
+
+#navigation .btn span.glyphicon {
+    font-size: 20px;
+}
+
+#navigation .btn.active {
+    background-color: rgba(255, 255, 255, 0.65);
+}
+
+#navigation .btn-group {
+    width: 100%;
+}
+
+#navigation .btn-group .btn {
+    width: 33.3%;
+}
+
+#control-column {
+    background-color: #2d353f;
+    height          : 100%;
+    box-shadow      : inset 7px 0 9px -7px rgba(0,0,0,0.4);
+}
+
+#control-column .row {
+    height : 14.285714286%;
+    padding: 0;
+}
+
+#control-column .col-xs-12 {
+    height      : 100%;
+    color       : rgba(255, 255, 255, 0.5);
+    display     : table;
+    table-layout: fixed;
+}
+
+#control-column span {
+    font-size     : 18px;
+    width         : 100%;
+    text-align    : center;
+    vertical-align: middle;
+    display       : table-cell;
+}
+
+#control-column .glyphicon {
+    font-size: 25px;
 }

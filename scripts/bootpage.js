@@ -2,20 +2,15 @@ var bootpage = {
     currentPage: ""
 };
 
-bootpage.switch = function(page) {
-    if (self.currentPage) {
-        document.getElementById(self.currentPage).style.display = "none"; // Hide the current page
+bootpage.show = function(page, callback) {
+    if (bootpage.currentPage) {
+        document.getElementById(bootpage.currentPage).style.display = "none"; // Hide the current page
     }
 
-    document.getElementById(page).style.display = "block"; // Hide the current page
-    self.currentPage = page;
-};
+    document.getElementById(page).style.display = "block"; // Show the desired page
+    bootpage.currentPage = page;
 
-bootpage.fade = function(page) {
-    if (self.currentPage) {
-        $("#" + self.currentPage).fadeOut(); // Hide the current page
+    if (callback) {
+        callback();
     }
-
-    $("#" + page).fadeIn(); // Hide the current page
-    self.currentPage = page;
 };

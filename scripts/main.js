@@ -1,16 +1,27 @@
 var version = "0.0.1";
 var loadTime = 500;
+var swalTimeout = 2000;
+var volume = 100;
 
 function init() {
     displayVersion();
-    bootpage.switch("idle-page");
 }
 
 function wakeSystem() {
-    bootpage.switch("loading-page");
+    $("#idle-splash").hide();
+    $("#loading-splash").show();
 
     setTimeout(function() {
-        bootpage.fade("control-page");
+        $("#loading-splash").fadeOut();
+
+        if (window.location.hash) { // If we're refreshing a page or opening a bookmark, open the proper tab
+            $(window.location.hash).addClass("active"); // Set the active tab
+
+            var hashPage = window.location.hash.substring(1, window.location.hash.length).substring(0, window.location.hash.length - 5);
+            bootpage.show(hashPage + "-page");
+        } else {
+            bootpage.show("display-page", updateActiveTab);
+        }
     }, loadTime);
 }
 
@@ -35,19 +46,46 @@ function confirmPowerOff() {
                 title: "Powering off!",
                 text: "The system will now shut down.",
                 type: "success",
-                timer: 2000,
+                timer: swalTimeout,
                 showConfirmButton: false
             });
+
+            setTimeout(function() {
+                window.location = "index.html"; // Reload the page without hashes
+            }, swalTimeout);
         } else {
             swal.close();
         }
     });
 }
 
-function showControlPage() {
-    bootpage.switch("control-page");
+function increaseVolume() {
+    if (volume < 100) {
+        volume += 10;
+    }
+
+    showVolume();
 }
 
-function showHelpPage() {
-    bootpage.switch("help-page");
+function decreaseVolume() {
+    if (volume > 0) {
+        volume -= 10;
+    }
+
+    showVolume();
+}
+
+function showVolume() {
+    $("#volume-level").text(volume + "%");
+}
+
+function updateActiveTab() {
+    $("#device-control-tab").removeClass("active");
+    $("#display-tab").removeClass("active");
+    $("#audio-control-tab").removeClass("active");
+    $("#microphone-control-tab").removeClass("active");
+
+    var currentTab = bootpage.currentPage.substring(0, bootpage.currentPage.length - 5);
+
+    $("#" + currentTab + "-tab").addClass("active");
 }

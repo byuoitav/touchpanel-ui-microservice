@@ -1,3 +1,13 @@
+#loading-splash {
+    position        : absolute;
+    left            : 0;
+    top             : 0;
+    width           : 100%;
+    height          : 100%;
+    background-color: #404a54;
+    z-index         : 999;
+}
+
 #loading-animation {
     position   : absolute;
     left       : 50%;

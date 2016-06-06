@@ -9,8 +9,8 @@
     <link href="styles/sweetalert.css" rel="stylesheet" type="text/css" />
     <link href="styles/bootstrap.min.css" rel="stylesheet" type="text/css" />
     <link href="styles/main.css" rel="stylesheet" type="text/css" />
-    <link href="styles/idle-page.css" rel="stylesheet" type="text/css" />
-    <link href="styles/loading-page.css" rel="stylesheet" type="text/css" />
+    <link href="styles/idle-splash.css" rel="stylesheet" type="text/css" />
+    <link href="styles/loading-splash.css" rel="stylesheet" type="text/css" />
     <link href="styles/control-page.css" rel="stylesheet" type="text/css" />
     <link href="styles/help-page.css" rel="stylesheet" type="text/css" />
 
@@ -22,11 +22,11 @@
 </head>
 
 <body onload="init()">
-    <div id="idle-page" style="display: none" onclick="wakeSystem()">
+    <div id="idle-splash" onclick="wakeSystem()">
         <div id="message">Touch here to operate system</div>
         <div class="version-number"></div>
     </div>
-    <div id="loading-page" style="display: none">
+    <div id="loading-splash" style="display: none">
         <div id="loading-animation">
             <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 500 500" style="enable-background:new 0 0 500 500;" xml:space="preserve">
                 <path class="svg" d="M323.3,263.3L390,136.7h60L336.7,363.3L190,76.7 M310,423.3L163.3,136.7L50,363.3h60l53.3-100H190" />
@@ -34,20 +34,20 @@
         </div>
         <div class="version-number"></div>
     </div>
-    <div id="control-page" class="container-fluid" style="display: none">
+    <div class="container-fluid">
         <div class="row">
             <div class="col-xs-11">
                 <div id="navigation" class="row">
                     <div class="col-xs-12">
                         <ul class="nav nav-tabs nav-justified">
-                            <li><a href="#">Device Control</a></li>
-                            <li class="active"><a href="#">Display</a></li>
-                            <li><a href="#">Audio Control</a></li>
-                            <li><a href="#">Microphone Control</a></li>
+                            <li id="device-control-tab"><a href="#device-control-tab" onclick="bootpage.show('device-control-page', updateActiveTab)">Device Control</a></li>
+                            <li id="display-tab"><a href="#display-tab" onclick="bootpage.show('display-page', updateActiveTab)">Display</a></li>
+                            <li id="audio-control-tab"><a href="#audio-control-tab" onclick="bootpage.show('audio-control-page', updateActiveTab)">Audio Control</a></li>
+                            <li id="microphone-control-tab"><a href="#microphone-control-tab" onclick="bootpage.show('microphone-control-page', updateActiveTab)">Microphone Control</a></li>
                         </ul>
                     </div>
                 </div>
-                <div id="display-tab" class="row">
+                <div id="display-page" class="row" style="display: none">
                     <div class="col-xs-8 col-xs-offset-2">
                         <div id="source-well" class="row">
                             <div class="col-xs-12">
@@ -85,68 +85,92 @@
                         </div>
                     </div>
                 </div>
+                <div id="device-control-page" class="row" style="display: none">
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <center>
+                                <h3>Not implemented</h3></center>
+                        </div>
+                    </div>
+                </div>
+                <div id="audio-control-page" class="row" style="display: none">
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <center>
+                                <h3>Not implemented</h3></center>
+                        </div>
+                    </div>
+                </div>
+                <div id="microphone-control-page" class="row" style="display: none">
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <center>
+                                <h3>Not implemented</h3></center>
+                        </div>
+                    </div>
+                </div>
+                <div id="help-page" class="row" style="display: none">
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <h2>Instructions</h2>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-12">
+                            To display a video source, press the "DISPLAY" tab at the top of the page, select the desired display (if more than one) then press the source to display.
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-12">
+                            To blank the screen, press "Blank". Select a source to unblank.
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-12">
+                            To control a device, press the "DEVICE CONTROL" tab at the top of the page. Press the icon of the device to be controlled. Press the control buttons as needed.
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-12">
+                            To select an audio source, press the "AUDIO CONTROL" tab at the top[ of the page. Press the icon of the desirec audio source. The audio source automatically follows the last-pressed video source under the "DISPLAY" tab.
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-12">
+                            To adjust microphone volume (if available), press the "MICROPHONE CONTROL" tab at the top of the page. Adjust levels as needed.
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <center>
+                                <button type="button" class="btn btn-default" onclick="showControlPage()">Close</button>
+                            </center>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div id="control-column" class="col-xs-1 control-column">
+            <div id="control-column" class="col-xs-1">
                 <div class="row">
                     <div class="col-xs-12"><span class="glyphicon glyphicon-off" onclick="confirmPowerOff()"></span></div>
                 </div>
                 <div class="row">
-                    <div class="col-xs-12"><span class="glyphicon glyphicon-home" onclick="showControlPage()"></span></div>
+                    <div class="col-xs-12"><span class="glyphicon glyphicon-home" onclick="bootpage.show('display-page', updateActiveTab)"></span></div>
                 </div>
                 <div class="row">
-                    <div class="col-xs-12"><span class="glyphicon glyphicon-flash" onclick="showHelpPage()"></span></div>
+                    <div class="col-xs-12"><span class="glyphicon glyphicon-flash" onclick="bootpage.show('help-page', updateActiveTab)"></span></div>
                 </div>
-                <div class="row">
+                <div class="row" onclick="increaseVolume()">
                     <div class="col-xs-12"><span class="glyphicon glyphicon-volume-up"></span></div>
                 </div>
                 <div class="row">
-                    <div class="col-xs-12"><span>100%<span></div>
+                    <div class="col-xs-12"><span id="volume-level">100%<span></div>
                 </div>
-                <div class="row">
+                <div class="row" onclick="decreaseVolume()">
                     <div class="col-xs-12"><span class="glyphicon glyphicon-volume-down"></span></div>
                 </div>
                 <div class="row">
                     <div class="col-xs-12"><span class="glyphicon glyphicon-volume-off"></span></div>
                 </div>
-            </div>
-        </div>
-    </div>
-    <div id="help-page" class="container" style="display: none">
-        <div class="row">
-            <div class="col-xs-12">
-                <h2>Instructions</h2>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-xs-12">
-                To display a video source, press the "DISPLAY" tab at the top of the page, select the desired display (if more than one) then press the source to display.
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-xs-12">
-                To blank the screen, press "Blank". Select a source to unblank.
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-xs-12">
-                To control a device, press the "DEVICE CONTROL" tab at the top of the page. Press the icon of the device to be controlled. Press the control buttons as needed.
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-xs-12">
-                To select an audio source, press the "AUDIO CONTROL" tab at the top[ of the page. Press the icon of the desirec audio source. The audio source automatically follows the last-pressed video source under the "DISPLAY" tab.
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-xs-12">
-                To adjust microphone volume (if available), press the "MICROPHONE CONTROL" tab at the top of the page. Adjust levels as needed.
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-xs-12">
-                <center>
-                    <button type="button" class="btn btn-default" onclick="showControlPage()">Close</button>
-                </center>
             </div>
         </div>
     </div>
