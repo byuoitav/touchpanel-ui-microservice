@@ -1,6 +1,7 @@
 var version = "0.0.1";
 var loadTime = 500;
 var swalTimeout = 2000;
+var previousVolume = 0; // Used for remembering the last volume value when muted
 var volume = 100;
 
 function init() {
@@ -60,6 +61,10 @@ function confirmPowerOff() {
 }
 
 function increaseVolume() {
+    if (volume == "MUTED") {
+        volume = previousVolume;
+    }
+
     if (volume < 100) {
         volume += 10;
     }
@@ -68,6 +73,10 @@ function increaseVolume() {
 }
 
 function decreaseVolume() {
+    if (volume == "MUTED") {
+        volume = previousVolume;
+    }
+
     if (volume > 0) {
         volume -= 10;
     }
@@ -75,8 +84,23 @@ function decreaseVolume() {
     showVolume();
 }
 
+function muteVolume() {
+    if (volume == "MUTED") {
+        volume = previousVolume;
+    } else {
+        previousVolume = volume;
+        volume = "MUTED";
+    }
+
+    showVolume();
+}
+
 function showVolume() {
-    $("#volume-level").text(volume + "%");
+    if (volume == "MUTED") {
+        $("#volume-level").text(volume);
+    } else {
+        $("#volume-level").text(volume + "%");
+    }
 }
 
 function updateActiveTab() {

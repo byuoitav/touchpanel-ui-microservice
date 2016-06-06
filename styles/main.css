@@ -89,6 +89,11 @@ h3 {
     table-layout: fixed;
 }
 
+#control-column a {
+    color          : rgba(255, 255, 255, 0.5);
+    text-decoration: none;
+}
+
 #control-column span {
     font-size     : 18px;
     width         : 100%;
@@ -98,5 +103,10 @@ h3 {
 }
 
 #control-column .glyphicon {
+    cursor   : pointer;
     font-size: 25px;
+}
+
+#control-column .glyphicon:active {
+    color: #ffffff;
 }

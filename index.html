@@ -110,41 +110,43 @@
                     </div>
                 </div>
                 <div id="help-page" class="row" style="display: none">
-                    <div class="row">
-                        <div class="col-xs-12">
-                            <h2>Instructions</h2>
+                    <div class="col-xs-10 col-xs-offset-1">
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <h2>Instructions</h2>
+                            </div>
                         </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-xs-12">
-                            To display a video source, press the "DISPLAY" tab at the top of the page, select the desired display (if more than one) then press the source to display.
+                        <div class="row">
+                            <div class="col-xs-12">
+                                To display a video source, press the "DISPLAY" tab at the top of the page, select the desired display (if more than one) then press the source to display.
+                            </div>
                         </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-xs-12">
-                            To blank the screen, press "Blank". Select a source to unblank.
+                        <div class="row">
+                            <div class="col-xs-12">
+                                To blank the screen, press "Blank". Select a source to unblank.
+                            </div>
                         </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-xs-12">
-                            To control a device, press the "DEVICE CONTROL" tab at the top of the page. Press the icon of the device to be controlled. Press the control buttons as needed.
+                        <div class="row">
+                            <div class="col-xs-12">
+                                To control a device, press the "DEVICE CONTROL" tab at the top of the page. Press the icon of the device to be controlled. Press the control buttons as needed.
+                            </div>
                         </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-xs-12">
-                            To select an audio source, press the "AUDIO CONTROL" tab at the top[ of the page. Press the icon of the desirec audio source. The audio source automatically follows the last-pressed video source under the "DISPLAY" tab.
+                        <div class="row">
+                            <div class="col-xs-12">
+                                To select an audio source, press the "AUDIO CONTROL" tab at the top[ of the page. Press the icon of the desirec audio source. The audio source automatically follows the last-pressed video source under the "DISPLAY" tab.
+                            </div>
                         </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-xs-12">
-                            To adjust microphone volume (if available), press the "MICROPHONE CONTROL" tab at the top of the page. Adjust levels as needed.
+                        <div class="row">
+                            <div class="col-xs-12">
+                                To adjust microphone volume (if available), press the "MICROPHONE CONTROL" tab at the top of the page. Adjust levels as needed.
+                            </div>
                         </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-xs-12">
-                            <center>
-                                <button type="button" class="btn btn-default" onclick="showControlPage()">Close</button>
-                            </center>
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <center>
+                                    <button type="button" class="btn btn-default" onclick="bootpage.show('display-page', updateActiveTab)">Close</button>
+                                </center>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -154,7 +156,9 @@
                     <div class="col-xs-12"><span class="glyphicon glyphicon-off" onclick="confirmPowerOff()"></span></div>
                 </div>
                 <div class="row">
-                    <div class="col-xs-12"><span class="glyphicon glyphicon-home" onclick="bootpage.show('display-page', updateActiveTab)"></span></div>
+                    <a href="#display-tab" onclick="bootpage.show('display-page', updateActiveTab)">
+                        <div class="col-xs-12"><span class="glyphicon glyphicon-home"></span></div>
+                    </a>
                 </div>
                 <div class="row">
                     <div class="col-xs-12"><span class="glyphicon glyphicon-flash" onclick="bootpage.show('help-page', updateActiveTab)"></span></div>
@@ -168,7 +172,7 @@
                 <div class="row" onclick="decreaseVolume()">
                     <div class="col-xs-12"><span class="glyphicon glyphicon-volume-down"></span></div>
                 </div>
-                <div class="row">
+                <div class="row" onclick="muteVolume()">
                     <div class="col-xs-12"><span class="glyphicon glyphicon-volume-off"></span></div>
                 </div>
             </div>
