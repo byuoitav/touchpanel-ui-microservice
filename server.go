@@ -5,9 +5,9 @@ import (
 
 	"fmt"
 
-	"github.com/jessemillar/byudzhet/helpers"
+	"github.com/byuoitav/raspi-tp/helpers"
+	"github.com/byuoitav/raspi-tp/views"
 	"github.com/jessemillar/health"
-	"github.com/jessemillar/raspi-tp/views"
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/engine/fasthttp"
 	"github.com/labstack/echo/middleware"
@@ -15,7 +15,7 @@ import (
 
 func main() {
 	templater := &helpers.Template{
-		Templates: template.Must(template.ParseGlob("public/*/*.html")),
+		Templates: template.Must(template.ParseGlob("public/*.html")),
 	}
 
 	port := ":9000"
@@ -29,6 +29,6 @@ func main() {
 	router.Static("/*", "public")
 	router.Get("/", views.Main)
 
-	fmt.Printf("Rapi TP is listening on %s\n", port)
+	fmt.Printf("Raspi TP is listening on %s\n", port)
 	router.Run(fasthttp.New(port))
 }
