@@ -2,8 +2,7 @@ package main
 
 import (
 	"html/template"
-
-	"fmt"
+	"log"
 
 	"github.com/byuoitav/raspi-tp/helpers"
 	"github.com/byuoitav/raspi-tp/views"
@@ -29,6 +28,6 @@ func main() {
 	router.Static("/*", "public")
 	router.Get("/", views.Main)
 
-	fmt.Printf("Raspi TP is listening on %s\n", port)
+	log.Println("Raspi TP is listening on " + port)
 	router.Run(fasthttp.New(port))
 }
