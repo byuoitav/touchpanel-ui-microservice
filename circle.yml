@@ -11,6 +11,7 @@ deployment:
   production:
     branch: master
     commands:
+      - env GOOS=linux GOARCH=arm go build -v .
       - docker build -t byuoitav/raspi-tp:$CIRCLE_SHA1 .
       - docker build -t byuoitav/raspi-tp:latest .
       - docker login -e $DOCKER_EMAIL -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
