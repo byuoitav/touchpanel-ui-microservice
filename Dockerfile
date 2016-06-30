@@ -4,10 +4,10 @@ RUN [ "cross-build-start" ]
 
 RUN apt-get update && apt-get upgrade -y
 
-RUN mkdir ~/go/bin
-COPY raspi-tp ~/go/bin
+RUN mkdir -p /go/bin
+COPY raspi-tp /go/bin
 
-CMD ["~/go/bin/raspi-tp"]
+CMD ["/go/bin/raspi-tp"]
 
 RUN [ "cross-build-end" ]
 
