@@ -9,6 +9,6 @@ WORKDIR /go
 
 CMD ["/go/raspi-tp"]
 
-RUN [ "cross-build-end" ]
-
 EXPOSE 80
+
+RUN [ "cross-build-end" ]
