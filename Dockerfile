@@ -3,7 +3,7 @@ FROM resin/armv7hf-debian-qemu
 RUN [ "cross-build-start" ]
 
 RUN mkdir -p /go
-ADD raspi-tp /go
+ADD . /go
 
 WORKDIR /go
 
