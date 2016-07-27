@@ -7,6 +7,6 @@ ADD raspi-tp /go
 
 WORKDIR /go
 
-CMD ["/go/bin/raspi-tp"]
+CMD ["/go/raspi-tp"]
 
 RUN [ "cross-build-end" ]
