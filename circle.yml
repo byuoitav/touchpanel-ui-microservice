@@ -8,8 +8,8 @@ deployment:
     commands:
       - go get -d -v
       - env GOOS=linux GOARCH=arm go build -v .
-      - docker build -t byuoitav/raspi-tp:$CIRCLE_SHA1 .
-      - docker build -t byuoitav/raspi-tp:latest .
+      - docker build -f Dockerfile-ARM -t byuoitav/raspi-tp:$CIRCLE_SHA1 .
+      - docker build -f Dockerfile-ARM -t byuoitav/raspi-tp:latest .
       - docker login -e $DOCKER_EMAIL -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
       - docker push byuoitav/raspi-tp:$CIRCLE_SHA1
       - docker push byuoitav/raspi-tp:latest
