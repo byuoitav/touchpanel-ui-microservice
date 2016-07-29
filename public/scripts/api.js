@@ -1,11 +1,14 @@
 function sonyTVPower() {
+    var homeButton = {
+        address: "10.66.9.6",
+        command: "Home"
+    };
+
     $.ajax({
         type: "POST",
         url: "localhost:8007/command",
-        data: {
-            address: "10.66.9.6",
-            command: "TvPower"
-        },
-        success: swal("Command sent.")
+        data: homeButton,
+        success: swal("Command sent."),
+        contentType: "application/json; charset=utf-8"
     });
 }
