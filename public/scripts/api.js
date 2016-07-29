@@ -6,9 +6,9 @@ function sonyTVPower() {
 
     $.ajax({
         type: "POST",
-        url: "localhost:8007/command",
+        url: "http://localhost:8007/command",
         data: homeButton,
-        success: swal("Command sent."),
+        success: sweetAlert("Yay!", "Command sent successfully!", "success"),
         contentType: "application/json; charset=utf-8"
     });
 }
