@@ -22,6 +22,8 @@ func main() {
 	router.Pre(middleware.RemoveTrailingSlash())
 	router.SetRenderer(templater)
 
+	router.Use(middleware.CORS())
+
 	router.Get("/health", health.Check)
 
 	// Views
