@@ -7,6 +7,9 @@ function sonyTVPower() {
     $.ajax({
         type: "POST",
         url: "http://localhost:8007/command",
+        headers: {
+            'Access-Control-Allow-Origin': '*'
+        },
         data: homeButton,
         success: sweetAlert("Yay!", "Command sent successfully!", "success"),
         contentType: "application/json; charset=utf-8"
