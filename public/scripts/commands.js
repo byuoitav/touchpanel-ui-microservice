@@ -35,7 +35,7 @@ function sonyTVPowerOff() {
 }
 
 function switchInput(inputName) {
-    var poots = {
+    var inputBody = {
         "currentVideoInput": inputName
     };
 
@@ -45,7 +45,7 @@ function switchInput(inputName) {
         headers: {
             'Access-Control-Allow-Origin': '*'
         },
-        data: JSON.stringify(poots),
+        data: JSON.stringify(inputBody),
         success: sweetAlert("Yay!", "Command sent successfully!", "success"),
         contentType: "application/json; charset=utf-8"
     });
