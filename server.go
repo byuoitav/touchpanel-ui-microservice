@@ -17,7 +17,7 @@ func main() {
 		Templates: template.Must(template.ParseGlob("public/*/*.html")),
 	}
 
-	port := ":8000"
+	port := ":8888"
 	router := echo.New()
 	router.Pre(middleware.RemoveTrailingSlash())
 	router.SetRenderer(templateEngine)
