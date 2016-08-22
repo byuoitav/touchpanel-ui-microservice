@@ -1,0 +1,29 @@
+{{define "control-column"}}
+
+<div id="control-column" class="col-xs-1">
+    <div class="row">
+        <div class="col-xs-12"><span class="glyphicon glyphicon-off" onclick="confirmPowerOff()"></span></div>
+    </div>
+    <div class="row">
+        <a href="#display-tab" onclick="bootpage.show('display-tab', updateActiveTab)">
+            <div class="col-xs-12"><span class="glyphicon glyphicon-home"></span></div>
+        </a>
+    </div>
+    <div class="row">
+        <div class="col-xs-12"><span class="glyphicon glyphicon-flash" onclick="bootpage.show('help-page', updateActiveTab)"></span></div>
+    </div>
+    <div class="row" onclick="increaseVolume()">
+        <div class="col-xs-12"><span class="glyphicon glyphicon-volume-up"></span></div>
+    </div>
+    <div class="row">
+        <div class="col-xs-12"><span id="volume-level">100%<span></div>
+    </div>
+    <div class="row" onclick="decreaseVolume()">
+        <div class="col-xs-12"><span class="glyphicon glyphicon-volume-down"></span></div>
+    </div>
+    <div class="row" onclick="muteVolume()">
+        <div class="col-xs-12"><span class="glyphicon glyphicon-volume-off"></span></div>
+    </div>
+</div>
+
+{{end}}

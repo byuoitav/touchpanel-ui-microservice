@@ -16,10 +16,10 @@ function wakeSystem() {
         $("#loading-splash").fadeOut();
 
         if (window.location.hash) { // If we're refreshing a page or opening a bookmark, open the proper tab
-            $(window.location.hash).addClass("active"); // Set the active tab
+            // $(window.location.hash).addClass("active"); // Set the active tab
 
-            var hashPage = window.location.hash.substring(1, window.location.hash.length).substring(0, window.location.hash.length - 5);
-            bootpage.show(hashPage + "-page");
+            var hashPage = window.location.hash.substring(1, window.location.hash.length);
+            bootpage.show(hashPage, updateActiveTab);
         } else {
             bootpage.show("display-page", updateActiveTab);
         }

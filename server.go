@@ -13,14 +13,14 @@ import (
 )
 
 func main() {
-	templater := &helpers.Template{
-		Templates: template.Must(template.ParseGlob("public/*.html")),
+	templateEngine := &helpers.Template{
+		Templates: template.Must(template.ParseGlob("public/*/*.html")),
 	}
 
-	port := ":80"
+	port := ":8000"
 	router := echo.New()
 	router.Pre(middleware.RemoveTrailingSlash())
-	router.SetRenderer(templater)
+	router.SetRenderer(templateEngine)
 
 	router.Use(middleware.CORS())
 

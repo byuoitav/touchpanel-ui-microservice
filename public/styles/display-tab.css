@@ -1,18 +1,18 @@
-#display-page {
+#display-tab {
     height: 100%;
 }
 
-#display-page #source-well-title {
+#display-tab #source-well-title {
     font-size  : 20px;
     font-weight: bold;
 }
 
-#display-page #source-well-icon span {
+#display-tab #source-well-icon span {
     font-size    : 65px;
     margin-bottom: 10px;
 }
 
-#display-page #input-select {
+#display-tab #input-select {
     position: absolute;
     bottom  : 0;
     left    : 0;
@@ -20,7 +20,7 @@
     height  : 250px;
 }
 
-#display-page #input-select .input-icon {
+#display-tab #input-select .input-icon {
     width  : 16%;
     height : auto;
     display: inline-block;

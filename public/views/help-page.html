@@ -1,0 +1,45 @@
+{{define "help-page"}}
+
+<div id="help-page" class="row" style="display: none">
+    <div class="col-xs-10 col-xs-offset-1">
+        <div class="row">
+            <div class="col-xs-12">
+                <h2>Instructions</h2>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12">
+                To display a video source, press the "DISPLAY" tab at the top of the page, select the desired display (if more than one) then press the source to display.
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12">
+                To blank the screen, press "Blank". Select a source to unblank.
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12">
+                To control a device, press the "DEVICE CONTROL" tab at the top of the page. Press the icon of the device to be controlled. Press the control buttons as needed.
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12">
+                To select an audio source, press the "AUDIO CONTROL" tab at the top[ of the page. Press the icon of the desirec audio source. The audio source automatically follows the last-pressed video source under the "DISPLAY" tab.
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12">
+                To adjust microphone volume (if available), press the "MICROPHONE CONTROL" tab at the top of the page. Adjust levels as needed.
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12">
+                <center>
+                    <button type="button" class="btn btn-default" onclick="bootpage.show('display-tab', updateActiveTab)">Close</button>
+                </center>
+            </div>
+        </div>
+    </div>
+</div>
+
+{{end}}

@@ -1,0 +1,21 @@
+{{define "main"}}
+<html>
+
+{{template "head"}}
+
+<body onload="init()">
+    {{template "splash"}}
+
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Leave one column for the "control column" -->
+            <div class="col-xs-11">
+                {{template "navigation"}} {{template "display-page"}} {{template "device-control-page"}} {{template "audio-control-page"}} {{template "microphone-control-page"}} {{template "help-page"}}
+            </div>
+            {{template "control-column"}}
+        </div>
+    </div>
+</body>
+
+</html>
+{{end}}
