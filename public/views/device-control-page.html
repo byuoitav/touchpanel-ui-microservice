@@ -1,6 +1,6 @@
 {{define "device-control-page"}}
 
-<div id="device-control-page" class="row spacing-top" style="display: none">
+<div id="device-control-page" class="row padding-above" style="display: none">
     <div class="row">
         <div class="col-xs-3">
             <center>
@@ -31,11 +31,32 @@
             </center>
         </div>
     </div>
-    <div class="row">
+    <div class="row padding-above">
         <div class="col-xs-3">
             <center>
                 <button type="button" class="btn btn-default" onclick="sonyTVPowerOff()">
                     Power Off
+                </button>
+            </center>
+        </div>
+        <div class="col-xs-3">
+            <center>
+                <button type="button" class="btn btn-default" onclick="switchInput('PC1')">
+                    PC1
+                </button>
+            </center>
+        </div>
+        <div class="col-xs-3">
+            <center>
+                <button type="button" class="btn btn-default" onclick="switchInput('IPTV')">
+                    IPTV
+                </button>
+            </center>
+        </div>
+        <div class="col-xs-3">
+            <center>
+                <button type="button" class="btn btn-default" onclick="switchInput('Roku')">
+                    Roku
                 </button>
             </center>
         </div>
