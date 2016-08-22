@@ -1,16 +1,34 @@
-function sonyTVPower() {
-    var homeButton = {
-        address: "10.66.9.6",
-        command: "Home"
-    };
-
+function sonyTVPowerOn() {
     $.ajax({
         type: "POST",
-        url: "http://localhost:8007/command",
+        url: "http://localhost:8000/buildings/ITB/rooms/1110",
         headers: {
             'Access-Control-Allow-Origin': '*'
         },
-        data: homeButton,
+        data: {
+            "displays": [{
+                "name": "dp1",
+                "power": "on"
+            }]
+        },
+        success: sweetAlert("Yay!", "Command sent successfully!", "success"),
+        contentType: "application/json; charset=utf-8"
+    });
+}
+
+function sonyTVPowerOff() {
+    $.ajax({
+        type: "POST",
+        url: "http://localhost:8000/buildings/ITB/rooms/1110",
+        headers: {
+            'Access-Control-Allow-Origin': '*'
+        },
+        data: {
+            "displays": [{
+                "name": "dp1",
+                "power": "off"
+            }]
+        },
         success: sweetAlert("Yay!", "Command sent successfully!", "success"),
         contentType: "application/json; charset=utf-8"
     });

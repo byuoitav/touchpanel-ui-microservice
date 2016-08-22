@@ -16,8 +16,6 @@ function wakeSystem() {
         $("#loading-splash").fadeOut();
 
         if (window.location.hash) { // If we're refreshing a page or opening a bookmark, open the proper tab
-            // $(window.location.hash).addClass("active"); // Set the active tab
-
             var hashPage = window.location.hash.substring(1, window.location.hash.length);
             bootpage.show(hashPage, updateActiveTab);
         } else {
