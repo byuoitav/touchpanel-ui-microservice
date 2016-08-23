@@ -1,6 +1,6 @@
 function sonyTVPowerOn() {
     $.ajax({
-        type: "POST",
+        type: "PUT",
         url: "http://localhost:8000/buildings/ITB/rooms/1110",
         headers: {
             'Access-Control-Allow-Origin': '*'
@@ -18,7 +18,7 @@ function sonyTVPowerOn() {
 
 function sonyTVPowerOff() {
     $.ajax({
-        type: "POST",
+        type: "PUT",
         url: "http://localhost:8000/buildings/ITB/rooms/1110",
         headers: {
             'Access-Control-Allow-Origin': '*'
