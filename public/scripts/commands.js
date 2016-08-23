@@ -26,7 +26,7 @@ function sonyTVPowerOff() {
         data: {
             "displays": [{
                 "name": "dp1",
-                "power": "off"
+                "power": "standby"
             }]
         },
         success: sweetAlert("Yay!", "Command sent successfully!", "success"),
