@@ -13,7 +13,4 @@ deployment:
       - docker login -e $DOCKER_EMAIL -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
       - docker push byuoitav/raspi-tp:$CIRCLE_SHA1
       - docker push byuoitav/raspi-tp:latest
-
-notify:
-  webhooks:
-    - url: http://requestb.in/1eckukh1
+      - ./deploy-pi.sh
