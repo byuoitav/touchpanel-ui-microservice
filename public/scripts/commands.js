@@ -4,7 +4,7 @@ function switchInput(input) {
     var body = {
         currentVideoInput: input,
         displays: [{
-            name: "D2",
+            name: "D1",
             power: "on",
             blanked: false
         }]
