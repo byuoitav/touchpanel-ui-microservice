@@ -23,3 +23,9 @@ h3 {
 .padding-above {
     padding-top: 35px;
 }
+
+.large-button {
+    width        : 100%;
+    height       : 200px;
+    margin-bottom: 25px;
+}

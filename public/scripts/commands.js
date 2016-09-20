@@ -1,7 +1,7 @@
 var outputDevice = "D1";
 
 function setOutPutDevice(device) {
-
+    outputDevice = device;
 }
 
 function switchInput(input) {
