@@ -58,41 +58,6 @@ function confirmPowerOff() {
     });
 }
 
-function increaseVolume() {
-    if (volume == "MUTED") {
-        volume = previousVolume;
-    }
-
-    if (volume < 100) {
-        volume += 10;
-    }
-
-    showVolume();
-}
-
-function decreaseVolume() {
-    if (volume == "MUTED") {
-        volume = previousVolume;
-    }
-
-    if (volume > 0) {
-        volume -= 10;
-    }
-
-    showVolume();
-}
-
-function muteVolume() {
-    if (volume == "MUTED") {
-        volume = previousVolume;
-    } else {
-        previousVolume = volume;
-        volume = "MUTED";
-    }
-
-    showVolume();
-}
-
 function showVolume() {
     if (volume == "MUTED") {
         $("#volume-level").text(volume);
