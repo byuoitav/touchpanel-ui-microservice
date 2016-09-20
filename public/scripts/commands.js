@@ -1,3 +1,9 @@
+var outputDevice = "D1";
+
+function setOutPutDevice(device) {
+
+}
+
 function switchInput(input) {
     console.log("Pressed");
 
