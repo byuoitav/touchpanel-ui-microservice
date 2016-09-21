@@ -45,6 +45,7 @@ function increaseVolume() {
 
     var body = {
         audioDevices: [{
+            name: outputDevice,
             volume: volume
         }]
     };
@@ -65,7 +66,7 @@ function increaseVolume() {
     showVolume();
 }
 
-function increaseVolume() {
+function decreaseVolume() {
     if (volume == "MUTED") {
         volume = previousVolume;
     }
@@ -78,6 +79,7 @@ function increaseVolume() {
 
     var body = {
         audioDevices: [{
+            name: outputDevice,
             volume: volume
         }]
     };
@@ -103,6 +105,7 @@ function muteVolume() {
 
     var body = {
         audioDevices: [{
+            name: outputDevice,
             muted: true
         }]
     };
@@ -131,61 +134,42 @@ function muteVolume() {
     showVolume();
 }
 
-// ------------------------------------------------------
-// OLD API COMMANDS BELOW
-// ------------------------------------------------------
+function powerOn() {
+    var body = {
+        displays: [{
+            name: outputDevice,
+            power: "on"
+        }]
+    };
 
-function sonyTVPowerOn() {
     $.ajax({
         type: "PUT",
-        url: "http://localhost:8000/buildings/ITB/rooms/1110",
+        url: "http://localhost:8000/buildings/ITB/rooms/1001D",
         headers: {
             'Access-Control-Allow-Origin': '*'
         },
-        data: {
-            "displays": [{
-                "name": "dp1",
-                "power": "on"
-            }]
-        },
+        data: JSON.stringify(body),
         success: sweetAlert("Yay!", "Command sent successfully!", "success"),
         contentType: "application/json; charset=utf-8"
     });
 }
 
-function sonyTVPowerOff() {
+function powerOff() {
+    var body = {
+        displays: [{
+            name: outputDevice,
+            power: "standby"
+        }]
+    };
+
     $.ajax({
         type: "PUT",
-        url: "http://localhost:8000/buildings/ITB/rooms/1110",
+        url: "http://localhost:8000/buildings/ITB/rooms/1001D",
         headers: {
             'Access-Control-Allow-Origin': '*'
         },
-        data: {
-            "displays": [{
-                "name": "dp1",
-                "power": "standby"
-            }]
-        },
+        data: JSON.stringify(body),
         success: sweetAlert("Yay!", "Command sent successfully!", "success"),
         contentType: "application/json; charset=utf-8"
     });
 }
-
-// function switchInput(inputName) {
-//     var inputBody = {
-//         "currentVideoInput": inputName
-//     };
-//
-//     $.ajax({
-//         type: "PUT",
-//         url: "http://localhost:8000/buildings/ITB/rooms/1110",
-//         headers: {
-//             'Access-Control-Allow-Origin': '*'
-//         },
-//         data: JSON.stringify(inputBody),
-//         success: sweetAlert("Yay!", "Command sent successfully!", "success"),
-//         contentType: "application/json; charset=utf-8"
-//     });
-// }
-// /     });
-// }

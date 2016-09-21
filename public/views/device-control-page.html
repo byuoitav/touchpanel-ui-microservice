@@ -4,59 +4,31 @@
     <div class="row">
         <div class="col-xs-3">
             <center>
-                <button type="button" class="btn btn-default" onclick="sonyTVPowerOn()">
+                <button type="button" class="btn btn-default" onclick="setOutPutDevice('D1')">
+                  Select Sony TV
+              </button>
+            </center>
+        </div>
+        <div class="col-xs-3">
+            <center>
+                <button type="button" class="btn btn-default" onclick="setOutPutDevice('D2')">
+                  Select Projector
+              </button>
+            </center>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-3">
+            <center>
+                <button type="button" class="btn btn-default" onclick="powerOn()">
                     Power On
                 </button>
             </center>
         </div>
         <div class="col-xs-3">
             <center>
-                <button type="button" class="btn btn-default">
-                    Volume Up
-                </button>
-            </center>
-        </div>
-        <div class="col-xs-3">
-            <center>
-                <button type="button" class="btn btn-default">
-                    Volume Down
-                </button>
-            </center>
-        </div>
-        <div class="col-xs-3">
-            <center>
-                <button type="button" class="btn btn-default">
-                    Mute
-                </button>
-            </center>
-        </div>
-    </div>
-    <div class="row padding-above">
-        <div class="col-xs-3">
-            <center>
-                <button type="button" class="btn btn-default" onclick="sonyTVPowerOff()">
+                <button type="button" class="btn btn-default" onclick="powerOff()">
                     Power Off
-                </button>
-            </center>
-        </div>
-        <div class="col-xs-3">
-            <center>
-                <button type="button" class="btn btn-default" onclick="switchInput('PC1')">
-                    PC1
-                </button>
-            </center>
-        </div>
-        <div class="col-xs-3">
-            <center>
-                <button type="button" class="btn btn-default" onclick="switchInput('IPTV')">
-                    IPTV
-                </button>
-            </center>
-        </div>
-        <div class="col-xs-3">
-            <center>
-                <button type="button" class="btn btn-default" onclick="switchInput('Roku')">
-                    Roku
                 </button>
             </center>
         </div>
