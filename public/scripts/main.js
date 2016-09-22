@@ -1,4 +1,4 @@
-var version = "0.0.1";
+var version = "0.0.2";
 var loadTime = 500;
 var swalTimeout = 2000;
 var previousVolume = 0; // Used for remembering the last volume value when muted
@@ -19,7 +19,7 @@ function wakeSystem() {
             var hashPage = window.location.hash.substring(1, window.location.hash.length);
             bootpage.show(hashPage, updateActiveTab);
         } else {
-            bootpage.show("display-page", updateActiveTab);
+            bootpage.show("sony-tv-page", updateActiveTab);
         }
     }, loadTime);
 }
@@ -50,7 +50,7 @@ function confirmPowerOff() {
             });
 
             setTimeout(function() {
-                window.location = "index.html"; // Reload the page without hashes
+                window.location = "/"; // Reload the page without hashes
             }, swalTimeout);
         } else {
             swal.close();
@@ -67,8 +67,8 @@ function showVolume() {
 }
 
 function updateActiveTab() {
-    $("#device-control-tab").removeClass("active");
-    $("#display-tab").removeClass("active");
+    $("#sony-tv-tab").removeClass("active");
+    $("#epson-projector-tab").removeClass("active");
     $("#audio-control-tab").removeClass("active");
     $("#microphone-control-tab").removeClass("active");
 
