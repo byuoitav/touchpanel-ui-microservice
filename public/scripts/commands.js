@@ -1,6 +1,8 @@
 var outputDevice = "D1";
+var displayBlanked = false;
 
 function setOutPutDevice(device) {
+    console.log(device);
     outputDevice = device;
 }
 
@@ -8,11 +10,40 @@ function switchInput(input) {
     console.log("Pressed");
 
     var body = {
-        currentVideoInput: input,
+        currentVideoInput: input
+    };
+
+    console.log(body);
+
+    $.ajax({
+        type: "PUT",
+        url: "http://localhost:8000/buildings/ITB/rooms/1001D",
+        headers: {
+            'Access-Control-Allow-Origin': '*'
+        },
+        data: JSON.stringify(body),
+        // success: sweetAlert("Yay!", "Command sent successfully!", "success"),
+        contentType: "application/json; charset=utf-8"
+    });
+}
+
+function blankDisplay() {
+    if (displayBlanked) {
+        displayBlanked = false;
+    } else {
+        displayBlanked = true;
+    }
+
+    if (volume < 100) {
+        volume += volumeIncrement;
+    }
+
+    console.log("Pressed");
+
+    var body = {
         displays: [{
-            name: "D1",
-            power: "on",
-            blanked: false
+            name: outputDevice,
+            blanked: displayBlanked
         }]
     };
 
@@ -25,9 +56,11 @@ function switchInput(input) {
             'Access-Control-Allow-Origin': '*'
         },
         data: JSON.stringify(body),
-        success: sweetAlert("Yay!", "Command sent successfully!", "success"),
+        // success: sweetAlert("Yay!", "Command sent successfully!", "success"),
         contentType: "application/json; charset=utf-8"
     });
+
+    showVolume();
 }
 
 var volumeIncrement = 1;
@@ -149,7 +182,7 @@ function powerOn() {
             'Access-Control-Allow-Origin': '*'
         },
         data: JSON.stringify(body),
-        success: sweetAlert("Yay!", "Command sent successfully!", "success"),
+        // success: sweetAlert("Yay!", "Command sent successfully!", "success"),
         contentType: "application/json; charset=utf-8"
     });
 }
@@ -169,7 +202,7 @@ function powerOff() {
             'Access-Control-Allow-Origin': '*'
         },
         data: JSON.stringify(body),
-        success: sweetAlert("Yay!", "Command sent successfully!", "success"),
+        // success: sweetAlert("Yay!", "Command sent successfully!", "success"),
         contentType: "application/json; charset=utf-8"
     });
 }

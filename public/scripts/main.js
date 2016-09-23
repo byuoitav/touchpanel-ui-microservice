@@ -15,12 +15,12 @@ function wakeSystem() {
     setTimeout(function() {
         $("#loading-splash").fadeOut();
 
-        if (window.location.hash) { // If we're refreshing a page or opening a bookmark, open the proper tab
-            var hashPage = window.location.hash.substring(1, window.location.hash.length);
-            bootpage.show(hashPage, updateActiveTab);
-        } else {
-            bootpage.show("sony-tv-page", updateActiveTab);
-        }
+        // if (window.location.hash) { // If we're refreshing a page or opening a bookmark, open the proper tab
+        // var hashPage = window.location.hash.substring(1, window.location.hash.length);
+        // bootpage.show(hashPage, updateActiveTab);
+        // } else {
+        bootpage.show("sony-tv-page", updateActiveTab);
+        // }
     }, loadTime);
 }
 
