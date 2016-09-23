@@ -2,10 +2,32 @@ var version = "0.0.2";
 var loadTime = 500;
 var swalTimeout = 2000;
 var previousVolume = 0; // Used for remembering the last volume value when muted
-var volume = 100;
+var volume = 0;
 
 function init() {
     displayVersion();
+    getVolume();
+}
+
+function getVolume() {
+    $.ajax({
+        type: "GET",
+        url: "http://localhost:8000/buildings/ITB/rooms/1001D",
+        headers: {
+            'Access-Control-Allow-Origin': '*'
+        },
+        success: function(data) {
+            var devices = data.devices;
+            for (var i = 0; i < devices.length; i++) {
+                if (devices[i].name == "D1") {
+                    volume = devices[i].volume;
+
+                    showVolume();
+                }
+            }
+        },
+        contentType: "application/json; charset=utf-8"
+    });
 }
 
 function wakeSystem() {

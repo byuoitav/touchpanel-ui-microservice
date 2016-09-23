@@ -1,9 +1,18 @@
 var outputDevice = "D1";
 var displayBlanked = false;
 
-function setOutPutDevice(device) {
+function setOutputDevice(device) {
     console.log(device);
     outputDevice = device;
+}
+
+function pleaseWait() {
+    swal({
+        title: "Please Wait",
+        text: "Command sent successfully.",
+        timer: 3000,
+        showConfirmButton: false
+    });
 }
 
 function switchInput(input) {
@@ -22,7 +31,7 @@ function switchInput(input) {
             'Access-Control-Allow-Origin': '*'
         },
         data: JSON.stringify(body),
-        // success: sweetAlert("Yay!", "Command sent successfully!", "success"),
+        success: pleaseWait(),
         contentType: "application/json; charset=utf-8"
     });
 }
@@ -56,7 +65,7 @@ function blankDisplay() {
             'Access-Control-Allow-Origin': '*'
         },
         data: JSON.stringify(body),
-        // success: sweetAlert("Yay!", "Command sent successfully!", "success"),
+        success: pleaseWait(),
         contentType: "application/json; charset=utf-8"
     });
 
@@ -92,7 +101,6 @@ function increaseVolume() {
             'Access-Control-Allow-Origin': '*'
         },
         data: JSON.stringify(body),
-        // success: sweetAlert("Yay!", "Command sent successfully!", "success"),
         contentType: "application/json; charset=utf-8"
     });
 
@@ -126,7 +134,6 @@ function decreaseVolume() {
             'Access-Control-Allow-Origin': '*'
         },
         data: JSON.stringify(body),
-        // success: sweetAlert("Yay!", "Command sent successfully!", "success"),
         contentType: "application/json; charset=utf-8"
     });
 
@@ -160,7 +167,6 @@ function muteVolume() {
             'Access-Control-Allow-Origin': '*'
         },
         data: JSON.stringify(body),
-        // success: sweetAlert("Yay!", "Command sent successfully!", "success"),
         contentType: "application/json; charset=utf-8"
     });
 
@@ -182,7 +188,7 @@ function powerOn() {
             'Access-Control-Allow-Origin': '*'
         },
         data: JSON.stringify(body),
-        // success: sweetAlert("Yay!", "Command sent successfully!", "success"),
+        success: pleaseWait(),
         contentType: "application/json; charset=utf-8"
     });
 }
@@ -202,7 +208,7 @@ function powerOff() {
             'Access-Control-Allow-Origin': '*'
         },
         data: JSON.stringify(body),
-        // success: sweetAlert("Yay!", "Command sent successfully!", "success"),
+        success: pleaseWait(),
         contentType: "application/json; charset=utf-8"
     });
 }

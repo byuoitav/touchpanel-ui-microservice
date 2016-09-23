@@ -1,14 +1,17 @@
 #navigation .col-xs-12 {
-    padding: 0;
+    padding      : 0;
+    margin-bottom: 30px;
 }
 
 #navigation,
 #navigation a {
-    padding-top     : 15px;
+    padding-top     : 20px;
     background-color: #4a555f;
     color           : rgba(255, 255, 255, 0.35);
     font-weight     : bold;
     text-transform  : uppercase;
+    height          : 60px;
+    font-size       : 18px;
 }
 
 #navigation .nav-tabs a {
@@ -29,10 +32,6 @@
     background-color: rgba(255, 255, 255, 0.85);
     font-weight     : bold;
     width           : 100%;
-}
-
-#navigation .btn span.glyphicon {
-    font-size: 20px;
 }
 
 #navigation .btn.active {

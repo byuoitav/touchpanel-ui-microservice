@@ -1,8 +1,15 @@
-body {
+body,
+html {
     margin          : 0;
     padding         : 0;
     background-color: #404a54;
     overflow        : hidden;
+    cursor          : pointer !important;
+}
+
+a,
+button {
+    cursor: pointer !important;
 }
 
 h1,
@@ -28,13 +35,12 @@ h3 {
     padding-bottom: 35px;
 }
 
-.soundboard-button {
-    width           : 90%;
-    height          : 100px;
-    margin-bottom   : 25px;
-    font-weight     : bold;
-    font-size       : 20px;
-    background-color: #95999f;
-    border-color    : #495560;
-    color           : #2d3540;
+.soundboard-button,
+.soundboard-button:hover {
+    width        : 90%;
+    height       : 85px;
+    margin-bottom: 25px;
+    font-weight  : bold;
+    font-size    : 18px;
+    opacity      : 0.8;
 }
