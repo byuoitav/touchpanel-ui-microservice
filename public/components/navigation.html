@@ -1,0 +1,13 @@
+{{define "navigation"}}
+
+<div id="navigation" class="row">
+    <div class="col-xs-12">
+        <ul class="nav nav-tabs nav-justified">
+            <li id="room-tab"><a href="#room-page" onclick="bootpage.show('room-page', updateActiveTab)">Room</a></li>
+            <li id="sony-tv-tab"><a href="#sony-tv-page" onclick="setOutPutDevice('D1'); bootpage.show('sony-tv-page', updateActiveTab)">Sony TV</a></li>
+            <li id="epson-projector-tab"><a href="#epson-projector-page" onclick="setOutPutDevice('D2'); bootpage.show('epson-projector-page', updateActiveTab)">EPSON Projector</a></li>
+        </ul>
+    </div>
+</div>
+
+{{end}}

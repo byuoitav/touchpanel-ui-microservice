@@ -68,9 +68,8 @@ function showVolume() {
 
 function updateActiveTab() {
     $("#sony-tv-tab").removeClass("active");
+    $("#room-tab").removeClass("active");
     $("#epson-projector-tab").removeClass("active");
-    $("#audio-control-tab").removeClass("active");
-    $("#microphone-control-tab").removeClass("active");
 
     var currentTab = bootpage.currentPage.substring(0, bootpage.currentPage.length - 5);
 
