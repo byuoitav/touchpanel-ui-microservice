@@ -1,4 +1,4 @@
-var outputDevice = "D1";
+var outputDevice = "room";
 var displayBlanked = false;
 
 function setOutputDevice(device) {
@@ -6,21 +6,23 @@ function setOutputDevice(device) {
     outputDevice = device;
 }
 
-function pleaseWait() {
-    swal({
-        title: "Please Wait",
-        text: "Command sent successfully.",
-        timer: 3000,
-        showConfirmButton: false
-    });
-}
-
 function switchInput(input) {
-    console.log("Pressed");
+    console.log("Pressed", outputDevice, input);
 
-    var body = {
-        currentVideoInput: input
-    };
+    var body = {};
+
+    if (outputDevice == "room") {
+        body = {
+            currentVideoInput: input
+        };
+    } else {
+        body = {
+            displays: [{
+                name: outputDevice,
+                input: input
+            }]
+        };
+    }
 
     console.log(body);
 
@@ -37,24 +39,30 @@ function switchInput(input) {
 }
 
 function blankDisplay() {
-    if (displayBlanked) {
-        displayBlanked = false;
-    } else {
-        displayBlanked = true;
-    }
-
-    if (volume < 100) {
-        volume += volumeIncrement;
-    }
-
     console.log("Pressed");
 
-    var body = {
-        displays: [{
-            name: outputDevice,
-            blanked: displayBlanked
-        }]
-    };
+    var body = {};
+
+    console.log(eval("devicesList." + outputDevice));
+
+    if (eval("devicesList." + outputDevice).blanked) {
+        eval("devicesList." + outputDevice).blanked = false;
+    } else {
+        eval("devicesList." + outputDevice).blanked = true;
+    }
+
+    if (outputDevice == "room") {
+        body = {
+            blanked: eval("devicesList." + outputDevice).blanked
+        };
+    } else {
+        body = {
+            displays: [{
+                name: outputDevice,
+                blanked: eval("devicesList." + outputDevice).blanked
+            }]
+        };
+    }
 
     console.log(body);
 
@@ -87,7 +95,7 @@ function increaseVolume() {
 
     var body = {
         audioDevices: [{
-            name: outputDevice,
+            name: "D1",
             volume: volume
         }]
     };
@@ -120,7 +128,7 @@ function decreaseVolume() {
 
     var body = {
         audioDevices: [{
-            name: outputDevice,
+            name: "D1",
             volume: volume
         }]
     };
@@ -145,7 +153,7 @@ function muteVolume() {
 
     var body = {
         audioDevices: [{
-            name: outputDevice,
+            name: "D1",
             muted: true
         }]
     };
@@ -174,12 +182,18 @@ function muteVolume() {
 }
 
 function powerOn() {
-    var body = {
-        displays: [{
-            name: outputDevice,
+    if (outputDevice == "room") {
+        body = {
             power: "on"
-        }]
-    };
+        };
+    } else {
+        body = {
+            displays: [{
+                name: outputDevice,
+                power: "on"
+            }]
+        };
+    }
 
     $.ajax({
         type: "PUT",
@@ -194,12 +208,18 @@ function powerOn() {
 }
 
 function powerOff() {
-    var body = {
-        displays: [{
-            name: outputDevice,
+    if (outputDevice == "room") {
+        body = {
             power: "standby"
-        }]
-    };
+        };
+    } else {
+        body = {
+            displays: [{
+                name: outputDevice,
+                power: "standby"
+            }]
+        };
+    }
 
     $.ajax({
         type: "PUT",

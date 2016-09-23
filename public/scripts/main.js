@@ -1,12 +1,36 @@
 var version = "0.0.2";
 var loadTime = 500;
-var swalTimeout = 2000;
+var swalTimeout = 2500;
 var previousVolume = 0; // Used for remembering the last volume value when muted
 var volume = 0;
+
+var devicesList = {
+    room: {
+        description: "room",
+        blanked: false
+    },
+    D1: {
+        description: "sony-tv",
+        blanked: false
+    },
+    D2: {
+        description: "epson-projector",
+        blanked: false
+    }
+};
 
 function init() {
     displayVersion();
     getVolume();
+}
+
+function pleaseWait() {
+    swal({
+        title: "Please Wait",
+        text: "Command sent successfully.",
+        timer: swalTimeout,
+        showConfirmButton: false
+    });
 }
 
 function getVolume() {
@@ -41,7 +65,7 @@ function wakeSystem() {
         // var hashPage = window.location.hash.substring(1, window.location.hash.length);
         // bootpage.show(hashPage, updateActiveTab);
         // } else {
-        bootpage.show("sony-tv-page", updateActiveTab);
+        bootpage.show("room-page", updateActiveTab);
         // }
     }, loadTime);
 }
