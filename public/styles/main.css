@@ -4,12 +4,12 @@ html {
     padding         : 0;
     background-color: #404a54;
     overflow        : hidden;
-    cursor          : pointer !important;
+    cursor          : none !important;
 }
 
 a,
 button {
-    cursor: pointer !important;
+    cursor: none !important;
 }
 
 h1,
@@ -35,12 +35,16 @@ h3 {
     padding-bottom: 35px;
 }
 
-.soundboard-button,
+.soundboard-button {
+    width           : 90%;
+    height          : 85px;
+    margin-bottom   : 25px;
+    font-weight     : bold;
+    font-size       : 18px;
+    opacity         : 0.8;
+    background-color: #ffffff;
+}
+
 .soundboard-button:hover {
-    width        : 90%;
-    height       : 85px;
-    margin-bottom: 25px;
-    font-weight  : bold;
-    font-size    : 18px;
-    opacity      : 0.8;
+    background-color: #ffffff;
 }
