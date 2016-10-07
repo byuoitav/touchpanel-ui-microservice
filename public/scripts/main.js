@@ -41,6 +41,8 @@ function getVolume() {
             'Access-Control-Allow-Origin': '*'
         },
         success: function(data) {
+            console.log("Returned volume data: " + data);
+
             var devices = data.devices;
             for (var i = 0; i < devices.length; i++) {
                 if (devices[i].name == "D1") {
