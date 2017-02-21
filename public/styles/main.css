@@ -4,12 +4,12 @@ html {
     padding         : 0;
     background-color: #404a54;
     overflow        : hidden;
-    cursor          : none !important;
+    /* cursor          : none !important;*/
 }
 
 a,
 button {
-    cursor: none !important;
+    /*cursor: none !important;*/
 }
 
 h1,
