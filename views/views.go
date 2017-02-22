@@ -14,10 +14,10 @@ func Main(context echo.Context) error {
 	// get hostname
 	hostname, err := os.Hostname()
 	if err != nil {
-		log.Printf("couldn't get the hostname. error: %s, hostname: %s", err, hostname)
+		log.Printf("couldn't get the hostname. error: %s", err)
 	}
 	// temporary
-	hostname = "ITB-1006"
+	hostname = "ITB-1001D"
 
 	return context.Render(http.StatusOK, "main", hostname)
 }

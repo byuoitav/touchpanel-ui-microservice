@@ -5,6 +5,8 @@ var previousVolume = 0; // Used for remembering the last volume value when muted
 var volume = 0;
 
 // needs to be dynamically set
+var url;
+var building;
 var room;
 var devicesList;
 //  devicesList: (old)
@@ -22,23 +24,39 @@ var devicesList;
     // }
 
 function init() {
-    getRoom();
     displayVersion();
+}
+
+function getRoom() {
+    var hostname = document.getElementById('hostname').innerHTML;
+    hostname = hostname.replace(/\s+/g, '');    // remove white space
+    console.log("hostname =", hostname);
+    var split = hostname.split('-');
+    building = split[0];
+    room = split[1];
+
+    url = "http://localhost:8000/buildings/" + building + "/rooms/" + room;
+    console.log("url for this room: ", url);
+
+    var data = getAllData();
+    console.log("data: " + data);
     getVolume();
 }
 
-function getRoom(hostname) {
-  console.log("hostname = " + hostname);
-  // $.ajax({
-  //     type: "PUT",
-  //     url: "http://localhost:8000/buildings/ITB/rooms/1001D",
-  //     headers: {
-  //         'Access-Control-Allow-Origin': '*'
-  //     },
-  //     data: JSON.stringify(body),
-  //     success: pleaseWait(),
-  //     contentType: "application/json; charset=utf-8"
-  // });
+function getAllData() {
+    // get the all room information
+    $.ajax({
+        type: "GET",
+        url: url,
+        headers: {
+            'Access-Control-Allow-Origin': '*'
+        },
+        success: function(data) {
+            console.log("returning room data: ", data);
+            return data
+        },
+        contentType: "application/json; charset=utf-8"
+    });
 }
 
 function pleaseWait() {
@@ -76,6 +94,7 @@ function getVolume() {
 function wakeSystem() {
     $("#idle-splash").hide();
     $("#loading-splash").show();
+    getRoom();
 
     setTimeout(function() {
         $("#loading-splash").fadeOut();
