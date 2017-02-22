@@ -4,24 +4,41 @@ var swalTimeout = 1000;
 var previousVolume = 0; // Used for remembering the last volume value when muted
 var volume = 0;
 
-var devicesList = {
-    room: {
-        description: "room",
-        blanked: false
-    },
-    D1: {
-        description: "sony-tv",
-        blanked: false
-    },
-    D2: {
-        description: "epson-projector",
-        blanked: false
-    }
-};
+// needs to be dynamically set
+var room;
+var devicesList;
+//  devicesList: (old)
+    // room: {
+    //     description: "room",
+    //     blanked: false
+    // },
+    // D1: {
+    //     description: "sony-tv",
+    //     blanked: false
+    // },
+    // D2: {
+    //     description: "epson-projector",
+    //     blanked: false
+    // }
 
 function init() {
+    getRoom();
     displayVersion();
     getVolume();
+}
+
+function getRoom(hostname) {
+  console.log("hostname = " + hostname);
+  // $.ajax({
+  //     type: "PUT",
+  //     url: "http://localhost:8000/buildings/ITB/rooms/1001D",
+  //     headers: {
+  //         'Access-Control-Allow-Origin': '*'
+  //     },
+  //     data: JSON.stringify(body),
+  //     success: pleaseWait(),
+  //     contentType: "application/json; charset=utf-8"
+  // });
 }
 
 function pleaseWait() {
