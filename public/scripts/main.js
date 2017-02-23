@@ -4,24 +4,10 @@ var swalTimeout = 1000;
 var previousVolume = 0; // Used for remembering the last volume value when muted
 var volume = 0;
 
-// needs to be dynamically set
+// need to be dynamically set
 var url;
-var building;
-var room;
-var devicesList;
-//  devicesList: (old)
-    // room: {
-    //     description: "room",
-    //     blanked: false
-    // },
-    // D1: {
-    //     description: "sony-tv",
-    //     blanked: false
-    // },
-    // D2: {
-    //     description: "epson-projector",
-    //     blanked: false
-    // }
+var roomData;
+var devices = [];
 
 function init() {
     displayVersion();
@@ -32,31 +18,41 @@ function getRoom() {
     hostname = hostname.replace(/\s+/g, '');    // remove white space
     console.log("hostname =", hostname);
     var split = hostname.split('-');
-    building = split[0];
-    room = split[1];
 
-    url = "http://localhost:8000/buildings/" + building + "/rooms/" + room;
+    url = "http://localhost:8000/buildings/" + split[0] + "/rooms/" + split[1];
     console.log("url for this room: ", url);
 
-    var data = getAllData();
-    console.log("data: " + data);
+    getAllData();
     getVolume();
+
+    // get devices, put them into an array
+    for(i in roomData.devices) {
+        devices.push(roomData.devices[i]);
+    }
+
+    for(i in devices) {
+        console.log(devices[i]);
+    }
 }
 
 function getAllData() {
     // get the all room information
-    $.ajax({
+    return $.ajax({
         type: "GET",
         url: url,
+        async: false,
         headers: {
             'Access-Control-Allow-Origin': '*'
         },
         success: function(data) {
             console.log("returning room data: ", data);
-            return data
+            roomData = data;
         },
         contentType: "application/json; charset=utf-8"
     });
+}
+
+function setup() {
 }
 
 function pleaseWait() {
@@ -82,7 +78,6 @@ function getVolume() {
             for (var i = 0; i < devices.length; i++) {
                 if (devices[i].name == "D1") {
                     volume = devices[i].volume;
-
                     showVolume();
                 }
             }
@@ -94,16 +89,14 @@ function getVolume() {
 function wakeSystem() {
     $("#idle-splash").hide();
     $("#loading-splash").show();
-    getRoom();
 
     setTimeout(function() {
         $("#loading-splash").fadeOut();
+        getRoom();
+        // setup();
 
         // if (window.location.hash) { // If we're refreshing a page or opening a bookmark, open the proper tab
-        // var hashPage = window.location.hash.substring(1, window.location.hash.length);
-        // bootpage.show(hashPage, updateActiveTab);
-        // } else {
-        bootpage.show("room-page", updateActiveTab);
+        // var hashPage = devicesm-page", updateActiveTab);
         // }
     }, loadTime);
 }
