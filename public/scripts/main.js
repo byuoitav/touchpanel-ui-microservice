@@ -96,7 +96,10 @@ function wakeSystem() {
         // setup();
 
         // if (window.location.hash) { // If we're refreshing a page or opening a bookmark, open the proper tab
-        // var hashPage = devicesm-page", updateActiveTab);
+        // var hashPage = window.location.hash.substring(1, window.location.hash.length);
+        // bootpage.show(hashPage, updateActiveTab);
+        // } else {
+        bootpage.show("room-page", updateActiveTab);
         // }
     }, loadTime);
 }
