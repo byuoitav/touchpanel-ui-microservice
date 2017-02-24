@@ -148,7 +148,7 @@ function wakeSystem() {
         // var hashPage = window.location.hash.substring(1, window.location.hash.length);
         // bootpage.show(hashPage, updateActiveTab);
         // } else {
-        bootpage.show("room-page", updateActiveTab);
+        bootpage.show("displays-page", updateActiveTab);
         // }
     }, loadTime);
 }
@@ -196,8 +196,8 @@ function showVolume() {
 }
 
 function updateActiveTab() {
+    $("#display-tab").removeClass("active")
     $("#sony-tv-tab").removeClass("active");
-    $("#room-tab").removeClass("active");
     $("#epson-projector-tab").removeClass("active");
 
     var currentTab = bootpage.currentPage.substring(0, bootpage.currentPage.length - 5);
