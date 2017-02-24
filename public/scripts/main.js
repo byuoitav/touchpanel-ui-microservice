@@ -23,7 +23,7 @@ function getRoom() {
     console.log("url for this room: ", url);
 
     getAllData();
-    getVolume();
+    // getVolume();
 
     // get devices, put them into an array
     for(i in roomData.devices) {
@@ -53,6 +53,35 @@ function getAllData() {
 }
 
 function setup() {
+    // add displays and their outputs
+    console.log("setup()");
+    var numOfDisplays = 0;
+
+    for (i in devices) {
+        if(devices[i].output == true) {
+            numOfDisplays++;
+            console.log("devices[" + i + "](" + devices[i].name + ") is an output device, building a button for it!");
+            // if it is an output, create a button on the displays page for it
+            var button = document.createElement("button");
+
+            // https://www.w3schools.com/js/js_htmldom_document.asp to fix onclick
+            // button.innerHTML = "type="button" class="output-button" onclick="switchInput('HDMIIn')"" // edit function call
+            button.type = "button";
+            button.className = "output-button";
+            button.onclick = function(){switchInput('HDMIIn')};
+            button.innerHTML = devices[i].name;
+            document.getElementById("displays").appendChild(button);
+        } else {
+            // console.log("devices[" + i + "](" + devices[i].name + ") is NOT an output device");
+        }
+    }
+
+    // update width of displays tabs
+    var newWidth = 90 / numOfDisplays;
+    var outputButton = document.querySelectorAll(".output-button");
+    for (var i = 0; i < outputButton.length; i++) {
+        outputButton[i].style.width = newWidth + "%";
+    }
 }
 
 function pleaseWait() {
@@ -93,7 +122,7 @@ function wakeSystem() {
     setTimeout(function() {
         $("#loading-splash").fadeOut();
         getRoom();
-        // setup();
+        setup();
 
         // if (window.location.hash) { // If we're refreshing a page or opening a bookmark, open the proper tab
         // var hashPage = window.location.hash.substring(1, window.location.hash.length);

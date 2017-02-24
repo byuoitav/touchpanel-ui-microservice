@@ -48,3 +48,19 @@ h3 {
 .soundboard-button:hover {
     background-color: #ffffff;
 }
+
+.output-button {
+    height:85px;
+    margin-bottom:25px;
+    font-size:18px;
+    opacity:0,8;
+    background-color: rgba(255, 255, 255, 1);
+    font-weight     : bold;
+    display:inline-block;
+    width: 30%;
+}
+
+.row {
+    width:100%;
+    text-align: center;
+}
