@@ -196,9 +196,8 @@ function showVolume() {
 }
 
 function updateActiveTab() {
-    $("#display-tab").removeClass("active")
+    $("#displays-tab").removeClass("active")
     $("#sony-tv-tab").removeClass("active");
-    $("#epson-projector-tab").removeClass("active");
 
     var currentTab = bootpage.currentPage.substring(0, bootpage.currentPage.length - 5);
 
