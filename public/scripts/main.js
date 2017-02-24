@@ -53,34 +53,54 @@ function getAllData() {
 }
 
 function setup() {
-    // add displays and their outputs
+    // add button for each display and their input
     console.log("setup()");
     var numOfDisplays = 0;
+    var numOfInputs = 0;
 
     for (i in devices) {
         if(devices[i].output == true) {
             numOfDisplays++;
-            console.log("devices[" + i + "](" + devices[i].name + ") is an output device, building a button for it!");
+            console.log("devices[" + i + "](" + devices[i].name + ") is an *output* device, building a button for it!");
             // if it is an output, create a button on the displays page for it
             var button = document.createElement("button");
 
             // https://www.w3schools.com/js/js_htmldom_document.asp to fix onclick
             // button.innerHTML = "type="button" class="output-button" onclick="switchInput('HDMIIn')"" // edit function call
             button.type = "button";
-            button.className = "output-button";
-            button.onclick = function(){switchInput('HDMIIn')};
+            button.className = "display-output-button";
+            button.onclick = function(){switchInput('HDMIIn')}; // could be used to switch view to availble inputs, not necessary (line 75)
             button.innerHTML = devices[i].name;
             document.getElementById("displays").appendChild(button);
-        } else {
-            // console.log("devices[" + i + "](" + devices[i].name + ") is NOT an output device");
+
+            // create (different) buttons for each input device
+            // not necessary right now, may be necessary later.
+        } else if (devices[i].input == true) {
+            numOfInputs++;
+            console.log("devices[" + i + "](" + devices[i].name + ") is an *input* device, building a button for it!");
+
+            //create a button for each input
+            var button = document.createElement("button");
+            button.type = "button";
+            button.className = "display-input-button";
+            button.onclick = function(){switchInput('HDMIIn')}; // need to get the function call dynamically
+            button.innerHTML = devices[i].name;
+            document.getElementById("display-inputs").appendChild(button);
         }
     }
 
-    // update width of displays tabs
+    // update width of displays buttons
     var newWidth = 90 / numOfDisplays;
-    var outputButton = document.querySelectorAll(".output-button");
+    var outputButton = document.querySelectorAll(".display-output-button");
     for (var i = 0; i < outputButton.length; i++) {
         outputButton[i].style.width = newWidth + "%";
+    }
+
+    // update width of display-inputs buttons
+    newWidth = 90 / numOfInputs;
+    var inputButton = document.querySelectorAll(".display-input-button");
+    for (var i = 0; i < inputButton.length; i++) {
+        inputButton[i].style.width = newWidth + "%";
     }
 }
 
