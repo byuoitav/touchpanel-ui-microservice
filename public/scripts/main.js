@@ -71,7 +71,7 @@ function setup() {
                 // button.innerHTML = "type="button" class="output-button" onclick="switchInput('HDMIIn')"" // edit function call
                 button.type = "button";
                 button.className = "display-output-button";
-                button.onclick = function(){switchInput('HDMIIn')}; // could be used to switch view to availble inputs, not necessary (line 75)
+                button.onclick = function(){setOutputDevice(devices[i].name)};
                 button.innerHTML = devices[i].name;
                 document.getElementById("displays").appendChild(button);
 
@@ -85,7 +85,7 @@ function setup() {
                 var button = document.createElement("button");
                 button.type = "button";
                 button.className = "display-input-button";
-                button.onclick = function(){switchInput('HDMIIn')}; // need to get the function call dynamically
+                button.onclick = function(){switchInput(devices[i].name)};
                 button.innerHTML = devices[i].name;
                 document.getElementById("display-inputs").appendChild(button);
             } else if (devices[i].roles[j] == "AudioOut") {
@@ -97,7 +97,7 @@ function setup() {
                 //create a button for each input
                 button.type = "button";
                 button.className = "audio-output-button";
-                button.onclick = function(){switchInput('HDMIIn')}; // need to get the function call dynamically
+                button.onclick = function(){setOutputDevice(devices[i].name)}; // need to create a switchAudioOutput function?
                 button.innerHTML = devices[i].name;
                 document.getElementById("audio-outs").appendChild(button);
             } else if (devices[i].roles[j] == "AudioIn") {
@@ -109,7 +109,7 @@ function setup() {
                 //create a button for each input
                 button.type = "button";
                 button.className = "audio-input-button";
-                button.onclick = function(){switchInput('HDMIIn')}; // need to get the function call dynamically
+                button.onclick = function(){switchInput('HDMIIn')}; // need to create a switchAudioInput function?
                 button.innerHTML = devices[i].name;
                 document.getElementById("audio-ins").appendChild(button);
             } else {

@@ -2,7 +2,7 @@ var outputDevice = "room";
 var displayBlanked = false;
 
 function setOutputDevice(device) {
-    console.log(device);
+    console.log("set output device to: " + device);
     outputDevice = device;
 }
 
