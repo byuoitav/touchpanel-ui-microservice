@@ -72,10 +72,13 @@ function setup() {
                 button.type = "button";
                 button.className = "display-output-button";
                 var name = devices[i].name;
-                button.onclick = function(){setOutputDevice(name)};
+                button.onclick = (function(name) {
+                    return function(){
+                        setOutputDevice(name);
+                    }
+                })(name);
                 button.innerHTML = name;
                 document.getElementById("displays").appendChild(button);
-                break;
 
                 // create (different) buttons for each input device
                 // not necessary right now, may be necessary later.
@@ -88,7 +91,11 @@ function setup() {
                 button.type = "button";
                 button.className = "display-input-button";
                 var name = devices[i].name;
-                button.onclick = function(){switchInput(name};
+                button.onclick = (function(name) {
+                    return function(){
+                        switchInput(name);
+                    }
+                })(name);
                 button.innerHTML = name;
                 document.getElementById("display-inputs").appendChild(button);
             } else if (devices[i].roles[j] == "AudioOut") {
@@ -101,7 +108,12 @@ function setup() {
                 button.type = "button";
                 button.className = "audio-output-button";
                 var name = devices[i].name;
-                button.onclick = function(){}; // need to create a switchAudioOutput function?
+                // need to create a switchAudioOutput function?
+                button.onclick = (function(name) {
+                    return function(){
+
+                    }
+                })(name);
                 button.innerHTML = name;
                 document.getElementById("audio-outs").appendChild(button);
             } else if (devices[i].roles[j] == "AudioIn") {
@@ -114,7 +126,12 @@ function setup() {
                 button.type = "button";
                 button.className = "audio-input-button";
                 var name = devices[i].name;
-                button.onclick = function(){}; // need to create a switchAudioInput function?
+                // need to create a switchAudioInput function?
+                button.onclick = (function(name) {
+                    return function(){
+
+                    }
+                })(name);
                 button.innerHTML = name;
                 document.getElementById("audio-ins").appendChild(button);
             } else {
