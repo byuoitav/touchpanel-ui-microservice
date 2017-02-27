@@ -47,7 +47,7 @@ function switchAudioInput(input) {
 }
 
 function blankDisplay() {
-    console.log("blank display");
+    console.log("blank/unblank display");
 
     var body = {};
 
