@@ -1,41 +1,49 @@
-var outputDevice = "room";
+var outputDisplay = "room";
+var outputAudio = "";
 var displayBlanked = false;
 
-function setOutputDevice(device) {
-    console.log("set output device to: " + device);
-    outputDevice = device;
+function setDisplayOutput(device) {
+    console.log("set display output to:", device);
+    outputDisplay = device;
 }
 
-function switchInput(input) {
-    console.log("Pressed", outputDevice, input);
+function setAudioOutput(device) {
+    console.log("set display output to:", device);
+    outputAudio = device;
+}
+
+function switchDisplayInput(input) {
+    console.log("switching display input of", outputDisplay, "to", input);
 
     var body = {};
 
-    if (outputDevice == "room") {
-        body = {
-            currentVideoInput: input
-        };
-    } else {
-        body = {
-            displays: [{
-                name: outputDevice,
-                input: input
-            }]
-        };
-    }
+    body = {
+        displays: [{
+            name: outputDisplay,
+            input: input
+        }]
+    };
 
     console.log(body);
 
-    $.ajax({
-        type: "PUT",
-        url: "http://localhost:8000/buildings/ITB/rooms/1001D",
-        headers: {
-            'Access-Control-Allow-Origin': '*'
-        },
-        data: JSON.stringify(body),
-        success: pleaseWait(),
-        contentType: "application/json; charset=utf-8"
-    });
+    put(body);
+}
+
+function switchAudioInput(input) {
+    console.log("switching audio input of", outputAudio, "to", input);
+
+    var body = {};
+
+    body = {
+        displays: [{
+            name: outputAudio,
+            input: input
+        }]
+    };
+
+    console.log(body);
+
+    put(body);
 }
 
 function blankDisplay() {
@@ -43,15 +51,15 @@ function blankDisplay() {
 
     var body = {};
 
-    console.log(eval("devicesList." + outputDevice));
+    console.log(eval("devicesList." + outputDisplay));
 
-    if (eval("devicesList." + outputDevice).blanked) {
-        eval("devicesList." + outputDevice).blanked = false;
+    if (eval("devicesList." + outputDisplay).blanked) {
+        eval("devicesList." + outputDisplay).blanked = false;
     } else {
-        eval("devicesList." + outputDevice).blanked = true;
+        eval("devicesList." + outputDisplay).blanked = true;
     }
 
-    if (outputDevice == "room") {
+    if (outputDisplay == "room") {
         body = {
             blanked: eval("devicesList." + outputDevice).blanked
         };
@@ -59,24 +67,14 @@ function blankDisplay() {
         body = {
             displays: [{
                 name: outputDevice,
-                blanked: eval("devicesList." + outputDevice).blanked
+                blanked: eval("devicesList." + outputDisplay).blanked
             }]
         };
     }
 
     console.log(body);
 
-    $.ajax({
-        type: "PUT",
-        url: "http://localhost:8000/buildings/ITB/rooms/1001D",
-        headers: {
-            'Access-Control-Allow-Origin': '*'
-        },
-        data: JSON.stringify(body),
-        success: pleaseWait(),
-        contentType: "application/json; charset=utf-8"
-    });
-
+    put(body);
     showVolume();
 }
 
@@ -91,27 +89,18 @@ function increaseVolume() {
         volume += volumeIncrement;
     }
 
-    console.log("Pressed");
+    console.log("pressed volume up");
 
     var body = {
         audioDevices: [{
-            name: "D1",
+            name: outputAudio,
             volume: volume
         }]
     };
 
     console.log(body);
 
-    $.ajax({
-        type: "PUT",
-        url: "http://localhost:8000/buildings/ITB/rooms/1001D",
-        headers: {
-            'Access-Control-Allow-Origin': '*'
-        },
-        data: JSON.stringify(body),
-        contentType: "application/json; charset=utf-8"
-    });
-
+    put(body);
     showVolume();
 }
 
@@ -128,23 +117,14 @@ function decreaseVolume() {
 
     var body = {
         audioDevices: [{
-            name: "D1",
+            name: outputAudio,
             volume: volume
         }]
     };
 
     console.log(body);
 
-    $.ajax({
-        type: "PUT",
-        url: "http://localhost:8000/buildings/ITB/rooms/1001D",
-        headers: {
-            'Access-Control-Allow-Origin': '*'
-        },
-        data: JSON.stringify(body),
-        contentType: "application/json; charset=utf-8"
-    });
-
+    put(body);
     showVolume();
 }
 
@@ -153,7 +133,7 @@ function muteVolume() {
 
     var body = {
         audioDevices: [{
-            name: "D1",
+            name: outputAudio,
             muted: true
         }]
     };
@@ -168,43 +148,25 @@ function muteVolume() {
 
     console.log(body);
 
-    $.ajax({
-        type: "PUT",
-        url: "http://localhost:8000/buildings/ITB/rooms/1001D",
-        headers: {
-            'Access-Control-Allow-Origin': '*'
-        },
-        data: JSON.stringify(body),
-        contentType: "application/json; charset=utf-8"
-    });
-
+    put(body);
     showVolume();
 }
 
 function powerOn() {
-    if (outputDevice == "room") {
+    if (outputDisplay == "room") {
         body = {
             power: "on"
         };
     } else {
         body = {
             displays: [{
-                name: outputDevice,
+                name: outputDisplay,
                 power: "on"
             }]
         };
     }
 
-    $.ajax({
-        type: "PUT",
-        url: "http://localhost:8000/buildings/ITB/rooms/1001D",
-        headers: {
-            'Access-Control-Allow-Origin': '*'
-        },
-        data: JSON.stringify(body),
-        success: pleaseWait(),
-        contentType: "application/json; charset=utf-8"
-    });
+    put(body);
 }
 
 function powerOff() {
@@ -215,15 +177,19 @@ function powerOff() {
     } else {
         body = {
             displays: [{
-                name: outputDevice,
+                name: outputDisplay,
                 power: "standby"
             }]
         };
     }
 
+    put(body);
+}
+
+function put(body) {
     $.ajax({
         type: "PUT",
-        url: "http://localhost:8000/buildings/ITB/rooms/1001D",
+        url: url,
         headers: {
             'Access-Control-Allow-Origin': '*'
         },

@@ -17,7 +17,7 @@ func Main(context echo.Context) error {
 		log.Printf("couldn't get the hostname. error: %s", err)
 	}
 	// temporary
-	hostname = "ITB-1001D"
+	hostname = "ITB-1106"
 
 	return context.Render(http.StatusOK, "main", hostname)
 }

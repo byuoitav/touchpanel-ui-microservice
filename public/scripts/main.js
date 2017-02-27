@@ -74,14 +74,11 @@ function setup() {
                 var name = devices[i].name;
                 button.onclick = (function(name) {
                     return function(){
-                        setOutputDevice(name);
+                        setDisplayOutput(name);
                     }
                 })(name);
                 button.innerHTML = name;
                 document.getElementById("displays").appendChild(button);
-
-                // create (different) buttons for each input device
-                // not necessary right now, may be necessary later.
             } else if (devices[i].roles[j] == "VideoIn") {
                 numOfDisplayIns++;
                 console.log("devices[" + i + "](" + devices[i].name + ") is an display *input* device, building a button for it!");
@@ -93,7 +90,7 @@ function setup() {
                 var name = devices[i].name;
                 button.onclick = (function(name) {
                     return function(){
-                        switchInput(name);
+                        switchDisplayInput(name);
                     }
                 })(name);
                 button.innerHTML = name;
@@ -101,21 +98,27 @@ function setup() {
             } else if (devices[i].roles[j] == "AudioOut") {
                 numOfAudioOuts++;
                 console.log("devices[" + i + "](" + devices[i].name + ") is a audio *output* device, building a button for it!");
-                // if it is an output, create a button on the displays page for it
-                var button = document.createElement("button");
 
                 //create a button for each input
+                var button = document.createElement("button");
                 button.type = "button";
                 button.className = "audio-output-button";
                 var name = devices[i].name;
                 // need to create a switchAudioOutput function?
                 button.onclick = (function(name) {
                     return function(){
-
+                        setAudioOutput(name);
                     }
                 })(name);
                 button.innerHTML = name;
                 document.getElementById("audio-outs").appendChild(button);
+
+                // set default (initial) volume (only for first audio device)
+                if (numOfAudioOuts == 1) {
+                    volume = devices[i].volume;
+                    volume = 50; // temporary, need a way to get the volume
+                    showVolume();
+                }
             } else if (devices[i].roles[j] == "AudioIn") {
                 numOfAudioIns++;
                 console.log("devices[" + i + "](" + devices[i].name + ") is a audio *output* device, building a button for it!");
@@ -126,10 +129,9 @@ function setup() {
                 button.type = "button";
                 button.className = "audio-input-button";
                 var name = devices[i].name;
-                // need to create a switchAudioInput function?
                 button.onclick = (function(name) {
                     return function(){
-
+                        switchAudioInput(name);
                     }
                 })(name);
                 button.innerHTML = name;
@@ -175,28 +177,6 @@ function pleaseWait() {
         text: "Command sent successfully.",
         timer: swalTimeout,
         showConfirmButton: false
-    });
-}
-
-function getVolume() {
-    $.ajax({
-        type: "GET",
-        url: "http://localhost:8000/buildings/ITB/rooms/1001D",
-        headers: {
-            'Access-Control-Allow-Origin': '*'
-        },
-        success: function(data) {
-            console.log("Returned volume data: ", data);
-
-            var devices = data.devices;
-            for (var i = 0; i < devices.length; i++) {
-                if (devices[i].name == "D1") {
-                    volume = devices[i].volume;
-                    showVolume();
-                }
-            }
-        },
-        contentType: "application/json; charset=utf-8"
     });
 }
 
