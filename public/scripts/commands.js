@@ -1,5 +1,5 @@
-var outputDisplay = "room";
-var outputAudio = "";
+var outputDisplay; // defaults are the first valid options in the displays array
+var outputAudio; // set in main.js
 var displayBlanked = false;
 
 function setDisplayOutput(device) {
@@ -8,7 +8,7 @@ function setDisplayOutput(device) {
 }
 
 function setAudioOutput(device) {
-    console.log("set display output to:", device);
+    console.log("set audio output to:", device);
     outputAudio = device;
 }
 
@@ -35,7 +35,7 @@ function switchAudioInput(input) {
     var body = {};
 
     body = {
-        displays: [{
+        audioDevices: [{
             name: outputAudio,
             input: input
         }]
@@ -47,29 +47,26 @@ function switchAudioInput(input) {
 }
 
 function blankDisplay() {
-    console.log("Pressed");
+    console.log("blank display");
 
     var body = {};
 
-    console.log(eval("devicesList." + outputDisplay));
-
-    if (eval("devicesList." + outputDisplay).blanked) {
-        eval("devicesList." + outputDisplay).blanked = false;
-    } else {
-        eval("devicesList." + outputDisplay).blanked = true;
-    }
-
-    if (outputDisplay == "room") {
+    if (displayBlanked == true) {
         body = {
-            blanked: eval("devicesList." + outputDevice).blanked
+            displays: [{
+                name: outputDisplay,
+                blanked: false
+            }]
         };
+        displayBlanked = false;
     } else {
         body = {
             displays: [{
-                name: outputDevice,
-                blanked: eval("devicesList." + outputDisplay).blanked
+                name: outputDisplay,
+                blanked: true
             }]
         };
+        displayBlanked = true;
     }
 
     console.log(body);
@@ -100,7 +97,7 @@ function increaseVolume() {
 
     console.log(body);
 
-    put(body);
+    quietPut(body);
     showVolume();
 }
 
@@ -124,7 +121,7 @@ function decreaseVolume() {
 
     console.log(body);
 
-    put(body);
+    quietPut(body);
     showVolume();
 }
 
@@ -195,6 +192,18 @@ function put(body) {
         },
         data: JSON.stringify(body),
         success: pleaseWait(),
+        contentType: "application/json; charset=utf-8"
+    });
+}
+
+function quietPut(body) {
+    $.ajax({
+        type: "PUT",
+        url: url,
+        headers: {
+            'Access-Control-Allow-Origin': '*'
+        },
+        data: JSON.stringify(body),
         contentType: "application/json; charset=utf-8"
     });
 }

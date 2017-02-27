@@ -30,9 +30,9 @@ function getRoom() {
         devices.push(roomData.devices[i]);
     }
 
-    for(i in devices) {
-        console.log(devices[i]);
-    }
+    // for(i in devices) {
+    //     console.log(devices[i]);
+    // }
 }
 
 function getAllData() {
@@ -63,7 +63,7 @@ function setup() {
         for (var j in devices[i].roles) {
             if (devices[i].roles[j] == "VideoOut") {
                 numOfDisplayOuts++;
-                console.log("devices[" + i + "](" + devices[i].name + ") is a display *output* device, building a button for it!");
+                // console.log("devices[" + i + "](" + devices[i].name + ") is a display *output* device, building a button for it!");
                 // if it is an output, create a button on the displays page for it
                 var button = document.createElement("button");
 
@@ -79,9 +79,13 @@ function setup() {
                 })(name);
                 button.innerHTML = name;
                 document.getElementById("displays").appendChild(button);
+                // set default
+                if (numOfDisplayOuts == 1) {
+                    setDisplayOutput(name);
+                }
             } else if (devices[i].roles[j] == "VideoIn") {
                 numOfDisplayIns++;
-                console.log("devices[" + i + "](" + devices[i].name + ") is an display *input* device, building a button for it!");
+                // console.log("devices[" + i + "](" + devices[i].name + ") is an display *input* device, building a button for it!");
 
                 //create a button for each input
                 var button = document.createElement("button");
@@ -97,7 +101,7 @@ function setup() {
                 document.getElementById("display-inputs").appendChild(button);
             } else if (devices[i].roles[j] == "AudioOut") {
                 numOfAudioOuts++;
-                console.log("devices[" + i + "](" + devices[i].name + ") is a audio *output* device, building a button for it!");
+                // console.log("devices[" + i + "](" + devices[i].name + ") is a audio *output* device, building a button for it!");
 
                 //create a button for each input
                 var button = document.createElement("button");
@@ -115,13 +119,30 @@ function setup() {
 
                 // set default (initial) volume (only for first audio device)
                 if (numOfAudioOuts == 1) {
-                    volume = devices[i].volume;
+                    // volume = devices[i].volume;
                     volume = 50; // temporary, need a way to get the volume
+
+                    // hack to get the current volume
+                    $.ajax({
+                        type: "GET",
+                        url: "http://localhost:8004/" + devices[i].address + "/volume/get",
+                        async: false,
+                        headers: {
+                            'Access-Control-Allow-Origin': '*'
+                        },
+                        success: function(data) {
+                            console.log("setting volume to", data);
+                            volume = data;
+                        },
+                        contentType: "application/json; charset=utf-8"
+                    });
+
                     showVolume();
+                    setAudioOutput(name);
                 }
             } else if (devices[i].roles[j] == "AudioIn") {
                 numOfAudioIns++;
-                console.log("devices[" + i + "](" + devices[i].name + ") is a audio *output* device, building a button for it!");
+                // console.log("devices[" + i + "](" + devices[i].name + ") is a audio *output* device, building a button for it!");
                 // if it is an output, create a button on the displays page for it
                 var button = document.createElement("button");
 
@@ -137,7 +158,7 @@ function setup() {
                 button.innerHTML = name;
                 document.getElementById("audio-ins").appendChild(button);
             } else {
-                console.log("my role is " + devices[i].roles[j] + ". I don't get a button :( my name is: " + devices[i].name);
+                // console.log("my role is " + devices[i].roles[j] + ". I don't get a button :( my name is: " + devices[i].name);
             }
         }
     }
