@@ -50,43 +50,61 @@ h3 {
 }
 
 .display-output-button {
-    height:85px;
-    margin-bottom:25px;
-    font-size:18px;
-    opacity:0,8;
+    height: 15%;
+    width: 7%;
+    opacity: 0,8;
     background-color: rgba(255, 255, 255, 1);
-    font-weight     : bold;
-    display:inline-block;
+    /*display: inline-block;*/
+    border-radius: 50%;
+    overflow: hidden;
 }
 
 .display-input-button {
-    height:85px;
-    margin-bottom:25px;
-    font-size:18px;
-    opacity:0,8;
+    height: 15%;
+    width: 7%;
+    opacity: 0,8;
     background-color: rgba(255, 255, 255, 1);
-    font-weight     : bold;
-    display:inline-block;
+    /*display: inline-block;*/
+    border-radius: 50%;
+    overflow: hidden;
 }
 
 .audio-output-button {
-    height:85px;
-    margin-bottom:25px;
-    font-size:18px;
-    opacity:0,8;
+    height: 15%;
+    width: 7%;
+    opacity: 0,8;
     background-color: rgba(255, 255, 255, 1);
-    font-weight     : bold;
-    display:inline-block;
+    /*display: inline-block;*/
+    border-radius: 50%;
+    overflow: hidden;
 }
 
 .audio-input-button {
-    height:85px;
-    margin-bottom:25px;
-    font-size:18px;
-    opacity:0,8;
+    height: 15%;
+    width: 7%;
+    opacity: 0,8;
     background-color: rgba(255, 255, 255, 1);
-    font-weight     : bold;
-    display:inline-block;
+    /*display: inline-block;*/
+    border-radius: 50%;
+    overflow: hidden;
+}
+
+.output-row {
+    width: 100%;
+    text-align: center;
+    margin-bottom: 2%;
+    font-size: 125%;
+    font-weight: bold;
+    display: block;
+}
+
+.input-row {
+    width: 100%;
+    text-align: center;
+    margin-bottom: 2%;
+    font-size: 125%;
+    font-weight: bold;
+    display: block;
 }
 
 .row {

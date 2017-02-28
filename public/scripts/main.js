@@ -164,31 +164,35 @@ function setup() {
     }
 
     // update width of display buttons
-    var newWidth = 90 / numOfDisplayOuts;
+    var newMargin = 5 / numOfDisplayOuts;
     var displayOutputButtons = document.querySelectorAll(".display-output-button");
     for (var i = 0; i < displayOutputButtons.length; i++) {
-        displayOutputButtons[i].style.width = newWidth + "%";
+        displayOutputButtons[i].style.marginLeft = newMargin + "%";
+        displayOutputButtons[i].style.marginRight = newMargin + "%";
     }
 
     // update width of display-input buttons
-    newWidth = 90 / numOfDisplayIns;
+    newMargin = 5 / numOfDisplayIns;
     var displayInputButtons = document.querySelectorAll(".display-input-button");
     for (var i = 0; i < displayInputButtons.length; i++) {
-        displayInputButtons[i].style.width = newWidth + "%";
+        displayInputButtons[i].style.marginLeft = newMargin + "%";
+        displayInputButtons[i].style.marginRight = newMargin + "%";
     }
 
     // update width of audio-output buttons
-    newWidth = 90 / numOfAudioOuts;
+    newMargin = 5 / numOfAudioOuts;
     var audioOutputButtons = document.querySelectorAll(".audio-output-button");
     for (var i = 0; i < audioOutputButtons.length; i++) {
-        audioOutputButtons[i].style.width = newWidth + "%";
+        audioOutputButtons[i].style.marginLeft = newMargin + "%";
+        audioOutputButtons[i].style.marginRight = newMargin + "%";
     }
 
     // update width of audio-input buttons
-    newWidth = 90 / numOfDisplayIns;
+    newMargin = 5 / numOfDisplayIns;
     var audioInputButtons = document.querySelectorAll(".audio-input-button");
     for (var i = 0; i < audioInputButtons.length; i++) {
-        audioInputButtons[i].style.width = newWidth + "%";
+        audioInputButtons[i].style.marginLeft = newMargin + "%";
+        audioInputButtons[i].style.marginRight = newMargin + "%";
     }
 }
 

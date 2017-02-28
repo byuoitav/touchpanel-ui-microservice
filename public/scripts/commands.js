@@ -51,21 +51,17 @@ function blankDisplay() {
 
     var body = {};
 
+    body = {
+        displays: [{
+            name: outputDisplay,
+            blanked: true
+        }]
+    };
+
     if (displayBlanked == true) {
-        body = {
-            displays: [{
-                name: outputDisplay,
-                blanked: false
-            }]
-        };
+        body.displays[0].blanked = false;
         displayBlanked = false;
     } else {
-        body = {
-            displays: [{
-                name: outputDisplay,
-                blanked: true
-            }]
-        };
         displayBlanked = true;
     }
 
@@ -110,7 +106,7 @@ function decreaseVolume() {
         volume -= volumeIncrement;
     }
 
-    console.log("Pressed");
+    console.log("pressed volume down");
 
     var body = {
         audioDevices: [{
@@ -126,7 +122,7 @@ function decreaseVolume() {
 }
 
 function muteVolume() {
-    console.log("Pressed");
+    console.log("mute/unmute volume");
 
     var body = {
         audioDevices: [{
