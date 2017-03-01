@@ -155,7 +155,18 @@ function powerOnRoom() {
         }]
     };
 
-    quietPut(body);
+    // make it take longer to turn on so that input can change
+    $.ajax({
+        type: "PUT",
+        url: url,
+        async: false,
+        headers: {
+            'Access-Control-Allow-Origin': '*'
+        },
+        data: JSON.stringify(body),
+        contentType: "application/json; charset=utf-8"
+    });
+    // quietPut(body);
 }
 
 function powerOffRoom() {
