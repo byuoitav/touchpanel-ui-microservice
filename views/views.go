@@ -11,13 +11,17 @@ import (
 func Main(context echo.Context) error {
 	log.Println("Returning page")
 
-	// get hostname
-	hostname, err := os.Hostname()
-	if err != nil {
-		log.Printf("couldn't get the hostname. error: %s", err)
+	if len(os.Getenv("PI_HOSTNAME")) > 0 { // get development hostname
+		hostname, err := os.Getenv("PI_HOSTNAME")
+		if err != nil {
+			log.Printf("Couldn't get development hostname: %s", err)
+		}
+	} else { // get the real hostname
+		hostname, err := os.Hostname()
+		if err != nil {
+			log.Printf("Couldn't get hostname: %s", err)
+		}
 	}
-	// temporary
-	hostname = "ITB-1106"
 
 	return context.Render(http.StatusOK, "main", hostname)
 }
