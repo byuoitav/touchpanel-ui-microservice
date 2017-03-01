@@ -79,9 +79,10 @@ function setup() {
                 })(name);
                 button.innerHTML = name;
                 document.getElementById("displays").appendChild(button);
-                // set default
+                // set default, turn on first device
                 if (numOfDisplayOuts == 1) {
                     setDisplayOutput(name);
+                    powerOnRoom();
                 }
             } else if (devices[i].roles[j] == "VideoIn") {
                 numOfDisplayIns++;
@@ -246,6 +247,8 @@ function confirmPowerOff() {
                 type: "success",
                 timer: swalTimeout,
                 showConfirmButton: false
+            }, function() {
+                powerOffRoom();
             });
 
             setTimeout(function() {

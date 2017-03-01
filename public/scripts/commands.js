@@ -21,7 +21,7 @@ function switchDisplayInput(input) {
         displays: [{
             name: outputDisplay,
             input: input
-        }]
+        }],
     };
 
     console.log(body);
@@ -145,41 +145,31 @@ function muteVolume() {
     showVolume();
 }
 
-function powerOn() {
-    if (outputDisplay == "room") {
-        body = {
-            power: "on"
-        };
-    } else {
-        body = {
-            displays: [{
-                name: outputDisplay,
-                power: "on"
-            }]
-        };
-    }
+function powerOnRoom() {
+    console.log("turning room on");
+    var body = {
+        power: "on",
+        displays: [{
+            name: outputDisplay,
+            power: "on",
+        }]
+    };
 
-    put(body);
+    quietPut(body);
 }
 
-function powerOff() {
-    if (outputDevice == "room") {
-        body = {
-            power: "standby"
-        };
-    } else {
-        body = {
-            displays: [{
-                name: outputDisplay,
-                power: "standby"
-            }]
-        };
-    }
+function powerOffRoom() {
+    console.log("powering off room");
+    // just to power down one (the current) device
+    var body = {
+        power: "standby"
+    };
 
-    put(body);
+    quietPut(body);
 }
 
 function put(body) {
+    // console.log("put", body);
     $.ajax({
         type: "PUT",
         url: url,
@@ -193,6 +183,7 @@ function put(body) {
 }
 
 function quietPut(body) {
+    console.log("quietPut", body);
     $.ajax({
         type: "PUT",
         url: url,

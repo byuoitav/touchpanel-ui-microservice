@@ -107,6 +107,25 @@ h3 {
     display: block;
 }
 
+.blank-row {
+    width: 100%;
+    text-align: center;
+    margin-bottom: 5%;
+    font-size: 125%;
+    font-weight: bold;
+    display: block;
+}
+
+.blank {
+    height: 15%;
+    width: 7%;
+    opacity: 0,8;
+    background-color: rgba(255, 255, 255, 1);
+    /*display: inline-block;*/
+    border-radius: 50%;
+    overflow: hidden;
+}
+
 .row {
     width:100%;
     text-align: center;
