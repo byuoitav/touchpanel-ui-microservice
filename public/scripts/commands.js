@@ -1,82 +1,95 @@
-var outputDevice = "room";
+var outputDisplay; // defaults are the first valid options in the displays array
+var outputAudio; // set in main.js
 var displayBlanked = false;
 
-function setOutputDevice(device) {
-    console.log(device);
-    outputDevice = device;
+function setDisplayOutput(device) {
+    console.log("set display output to:", device);
+    outputDisplay = device;
 }
 
-function switchInput(input) {
-    console.log("Pressed", outputDevice, input);
+function setAudioOutput(device) {
+    console.log("set audio output to:", device);
+    outputAudio = device;
+
+    // if output device isn't an RPC device, create a slider to control it with
+    for (var i in devices) {
+        if (devices[i].name == outputAudio) {
+            for (var j in devices[i].roles) {
+                if (devices[i].roles[j] == "AudioOut"){
+                    console.log("adding a slider");
+                    var slider = document.createElement("INPUT");
+                    slider.setAttribute("id", "slider");
+                    slider.setAttribute("type", "range");
+                    // edit volume dynamically as the slider changes
+                    slider.onchange = function() {setVolume()};
+
+                    // delete current things, replace them with slider
+                    document.getElementById("vol-up").remove();
+                    document.getElementById("vol-level").remove();
+                    document.getElementById("vol-down").remove();
+                    document.getElementById("vol-slider").appendChild(slider);
+                }
+            }
+        }
+    }
+}
+
+function switchDisplayInput(input) {
+    console.log("switching display input of", outputDisplay, "to", input);
 
     var body = {};
 
-    if (outputDevice == "room") {
-        body = {
-            currentVideoInput: input
-        };
-    } else {
-        body = {
-            displays: [{
-                name: outputDevice,
-                input: input
-            }]
-        };
-    }
+    body = {
+        displays: [{
+            name: outputDisplay,
+            input: input
+        }],
+    };
 
     console.log(body);
 
-    $.ajax({
-        type: "PUT",
-        url: "http://localhost:8000/buildings/ITB/rooms/1001D",
-        headers: {
-            'Access-Control-Allow-Origin': '*'
-        },
-        data: JSON.stringify(body),
-        success: pleaseWait(),
-        contentType: "application/json; charset=utf-8"
-    });
+    put(body);
+}
+
+function switchAudioInput(input) {
+    console.log("switching audio input of", outputAudio, "to", input);
+
+    var body = {};
+
+    body = {
+        audioDevices: [{
+            name: outputAudio,
+            input: input
+        }]
+    };
+
+    console.log(body);
+
+    put(body);
 }
 
 function blankDisplay() {
-    console.log("Pressed");
+    console.log("blank/unblank display");
 
     var body = {};
 
-    console.log(eval("devicesList." + outputDevice));
+    body = {
+        displays: [{
+            name: outputDisplay,
+            blanked: true
+        }]
+    };
 
-    if (eval("devicesList." + outputDevice).blanked) {
-        eval("devicesList." + outputDevice).blanked = false;
+    if (displayBlanked == true) {
+        body.displays[0].blanked = false;
+        displayBlanked = false;
     } else {
-        eval("devicesList." + outputDevice).blanked = true;
-    }
-
-    if (outputDevice == "room") {
-        body = {
-            blanked: eval("devicesList." + outputDevice).blanked
-        };
-    } else {
-        body = {
-            displays: [{
-                name: outputDevice,
-                blanked: eval("devicesList." + outputDevice).blanked
-            }]
-        };
+        displayBlanked = true;
     }
 
     console.log(body);
 
-    $.ajax({
-        type: "PUT",
-        url: "http://localhost:8000/buildings/ITB/rooms/1001D",
-        headers: {
-            'Access-Control-Allow-Origin': '*'
-        },
-        data: JSON.stringify(body),
-        success: pleaseWait(),
-        contentType: "application/json; charset=utf-8"
-    });
-
+    put(body);
     showVolume();
 }
 
@@ -91,27 +104,18 @@ function increaseVolume() {
         volume += volumeIncrement;
     }
 
-    console.log("Pressed");
+    console.log("pressed volume up");
 
     var body = {
         audioDevices: [{
-            name: "D1",
+            name: outputAudio,
             volume: volume
         }]
     };
 
     console.log(body);
 
-    $.ajax({
-        type: "PUT",
-        url: "http://localhost:8000/buildings/ITB/rooms/1001D",
-        headers: {
-            'Access-Control-Allow-Origin': '*'
-        },
-        data: JSON.stringify(body),
-        contentType: "application/json; charset=utf-8"
-    });
-
+    quietPut(body);
     showVolume();
 }
 
@@ -124,36 +128,27 @@ function decreaseVolume() {
         volume -= volumeIncrement;
     }
 
-    console.log("Pressed");
+    console.log("pressed volume down");
 
     var body = {
         audioDevices: [{
-            name: "D1",
+            name: outputAudio,
             volume: volume
         }]
     };
 
     console.log(body);
 
-    $.ajax({
-        type: "PUT",
-        url: "http://localhost:8000/buildings/ITB/rooms/1001D",
-        headers: {
-            'Access-Control-Allow-Origin': '*'
-        },
-        data: JSON.stringify(body),
-        contentType: "application/json; charset=utf-8"
-    });
-
+    quietPut(body);
     showVolume();
 }
 
 function muteVolume() {
-    console.log("Pressed");
+    console.log("mute/unmute volume");
 
     var body = {
         audioDevices: [{
-            name: "D1",
+            name: outputAudio,
             muted: true
         }]
     };
@@ -168,36 +163,71 @@ function muteVolume() {
 
     console.log(body);
 
-    $.ajax({
-        type: "PUT",
-        url: "http://localhost:8000/buildings/ITB/rooms/1001D",
-        headers: {
-            'Access-Control-Allow-Origin': '*'
-        },
-        data: JSON.stringify(body),
-        contentType: "application/json; charset=utf-8"
-    });
-
+    put(body);
     showVolume();
 }
 
-function powerOn() {
-    if (outputDevice == "room") {
-        body = {
-            power: "on"
-        };
+function setVolume() {
+    var vol = document.getElementById("slider").value;
+    if (volume == "MUTED") {
+        volume = previousVolume;
     } else {
-        body = {
-            displays: [{
-                name: outputDevice,
-                power: "on"
-            }]
-        };
+        volume = vol;
     }
 
+    console.log("moved volume slider to", vol);
+
+    var body = {
+        audioDevices: [{
+            name: outputAudio,
+            volume: parseInt(vol)
+        }]
+    };
+
+    console.log(body);
+
+    quietPut(body);
+}
+
+function powerOnRoom() {
+    console.log("turning room on");
+    var body = {
+        power: "on",
+        displays: [{
+            name: outputDisplay,
+            power: "on",
+        }]
+    };
+
+    // make it take longer to turn on so that input can change
     $.ajax({
         type: "PUT",
-        url: "http://localhost:8000/buildings/ITB/rooms/1001D",
+        url: url,
+        async: false,
+        headers: {
+            'Access-Control-Allow-Origin': '*'
+        },
+        data: JSON.stringify(body),
+        contentType: "application/json; charset=utf-8"
+    });
+    // quietPut(body);
+}
+
+function powerOffRoom() {
+    console.log("powering off room");
+    // just to power down one (the current) device
+    var body = {
+        power: "standby"
+    };
+
+    quietPut(body);
+}
+
+function put(body) {
+    // console.log("put", body);
+    $.ajax({
+        type: "PUT",
+        url: url,
         headers: {
             'Access-Control-Allow-Origin': '*'
         },
@@ -207,28 +237,15 @@ function powerOn() {
     });
 }
 
-function powerOff() {
-    if (outputDevice == "room") {
-        body = {
-            power: "standby"
-        };
-    } else {
-        body = {
-            displays: [{
-                name: outputDevice,
-                power: "standby"
-            }]
-        };
-    }
-
+function quietPut(body) {
+    console.log("quietPut", body);
     $.ajax({
         type: "PUT",
-        url: "http://localhost:8000/buildings/ITB/rooms/1001D",
+        url: url,
         headers: {
             'Access-Control-Allow-Origin': '*'
         },
         data: JSON.stringify(body),
-        success: pleaseWait(),
         contentType: "application/json; charset=utf-8"
     });
 }

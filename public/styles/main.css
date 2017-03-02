@@ -4,12 +4,12 @@ html {
     padding         : 0;
     background-color: #404a54;
     overflow        : hidden;
-    cursor          : none !important;
+    /* cursor          : none !important;*/
 }
 
 a,
 button {
-    cursor: none !important;
+    /*cursor: none !important;*/
 }
 
 h1,
@@ -47,4 +47,86 @@ h3 {
 
 .soundboard-button:hover {
     background-color: #ffffff;
+}
+
+.display-output-button {
+    height: 15%;
+    width: 7%;
+    opacity: 0,8;
+    background-color: rgba(255, 255, 255, 1);
+    /*display: inline-block;*/
+    border-radius: 50%;
+    overflow: hidden;
+}
+
+.display-input-button {
+    height: 15%;
+    width: 7%;
+    opacity: 0,8;
+    background-color: rgba(255, 255, 255, 1);
+    /*display: inline-block;*/
+    border-radius: 50%;
+    overflow: hidden;
+}
+
+.audio-output-button {
+    height: 15%;
+    width: 7%;
+    opacity: 0,8;
+    background-color: rgba(255, 255, 255, 1);
+    /*display: inline-block;*/
+    border-radius: 50%;
+    overflow: hidden;
+}
+
+.audio-input-button {
+    height: 15%;
+    width: 7%;
+    opacity: 0,8;
+    background-color: rgba(255, 255, 255, 1);
+    /*display: inline-block;*/
+    border-radius: 50%;
+    overflow: hidden;
+}
+
+.output-row {
+    width: 100%;
+    text-align: center;
+    margin-bottom: 2%;
+    font-size: 125%;
+    font-weight: bold;
+    display: block;
+}
+
+.input-row {
+    width: 100%;
+    text-align: center;
+    margin-bottom: 2%;
+    font-size: 125%;
+    font-weight: bold;
+    display: block;
+}
+
+.blank-row {
+    width: 100%;
+    text-align: center;
+    margin-bottom: 5%;
+    font-size: 125%;
+    font-weight: bold;
+    display: block;
+}
+
+.blank {
+    height: 15%;
+    width: 7%;
+    opacity: 0,8;
+    background-color: rgba(255, 255, 255, 1);
+    /*display: inline-block;*/
+    border-radius: 50%;
+    overflow: hidden;
+}
+
+.row {
+    width:100%;
+    text-align: center;
 }
