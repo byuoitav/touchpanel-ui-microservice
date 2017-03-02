@@ -180,7 +180,7 @@ function setVolume() {
     var body = {
         audioDevices: [{
             name: outputAudio,
-            volume: vol
+            volume: parseInt(vol)
         }]
     };
 
