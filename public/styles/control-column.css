@@ -38,3 +38,11 @@
 #control-column .glyphicon:active {
     color: #ffffff;
 }
+
+#vol-slider {
+    transform: rotate(270deg);
+    text-align: center;
+    margin-left: 7%;
+    margin-top: 35%;
+    margin-bottom: 35%;
+}

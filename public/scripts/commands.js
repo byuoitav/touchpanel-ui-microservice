@@ -10,6 +10,28 @@ function setDisplayOutput(device) {
 function setAudioOutput(device) {
     console.log("set audio output to:", device);
     outputAudio = device;
+
+    // if output device isn't an RPC device, create a slider to control it with
+    for (var i in devices) {
+        if (devices[i].name == outputAudio) {
+            for (var j in devices[i].roles) {
+                if (devices[i].roles[j] == "AudioOut"){
+                    console.log("adding a slider");
+                    var slider = document.createElement("INPUT");
+                    slider.setAttribute("id", "slider");
+                    slider.setAttribute("type", "range");
+                    // edit volume dynamically as the slider changes
+                    slider.onchange = function() {setVolume()};
+
+                    // delete current things, replace them with slider
+                    document.getElementById("vol-up").remove();
+                    document.getElementById("vol-level").remove();
+                    document.getElementById("vol-down").remove();
+                    document.getElementById("vol-slider").appendChild(slider);
+                }
+            }
+        }
+    }
 }
 
 function switchDisplayInput(input) {
@@ -143,6 +165,28 @@ function muteVolume() {
 
     put(body);
     showVolume();
+}
+
+function setVolume() {
+    var vol = document.getElementById("slider").value;
+    if (volume == "MUTED") {
+        volume = previousVolume;
+    } else {
+        volume = vol;
+    }
+
+    console.log("moved volume slider to", vol);
+
+    var body = {
+        audioDevices: [{
+            name: outputAudio,
+            volume: vol
+        }]
+    };
+
+    console.log(body);
+
+    quietPut(body);
 }
 
 function powerOnRoom() {
