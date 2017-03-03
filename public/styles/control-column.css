@@ -2,6 +2,8 @@
     background-color: #2d353f;
     height          : 100%;
     box-shadow      : inset 7px 0 9px -7px rgba(0,0,0,0.4);
+    padding-left: 0;
+    padding-right: 0;
 }
 
 #control-column .row {

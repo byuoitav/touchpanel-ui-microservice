@@ -1,3 +1,7 @@
+#main {
+    padding-left: 0;
+    padding-right: 0;
+}
 body,
 html {
     margin          : 0;
@@ -50,8 +54,8 @@ h3 {
 }
 
 .display-output-button {
-    height: 15%;
-    width: 7%;
+    height: 18%;
+    width: 15%;
     opacity: 0,8;
     background-color: rgba(255, 255, 255, 1);
     /*display: inline-block;*/
@@ -60,8 +64,8 @@ h3 {
 }
 
 .display-input-button {
-    height: 15%;
-    width: 7%;
+    height: 18%;
+    width: 15%;
     opacity: 0,8;
     background-color: rgba(255, 255, 255, 1);
     /*display: inline-block;*/
@@ -70,8 +74,8 @@ h3 {
 }
 
 .audio-output-button {
-    height: 15%;
-    width: 7%;
+    height: 18%;
+    width: 15%;
     opacity: 0,8;
     background-color: rgba(255, 255, 255, 1);
     /*display: inline-block;*/
@@ -80,8 +84,8 @@ h3 {
 }
 
 .audio-input-button {
-    height: 15%;
-    width: 7%;
+    height: 18%;
+    width: 15%;
     opacity: 0,8;
     background-color: rgba(255, 255, 255, 1);
     /*display: inline-block;*/
@@ -117,8 +121,8 @@ h3 {
 }
 
 .blank {
-    height: 15%;
-    width: 7%;
+    height: 18%;
+    width: 15%;
     opacity: 0,8;
     background-color: rgba(255, 255, 255, 1);
     /*display: inline-block;*/
