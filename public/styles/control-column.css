@@ -4,11 +4,16 @@
     box-shadow      : inset 7px 0 9px -7px rgba(0,0,0,0.4);
     padding-left: 0;
     padding-right: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 
 #control-column .row {
     height : 16.666666667%;
     padding: 0;
+    margin-left: 0;
+    margin-right: 0;
 }
 
 #control-column .col-xs-12 {
@@ -42,9 +47,7 @@
 }
 
 #vol-slider {
-    transform: rotate(270deg);
-    text-align: center;
-    margin-left: 7%;
+    transform: rotate(270deg) translateY(35%);
     margin-top: 35%;
     margin-bottom: 35%;
 }
