@@ -24,10 +24,23 @@ function setAudioOutput(device) {
                     slider.onchange = function() {setVolume()};
 
                     // delete current things, replace them with slider
-                    document.getElementById("vol-up").remove();
-                    document.getElementById("vol-level").remove();
-                    document.getElementById("vol-down").remove();
+                    // document.getElementById("vol-up").remove();
+                    // document.getElementById("vol-level").remove();
+                    // document.getElementById("vol-down").remove();
+                    $("#vol-up").hide();
+                    $("#vol-level").hide();
+                    $("#vol-down").hide();
                     document.getElementById("vol-slider").appendChild(slider);
+                    $("#vol-slider").show();
+                } else {
+                    // change it back to buttons if it's RPC
+                    if ($("#vol-slider").length != 0) {
+                        // document.getElementById("vol-slider").remove();
+                        $("#vol-slider").hide();
+                        $("#vol-up").show();
+                        $("#vol-level").show();
+                        $("#vol-down").show();
+                    }
                 }
             }
         }
