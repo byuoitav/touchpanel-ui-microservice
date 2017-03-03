@@ -12,7 +12,7 @@ import (
 )
 
 func main() {
-	port := ":9999"
+	port := ":8888"
 	router := echo.New()
 	router.Pre(middleware.RemoveTrailingSlash())
 	router.Use(middleware.CORS())
