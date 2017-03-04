@@ -8,12 +8,12 @@ html {
     padding         : 0;
     background-color: #404a54;
     overflow        : hidden;
-    /* cursor          : none !important;*/
+    cursor          : none !important;
 }
 
 a,
 button {
-    /*cursor: none !important;*/
+    cursor: none !important;
 }
 
 h1,
@@ -58,7 +58,6 @@ h3 {
     width: 15%;
     opacity: 0,8;
     background-color: rgba(255, 255, 255, 1);
-    /*display: inline-block;*/
     border-radius: 50%;
     overflow: hidden;
 }
@@ -68,7 +67,6 @@ h3 {
     width: 15%;
     opacity: 0,8;
     background-color: rgba(255, 255, 255, 1);
-    /*display: inline-block;*/
     border-radius: 50%;
     overflow: hidden;
 }
@@ -78,7 +76,6 @@ h3 {
     width: 15%;
     opacity: 0,8;
     background-color: rgba(255, 255, 255, 1);
-    /*display: inline-block;*/
     border-radius: 50%;
     overflow: hidden;
 }
@@ -88,7 +85,6 @@ h3 {
     width: 15%;
     opacity: 0,8;
     background-color: rgba(255, 255, 255, 1);
-    /*display: inline-block;*/
     border-radius: 50%;
     overflow: hidden;
 }
@@ -125,7 +121,6 @@ h3 {
     width: 15%;
     opacity: 0,8;
     background-color: rgba(255, 255, 255, 1);
-    /*display: inline-block;*/
     border-radius: 50%;
     overflow: hidden;
 }
