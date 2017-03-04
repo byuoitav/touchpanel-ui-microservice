@@ -1,4 +1,4 @@
-var version = "0.9";
+var version = "0.9.3";
 var loadTime = 500;
 var swalTimeout = 1000;
 var previousVolume = 0; // Used for remembering the last volume value when muted
@@ -58,6 +58,20 @@ function setup() {
     var numOfDisplayOuts = 0;
     var numOfAudioIns = 0;
     var numOfAudioOuts = 0;
+
+    // if there are no devices
+    if (devices.length == 0) {
+        console.log("no devices found");
+        $("#vol-slider").hide();
+        $(".blank").hide();
+        document.getElementById("volume-level").innerHTML = ":(";
+
+        swal({
+            title: "No devices found",
+            text: "please contact a CSR for help",
+            showConfirmButton: false
+        });
+    }
 
     for (var i in devices) {
         for (var j in devices[i].roles) {
