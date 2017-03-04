@@ -67,9 +67,10 @@ function setup() {
         document.getElementById("volume-level").innerHTML = ":(";
 
         swal({
-            title: "No devices found",
+            title: "no devices found",
             text: "please contact a CSR for help",
-            showConfirmButton: false
+            showConfirmButton: false,
+            type: "warning",
         });
     }
 
