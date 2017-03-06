@@ -19,7 +19,7 @@ function getRoom() {
     console.log("hostname =", hostname);
     var split = hostname.split('-');
 
-    url = "http://" + hostname + ":8000/buildings/" + split[0] + "/rooms/" + split[1];
+    url = "http://localhost:8000/buildings/" + split[0] + "/rooms/" + split[1];
     console.log("url for this room: ", url);
 
     getAllData();
