@@ -10,7 +10,7 @@ ADD . /go
 
 WORKDIR /go
 
-CMD ["/go/raspi-tp"]
+CMD ["/go/touchpanel-ui-microservice"]
 
 EXPOSE 80
 

@@ -4,8 +4,8 @@ import (
 	"html/template"
 	"net/http"
 
-	"github.com/byuoitav/raspi-tp/helpers"
-	"github.com/byuoitav/raspi-tp/views"
+	"github.com/byuoitav/touchpanel-ui-microservice/helpers"
+	"github.com/byuoitav/touchpanel-ui-microservice/views"
 	"github.com/jessemillar/health"
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
