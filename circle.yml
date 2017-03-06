@@ -1,16 +1,25 @@
 machine:
-  services:
-    - docker
+    services:
+        - docker
+
+test:
+    post:
+        - ./coverage.sh
+        - bash <(curl -s https://codecov.io/bash)
 
 deployment:
-  production:
-    branch: master
-    commands:
-      - go get -d -v
-      - env GOOS=linux GOARCH=arm go build -v .
-      - docker build -f Dockerfile-ARM -t byuoitav/raspi-tp:$CIRCLE_SHA1 .
-      - docker build -f Dockerfile-ARM -t byuoitav/raspi-tp:latest .
-      - docker login -e $DOCKER_EMAIL -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
-      - docker push byuoitav/raspi-tp:$CIRCLE_SHA1
-      - docker push byuoitav/raspi-tp:latest
-      - ./deploy-pi.sh
+    production:
+        branch: master
+        commands:
+            - go get -d -v
+            - env GOOS=linux GOARCH=arm go build -v .
+            - docker build -f Dockerfile-ARM -t byuoitav/rpi-touchpanel-ui-microservice:$CIRCLE_SHA1 .
+            - docker build -f Dockerfile-ARM -t byuoitav/rpi-touchpanel-ui-microservice:latest .
+            - docker build -t byuoitav/touchpanel-ui-microservice:$CIRCLE_SHA1 .
+            - docker build -t byuoitav/touchpanel-ui-microservice:latest .
+            - docker login -e $DOCKER_EMAIL -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
+            - docker push byuoitav/touchpanel-ui-microservice:$CIRCLE_SHA1
+            - docker push byuoitav/touchpanel-ui-microservice:latest
+            - docker push byuoitav/rpi-touchpanel-ui-microservice:$CIRCLE_SHA1
+            - docker push byuoitav/rpi-touchpanel-ui-microservice:latest
+            - ./deploy-pi.sh
