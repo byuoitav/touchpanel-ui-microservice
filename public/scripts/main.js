@@ -78,7 +78,7 @@ function setup() {
         for (var j in devices[i].roles) {
             if (devices[i].roles[j] == "VideoOut") {
                 numOfDisplayOuts++;
-                // console.log("devices[" + i + "](" + devices[i].name + ") is a display *output* device, building a button for it!");
+                console.log("devices[" + i + "](" + devices[i].name + ") is a display *output* device, building a button for it!");
                 // if it is an output, create a button on the displays page for it
                 var button = document.createElement("button");
 
@@ -101,7 +101,7 @@ function setup() {
                 }
             } else if (devices[i].roles[j] == "VideoIn") {
                 numOfDisplayIns++;
-                // console.log("devices[" + i + "](" + devices[i].name + ") is an display *input* device, building a button for it!");
+                console.log("devices[" + i + "](" + devices[i].name + ") is an display *input* device, building a button for it!");
 
                 //create a button for each input
                 var button = document.createElement("button");
@@ -117,7 +117,7 @@ function setup() {
                 document.getElementById("display-inputs").appendChild(button);
             } else if (devices[i].roles[j] == "AudioOut") {
                 numOfAudioOuts++;
-                // console.log("devices[" + i + "](" + devices[i].name + ") is a audio *output* device, building a button for it!");
+                console.log("devices[" + i + "](" + devices[i].name + ") is a audio *output* device, building a button for it!");
 
                 //create a button for each input
                 var button = document.createElement("button");
@@ -158,7 +158,7 @@ function setup() {
                 }
             } else if (devices[i].roles[j] == "AudioIn") {
                 numOfAudioIns++;
-                // console.log("devices[" + i + "](" + devices[i].name + ") is a audio *output* device, building a button for it!");
+                console.log("devices[" + i + "](" + devices[i].name + ") is a audio *output* device, building a button for it!");
                 // if it is an output, create a button on the displays page for it
                 var button = document.createElement("button");
 
