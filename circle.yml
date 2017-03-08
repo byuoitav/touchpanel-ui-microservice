@@ -2,6 +2,10 @@ machine:
     services:
         - docker
 
+dependencies:
+    post:
+        - rm -r ~/.gradle
+
 test:
     post:
         - ./coverage.sh
