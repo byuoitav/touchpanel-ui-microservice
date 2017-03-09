@@ -25,8 +25,6 @@ function setAudioOutput(device) {
 					}
 				}
 
-				console.log("POOTS", JSON.stringify(devices[i].roles[j]), canGetVolume);
-
 				if (devices[i].roles[j] == "AudioOut" && canGetVolume) {
 					console.log("adding a slider");
 					slider = document.createElement("INPUT");
@@ -37,10 +35,6 @@ function setAudioOutput(device) {
 						setVolume()
 					};
 
-					// delete current things, replace them with slider
-					// document.getElementById("vol-up").remove();
-					// document.getElementById("vol-level").remove();
-					// document.getElementById("vol-down").remove();
 					document.getElementById("vol-slider").appendChild(slider);
 					$("#vol-slider").show();
 				} else {

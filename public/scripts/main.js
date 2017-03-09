@@ -230,12 +230,7 @@ function wakeSystem() {
 		getRoom();
 		setup();
 
-		// if (window.location.hash) { // If we're refreshing a page or opening a bookmark, open the proper tab
-		// var hashPage = window.location.hash.substring(1, window.location.hash.length);
-		// bootpage.show(hashPage, updateActiveTab);
-		// } else {
 		bootpage.show("displays-page", updateActiveTab);
-		// }
 	}, loadTime);
 }
 
