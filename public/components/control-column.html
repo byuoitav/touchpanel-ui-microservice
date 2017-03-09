@@ -7,18 +7,13 @@
     <div class="row">
         <div class="col-xs-12"><span class="glyphicon glyphicon-question-sign" onclick="bootpage.show('help-page', updateActiveTab)"></span></div>
     </div>
-    <div id="vol-up" class="row" onclick="increaseVolume()">
+    <div id="vol-up" class="row" onclick="increaseVolume()" style="display: none">
         <div class="col-xs-12"><span class="glyphicon glyphicon-chevron-up"></span></div>
     </div>
-    <div id="vol-level" class="row">
-        <div class="col-xs-12"><span id="volume-level">100%<span></div>
-    </div>
-    <div id="vol-down" class="row" onclick="decreaseVolume()">
+    <div id="vol-down" class="row" onclick="decreaseVolume()" style="display: none">
         <div class="col-xs-12"><span class="glyphicon glyphicon-chevron-down"></span></div>
     </div>
-    <div id="vol-slider" class="row">
-        <!-- slider goes here -->
-    </div>
+    <div id="vol-slider" class="row" style="display: none"></div>
     <div class="row" onclick="muteVolume()">
         <div class="col-xs-12"><span class="glyphicon glyphicon-volume-off"></span></div>
     </div>
