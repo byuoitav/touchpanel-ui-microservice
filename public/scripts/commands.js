@@ -2,6 +2,7 @@ var outputDisplay; // defaults are the first valid options in the displays array
 var outputAudio; // set in main.js
 var displayBlanked = false;
 var canGetVolume = false;
+var sliderBuilt = false;
 
 function setDisplayOutput(device) {
 	console.log("set display output to:", device);
@@ -14,8 +15,6 @@ function setAudioOutput(device) {
 
 	// if output device isn't an RPC device, create a slider to control it with
 	for (var i in devices) {
-		console.log(devices[i].name, outputAudio);
-
 		if (devices[i].name == outputAudio) {
 			for (var j in devices[i].roles) {
 				for (var k in devices[i].commands) {
@@ -26,20 +25,26 @@ function setAudioOutput(device) {
 				}
 
 				if (devices[i].roles[j] == "AudioOut" && canGetVolume) {
-					console.log("adding a slider");
-					slider = document.createElement("INPUT");
-					slider.setAttribute("id", "slider");
-					slider.setAttribute("type", "range");
-					// edit volume dynamically as the slider changes
-					slider.onchange = function() {
-						setVolume()
-					};
+					if (!sliderBuilt) {
+						slider = document.createElement("INPUT");
+						slider.setAttribute("id", "slider");
+						slider.setAttribute("type", "range");
+						// edit volume dynamically as the slider changes
+						slider.onchange = function() {
+							setVolume()
+						};
 
-					document.getElementById("vol-slider").appendChild(slider);
+						console.log("adding a slider");
+						document.getElementById("vol-slider").appendChild(slider);
+						sliderBuilt = true;
+					}
+
+					$("#vol-up").hide();
+					$("#vol-down").hide();
 					$("#vol-slider").show();
 				} else {
 					// change it back to buttons if it's RPC
-					console.log("Hit else");
+					$("#vol-slider").hide();
 					$("#vol-up").show();
 					$("#vol-down").show();
 				}
