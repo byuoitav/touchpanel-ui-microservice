@@ -2,20 +2,27 @@ var outputDisplay; // defaults are the first valid options in the displays array
 var outputAudio; // set in main.js
 var displayBlanked = false;
 var canGetVolume = false;
+var sliderBuilt = false;
 
-function setDisplayOutput(device) {
+function setDisplayOutput(device, e) {
 	console.log("set display output to:", device);
 	outputDisplay = device;
+
+	// remove color from all display output buttons
+	$('.display-output-button').each(function(i, obj) {
+    	obj.style.backgroundColor = "white";
+	});
+
+	// change visual for active device
+	e.style.backgroundColor = "#a8a8a8";
 }
 
-function setAudioOutput(device) {
+function setAudioOutput(device, e) {
 	console.log("set audio output to:", device);
 	outputAudio = device;
 
 	// if output device isn't an RPC device, create a slider to control it with
 	for (var i in devices) {
-		console.log(devices[i].name, outputAudio);
-
 		if (devices[i].name == outputAudio) {
 			for (var j in devices[i].roles) {
 				for (var k in devices[i].commands) {
@@ -25,37 +32,53 @@ function setAudioOutput(device) {
 					}
 				}
 
-				console.log("POOTS", JSON.stringify(devices[i].roles[j]), canGetVolume);
-
 				if (devices[i].roles[j] == "AudioOut" && canGetVolume) {
-					console.log("adding a slider");
-					slider = document.createElement("INPUT");
-					slider.setAttribute("id", "slider");
-					slider.setAttribute("type", "range");
-					// edit volume dynamically as the slider changes
-					slider.onchange = function() {
-						setVolume()
-					};
+					if (!sliderBuilt) {
+						slider = document.createElement("INPUT");
+						slider.setAttribute("id", "slider");
+						slider.setAttribute("type", "range");
+						// edit volume dynamically as the slider changes
+						slider.onchange = function() {
+							setVolume(slider)
+						};
 
-					// delete current things, replace them with slider
-					// document.getElementById("vol-up").remove();
-					// document.getElementById("vol-level").remove();
-					// document.getElementById("vol-down").remove();
-					document.getElementById("vol-slider").appendChild(slider);
+						console.log("adding a slider");
+						document.getElementById("vol-slider").appendChild(slider);
+						sliderBuilt = true;
+					}
+
+					$("#vol-up").hide();
+					$("#vol-down").hide();
 					$("#vol-slider").show();
 				} else {
 					// change it back to buttons if it's RPC
-					console.log("Hit else");
+					$("#vol-slider").hide();
 					$("#vol-up").show();
 					$("#vol-down").show();
 				}
 			}
 		}
 	}
+
+	// remove color from all audio output buttons
+	$('.audio-output-button').each(function(i, obj) {
+    	obj.style.backgroundColor = "white";
+	});
+
+	// change visual for active device
+	e.style.backgroundColor = "#a8a8a8";
 }
 
-function switchDisplayInput(input) {
+function switchDisplayInput(input, e) {
 	console.log("switching display input of", outputDisplay, "to", input);
+
+	// remove color from all display input buttons
+	$('.display-input-button').each(function(i, obj) {
+    	obj.style.backgroundColor = "white";
+	});
+
+	// change visual for active device
+	e.style.backgroundColor = "#a8a8a8";
 
 	var body = {};
 
@@ -65,14 +88,19 @@ function switchDisplayInput(input) {
 			input: input
 		}],
 	};
-
-	console.log(body);
-
 	put(body);
 }
 
-function switchAudioInput(input) {
+function switchAudioInput(input, e) {
 	console.log("switching audio input of", outputAudio, "to", input);
+
+	// remove color from all display output buttons
+	$('.audio-input-button').each(function(i, obj) {
+    	obj.style.backgroundColor = "white";
+	});
+
+	// change visual for active device
+	e.style.backgroundColor = "#a8a8a8";
 
 	var body = {};
 
@@ -82,13 +110,10 @@ function switchAudioInput(input) {
 			input: input
 		}]
 	};
-
-	console.log(body);
-
 	put(body);
 }
 
-function blankDisplay() {
+function blankDisplay(e) {
 	console.log("blank/unblank display");
 
 	var body = {};
@@ -103,12 +128,15 @@ function blankDisplay() {
 	if (displayBlanked == true) {
 		body.displays[0].blanked = false;
 		displayBlanked = false;
+		// set button to say "Blank"
+		e.innerHTML = "Blank";
+		e.style.backgroundColor = "white";
 	} else {
 		displayBlanked = true;
+		// set button to say "Unblank"
+		e.innerHTML = "Unblank";
+		e.style.backgroundColor = "#a8a8a8";
 	}
-
-	console.log(body);
-
 	put(body);
 }
 
@@ -131,9 +159,6 @@ function increaseVolume() {
 			volume: volume
 		}]
 	};
-
-	console.log(body);
-
 	quietPut(body);
 }
 
@@ -154,9 +179,6 @@ function decreaseVolume() {
 			volume: volume
 		}]
 	};
-
-	console.log(body);
-
 	quietPut(body);
 }
 
@@ -177,13 +199,10 @@ function muteVolume() {
 		previousVolume = volume;
 		volume = "MUTED";
 	}
-
-	console.log(body);
-
 	put(body);
 }
 
-function setVolume() {
+function setVolume(e) {
 	var vol = document.getElementById("slider").value;
 	if (volume == "MUTED") {
 		volume = previousVolume;
@@ -192,6 +211,7 @@ function setVolume() {
 	}
 
 	console.log("moved volume slider to", vol);
+	e.style.background = 'linear-gradient(to right, blue, #527090 ' + vol + '%, #e0e0e0)';
 
 	var body = {
 		audioDevices: [{
@@ -199,9 +219,6 @@ function setVolume() {
 			volume: parseInt(vol)
 		}]
 	};
-
-	console.log(body);
-
 	quietPut(body);
 }
 
@@ -240,7 +257,7 @@ function powerOffRoom() {
 }
 
 function put(body) {
-	// console.log("put", body);
+	console.log("put", body);
 	$.ajax({
 		type: "PUT",
 		url: url,

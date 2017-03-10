@@ -46,8 +46,41 @@
     color: #ffffff;
 }
 
+/*stuff for volume slider*/
 #vol-slider {
     transform: rotate(270deg) translateY(35%);
-    margin-top: 35%;
-    margin-bottom: 35%;
+    /*change spacing above/below volume slider*/
+    margin-top: 75%;
+    margin-bottom: 80%;
 }
+
+input[type=range]{
+    background: linear-gradient(to right, blue, #527090 50%, #e0e0e0);
+    -webkit-appearance: none;
+    margin-top: -4px; /* move it left/right (left = smaller) */
+    width: 132%; /* change size of volume slider */
+    margin-left: -23%; /* shift it down */
+}
+
+input[type=range]::-webkit-slider-runnable-track {
+    width: 1000px;
+    height: 5px;
+    /*background: #ddd;*/
+    border: none;
+    border-radius: 3px;
+    /*background: grey;*/
+}
+
+input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    border: none;
+    height: 16px;
+    width: 16px;
+    border-radius: 75%;
+    background: white;
+    margin-top: -5px;
+}
+
+/*input[type=range]:focus::-webkit-slider-runnable-track {
+    background: #ccc;
+}*/
