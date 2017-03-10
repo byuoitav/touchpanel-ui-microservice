@@ -97,7 +97,8 @@ function setup() {
 				// set default, turn on first device
 				if (numOfDisplayOuts == 1) {
 					setDisplayOutput(name, button);
-					powerOnRoom();
+					powerOnRoom(); // this is not async. if it takes a long time to boot up, this is why.
+								   // can set async to true to solve this issue.
 				}
 			} else if (devices[i].roles[j] == "VideoIn") {
 				numOfDisplayIns++;
@@ -193,6 +194,9 @@ function setup() {
 	for (var i = 0; i < displayInputButtons.length; i++) {
 		displayInputButtons[i].style.marginLeft = newMargin + "%";
 		displayInputButtons[i].style.marginRight = newMargin + "%";
+		if (displayInputButtons[i].scrollWidth > displayInputButtons.innerWidth) {
+			console.log("overflow");
+		}
 	}
 
 	// update width of audio-output buttons

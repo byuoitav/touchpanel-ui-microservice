@@ -16,6 +16,7 @@ a,
 button,
 input {
     cursor: none !important;
+    vertical-align:top;
 }
 
 h1,
