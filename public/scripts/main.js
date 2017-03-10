@@ -1,4 +1,4 @@
-var version = "0.9.4";
+var version = "0.9.6";
 var loadTime = 500;
 var swalTimeout = 1000;
 var previousVolume = 0; // Used for remembering the last volume value when muted
@@ -89,14 +89,14 @@ function setup() {
 				var name = devices[i].name;
 				button.onclick = (function(name) {
 					return function() {
-						setDisplayOutput(name);
+						setDisplayOutput(name, this);
 					}
 				})(name);
 				button.innerHTML = name;
 				document.getElementById("displays").appendChild(button);
 				// set default, turn on first device
 				if (numOfDisplayOuts == 1) {
-					setDisplayOutput(name);
+					setDisplayOutput(name, button);
 					powerOnRoom();
 				}
 			} else if (devices[i].roles[j] == "VideoIn") {
@@ -110,7 +110,7 @@ function setup() {
 				var name = devices[i].name;
 				button.onclick = (function(name) {
 					return function() {
-						switchDisplayInput(name);
+						switchDisplayInput(name, this);
 					}
 				})(name);
 				button.innerHTML = name;
@@ -127,7 +127,7 @@ function setup() {
 				// need to create a switchAudioOutput function?
 				button.onclick = (function(name) {
 					return function() {
-						setAudioOutput(name);
+						setAudioOutput(name, this);
 					}
 				})(name);
 				button.innerHTML = name;
@@ -155,7 +155,7 @@ function setup() {
 					});
 				}
 
-				setAudioOutput(name);
+				setAudioOutput(name, button);
 			} else if (devices[i].roles[j] == "AudioIn") {
 				numOfAudioIns++;
 				console.log("devices[" + i + "](" + devices[i].name + ") is a audio *output* device, building a button for it!");
@@ -168,7 +168,7 @@ function setup() {
 				var name = devices[i].name;
 				button.onclick = (function(name) {
 					return function() {
-						switchAudioInput(name);
+						switchAudioInput(name, this);
 					}
 				})(name);
 				button.innerHTML = name;
