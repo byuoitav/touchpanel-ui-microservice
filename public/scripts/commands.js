@@ -204,7 +204,7 @@ function increaseVolume() {
 				}]
 			}]
 		};
-		quietPut(body, false);
+		quietPut(body, true);
 	} else {
 		console.log("Regular Command");
 		body = {
@@ -213,7 +213,7 @@ function increaseVolume() {
 				volume: volume
 			}]
 		};
-		quietPut(body, true);
+		quietPut(body, false);
 	}
 }
 
@@ -264,13 +264,12 @@ function muteVolume() {
 			rpcDevices: [{
 				name: outputAudio,
 				commands: [{
-					name: "Mute"
+					name: "ToggleMute"
 				}]
 			}]
 		};
 		if (volume == "MUTED") {
 			volume = previousVolume;
-			body.rpcDevices[0].commands[0].name = "UnMute";
 		} else {
 			previousVolume = volume;
 			volume = "MUTED";

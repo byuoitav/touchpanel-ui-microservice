@@ -26,7 +26,6 @@ function getRoom() {
 	console.log("url for this room: ", url);
 
 	getAllData();
-	// getVolume();
 
 	// get devices, put them into an array
 	for (i in roomData.devices) {
