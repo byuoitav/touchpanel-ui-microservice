@@ -127,7 +127,7 @@ function switchDisplayInput(input, e) {
 			input: input
 		}],
 	};
-	put(body);
+	put(body, false);
 }
 
 function switchAudioInput(input, e) {
@@ -149,7 +149,7 @@ function switchAudioInput(input, e) {
 			input: input
 		}]
 	};
-	put(body);
+	put(body, false);
 }
 
 function blankDisplay(e) {
@@ -176,7 +176,7 @@ function blankDisplay(e) {
 		e.innerHTML = "Unblank";
 		e.style.backgroundColor = selectedColor;
 	}
-	put(body);
+	put(body, false);
 }
 
 var volumeIncrement = 1;
@@ -192,13 +192,29 @@ function increaseVolume() {
 
 	console.log("pressed volume up");
 
-	var body = {
-		audioDevices: [{
-			name: outputAudio,
-			volume: volume
-		}]
-	};
-	quietPut(body);
+	var body;
+	// if its a RPC devices, make a specific command
+	if (roomData.configuration.name == "TecLite") {
+		console.log("RPC Command");
+		body = {
+			rpcDevices: [{
+				name: outputAudio,
+				commands: [{
+					name: "VolumeUp"
+				}]
+			}]
+		};
+		quietPut(body, true);
+	} else {
+		console.log("Regular Command");
+		body = {
+			audioDevices: [{
+				name: outputAudio,
+				volume: volume
+			}]
+		};
+		quietPut(body, false);
+	}
 }
 
 function decreaseVolume() {
@@ -212,33 +228,71 @@ function decreaseVolume() {
 
 	console.log("pressed volume down");
 
-	var body = {
-		audioDevices: [{
-			name: outputAudio,
-			volume: volume
-		}]
-	};
-	quietPut(body);
+	var body;
+	// if its a RPC devices, make a specific command
+	if (roomData.configuration.name == "TecLite") {
+		console.log("RPC Command");
+		body = {
+			rpcDevices: [{
+				name: outputAudio,
+				commands: [{
+					name: "VolumeDown"
+				}]
+			}]
+		};
+		quietPut(body, true);
+	} else {
+		console.log("Regular Command");
+		body = {
+			audioDevices: [{
+				name: outputAudio,
+				volume: volume
+			}]
+		};
+		quietPut(body, false);
+	}
 }
 
 function muteVolume() {
 	console.log("mute/unmute volume");
 
-	var body = {
-		audioDevices: [{
-			name: outputAudio,
-			muted: true
-		}]
-	};
-
-	if (volume == "MUTED") {
-		volume = previousVolume;
-		body.audioDevices[0].muted = false;
+	var body;
+	// if its a RPC devices, make a specific command
+	if (roomData.configuration.name == "TecLite") {
+		console.log("RPC Command");
+		body = {
+			rpcDevices: [{
+				name: outputAudio,
+				commands: [{
+					name: "ToggleMute"
+				}]
+			}]
+		};
+		if (volume == "MUTED") {
+			volume = previousVolume;
+		} else {
+			previousVolume = volume;
+			volume = "MUTED";
+		}
+		quietPut(body, true);
 	} else {
-		previousVolume = volume;
-		volume = "MUTED";
+		console.log("Regular Command");
+		body = {
+			audioDevices: [{
+				name: outputAudio,
+				muted: true
+			}]
+		};
+
+		if (volume == "MUTED") {
+			volume = previousVolume;
+			body.audioDevices[0].muted = false;
+		} else {
+			previousVolume = volume;
+			volume = "MUTED";
+		}
+		quietPut(body, false);
 	}
-	put(body);
 }
 
 function setVolume(e) {
@@ -258,7 +312,7 @@ function setVolume(e) {
 			volume: parseInt(vol)
 		}]
 	};
-	quietPut(body);
+	quietPut(body, false);
 }
 
 function powerOnRoom() {
@@ -282,7 +336,7 @@ function powerOnRoom() {
 		data: JSON.stringify(body),
 		contentType: "application/json; charset=utf-8"
 	});
-	quietPut(body);
+	quietPut(body, false);
 }
 
 function powerOffRoom() {
@@ -292,32 +346,57 @@ function powerOffRoom() {
 		power: "standby"
 	};
 
-	quietPut(body);
+	quietPut(body, false);
 }
 
-function put(body) {
+function put(body, rpc) {
 	console.log("put", body);
-	$.ajax({
-		type: "PUT",
-		url: url,
-		headers: {
-			'Access-Control-Allow-Origin': '*'
-		},
-		data: JSON.stringify(body),
-		success: pleaseWait(),
-		contentType: "application/json; charset=utf-8"
-	});
+	if (rpc) {
+		$.ajax({
+			type: "PUT",
+			url: rpcUrl,
+			headers: {
+				'Access-Control-Allow-Origin': '*'
+			},
+			data: JSON.stringify(body),
+			success: pleaseWait(),
+			contentType: "application/json; charset=utf-8"
+		});
+	} else {
+		$.ajax({
+			type: "PUT",
+			url: url,
+			headers: {
+				'Access-Control-Allow-Origin': '*'
+			},
+			data: JSON.stringify(body),
+			success: pleaseWait(),
+			contentType: "application/json; charset=utf-8"
+		});
+	}
 }
 
-function quietPut(body) {
+function quietPut(body, rpc) {
 	console.log("quietPut", body);
-	$.ajax({
-		type: "PUT",
-		url: url,
-		headers: {
-			'Access-Control-Allow-Origin': '*'
-		},
-		data: JSON.stringify(body),
-		contentType: "application/json; charset=utf-8"
-	});
+	if (rpc) {
+		$.ajax({
+			type: "PUT",
+			url: rpcUrl,
+			headers: {
+				'Access-Control-Allow-Origin': '*'
+			},
+			data: JSON.stringify(body),
+			contentType: "application/json; charset=utf-8"
+		});
+	} else {
+		$.ajax({
+			type: "PUT",
+			url: url,
+			headers: {
+				'Access-Control-Allow-Origin': '*'
+			},
+			data: JSON.stringify(body),
+			contentType: "application/json; charset=utf-8"
+		});
+	}
 }

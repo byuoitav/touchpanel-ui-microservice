@@ -5,6 +5,7 @@ var previousVolume = 0; // Used for remembering the last volume value when muted
 var volume = 0;
 
 var url;
+var rpcUrl;
 var roomData;
 var devices = [];
 var displayInputs = {}; // map of each displayOutput to their current displayInput
@@ -21,10 +22,10 @@ function getRoom() {
 	var split = hostname.split('-');
 
 	url = "http://localhost:8000/buildings/" + split[0] + "/rooms/" + split[1];
+	rpcUrl = "http://localhost:8100/buildings/" + split[0] + "/rooms/" + split[1];
 	console.log("url for this room: ", url);
 
 	getAllData();
-	// getVolume();
 
 	// get devices, put them into an array
 	for (i in roomData.devices) {
