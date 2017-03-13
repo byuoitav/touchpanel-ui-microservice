@@ -4,10 +4,11 @@ var swalTimeout = 1000;
 var previousVolume = 0; // Used for remembering the last volume value when muted
 var volume = 0;
 
-// need to be dynamically set
 var url;
 var roomData;
 var devices = [];
+var displayInputs = {}; // map of each displayOutput to their current displayInput
+var audioInputs = {}; // map of each audioOutput to their current audioInput
 
 function init() {
 	displayVersion();
@@ -29,10 +30,6 @@ function getRoom() {
 	for (i in roomData.devices) {
 		devices.push(roomData.devices[i]);
 	}
-
-	// for(i in devices) {
-	//     console.log(devices[i]);
-	// }
 }
 
 function getAllData() {
@@ -78,12 +75,14 @@ function setup() {
 		for (var j in devices[i].roles) {
 			if (devices[i].roles[j] == "VideoOut") {
 				numOfDisplayOuts++;
+				// add the item into displayOutputs
+				displayInputs[devices[i].name] = "";
+
 				console.log("devices[" + i + "](" + devices[i].name + ") is a display *output* device, building a button for it!");
-				// if it is an output, create a button on the displays page for it
+
+				// create a button for each output display
 				var button = document.createElement("button");
 
-				// https://www.w3schools.com/js/js_htmldom_document.asp to fix onclick
-				// button.innerHTML = "type="button" class="output-button" onclick="switchInput('HDMIIn')"" // edit function call
 				button.type = "button";
 				button.className = "display-output-button";
 				var name = devices[i].name;
@@ -97,7 +96,8 @@ function setup() {
 				// set default, turn on first device
 				if (numOfDisplayOuts == 1) {
 					setDisplayOutput(name, button);
-					powerOnRoom();
+					powerOnRoom(); // this is not async. if it takes a long time to boot up, this is why.
+								   // can set async to true to solve this issue.
 				}
 			} else if (devices[i].roles[j] == "VideoIn") {
 				numOfDisplayIns++;
@@ -117,6 +117,10 @@ function setup() {
 				document.getElementById("display-inputs").appendChild(button);
 			} else if (devices[i].roles[j] == "AudioOut") {
 				numOfAudioOuts++;
+
+				// add the item into displayOutputs
+				audioInputs[devices[i].name] = "";
+
 				console.log("devices[" + i + "](" + devices[i].name + ") is a audio *output* device, building a button for it!");
 
 				//create a button for each input
@@ -193,6 +197,9 @@ function setup() {
 	for (var i = 0; i < displayInputButtons.length; i++) {
 		displayInputButtons[i].style.marginLeft = newMargin + "%";
 		displayInputButtons[i].style.marginRight = newMargin + "%";
+		if (displayInputButtons[i].scrollWidth > displayInputButtons.innerWidth) {
+			console.log("overflow");
+		}
 	}
 
 	// update width of audio-output buttons

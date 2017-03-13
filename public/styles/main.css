@@ -13,7 +13,6 @@ html {
 }
 
 a,
-button,
 input {
     cursor: none !important;
 }
@@ -55,42 +54,6 @@ h3 {
     background-color: #ffffff;
 }
 
-.display-output-button {
-    height: 18%;
-    width: 15%;
-    opacity: 0, 8;
-    background-color: rgba(255, 255, 255, 1);
-    border-radius: 50%;
-    overflow: hidden;
-}
-
-.display-input-button {
-    height: 18%;
-    width: 15%;
-    opacity: 0, 8;
-    background-color: rgba(255, 255, 255, 1);
-    border-radius: 50%;
-    overflow: hidden;
-}
-
-.audio-output-button {
-    height: 18%;
-    width: 15%;
-    opacity: 0, 8;
-    background-color: rgba(255, 255, 255, 1);
-    border-radius: 50%;
-    overflow: hidden;
-}
-
-.audio-input-button {
-    height: 18%;
-    width: 15%;
-    opacity: 0, 8;
-    background-color: rgba(255, 255, 255, 1);
-    border-radius: 50%;
-    overflow: hidden;
-}
-
 .output-row {
     width: 100%;
     text-align: center;
@@ -118,18 +81,23 @@ h3 {
     display: block;
 }
 
-.blank {
-    height: 18%;
-    width: 15%;
-    opacity: 0, 8;
-    background-color: rgba(255, 255, 255, 1);
-    border-radius: 50%;
-    overflow: hidden;
-}
-
 .row {
     width: 100%;
     text-align: center;
 }
 
 button:focus { outline-style: none; }
+
+.blank,
+.display-output-button,
+.display-input-button,
+.audio-output-button,
+.audio-input-button {
+    height: 18%;
+    width: 15%;
+    opacity: 0, 8;
+    background-color: rgba(255, 255, 255, 1);
+    border-radius: 50%;
+    overflow: hidden;
+    vertical-align:top;
+}
