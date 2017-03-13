@@ -3,10 +3,28 @@ var outputAudio; // set in main.js
 var displayBlanked = false;
 var canGetVolume = false;
 var sliderBuilt = false;
+var selectedColor = "#a8a8a8";
 
 function setDisplayOutput(device, e) {
 	console.log("set display output to:", device);
 	outputDisplay = device;
+
+	// re-highlight the previous input
+	if (displayInputs[outputDisplay].length != 0) {
+		console.log("checking displayInputs[" + outputDisplay + "]. It's current value is " + displayInputs[outputDisplay]);
+		// find the correct input button to re highlight
+		$('.display-input-button').each(function(i, obj) {
+			obj.style.backgroundColor = "white"; // set all to white
+			if(obj.innerHTML == displayInputs[outputDisplay]) {
+				console.log(obj);
+				obj.style.backgroundColor = selectedColor;
+			}
+		});
+	} else {
+		$('.display-input-button').each(function(i, obj) {
+	    	obj.style.backgroundColor = "white"; // set all to white
+		});
+	}
 
 	// remove color from all display output buttons
 	$('.display-output-button').each(function(i, obj) {
@@ -14,7 +32,7 @@ function setDisplayOutput(device, e) {
 	});
 
 	// change visual for active device
-	e.style.backgroundColor = "#a8a8a8";
+	e.style.backgroundColor = selectedColor;
 }
 
 function setAudioOutput(device, e) {
@@ -60,17 +78,38 @@ function setAudioOutput(device, e) {
 		}
 	}
 
+	// re-highlight the previous input
+	if (audioInputs[outputAudio].length != 0) {
+		console.log("checking displayInputs[" + outputAudio + "]. It's current value is " + audioInputs[outputAudio]);
+		// find the correct input button to re highlight
+		$('.audio-input-button').each(function(i, obj) {
+			obj.style.backgroundColor = "white"; // set all to white
+			if(obj.innerHTML == audioInputs[outputAudio]) {
+				console.log(obj);
+				obj.style.backgroundColor = selectedColor;
+			}
+		});
+	} else {
+		$('.audio-input-button').each(function(i, obj) {
+	    	obj.style.backgroundColor = "white"; // set all to white
+		});
+	}
+
 	// remove color from all audio output buttons
 	$('.audio-output-button').each(function(i, obj) {
     	obj.style.backgroundColor = "white";
 	});
 
 	// change visual for active device
-	e.style.backgroundColor = "#a8a8a8";
+	e.style.backgroundColor = selectedColor;
 }
 
 function switchDisplayInput(input, e) {
 	console.log("switching display input of", outputDisplay, "to", input);
+
+	// set previous input into the map
+	console.log("mapped displayInputs[" + outputDisplay + "] to " + input);
+	displayInputs[outputDisplay] = input;
 
 	// remove color from all display input buttons
 	$('.display-input-button').each(function(i, obj) {
@@ -78,7 +117,7 @@ function switchDisplayInput(input, e) {
 	});
 
 	// change visual for active device
-	e.style.backgroundColor = "#a8a8a8";
+	e.style.backgroundColor = selectedColor;
 
 	var body = {};
 
@@ -100,7 +139,7 @@ function switchAudioInput(input, e) {
 	});
 
 	// change visual for active device
-	e.style.backgroundColor = "#a8a8a8";
+	e.style.backgroundColor = selectedColor;
 
 	var body = {};
 
@@ -135,7 +174,7 @@ function blankDisplay(e) {
 		displayBlanked = true;
 		// set button to say "Unblank"
 		e.innerHTML = "Unblank";
-		e.style.backgroundColor = "#a8a8a8";
+		e.style.backgroundColor = selectedColor;
 	}
 	put(body);
 }
@@ -243,7 +282,7 @@ function powerOnRoom() {
 		data: JSON.stringify(body),
 		contentType: "application/json; charset=utf-8"
 	});
-	// quietPut(body);
+	quietPut(body);
 }
 
 function powerOffRoom() {
