@@ -42,10 +42,16 @@ function getAllData() {
 		headers: {
 			'Access-Control-Allow-Origin': '*'
 		},
+		beforesend: function() {
+			// show alert
+		},
 		success: function(data) {
 			console.log("returning room data: ", data);
 			roomData = data;
 		},
+		complete: function() {
+			// hide alert
+		}
 		contentType: "application/json; charset=utf-8"
 	});
 }
