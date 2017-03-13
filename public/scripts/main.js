@@ -1,4 +1,4 @@
-var version = "0.9.7";
+var version = "0.9.8";
 var loadTime = 500;
 var swalTimeout = 1000;
 var previousVolume = 0; // Used for remembering the last volume value when muted
@@ -25,6 +25,7 @@ function getRoom() {
 	rpcUrl = "http://localhost:8100/buildings/" + split[0] + "/rooms/" + split[1];
 	console.log("url for this room: ", url);
 
+	console.log("here");
 	getAllData();
 
 	// get devices, put them into an array
@@ -35,7 +36,7 @@ function getRoom() {
 
 function getAllData() {
 	// get the all room information
-	return $.ajax({
+	$.ajax({
 		type: "GET",
 		url: url,
 		async: false,
@@ -45,6 +46,9 @@ function getAllData() {
 		success: function(data) {
 			console.log("returning room data: ", data);
 			roomData = data;
+		},
+		complete: function() {
+			swal.close();
 		},
 		contentType: "application/json; charset=utf-8"
 	});
@@ -230,6 +234,13 @@ function pleaseWait() {
 }
 
 function wakeSystem() {
+	swal({
+		title: "Please Wait",
+		text: "\"It's not my fault\" - Lando Calrissian",
+		imageUrl: "https://upload.wikimedia.org/wikipedia/en/c/cb/Lando6-2.jpg",
+		showConfirmButton: false
+	});
+
 	$("#idle-splash").hide();
 	$("#loading-splash").show();
 
