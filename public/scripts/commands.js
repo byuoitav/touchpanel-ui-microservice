@@ -192,12 +192,28 @@ function increaseVolume() {
 
 	console.log("pressed volume up");
 
-	var body = {
-		audioDevices: [{
-			name: outputAudio,
-			volume: volume
-		}]
-	};
+	var body;
+	// if its a RPC devices, make a specific command
+	if (roomData.configuration.name == "TecLite") {
+		console.log("RPC Command");
+		body = {
+			rpcDevices: [{
+				name: outputAudio,
+				commands: [{
+					name: "VolumeUp"
+				}]
+			}]
+		};
+	} else {
+		console.log("Regular Command");
+		body = {
+			audioDevices: [{
+				name: outputAudio,
+				volume: volume
+			}]
+		};
+	}
+
 	quietPut(body);
 }
 
@@ -212,32 +228,73 @@ function decreaseVolume() {
 
 	console.log("pressed volume down");
 
-	var body = {
-		audioDevices: [{
-			name: outputAudio,
-			volume: volume
-		}]
-	};
+	var body;
+	// if its a RPC devices, make a specific command
+	if (roomData.configuration.name == "TecLite") {
+		console.log("RPC Command");
+		body = {
+			rpcDevices: [{
+				name: outputAudio,
+				commands: [{
+					name: "VolumeDown"
+				}]
+			}]
+		};
+	} else {
+		console.log("Regular Command");
+		body = {
+			audioDevices: [{
+				name: outputAudio,
+				volume: volume
+			}]
+		};
+	}
+
 	quietPut(body);
 }
 
 function muteVolume() {
 	console.log("mute/unmute volume");
 
-	var body = {
-		audioDevices: [{
-			name: outputAudio,
-			muted: true
-		}]
-	};
+	var body;
+	// if its a RPC devices, make a specific command
+	if (roomData.configuration.name == "TecLite") {
+		console.log("RPC Command");
+		body = {
+			rpcDevices: [{
+				name: outputAudio,
+				commands: [{
+					name: "Mute"
+				}]
+			}]
+		};
+		if (volume == "MUTED") {
+			volume = previousVolume;
+			body.rpcDevices[0].commands[0].name = "UnMute";
+		} else {
+			previousVolume = volume;
+			volume = "MUTED";
+		}
 
-	if (volume == "MUTED") {
-		volume = previousVolume;
-		body.audioDevices[0].muted = false;
+		console.log(body);
 	} else {
-		previousVolume = volume;
-		volume = "MUTED";
+		console.log("Regular Command");
+		body = {
+			audioDevices: [{
+				name: outputAudio,
+				muted: true
+			}]
+		};
+
+		if (volume == "MUTED") {
+			volume = previousVolume;
+			body.audioDevices[0].muted = false;
+		} else {
+			previousVolume = volume;
+			volume = "MUTED";
+		}
 	}
+
 	put(body);
 }
 
