@@ -127,7 +127,7 @@ function switchDisplayInput(input, e) {
 			input: input
 		}],
 	};
-	put(body);
+	put(body, false);
 }
 
 function switchAudioInput(input, e) {
@@ -149,7 +149,7 @@ function switchAudioInput(input, e) {
 			input: input
 		}]
 	};
-	put(body);
+	put(body, false);
 }
 
 function blankDisplay(e) {
@@ -176,7 +176,7 @@ function blankDisplay(e) {
 		e.innerHTML = "Unblank";
 		e.style.backgroundColor = selectedColor;
 	}
-	put(body);
+	put(body, false);
 }
 
 var volumeIncrement = 1;
@@ -204,6 +204,7 @@ function increaseVolume() {
 				}]
 			}]
 		};
+		quietPut(body, false);
 	} else {
 		console.log("Regular Command");
 		body = {
@@ -212,9 +213,8 @@ function increaseVolume() {
 				volume: volume
 			}]
 		};
+		quietPut(body, true);
 	}
-
-	quietPut(body);
 }
 
 function decreaseVolume() {
@@ -240,6 +240,7 @@ function decreaseVolume() {
 				}]
 			}]
 		};
+		quietPut(body, true);
 	} else {
 		console.log("Regular Command");
 		body = {
@@ -248,9 +249,8 @@ function decreaseVolume() {
 				volume: volume
 			}]
 		};
+		quietPut(body, false);
 	}
-
-	quietPut(body);
 }
 
 function muteVolume() {
@@ -275,8 +275,7 @@ function muteVolume() {
 			previousVolume = volume;
 			volume = "MUTED";
 		}
-
-		console.log(body);
+		quietPut(body, true);
 	} else {
 		console.log("Regular Command");
 		body = {
@@ -293,9 +292,8 @@ function muteVolume() {
 			previousVolume = volume;
 			volume = "MUTED";
 		}
+		quietPut(body, false);
 	}
-
-	put(body);
 }
 
 function setVolume(e) {
@@ -315,7 +313,7 @@ function setVolume(e) {
 			volume: parseInt(vol)
 		}]
 	};
-	quietPut(body);
+	quietPut(body, false);
 }
 
 function powerOnRoom() {
@@ -339,7 +337,7 @@ function powerOnRoom() {
 		data: JSON.stringify(body),
 		contentType: "application/json; charset=utf-8"
 	});
-	quietPut(body);
+	quietPut(body, false);
 }
 
 function powerOffRoom() {
@@ -349,32 +347,57 @@ function powerOffRoom() {
 		power: "standby"
 	};
 
-	quietPut(body);
+	quietPut(body, false);
 }
 
-function put(body) {
+function put(body, rpc) {
 	console.log("put", body);
-	$.ajax({
-		type: "PUT",
-		url: url,
-		headers: {
-			'Access-Control-Allow-Origin': '*'
-		},
-		data: JSON.stringify(body),
-		success: pleaseWait(),
-		contentType: "application/json; charset=utf-8"
-	});
+	if (rpc) {
+		$.ajax({
+			type: "PUT",
+			url: rpcUrl,
+			headers: {
+				'Access-Control-Allow-Origin': '*'
+			},
+			data: JSON.stringify(body),
+			success: pleaseWait(),
+			contentType: "application/json; charset=utf-8"
+		});
+	} else {
+		$.ajax({
+			type: "PUT",
+			url: url,
+			headers: {
+				'Access-Control-Allow-Origin': '*'
+			},
+			data: JSON.stringify(body),
+			success: pleaseWait(),
+			contentType: "application/json; charset=utf-8"
+		});
+	}
 }
 
-function quietPut(body) {
+function quietPut(body, rpc) {
 	console.log("quietPut", body);
-	$.ajax({
-		type: "PUT",
-		url: url,
-		headers: {
-			'Access-Control-Allow-Origin': '*'
-		},
-		data: JSON.stringify(body),
-		contentType: "application/json; charset=utf-8"
-	});
+	if (rpc) {
+		$.ajax({
+			type: "PUT",
+			url: rpcUrl,
+			headers: {
+				'Access-Control-Allow-Origin': '*'
+			},
+			data: JSON.stringify(body),
+			contentType: "application/json; charset=utf-8"
+		});
+	} else {
+		$.ajax({
+			type: "PUT",
+			url: url,
+			headers: {
+				'Access-Control-Allow-Origin': '*'
+			},
+			data: JSON.stringify(body),
+			contentType: "application/json; charset=utf-8"
+		});
+	}
 }
