@@ -39,6 +39,8 @@ function setDisplayOutput(device, e) {
 function setAudioOutput(device, e) {
 	console.log("set audio output to:", device);
 	outputAudio = device;
+	canGetVolume = false;
+	var buildSlider = false;
 
 	// if output device isn't an RPC device, create a slider to control it with
 	for (var i in devices) {
@@ -52,31 +54,35 @@ function setAudioOutput(device, e) {
 				}
 
 				if (devices[i].roles[j] == "AudioOut" && canGetVolume) {
-					if (!sliderBuilt) {
-						slider = document.createElement("INPUT");
-						slider.setAttribute("id", "slider");
-						slider.setAttribute("type", "range");
-						// edit volume dynamically as the slider changes
-						slider.onchange = function() {
-							setVolume(slider)
-						};
-
-						console.log("adding a slider");
-						document.getElementById("vol-slider").appendChild(slider);
-						sliderBuilt = true;
-					}
-
-					$("#vol-up").hide();
-					$("#vol-down").hide();
-					$("#vol-slider").show();
-				} else {
-					// change it back to buttons if it's RPC
-					$("#vol-slider").hide();
-					$("#vol-up").show();
-					$("#vol-down").show();
+					console.log("buildslider set to true");
+					buildSlider = true;
 				}
 			}
 		}
+	}
+
+	if (buildSlider) {
+		slider = document.createElement("INPUT");
+		slider.setAttribute("id", "slider");
+		slider.setAttribute("type", "range");
+		// edit volume dynamically as the slider changes
+		slider.onchange = function() {
+			setVolume(slider)
+		};
+
+		console.log("adding a slider");
+		document.getElementById("vol-slider").appendChild(slider);
+		sliderBuilt = true;
+
+		$("#vol-up").hide();
+		$("#vol-down").hide();
+		$("#vol-slider").show();
+	} else {
+		// change it back to buttons if it's RPC
+		console.log("removing slider");
+		$("#vol-slider").hide();
+		$("#vol-up").show();
+		$("#vol-down").show();
 	}
 
 	// re-highlight the previous input
