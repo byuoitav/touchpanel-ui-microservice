@@ -4,6 +4,7 @@ var displayBlanked = false;
 var canGetVolume = false;
 var sliderBuilt = false;
 var selectedColor = "#a8a8a8";
+var volumeIncrement = 5;
 
 function setDisplayOutput(device, e) {
 	console.log("set display output to:", device);
@@ -179,8 +180,6 @@ function blankDisplay(e) {
 	put(body, false);
 }
 
-var volumeIncrement = 1;
-
 function increaseVolume() {
 	if (volume == "MUTED") {
 		volume = previousVolume;
@@ -204,7 +203,9 @@ function increaseVolume() {
 				}]
 			}]
 		};
-		quietPut(body, true);
+		for (var i = 0; i < volumeIncrement; i++) {
+			quietPut(body, true);
+		}
 	} else {
 		console.log("Regular Command");
 		body = {
@@ -240,7 +241,9 @@ function decreaseVolume() {
 				}]
 			}]
 		};
-		quietPut(body, true);
+		for (var i = 0; i < volumeIncrement; i++) {
+			quietPut(body, true);
+		}
 	} else {
 		console.log("Regular Command");
 		body = {

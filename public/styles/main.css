@@ -101,3 +101,9 @@ button:focus { outline-style: none; }
     overflow: hidden;
     vertical-align:top;
 }
+
+.row-heading {
+    color: white;
+    margin-top: -20px;
+    margin-bottom: 5px;
+}
