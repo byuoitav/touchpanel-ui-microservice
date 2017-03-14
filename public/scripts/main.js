@@ -1,4 +1,4 @@
-var version = "0.9.8";
+var version = "0.9.9";
 var loadTime = 500;
 var swalTimeout = 1000;
 var previousVolume = 0; // Used for remembering the last volume value when muted
