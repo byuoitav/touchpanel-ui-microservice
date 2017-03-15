@@ -189,9 +189,11 @@ function blankDisplay(e) {
 
 function preventVolumeDDOS() {
 	canChangeVolume = false;
+	console.log("Can change volume: " + canChangeVolume);
 
 	setTimeout(function() {
 		canChangeVolume = true;
+		console.log("Can change volume: " + canChangeVolume);
 	}, 500);
 }
 
