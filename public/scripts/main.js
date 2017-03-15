@@ -1,4 +1,4 @@
-var version = "0.9.9.1";
+var version = "1.0.0";
 var loadTime = 500;
 var swalTimeout = 1000;
 var previousVolume = 0; // Used for remembering the last volume value when muted
@@ -102,7 +102,7 @@ function setup() {
 				if (numOfDisplayOuts == 1) {
 					setDisplayOutput(name, button);
 					powerOnRoom(); // this is not async. if it takes a long time to boot up, this is why.
-								   // can set async to true to solve this issue.
+					// can set async to true to solve this issue.
 				}
 			} else if (devices[i].roles[j] == "VideoIn") {
 				numOfDisplayIns++;
@@ -146,24 +146,24 @@ function setup() {
 
 				// set default (initial) volume (only for first audio device)
 				if (numOfAudioOuts == 1 && canGetVolume) {
-					// volume = devices[i].volume;
-					// volume = 0; // temporary, need a way to get the volume
+					volume = devices[i].volume;
+					volume = 0; // temporary, need a way to get the volume
 
 					// hack to get the current volume
-					// $.ajax({
-					// 	type: "GET",
-					// 	url: "http://localhost:8004/" + devices[i].address + "/volume/get",
-					// 	async: false,
-					// 	headers: {
-					// 		'Access-Control-Allow-Origin': '*'
-					// 	},
-					// 	success: function(data) {
-					// 		console.log("setting volume to", data);
-					// 		volume = data;
-					// 		slider.setAttribute("value", volume);
-					// 	},
-					// 	contentType: "application/json; charset=utf-8"
-					// });
+					$.ajax({
+						type: "GET",
+						url: "http://localhost:8004/" + devices[i].address + "/volume/get",
+						async: false,
+						headers: {
+							'Access-Control-Allow-Origin': '*'
+						},
+						success: function(data) {
+							console.log("setting volume to", data);
+							volume = data;
+							slider.setAttribute("value", volume);
+						},
+						contentType: "application/json; charset=utf-8"
+					});
 				}
 			} else if (devices[i].roles[j] == "AudioIn") {
 				numOfAudioIns++;
