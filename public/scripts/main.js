@@ -1,4 +1,4 @@
-var version = "0.9.9";
+var version = "0.9.9.1";
 var loadTime = 500;
 var swalTimeout = 1000;
 var previousVolume = 0; // Used for remembering the last volume value when muted
@@ -142,32 +142,32 @@ function setup() {
 				button.innerHTML = name;
 				document.getElementById("audio-outs").appendChild(button);
 
+				setAudioOutput(name, button);
+
 				// set default (initial) volume (only for first audio device)
 				if (numOfAudioOuts == 1 && canGetVolume) {
 					// volume = devices[i].volume;
-					volume = 0; // temporary, need a way to get the volume
+					// volume = 0; // temporary, need a way to get the volume
 
 					// hack to get the current volume
-					$.ajax({
-						type: "GET",
-						url: "http://localhost:8004/" + devices[i].address + "/volume/get",
-						async: false,
-						headers: {
-							'Access-Control-Allow-Origin': '*'
-						},
-						success: function(data) {
-							console.log("setting volume to", data);
-							volume = data;
-							slider.setAttribute("value", volume);
-						},
-						contentType: "application/json; charset=utf-8"
-					});
+					// $.ajax({
+					// 	type: "GET",
+					// 	url: "http://localhost:8004/" + devices[i].address + "/volume/get",
+					// 	async: false,
+					// 	headers: {
+					// 		'Access-Control-Allow-Origin': '*'
+					// 	},
+					// 	success: function(data) {
+					// 		console.log("setting volume to", data);
+					// 		volume = data;
+					// 		slider.setAttribute("value", volume);
+					// 	},
+					// 	contentType: "application/json; charset=utf-8"
+					// });
 				}
-
-				setAudioOutput(name, button);
 			} else if (devices[i].roles[j] == "AudioIn") {
 				numOfAudioIns++;
-				console.log("devices[" + i + "](" + devices[i].name + ") is a audio *output* device, building a button for it!");
+				console.log("devices[" + i + "](" + devices[i].name + ") is a audio *input* device, building a button for it!");
 				// if it is an output, create a button on the displays page for it
 				var button = document.createElement("button");
 
