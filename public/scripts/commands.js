@@ -28,6 +28,15 @@ function setDisplayOutput(device, e) {
 		});
 	}
 
+	// fix blank
+	if (blanks[outputDisplay]) {
+		document.getElementById("blank").style.backgroundColor = selectedColor;
+		document.getElementById("blank").innerHTML = "Unblank";
+	} else {
+		document.getElementById("blank").style.backgroundColor = "white";
+		document.getElementById("blank").innerHTML = "Blank";
+	}
+
 	// remove color from all display output buttons
 	$('.display-output-button').each(function(i, obj) {
 		obj.style.backgroundColor = "white";
@@ -172,14 +181,14 @@ function blankDisplay(e) {
 		}]
 	};
 
-	if (displayBlanked == true) {
+	if (blanks[outputDisplay]) {
 		body.displays[0].blanked = false;
-		displayBlanked = false;
+		blanks[outputDisplay] = false;
 		// set button to say "Blank"
 		e.innerHTML = "Blank";
 		e.style.backgroundColor = "white";
 	} else {
-		displayBlanked = true;
+		blanks[outputDisplay] = true;
 		// set button to say "Unblank"
 		e.innerHTML = "Unblank";
 		e.style.backgroundColor = selectedColor;

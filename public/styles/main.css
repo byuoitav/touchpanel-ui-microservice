@@ -88,7 +88,7 @@ h3 {
 
 button:focus { outline-style: none; }
 
-.blank,
+#blank,
 .display-output-button,
 .display-input-button,
 .audio-output-button,

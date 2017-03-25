@@ -1,4 +1,4 @@
-var version = "1.0.0";
+var version = "1.0.1";
 var loadTime = 500;
 var swalTimeout = 1000;
 var previousVolume = 0; // Used for remembering the last volume value when muted
@@ -10,6 +10,7 @@ var roomData;
 var devices = [];
 var displayInputs = {}; // map of each displayOutput to their current displayInput
 var audioInputs = {}; // map of each audioOutput to their current audioInput
+var blanks = {}; // map of each displayOutput to true/false
 
 function init() {
 	displayVersion();
@@ -65,7 +66,7 @@ function setup() {
 	if (devices.length == 0) {
 		console.log("no devices found");
 		$("#vol-slider").hide();
-		$(".blank").hide();
+		$("#blank").hide();
 		document.getElementById("volume-level").innerHTML = ":(";
 
 		swal({
@@ -82,6 +83,7 @@ function setup() {
 				numOfDisplayOuts++;
 				// add the item into displayOutputs
 				displayInputs[devices[i].name] = "";
+				blanks[devices[i].name] = false;
 
 				console.log("devices[" + i + "](" + devices[i].name + ") is a display *output* device, building a button for it!");
 
