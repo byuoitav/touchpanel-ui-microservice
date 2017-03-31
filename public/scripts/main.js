@@ -22,11 +22,13 @@ function getRoom() {
 	console.log("hostname =", hostname);
 	var split = hostname.split('-');
 
-	url = "http://localhost:8000/buildings/" + split[0] + "/rooms/" + split[1];
-	rpcUrl = "http://localhost:8100/buildings/" + split[0] + "/rooms/" + split[1];
+	var urlHost = document.location.host;
+	urlHost = /.+?(?=:)/.exec(urlHost) // remove port info
+	console.log("urlHost =", urlHost);
+	url = "http://" + urlHost  + ":8000/buildings/" + split[0] + "/rooms/" + split[1];
+	rpcUrl = "http://" + urlHost + ":8100/buildings/" + split[0] + "/rooms/" + split[1];
 	console.log("url for this room: ", url);
 
-	console.log("here");
 	getAllData();
 
 	// get devices, put them into an array
@@ -154,7 +156,7 @@ function setup() {
 					// hack to get the current volume
 					$.ajax({
 						type: "GET",
-						url: "http://localhost:8004/" + devices[i].address + "/volume/get",
+						url: "http://" + hostname + ":8004/" + devices[i].address + "/volume/get",
 						async: false,
 						headers: {
 							'Access-Control-Allow-Origin': '*'
