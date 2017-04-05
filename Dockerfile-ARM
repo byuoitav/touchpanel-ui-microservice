@@ -9,6 +9,6 @@ WORKDIR /go
 
 CMD ["/go/touchpanel-ui-microservice-arm"]
 
-EXPOSE 80
+EXPOSE 8888
 
 RUN [ "cross-build-end" ]
