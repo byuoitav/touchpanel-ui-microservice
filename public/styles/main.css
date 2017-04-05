@@ -88,7 +88,7 @@ h3 {
 
 button:focus { outline-style: none; }
 
-.blank,
+#blank,
 .display-output-button,
 .display-input-button,
 .audio-output-button,
@@ -100,4 +100,10 @@ button:focus { outline-style: none; }
     border-radius: 50%;
     overflow: hidden;
     vertical-align:top;
+}
+
+.row-heading {
+    color: white;
+    margin-top: -20px;
+    margin-bottom: 5px;
 }

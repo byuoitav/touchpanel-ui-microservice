@@ -1,3 +1,7 @@
+#navigation {
+	display: none;
+}
+
 #navigation .col-xs-12 {
     padding      : 0;
     margin-bottom: 30px;

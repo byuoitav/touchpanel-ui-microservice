@@ -4,6 +4,8 @@ var displayBlanked = false;
 var canGetVolume = false;
 var sliderBuilt = false;
 var selectedColor = "#a8a8a8";
+var volumeIncrement = 3;
+var canChangeVolume = true;
 
 function setDisplayOutput(device, e) {
 	console.log("set display output to:", device);
@@ -15,20 +17,29 @@ function setDisplayOutput(device, e) {
 		// find the correct input button to re highlight
 		$('.display-input-button').each(function(i, obj) {
 			obj.style.backgroundColor = "white"; // set all to white
-			if(obj.innerHTML == displayInputs[outputDisplay]) {
+			if (obj.innerHTML == displayInputs[outputDisplay]) {
 				console.log(obj);
 				obj.style.backgroundColor = selectedColor;
 			}
 		});
 	} else {
 		$('.display-input-button').each(function(i, obj) {
-	    	obj.style.backgroundColor = "white"; // set all to white
+			obj.style.backgroundColor = "white"; // set all to white
 		});
+	}
+
+	// fix blank
+	if (blanks[outputDisplay]) {
+		document.getElementById("blank").style.backgroundColor = selectedColor;
+		document.getElementById("blank").innerHTML = "Unblank";
+	} else {
+		document.getElementById("blank").style.backgroundColor = "white";
+		document.getElementById("blank").innerHTML = "Blank";
 	}
 
 	// remove color from all display output buttons
 	$('.display-output-button').each(function(i, obj) {
-    	obj.style.backgroundColor = "white";
+		obj.style.backgroundColor = "white";
 	});
 
 	// change visual for active device
@@ -38,6 +49,8 @@ function setDisplayOutput(device, e) {
 function setAudioOutput(device, e) {
 	console.log("set audio output to:", device);
 	outputAudio = device;
+	canGetVolume = false;
+	var buildSlider = false;
 
 	// if output device isn't an RPC device, create a slider to control it with
 	for (var i in devices) {
@@ -51,31 +64,35 @@ function setAudioOutput(device, e) {
 				}
 
 				if (devices[i].roles[j] == "AudioOut" && canGetVolume) {
-					if (!sliderBuilt) {
-						slider = document.createElement("INPUT");
-						slider.setAttribute("id", "slider");
-						slider.setAttribute("type", "range");
-						// edit volume dynamically as the slider changes
-						slider.onchange = function() {
-							setVolume(slider)
-						};
-
-						console.log("adding a slider");
-						document.getElementById("vol-slider").appendChild(slider);
-						sliderBuilt = true;
-					}
-
-					$("#vol-up").hide();
-					$("#vol-down").hide();
-					$("#vol-slider").show();
-				} else {
-					// change it back to buttons if it's RPC
-					$("#vol-slider").hide();
-					$("#vol-up").show();
-					$("#vol-down").show();
+					console.log("buildslider set to true");
+					buildSlider = true;
 				}
 			}
 		}
+	}
+
+	if (buildSlider) {
+		slider = document.createElement("INPUT");
+		slider.setAttribute("id", "slider");
+		slider.setAttribute("type", "range");
+		// edit volume dynamically as the slider changes
+		slider.onchange = function() {
+			setVolume(slider)
+		};
+
+		console.log("adding a slider");
+		document.getElementById("vol-slider").appendChild(slider);
+		sliderBuilt = true;
+
+		$("#vol-up").hide();
+		$("#vol-down").hide();
+		$("#vol-slider").show();
+	} else {
+		// change it back to buttons if it's RPC
+		console.log("removing slider");
+		$("#vol-slider").hide();
+		$("#vol-up").show();
+		$("#vol-down").show();
 	}
 
 	// re-highlight the previous input
@@ -84,20 +101,20 @@ function setAudioOutput(device, e) {
 		// find the correct input button to re highlight
 		$('.audio-input-button').each(function(i, obj) {
 			obj.style.backgroundColor = "white"; // set all to white
-			if(obj.innerHTML == audioInputs[outputAudio]) {
+			if (obj.innerHTML == audioInputs[outputAudio]) {
 				console.log(obj);
 				obj.style.backgroundColor = selectedColor;
 			}
 		});
 	} else {
 		$('.audio-input-button').each(function(i, obj) {
-	    	obj.style.backgroundColor = "white"; // set all to white
+			obj.style.backgroundColor = "white"; // set all to white
 		});
 	}
 
 	// remove color from all audio output buttons
 	$('.audio-output-button').each(function(i, obj) {
-    	obj.style.backgroundColor = "white";
+		obj.style.backgroundColor = "white";
 	});
 
 	// change visual for active device
@@ -113,7 +130,7 @@ function switchDisplayInput(input, e) {
 
 	// remove color from all display input buttons
 	$('.display-input-button').each(function(i, obj) {
-    	obj.style.backgroundColor = "white";
+		obj.style.backgroundColor = "white";
 	});
 
 	// change visual for active device
@@ -127,7 +144,7 @@ function switchDisplayInput(input, e) {
 			input: input
 		}],
 	};
-	put(body);
+	put(body, false);
 }
 
 function switchAudioInput(input, e) {
@@ -135,7 +152,7 @@ function switchAudioInput(input, e) {
 
 	// remove color from all display output buttons
 	$('.audio-input-button').each(function(i, obj) {
-    	obj.style.backgroundColor = "white";
+		obj.style.backgroundColor = "white";
 	});
 
 	// change visual for active device
@@ -149,7 +166,7 @@ function switchAudioInput(input, e) {
 			input: input
 		}]
 	};
-	put(body);
+	put(body, false);
 }
 
 function blankDisplay(e) {
@@ -164,81 +181,155 @@ function blankDisplay(e) {
 		}]
 	};
 
-	if (displayBlanked == true) {
+	if (blanks[outputDisplay]) {
 		body.displays[0].blanked = false;
-		displayBlanked = false;
+		blanks[outputDisplay] = false;
 		// set button to say "Blank"
 		e.innerHTML = "Blank";
 		e.style.backgroundColor = "white";
 	} else {
-		displayBlanked = true;
+		blanks[outputDisplay] = true;
 		// set button to say "Unblank"
 		e.innerHTML = "Unblank";
 		e.style.backgroundColor = selectedColor;
 	}
-	put(body);
+	put(body, false);
 }
 
-var volumeIncrement = 1;
+function preventVolumeDDOS() {
+	canChangeVolume = false;
+	console.log("Can change volume: " + canChangeVolume);
+
+	setTimeout(function() {
+		canChangeVolume = true;
+		console.log("Can change volume: " + canChangeVolume);
+	}, 500);
+}
 
 function increaseVolume() {
-	if (volume == "MUTED") {
-		volume = previousVolume;
+	if (canChangeVolume) {
+		preventVolumeDDOS();
+
+		if (volume == "MUTED") {
+			volume = previousVolume;
+		}
+
+		if (volume < 100) {
+			volume += volumeIncrement;
+		}
+
+		console.log("pressed volume up");
+
+		var body;
+		// if its a RPC devices, make a specific command
+		if (roomData.configuration.name == "TecLite") {
+			console.log("RPC Command");
+			body = {
+				rpcDevices: [{
+					name: outputAudio,
+					commands: [{
+						name: "VolumeUp"
+					}]
+				}]
+			};
+			for (var i = 0; i < volumeIncrement; i++) {
+				quietPut(body, true);
+			}
+		} else {
+			console.log("Regular Command");
+			body = {
+				audioDevices: [{
+					name: outputAudio,
+					volume: volume
+				}]
+			};
+			quietPut(body, false);
+		}
 	}
-
-	if (volume < 100) {
-		volume += volumeIncrement;
-	}
-
-	console.log("pressed volume up");
-
-	var body = {
-		audioDevices: [{
-			name: outputAudio,
-			volume: volume
-		}]
-	};
-	quietPut(body);
 }
 
 function decreaseVolume() {
-	if (volume == "MUTED") {
-		volume = previousVolume;
+	if (canChangeVolume) {
+		preventVolumeDDOS();
+
+		if (volume == "MUTED") {
+			volume = previousVolume;
+		}
+
+		if (volume > 0) {
+			volume -= volumeIncrement;
+		}
+
+		console.log("pressed volume down");
+
+		var body;
+		// if its a RPC devices, make a specific command
+		if (roomData.configuration.name == "TecLite") {
+			console.log("RPC Command");
+			body = {
+				rpcDevices: [{
+					name: outputAudio,
+					commands: [{
+						name: "VolumeDown"
+					}]
+				}]
+			};
+			for (var i = 0; i < volumeIncrement; i++) {
+				quietPut(body, true);
+			}
+		} else {
+			console.log("Regular Command");
+			body = {
+				audioDevices: [{
+					name: outputAudio,
+					volume: volume
+				}]
+			};
+			quietPut(body, false);
+		}
 	}
-
-	if (volume > 0) {
-		volume -= volumeIncrement;
-	}
-
-	console.log("pressed volume down");
-
-	var body = {
-		audioDevices: [{
-			name: outputAudio,
-			volume: volume
-		}]
-	};
-	quietPut(body);
 }
 
 function muteVolume() {
 	console.log("mute/unmute volume");
 
-	var body = {
-		audioDevices: [{
-			name: outputAudio,
-			muted: true
-		}]
-	};
-
-	if (volume == "MUTED") {
-		volume = previousVolume;
-		body.audioDevices[0].muted = false;
+	var body;
+	// if its a RPC devices, make a specific command
+	if (roomData.configuration.name == "TecLite") {
+		console.log("RPC Command");
+		body = {
+			rpcDevices: [{
+				name: outputAudio,
+				commands: [{
+					name: "ToggleMute"
+				}]
+			}]
+		};
+		if (volume == "MUTED") {
+			volume = previousVolume;
+		} else {
+			previousVolume = volume;
+			volume = "MUTED";
+		}
+		quietPut(body, true);
 	} else {
-		previousVolume = volume;
-		volume = "MUTED";
+		console.log("Regular Command");
+		body = {
+			audioDevices: [{
+				name: outputAudio,
+				muted: true
+			}]
+		};
+
+		if (volume == "MUTED") {
+			volume = previousVolume;
+			body.audioDevices[0].muted = false;
+		} else {
+			previousVolume = volume;
+			volume = "MUTED";
+		}
+		quietPut(body, false);
 	}
-	put(body);
 }
 
 function setVolume(e) {
@@ -258,7 +349,7 @@ function setVolume(e) {
 			volume: parseInt(vol)
 		}]
 	};
-	quietPut(body);
+	quietPut(body, false);
 }
 
 function powerOnRoom() {
@@ -282,7 +373,7 @@ function powerOnRoom() {
 		data: JSON.stringify(body),
 		contentType: "application/json; charset=utf-8"
 	});
-	quietPut(body);
+	quietPut(body, false);
 }
 
 function powerOffRoom() {
@@ -292,32 +383,57 @@ function powerOffRoom() {
 		power: "standby"
 	};
 
-	quietPut(body);
+	quietPut(body, false);
 }
 
-function put(body) {
+function put(body, rpc) {
 	console.log("put", body);
-	$.ajax({
-		type: "PUT",
-		url: url,
-		headers: {
-			'Access-Control-Allow-Origin': '*'
-		},
-		data: JSON.stringify(body),
-		success: pleaseWait(),
-		contentType: "application/json; charset=utf-8"
-	});
+	if (rpc) {
+		$.ajax({
+			type: "PUT",
+			url: rpcUrl,
+			headers: {
+				'Access-Control-Allow-Origin': '*'
+			},
+			data: JSON.stringify(body),
+			success: pleaseWait(),
+			contentType: "application/json; charset=utf-8"
+		});
+	} else {
+		$.ajax({
+			type: "PUT",
+			url: url,
+			headers: {
+				'Access-Control-Allow-Origin': '*'
+			},
+			data: JSON.stringify(body),
+			success: pleaseWait(),
+			contentType: "application/json; charset=utf-8"
+		});
+	}
 }
 
-function quietPut(body) {
+function quietPut(body, rpc) {
 	console.log("quietPut", body);
-	$.ajax({
-		type: "PUT",
-		url: url,
-		headers: {
-			'Access-Control-Allow-Origin': '*'
-		},
-		data: JSON.stringify(body),
-		contentType: "application/json; charset=utf-8"
-	});
+	if (rpc) {
+		$.ajax({
+			type: "PUT",
+			url: rpcUrl,
+			headers: {
+				'Access-Control-Allow-Origin': '*'
+			},
+			data: JSON.stringify(body),
+			contentType: "application/json; charset=utf-8"
+		});
+	} else {
+		$.ajax({
+			type: "PUT",
+			url: url,
+			headers: {
+				'Access-Control-Allow-Origin': '*'
+			},
+			data: JSON.stringify(body),
+			contentType: "application/json; charset=utf-8"
+		});
+	}
 }
