@@ -2,15 +2,12 @@ FROM resin/armv7hf-debian-qemu
 
 RUN [ "cross-build-start" ]
 
-RUN apt-get update
-RUN apt-get -y upgrade
-
 RUN mkdir -p /go
 ADD . /go
 
 WORKDIR /go
 
-CMD ["/go/touchpanel-ui-microservice"]
+CMD ["/go/touchpanel-ui-microservice-arm"]
 
 EXPOSE 80
 

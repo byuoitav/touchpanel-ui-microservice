@@ -1,6 +1,9 @@
-FROM golang:1.7.1-alpine
+FROM golang:alpine
 
-RUN apk update && apk upgrade && apk add git
+ARG GITHUB_BRANCH
+
+RUN apk update && apk add git
+RUN go get -u github.com/FiloSottile/gvt
 
 RUN mkdir -p /go/src/github.com/byuoitav
 ADD . /go/src/github.com/byuoitav/touchpanel-ui-microservice
@@ -11,4 +14,4 @@ RUN go install -v
 
 CMD ["/go/bin/touchpanel-ui-microservice"]
 
-EXPOSE 8888
+EXPOSE 80
