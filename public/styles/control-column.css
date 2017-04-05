@@ -84,3 +84,15 @@ input[type=range]::-webkit-slider-thumb {
 /*input[type=range]:focus::-webkit-slider-runnable-track {
     background: #ccc;
 }*/
+
+#beta-notice {
+	position: absolute;
+	left: 0;
+	bottom: 0;
+	background-color: #7FDBFF;
+	color: #ffffff;
+	opacity: 0.75;
+	padding: 5px 10px;
+	font-weight: bold;
+	z-index: 100;
+}

@@ -1,14 +1,16 @@
-var version = "0.9.6";
+var version = "1.0.1";
 var loadTime = 500;
 var swalTimeout = 1000;
 var previousVolume = 0; // Used for remembering the last volume value when muted
 var volume = 0;
 
 var url;
+var rpcUrl;
 var roomData;
 var devices = [];
 var displayInputs = {}; // map of each displayOutput to their current displayInput
 var audioInputs = {}; // map of each audioOutput to their current audioInput
+var blanks = {}; // map of each displayOutput to true/false
 
 function init() {
 	displayVersion();
@@ -20,11 +22,14 @@ function getRoom() {
 	console.log("hostname =", hostname);
 	var split = hostname.split('-');
 
-	url = "http://localhost:8000/buildings/" + split[0] + "/rooms/" + split[1];
+	var urlHost = document.location.host;
+	urlHost = /.+?(?=:)/.exec(urlHost) // remove port info
+	console.log("urlHost =", urlHost);
+	url = "http://" + urlHost  + ":8000/buildings/" + split[0] + "/rooms/" + split[1];
+	rpcUrl = "http://" + urlHost + ":8100/buildings/" + split[0] + "/rooms/" + split[1];
 	console.log("url for this room: ", url);
 
 	getAllData();
-	// getVolume();
 
 	// get devices, put them into an array
 	for (i in roomData.devices) {
@@ -34,7 +39,7 @@ function getRoom() {
 
 function getAllData() {
 	// get the all room information
-	return $.ajax({
+	$.ajax({
 		type: "GET",
 		url: url,
 		async: false,
@@ -44,6 +49,9 @@ function getAllData() {
 		success: function(data) {
 			console.log("returning room data: ", data);
 			roomData = data;
+		},
+		complete: function() {
+			swal.close();
 		},
 		contentType: "application/json; charset=utf-8"
 	});
@@ -60,7 +68,7 @@ function setup() {
 	if (devices.length == 0) {
 		console.log("no devices found");
 		$("#vol-slider").hide();
-		$(".blank").hide();
+		$("#blank").hide();
 		document.getElementById("volume-level").innerHTML = ":(";
 
 		swal({
@@ -77,6 +85,7 @@ function setup() {
 				numOfDisplayOuts++;
 				// add the item into displayOutputs
 				displayInputs[devices[i].name] = "";
+				blanks[devices[i].name] = false;
 
 				console.log("devices[" + i + "](" + devices[i].name + ") is a display *output* device, building a button for it!");
 
@@ -97,7 +106,7 @@ function setup() {
 				if (numOfDisplayOuts == 1) {
 					setDisplayOutput(name, button);
 					powerOnRoom(); // this is not async. if it takes a long time to boot up, this is why.
-								   // can set async to true to solve this issue.
+					// can set async to true to solve this issue.
 				}
 			} else if (devices[i].roles[j] == "VideoIn") {
 				numOfDisplayIns++;
@@ -137,15 +146,17 @@ function setup() {
 				button.innerHTML = name;
 				document.getElementById("audio-outs").appendChild(button);
 
+				setAudioOutput(name, button);
+
 				// set default (initial) volume (only for first audio device)
 				if (numOfAudioOuts == 1 && canGetVolume) {
-					// volume = devices[i].volume;
+					volume = devices[i].volume;
 					volume = 0; // temporary, need a way to get the volume
 
 					// hack to get the current volume
 					$.ajax({
 						type: "GET",
-						url: "http://localhost:8004/" + devices[i].address + "/volume/get",
+						url: "http://" + hostname + ":8004/" + devices[i].address + "/volume/get",
 						async: false,
 						headers: {
 							'Access-Control-Allow-Origin': '*'
@@ -158,11 +169,9 @@ function setup() {
 						contentType: "application/json; charset=utf-8"
 					});
 				}
-
-				setAudioOutput(name, button);
 			} else if (devices[i].roles[j] == "AudioIn") {
 				numOfAudioIns++;
-				console.log("devices[" + i + "](" + devices[i].name + ") is a audio *output* device, building a button for it!");
+				console.log("devices[" + i + "](" + devices[i].name + ") is a audio *input* device, building a button for it!");
 				// if it is an output, create a button on the displays page for it
 				var button = document.createElement("button");
 
@@ -229,6 +238,13 @@ function pleaseWait() {
 }
 
 function wakeSystem() {
+	swal({
+		title: "Please Wait",
+		text: "\"It's not my fault\" - Lando Calrissian",
+		imageUrl: "https://upload.wikimedia.org/wikipedia/en/c/cb/Lando6-2.jpg",
+		showConfirmButton: false
+	});
+
 	$("#idle-splash").hide();
 	$("#loading-splash").show();
 
