@@ -11,4 +11,4 @@ RUN go install -v
 
 CMD ["/go/bin/touchpanel-ui-microservice"]
 
-EXPOSE 80
+EXPOSE 8888
