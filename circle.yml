@@ -1,4 +1,6 @@
 machine:
+    node:
+        version: 7.10.0
     services:
         - docker
     environment:
@@ -23,6 +25,10 @@ compile:
 test:
     override:
         - cd $BUILD_PATH && go test -v -race $(go list ./... | grep -v /vendor/)
+        - npm install -g @angular/core
+        - npm install -g @angluar/cli
+        - cd touchpanel-ui && npm install && ng build --prod --bash-href="./"
+        - mv touchpanel-ui/dist/ dist && rm -r touchpanel-ui
 
 deployment:
     development:
