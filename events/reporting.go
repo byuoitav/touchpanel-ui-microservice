@@ -20,15 +20,13 @@ var Name string
 func Init() {
 	getBuildingAndRoomAndName()
 	Publisher, err := publisher.NewPublisher("7003", 1000, 10)
-	log.Printf("hi2")
 	if err != nil {
 		log.Fatalf("Could not start publisher. Error: %v\n", err.Error())
 	}
-	log.Printf("hi")
 
 	go func() {
-		Publisher.Listen()
 		log.Printf("Publisher started on port :7003")
+		Publisher.Listen()
 	}()
 }
 
