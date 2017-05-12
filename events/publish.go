@@ -2,6 +2,7 @@ package events
 
 import (
 	"encoding/json"
+	"errors"
 	"log"
 	"os"
 	"strings"
@@ -29,21 +30,23 @@ func Init() {
 	SubInit()
 }
 
-func Publish(event json.RawMessage) error {
+func Publish(event eventinfrastructure.EventInfo) error {
 	var e eventinfrastructure.Event
 
-	ebyte, err := json.Marshal(event)
-	estr := string(ebyte[:])
-
 	// create the event
-	e.Building = Building
-	e.Device = Name
-	e.Event = estr
 	e.Hostname = os.Getenv("PI_HOSTNAME")
-	e.LocalEnvironment = len(os.Getenv("LOCAL_ENVIRONMENT")) > 0
-	e.Room = Room
-	e.Success = true
 	e.Timestamp = time.Now().Format(time.RFC3339)
+	e.LocalEnvironment = len(os.Getenv("LOCAL_ENVIRONMENT")) > 0
+	e.Building = Building
+	e.Room = Room
+	e.Event.Type = eventinfrastructure.USERACTION
+	e.Event.EventCause = eventinfrastructure.USERINPUT
+	e.Event.Device = event.Device
+	e.Event.EventInfoKey = event.EventInfoKey
+	e.Event.EventInfoValue = event.EventInfoValue
+	if len(e.Event.Device) == 0 || len(e.Event.EventInfoKey) == 0 || len(e.Event.EventInfoValue) == 0 {
+		return errors.New("Please fill in all the necessary fields")
+	}
 
 	toSend, err := json.Marshal(&e)
 	if err != nil {

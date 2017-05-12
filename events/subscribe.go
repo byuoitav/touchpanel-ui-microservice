@@ -46,7 +46,7 @@ func SubInit() {
 	go SubListen()
 }
 
-func (manager *ClientManager) Start() {
+func (manager *ClientManager) Start(filter func()) {
 	for {
 		select {
 		case conn := <-manager.register:
@@ -66,6 +66,8 @@ func (manager *ClientManager) Start() {
 			if err != nil {
 				continue
 			}
+			var e eventinfrastructure.Event
+			err = json.Unmarshal(toSend, &e)
 			for conn := range manager.clients {
 				select {
 				case conn.send <- toSend:
@@ -76,6 +78,21 @@ func (manager *ClientManager) Start() {
 			}
 		}
 	}
+}
+
+func UIFilter(event common.Message) (eventinfrastructure.EventInfo, error) {
+	var e eventinfrastructure.EventInfo
+	toSend, err := json.Marshal(&event.MessageBody)
+	if err != nil {
+		return e, err
+	}
+	err = json.Unmarshal(toSend, &e)
+	if err != nil {
+		return e, err
+	}
+
+	log.Printf("event: %v", e)
+	return e, nil
 }
 
 func SubListen() {
