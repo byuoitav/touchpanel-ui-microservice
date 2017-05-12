@@ -25,6 +25,17 @@ type Client struct {
 	send   chan []byte
 }
 
+type EventWrapper struct {
+	Tag  string `json:"tag,omitempty"`
+	Data Event  `json:"data,omitempty"`
+}
+
+type Event struct {
+	Data      interface{} `json:"data,omitempty"`
+	ID        string      `json:"id,omitempty"`
+	TimeStamp string      `json:"_stamp,omitempty"`
+}
+
 var Manager = &ClientManager{
 	Broadcast:  make(chan common.Message, 100),
 	register:   make(chan *Client),
@@ -42,7 +53,6 @@ func SubInit() {
 	Sub.Subscribe("localhost:7003", []string{eventinfrastructure.UI})
 	log.Printf("Subscribed to %s events", eventinfrastructure.UI)
 
-	go Manager.Start()
 	go SubListen()
 }
 
@@ -61,8 +71,8 @@ func (manager *ClientManager) Start() {
 			}
 
 		case event := <-manager.Broadcast:
-			log.Printf("Sending event %s", event.MessageBody)
-			toSend, err := json.Marshal(&event.MessageBody)
+			log.Printf("Sending event %s", event)
+			toSend, err := json.Marshal(&event)
 			if err != nil {
 				continue
 			}
@@ -83,7 +93,7 @@ func SubListen() {
 
 	for {
 		message := Sub.Read()
-		log.Printf("Recieved message. Sending to socket")
+		log.Printf("Message Recieved: %s", message.MessageBody)
 		Manager.Broadcast <- message
 	}
 }
