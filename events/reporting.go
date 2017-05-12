@@ -19,28 +19,29 @@ var Name string
 
 func Init() {
 	getBuildingAndRoomAndName()
-	Publisher, err := publisher.NewPublisher("7003", 1000, 10)
+	var err error
+	Publisher, err = publisher.NewPublisher("7003", 1000, 10)
 	if err != nil {
 		log.Fatalf("Could not start publisher. Error: %v\n", err.Error())
 	}
 
-	go func() {
-		log.Printf("Publisher started on port :7003")
-		Publisher.Listen()
-	}()
+	go Publisher.Listen()
 }
 
-func Publish(event string) error {
+func Publish(event json.RawMessage) error {
 	var e eventinfrastructure.Event
+
+	ebyte, err := json.Marshal(event)
+	estr := string(ebyte[:])
 
 	// create the event
 	e.Building = Building
 	e.Device = Name
-	e.Event = event
+	e.Event = estr
 	e.Hostname = os.Getenv("PI_HOSTNAME")
 	e.LocalEnvironment = len(os.Getenv("LOCAL_ENVIRONMENT")) > 0
 	e.Room = Room
-	// e.Success?
+	e.Success = true
 	e.Timestamp = time.Now().Format(time.RFC3339)
 
 	toSend, err := json.Marshal(&e)
@@ -49,10 +50,13 @@ func Publish(event string) error {
 	}
 
 	header := [24]byte{}
-	copy(header[:], eventinfrastructure.UI)
+	copy(header[:], []byte(eventinfrastructure.UI))
 
-	log.Printf("Publishing event: %+v", toSend)
-	Publisher.Write(common.Message{MessageHeader: header, MessageBody: toSend})
+	log.Printf("Publishing event: %s", toSend)
+	err = Publisher.Write(common.Message{MessageHeader: header, MessageBody: toSend})
+	if err != nil {
+		return err
+	}
 
 	return nil
 }
@@ -69,5 +73,7 @@ func getBuildingAndRoomAndName() {
 	Building = data[0]
 	Room = data[1]
 	Name = data[2]
+
+	log.Printf("Building: %s, Room: %s, Device: %s", Building, Room, Name)
 	return
 }
