@@ -12,7 +12,7 @@ import (
 	"github.com/xuther/go-message-router/publisher"
 )
 
-var Publisher publisher.Publisher
+var Pub publisher.Publisher
 var Building string
 var Room string
 var Name string
@@ -20,12 +20,13 @@ var Name string
 func Init() {
 	getBuildingAndRoomAndName()
 	var err error
-	Publisher, err = publisher.NewPublisher("7003", 1000, 10)
+	Pub, err = publisher.NewPublisher("7003", 1000, 10)
 	if err != nil {
 		log.Fatalf("Could not start publisher. Error: %v\n", err.Error())
 	}
 
-	go Publisher.Listen()
+	go Pub.Listen()
+	SubInit()
 }
 
 func Publish(event json.RawMessage) error {
@@ -53,7 +54,7 @@ func Publish(event json.RawMessage) error {
 	copy(header[:], []byte(eventinfrastructure.UI))
 
 	log.Printf("Publishing event: %s", toSend)
-	err = Publisher.Write(common.Message{MessageHeader: header, MessageBody: toSend})
+	err = Pub.Write(common.Message{MessageHeader: header, MessageBody: toSend})
 	if err != nil {
 		return err
 	}
