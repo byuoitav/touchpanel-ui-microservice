@@ -8,6 +8,11 @@ import (
 	"github.com/labstack/echo"
 )
 
+func OpenWebSocket(context echo.Context) error {
+	events.StartWebClient(context.Response(), context.Request())
+	return nil
+}
+
 func PublishEvent(context echo.Context) error {
 	var event eventinfrastructure.EventInfo
 	err := context.Bind(&event)

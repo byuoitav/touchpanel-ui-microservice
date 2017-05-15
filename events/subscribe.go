@@ -3,10 +3,10 @@ package events
 import (
 	"encoding/json"
 	"log"
-
-	"golang.org/x/net/websocket"
+	"net/http"
 
 	"github.com/byuoitav/event-router-microservice/eventinfrastructure"
+	"github.com/gorilla/websocket"
 	"github.com/xuther/go-message-router/common"
 	"github.com/xuther/go-message-router/subscriber"
 )
@@ -31,8 +31,6 @@ var Manager = &ClientManager{
 	unregister: make(chan *Client),
 	clients:    make(map[*Client]bool),
 }
-
-type filter func(common.Message) eventinfrastructure.EventInfo
 
 func SubInit() {
 	var err error
@@ -81,6 +79,43 @@ func (manager *ClientManager) Start(f filter) {
 		}
 	}
 }
+
+func (c *Client) write() {
+	defer func() {
+		c.socket.Close()
+	}()
+
+	for {
+		select {
+		case message, ok := <-c.send:
+			log.Printf("Writing event to client.")
+			if !ok {
+				log.Printf("not ok....??")
+				c.socket.WriteMessage(websocket.CloseMessage, []byte{})
+				return
+			}
+
+			c.socket.WriteMessage(websocket.TextMessage, message)
+			log.Printf("Written")
+		}
+	}
+}
+
+func StartWebClient(res http.ResponseWriter, req *http.Request) {
+	conn, err := (&websocket.Upgrader{CheckOrigin: func(r *http.Request) bool { return true }}).Upgrade(res, req, nil)
+	if err != nil {
+		http.NotFound(res, req)
+		return
+	}
+
+	client := &Client{socket: conn, send: make(chan []byte)}
+
+	Manager.register <- client
+
+	go client.write()
+}
+
+type filter func(common.Message) eventinfrastructure.EventInfo
 
 func UIFilter(event common.Message) eventinfrastructure.EventInfo {
 	var e eventinfrastructure.Event

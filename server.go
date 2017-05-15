@@ -19,6 +19,8 @@ func main() {
 	router.Use(middleware.CORS())
 
 	router.GET("/health", echo.WrapHandler(http.HandlerFunc(health.Check)))
+
+	router.GET("/websocket", handlers.OpenWebSocket)
 	router.PUT("/publish", handlers.PublishEvent)
 
 	router.Static("/", "dist")

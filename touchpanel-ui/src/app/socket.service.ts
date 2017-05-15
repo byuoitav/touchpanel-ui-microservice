@@ -6,20 +6,20 @@ export class SocketService {
 	private listener: EventEmitter<any> = new EventEmitter();
 
 	public constructor() {
-		this.socket = new WebSocket("ws://localhost:7003");
+		this.socket = new WebSocket("ws://localhost:8888/websocket");
 
 		this.socket.onopen = event => {
-			this.listener.emit({"type": "open", "data": event});
+			this.listener.emit({"type": OPEN, "data": event});
 		}
 
 		this.socket.onclose = event => {
-			this.listener.emit({"type": "close", "data": event});
+			this.listener.emit({"type": CLOSE, "data": event});
 		}
 
 		this.socket.onmessage = event => {
 			console.log("Message recieved");
 			console.log(event);
-			this.listener.emit({"type": "messsage", "data": event});
+			this.listener.emit({"type": MESSAGE, "data": event});
 		}
 	}
 
@@ -31,3 +31,7 @@ export class SocketService {
 		return this.listener;
 	}
 }
+
+export const OPEN: string = "open";
+export const CLOSE: string = "close";
+export const MESSAGE: string = "message";

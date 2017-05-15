@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { SocketService } from './socket.service';
+import { SocketService, OPEN, CLOSE, MESSAGE } from './socket.service';
 
 @Component({
   selector: 'app-root',
@@ -8,7 +8,6 @@ import { SocketService } from './socket.service';
 })
 export class AppComponent {
 	messages: Array<any>;
-	hi: string;
 
 	public constructor(private socket: SocketService) {
 		this.messages = [];
@@ -16,13 +15,16 @@ export class AppComponent {
 
 	public ngOnInit() {
 		this.socket.getEventListener().subscribe(event => {
-			if(event.type == "message") {
+			console.log("event.type =", event.type);
+			console.log("event.data =", event.data);
+			if(event.type == MESSAGE) {
+				console.log("got the event type of message!")
 				let data = event.data.data;
 				console.log(data);
 				this.messages.push(data);
-			} else if(event.type == "close") {
+			} else if(event.type == CLOSE) {
 				this.messages.push("/The socket connection has been closed");
-			} else if(event.type == "open") {
+			} else if(event.type == OPEN) {
 				this.messages.push("/The socket connection has been opened");
 			}
 		})	
@@ -31,6 +33,4 @@ export class AppComponent {
 	public ngOnDestroy() {
 		this.socket.close();
 	}
-
-  title = 'app works!';
 }
