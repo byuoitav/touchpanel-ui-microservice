@@ -69,7 +69,7 @@ func (manager *ClientManager) Start(f filter) {
 				log.Printf("error: %s", err.Error())
 				continue
 			}
-			log.Printf("[Socket] Sending event: %s", toSend)
+			log.Printf("[Socket] Sending event %s", toSend)
 			for conn := range manager.clients {
 				select {
 				case conn.send <- toSend:
@@ -86,12 +86,12 @@ func (c *Client) write() {
 	for {
 		select {
 		case message, ok := <-c.send:
-			log.Printf("[Client] Writing event to client %v", c.socket)
 			if !ok {
 				log.Printf("[Client] client send channel closed")
 				return
 			}
 
+			log.Printf("[Client] Writing event to client")
 			c.socket.WriteMessage(websocket.TextMessage, message)
 		}
 	}
