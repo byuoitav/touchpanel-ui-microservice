@@ -6,14 +6,14 @@ export class SocketService {
 	private listener: EventEmitter<any> = new EventEmitter();
 
 	public constructor() {
-		this.socket = new WebSocket("ws://localhost:");
+		this.socket = new WebSocket("ws://localhost:7003");
 
 		this.socket.onopen = event => {
 			this.listener.emit({"type": "open", "data": event});
 		}
 
 		this.socket.onclose = event => {
-			this.listener.emit({"type": "close", "data", event});
+			this.listener.emit({"type": "close", "data": event});
 		}
 
 		this.socket.onmessage = event => {

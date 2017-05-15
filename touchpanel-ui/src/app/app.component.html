@@ -1,3 +1,9 @@
 <h1>
   {{title}}
 </h1>
+
+<ul id="messages">
+	<li *ngFor="let message of messages">
+		<pre>{{message}}</pre>
+	</li>
+</ul>
