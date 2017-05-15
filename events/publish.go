@@ -56,7 +56,7 @@ func Publish(event eventinfrastructure.EventInfo) error {
 	header := [24]byte{}
 	copy(header[:], []byte(eventinfrastructure.UI))
 
-	log.Printf("Publishing event: %s", toSend)
+	log.Printf("[Routing] Publishing event: %s", toSend)
 	err = Pub.Write(common.Message{MessageHeader: header, MessageBody: toSend})
 	if err != nil {
 		return err

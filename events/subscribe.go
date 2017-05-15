@@ -32,6 +32,8 @@ var Manager = &ClientManager{
 	clients:    make(map[*Client]bool),
 }
 
+type filter func(common.Message) eventinfrastructure.EventInfo
+
 func SubInit() {
 	var err error
 	Sub, err = subscriber.NewSubscriber(10)
@@ -42,11 +44,11 @@ func SubInit() {
 	Sub.Subscribe("localhost:7003", []string{eventinfrastructure.UI})
 	log.Printf("Subscribed to %s events", eventinfrastructure.UI)
 
-	go Manager.Start()
+	go Manager.Start(UIFilter)
 	go SubListen()
 }
 
-func (manager *ClientManager) Start(filter func()) {
+func (manager *ClientManager) Start(f filter) {
 	for {
 		select {
 		case conn := <-manager.register:
@@ -61,13 +63,13 @@ func (manager *ClientManager) Start(filter func()) {
 			}
 
 		case event := <-manager.Broadcast:
-			log.Printf("Sending event %s", event.MessageBody)
-			toSend, err := json.Marshal(&event.MessageBody)
+			e := f(event)
+			toSend, err := json.Marshal(&e)
 			if err != nil {
+				log.Printf("error: %s", err.Error())
 				continue
 			}
-			var e eventinfrastructure.Event
-			err = json.Unmarshal(toSend, &e)
+			log.Printf("[Socket] Sending event: %s", toSend)
 			for conn := range manager.clients {
 				select {
 				case conn.send <- toSend:
@@ -80,19 +82,15 @@ func (manager *ClientManager) Start(filter func()) {
 	}
 }
 
-func UIFilter(event common.Message) (eventinfrastructure.EventInfo, error) {
-	var e eventinfrastructure.EventInfo
-	toSend, err := json.Marshal(&event.MessageBody)
+func UIFilter(event common.Message) eventinfrastructure.EventInfo {
+	var e eventinfrastructure.Event
+	err := json.Unmarshal(event.MessageBody, &e)
 	if err != nil {
-		return e, err
-	}
-	err = json.Unmarshal(toSend, &e)
-	if err != nil {
-		return e, err
+		log.Printf("error: %v", err.Error())
+		return eventinfrastructure.EventInfo{}
 	}
 
-	log.Printf("event: %v", e)
-	return e, nil
+	return e.Event
 }
 
 func SubListen() {
@@ -100,7 +98,6 @@ func SubListen() {
 
 	for {
 		message := Sub.Read()
-		log.Printf("Recieved message. Sending to socket")
 		Manager.Broadcast <- message
 	}
 }
