@@ -1,9 +1,11 @@
 import { Injectable, EventEmitter } from '@angular/core'
+import { Http } from '@angular/http'
 
 @Injectable()
 export class SocketService {
 	private socket: WebSocket;
 	private listener: EventEmitter<any> = new EventEmitter();
+	private http: Http;
 
 	public constructor() {
 		this.socket = new WebSocket("ws://localhost:8888/websocket");
@@ -25,6 +27,7 @@ export class SocketService {
 
 	public close() {
 		this.socket.close();
+		this.http.get("http://localhost:8888/closewebsocket")
 	}
 
 	public getEventListener() {

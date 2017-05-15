@@ -13,6 +13,8 @@ import (
 
 var Sub subscriber.Subscriber
 
+type filter func(common.Message) eventinfrastructure.EventInfo
+
 type ClientManager struct {
 	clients    map[*Client]bool
 	Broadcast  chan common.Message
@@ -40,7 +42,7 @@ func SubInit() {
 	}
 
 	Sub.Subscribe("localhost:7003", []string{eventinfrastructure.UI})
-	log.Printf("Subscribed to %s events", eventinfrastructure.UI)
+	log.Printf("[Routing] Subscribed to %s events", eventinfrastructure.UI)
 
 	go Manager.Start(UIFilter)
 	go SubListen()
@@ -50,11 +52,11 @@ func (manager *ClientManager) Start(f filter) {
 	for {
 		select {
 		case conn := <-manager.register:
-			log.Printf("Registering connection")
+			log.Printf("[Socket] Registering connection")
 			manager.clients[conn] = true
 
 		case conn := <-manager.unregister:
-			log.Printf("Unregistering connection")
+			log.Printf("[Socket] Unregistering connection")
 			if _, ok := manager.clients[conn]; ok {
 				close(conn.send)
 				delete(manager.clients, conn)
@@ -81,22 +83,26 @@ func (manager *ClientManager) Start(f filter) {
 }
 
 func (c *Client) write() {
-	defer func() {
-		c.socket.Close()
-	}()
-
 	for {
 		select {
 		case message, ok := <-c.send:
-			log.Printf("Writing event to client.")
+			log.Printf("[Client] Writing event to client %v", c.socket)
 			if !ok {
-				log.Printf("not ok....??")
-				c.socket.WriteMessage(websocket.CloseMessage, []byte{})
+				log.Printf("[Client] client send channel closed")
 				return
 			}
 
 			c.socket.WriteMessage(websocket.TextMessage, message)
-			log.Printf("Written")
+		}
+	}
+}
+
+func (c *Client) read() {
+	for {
+		if _, _, err := c.socket.NextReader(); err != nil {
+			log.Printf("[Client] Unregistering connection")
+			Manager.unregister <- c
+			break
 		}
 	}
 }
@@ -113,9 +119,8 @@ func StartWebClient(res http.ResponseWriter, req *http.Request) {
 	Manager.register <- client
 
 	go client.write()
+	go client.read()
 }
-
-type filter func(common.Message) eventinfrastructure.EventInfo
 
 func UIFilter(event common.Message) eventinfrastructure.EventInfo {
 	var e eventinfrastructure.Event
