@@ -28,7 +28,7 @@ export class APIService {
 	}
 
 	getRoomConfig(): Observable<Object> {
-		return this.http.get(this.url)
+		return this.http.get(this.url + "/configuration")
 				.map(response => response.json());
 	}
 

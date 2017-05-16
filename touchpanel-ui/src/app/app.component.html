@@ -27,6 +27,10 @@
 </div>
 -->
 <h3>Messages</h3>
+<div *ngFor="let m of messages">
+	<pre>{{m | json}}</pre>
+</div>
+<h3>Events</h3>
 <div *ngFor="let event of events">
 	<pre>{{event | json}}</pre>
 </div>

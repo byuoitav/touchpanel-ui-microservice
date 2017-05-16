@@ -27,7 +27,6 @@ export class SocketService {
 
 	public close() {
 		this.socket.close();
-		this.http.get("http://localhost:8888/closewebsocket")
 	}
 
 	public getEventListener() {
