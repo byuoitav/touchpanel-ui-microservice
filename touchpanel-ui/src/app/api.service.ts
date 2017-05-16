@@ -27,10 +27,14 @@ export class APIService {
 		this.options = new RequestOptions({ headers: this.headers });
 	}
 
-
-	getDevices(building: string, room: string): Observable<Object> {
+	getRoomConfig(): Observable<Object> {
 		return this.http.get(this.url)
-				.map(response => response.json())
+				.map(response => response.json());
+	}
+
+	getRoomStatus(): Observable<Object> {
+		return this.http.get(this.url)
+				.map(response => response.json());
 	}
 
 	postData(data: any) {

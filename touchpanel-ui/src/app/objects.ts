@@ -1,14 +1,28 @@
 export class Room {
-	videoInDevices: []Device;
-	videoOutDevices: []Device;	
-	audioInDevices: []Device;
-	audioOutDevices: []Device;
+	config: RoomConfiguration;
+	status: RoomStatus;
+}
+
+export class RoomConfiguration {
+	displays: Device[];
+	audioDevices: Device[];
+}
+
+export class RoomStatus {
+	currentVideoInput: string;
+	currentAudioInput: string;
+	power: string;
+	blanked: boolean;
+	muted: boolean;
+	volume: number;
 }
 
 export class Device {
 	name: string;
 	displayName: string;
+	power: string;
 	input: boolean;
-	output: boolean;
-	input?: string;
+	blanked: boolean;
+	muted: boolean;
+	volume: number;
 }
