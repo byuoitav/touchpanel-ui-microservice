@@ -41,6 +41,13 @@ export class APIService {
 		let body = JSON.stringify(data);
 		console.log("posting:", data);	
 
-		return this.http.post(this.url, body, this.options).map((res: Response) => res.json());
+		this.http.post(this.url, body, this.options).map((res: Response) => res.json());
+	}
+
+	publish(event: any) {
+		let body = JSON.stringify(event);
+		console.log("publishing:", event);
+
+		this.http.post("http://localhost:8888/publish", body, this.options).map((res: Response) => res.json());
 	}
 }

@@ -26,3 +26,11 @@ export class Device {
 	muted: boolean;
 	volume: number;
 }
+
+export class Event {
+	type: number;
+	eventCause: number;
+	device: string;
+	eventInfoKey: string;
+	eventInfoValue: string;	
+}

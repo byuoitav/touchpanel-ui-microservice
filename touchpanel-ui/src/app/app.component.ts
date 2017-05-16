@@ -3,20 +3,22 @@ import { SocketService, OPEN, CLOSE, MESSAGE } from './socket.service';
 import { Observable } from 'rxjs/Rx';
 
 import { APIService } from './api.service';
-import { Room, RoomConfiguration, RoomStatus } from './objects';
+import { Room, RoomConfiguration, RoomStatus, Event } from './objects';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css'],
-  providers: [APIService]
+  providers: [APIService, SocketService]
 })
 export class AppComponent {
 	messages: Array<any>;
+	events: Array<Event>;
 	room: Room;
 
 	public constructor(private socket: SocketService, private api: APIService) {
 		this.messages = [];
+		this.events = [];
 	}
 
 	public ngOnInit() {
@@ -26,9 +28,14 @@ export class AppComponent {
 
 		this.socket.getEventListener().subscribe(event => {
 			if(event.type == MESSAGE) {
-				let data = event.data.data;
-				console.log(data);
-				this.messages.push(data);
+				let data = JSON.parse(event.data.data);
+				
+				let e = new Event();
+				Object.assign(e, data);
+				this.events.push(e);
+
+				// do stuff with event
+				this.updateUI(e);
 			} else if(event.type == CLOSE) {
 				this.messages.push("The socket connection has been closed");
 			} else if(event.type == OPEN) {
@@ -39,6 +46,20 @@ export class AppComponent {
 
 	public ngOnDestroy() {
 		this.socket.close();
+	}
+
+	updateUI(e: Event) {
+		console.log("update ui based on event:", e);	
+
+		switch(e.eventInfoKey) {
+			case "power":
+				break;
+			case "volume":
+				break;
+			default:
+				console.log("unknown eventInfoKey:", e.eventInfoKey);
+				break;
+		}
 	}
 
 	getData()  {

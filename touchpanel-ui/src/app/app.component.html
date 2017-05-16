@@ -26,18 +26,16 @@
     </div>
 </div>
 -->
+<h3>Messages</h3>
+<div *ngFor="let event of events">
+	<pre>{{event | json}}</pre>
+</div>
 
 <h3>RoomData</h3>
 <pre>{{room | json}}</pre>
 
 <h3>Displays</h3>
 <pre>{{room.config.displays | json}}</pre>
-<h6>Names</h6>
-<ul>
-	<li *ngFor="let d of room.config.displays">
-		{{d.name}}
-	</li>
-</ul>
 
 <h3>audioDevices</h3>
 <pre>{{room.config.audioDevices | json}}</pre>
