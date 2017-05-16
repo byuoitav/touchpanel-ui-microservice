@@ -18,13 +18,15 @@ export class RoomStatus {
 }
 
 export class Device {
+	id: number;
 	name: string;
 	displayName: string;
-	power: string;
+	address: string;
 	input: boolean;
-	blanked: boolean;
-	muted: boolean;
-	volume: number;
+	output: boolean;
+	type: string;
+	roles: string[];
+	responding: boolean;
 }
 
 export class Event {
