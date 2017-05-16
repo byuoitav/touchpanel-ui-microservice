@@ -1,9 +1,26 @@
-<h1>
-  {{title}}
-</h1>
-
-<ul id="messages">
-	<li *ngFor="let message of messages">
-		<span>{{message}}</span>
-	</li>
-</ul>
+<div class='basediv'>
+    <div class='devices'>
+        <div class='row output-devices'>
+            <div class ="output-device" *ngFor="let device in room.videoOutDevices" (click)="selectOutputDevice(device)">
+                <span class ='output-device-name'>{{device.displayName}}</span>
+                <img class='output-device-icon' [src]="getImageForDevice(device.input)"/>
+            </div>
+        </div>
+        <div class='row input-device'>
+            <div class ="input-device" *ngFor="let device in room.videoInDevices" (click)="selectInputDevice(device)">
+                <span class ='output-device-name'>{{device.displayName}}</span>
+                <img class='output-device-icon' [src]="getImageForDevice(device)"/>
+            </div>
+        </div>
+    </div>
+    <div class='sidebar'>
+        <div class="power" (click)="powerOff()">
+            <img class='power-button' [src]="/path/to/power/button"/>
+        </div>
+        <div class="mute" (click)="toggleMute()">
+            <img class='mute-button' [src]="getCurrentMuteImage()">
+        </div>
+            <div class="volume">
+        </div>
+    </div>
+</div>
