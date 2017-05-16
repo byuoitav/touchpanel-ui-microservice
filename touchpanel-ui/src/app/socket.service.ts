@@ -19,15 +19,14 @@ export class SocketService {
 		}
 
 		this.socket.onmessage = event => {
-			console.log("Message recieved");
-			console.log(event);
+//			console.log("Message recieved");
+//			console.log(event);
 			this.listener.emit({"type": MESSAGE, "data": event});
 		}
 	}
 
 	public close() {
 		this.socket.close();
-		this.http.get("http://localhost:8888/closewebsocket")
 	}
 
 	public getEventListener() {

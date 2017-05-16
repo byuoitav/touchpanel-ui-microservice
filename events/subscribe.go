@@ -41,8 +41,8 @@ func SubInit() {
 		log.Fatalf("Could not create a subscriber. Error: %v\n", err.Error())
 	}
 
-	Sub.Subscribe("localhost:7003", []string{eventinfrastructure.UI})
-	log.Printf("[Routing] Subscribed to %s events", eventinfrastructure.UI)
+	Sub.Subscribe("localhost:7000", []string{eventinfrastructure.UI})
+	log.Printf("[Routing] Subscribed to %s events on port :7000", eventinfrastructure.UI)
 
 	go Manager.Start(UIFilter)
 	go SubListen()
@@ -69,7 +69,6 @@ func (manager *ClientManager) Start(f filter) {
 				log.Printf("error: %s", err.Error())
 				continue
 			}
-			log.Printf("[Socket] Sending event %s", toSend)
 			for conn := range manager.clients {
 				select {
 				case conn.send <- toSend:
