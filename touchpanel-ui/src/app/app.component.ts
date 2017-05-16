@@ -3,7 +3,7 @@ import { SocketService, OPEN, CLOSE, MESSAGE } from './socket.service';
 import { Observable } from 'rxjs/Rx';
 
 import { APIService } from './api.service';
-import { Room, RoomConfiguration, RoomStatus, Event } from './objects';
+import { Room, RoomConfiguration, RoomStatus, Event, Device } from './objects';
 
 @Component({
   selector: 'app-root',
@@ -74,5 +74,13 @@ export class AppComponent {
 			Object.assign(this.room.status, data);
 			console.log("roomstatus:", this.room.status);	
 		})
+	}
+
+	hasRole(d: Device, role: string): boolean {
+		for (let r of d.roles) {
+			if (r == role)
+				return true;
+		}	
+		return false;
 	}
 }
