@@ -39,9 +39,10 @@ export class APIService {
 
 	putData(data: any) {
 		let body = JSON.stringify(data);
-		console.log("putting:", data, "to", this.url, "with headers", this.headers);
+		console.log("putting:", data, "to", this.url, "with options", this.options);
 
-		return this.http.put(this.url, body, this.options).map((res: Response) => res.json());
+		return this.http.put(this.url, body, this.options).map((res: Response) => res.json())
+				.catch(this.handleError);
 	}
 
 	publish(event: any) {
@@ -49,5 +50,13 @@ export class APIService {
 		console.log("publishing:", event);
 
 		this.http.post("http://localhost:8888/publish", body, this.options).map((res: Response) => res.json());
+	}
+
+	handleError(error: Response | any) {
+		let msg: string;
+		msg = error.message ? error.message : error.toString();
+		console.log(msg);
+		
+		return Observable.throw(msg);	
 	}
 }
