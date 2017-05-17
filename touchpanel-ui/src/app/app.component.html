@@ -1,6 +1,7 @@
 <div class='basediv'>
 <div class='row'>
 
+	<!-- main -->
     <div class='column col-sm-9 devices'>
         <div class='row row-centered output-devices'>
             <div *ngFor='let device of room.config.devices'>
@@ -10,16 +11,31 @@
 				</div>
             </div>
         </div>
-        <div class='input-device'>
-            <div class ="input-device" *ngFor="let device of room.config.devices">
-				<div *ngIf="hasRole(device, 'VideoIn')">
-                	<span class ='output-device-name'>{{device.name}}</span>
-                	<img class='output-device-icon'/>
+
+		<!-- spacing between output/input devices -->
+		<div class='row row-centered'>
+		</div>
+
+		<!-- 
+		<div class='row row-centered blank'>
+			<div class='col-centered'>	
+				blank
+			</div>
+		</div>
+		-->
+
+        <div class='row row-centered input-devices'>
+            <div *ngFor='let device of room.config.devices'>
+				<div class='col-sm-1 col-centered input-device' *ngIf="hasRole(device, 'VideoOut')">
+               		<span class='input-device-name'>{{device.name}}</span>
+               		<img class='input-device-icon'/>
 				</div>
             </div>
         </div>
     </div>
 
+
+	<!-- sidebar -->
     <div class='column col-sm-3 sidebar'>
         <div class="power">
             <img class='power-button'/>

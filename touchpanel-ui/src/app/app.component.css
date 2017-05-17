@@ -6,6 +6,7 @@ html, body {
 	height: 100%;
 	margin-left: 0;
 	margin-right: 0;	
+	min-height: 100%;
 }
 
 .sidebar {
@@ -17,13 +18,14 @@ html, body {
 
 /* centered columns styles */
 .row-centered {
-    text-align:center;
+	display: flex;
+	justify-content: center;
 }
-.col-centered {
-    display:inline-block;
-    float:none;
-    /* reset the text-align */
-    text-align:left;
-    /* inline-block space fix */
-    margin-right:-4px;
+
+.output-devices {
+	margin-top: 10vh;
+}
+
+.input-devices {
+
 }
