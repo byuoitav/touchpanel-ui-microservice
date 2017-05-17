@@ -1,36 +1,55 @@
 <div class='basediv'>
 <div class='row'>
 
+	<!-- main -->
     <div class='column col-sm-9 devices'>
         <div class='row row-centered output-devices'>
-            <div *ngFor='let device of room.config.devices'>
-				<div class='col-sm-1 col-centered output-device' *ngIf="hasRole(device, 'VideoOut')">
-               		<span class ='output-device-name'>{{device.name}}</span>
-               		<img class='output-device-icon'/>
+            <div *ngFor='let device of displays'>
+				<div class='col-sm-2 col-centered output-device' (click)="setOutputDevice(device)">
+               		<span class='output-device-name'>{{device.displayName}}</span>
+					<i class='material-icons'>{{device.type}}</i>
 				</div>
             </div>
         </div>
-        <div class='input-device'>
-            <div class ="input-device" *ngFor="let device of room.config.devices">
-				<div *ngIf="hasRole(device, 'VideoIn')">
-                	<span class ='output-device-name'>{{device.name}}</span>
-                	<img class='output-device-icon'/>
+
+		<!-- spacing between output/input devices -->
+		<div class='space'>
+		</div>
+
+		<!-- 
+		<div class='row row-centered blank'>
+			<div class='col-centered'>	
+				blank
+			</div>
+		</div>
+		-->
+
+        <div class='row row-centered input-devices'>
+            <div *ngFor='let device of inputs'>
+				<div class='col-sm-1 col-centered input-device' (click)="setInputDevice(device)">
+					<i class='material-icons'>{{device.type}}</i>
+               		<span class='input-device-name'>{{device.name}}</span>
 				</div>
             </div>
         </div>
     </div>
 
+
+	<!-- sidebar -->
     <div class='column col-sm-3 sidebar'>
         <div class="power">
-            <img class='power-button'/>
-			<p>power</p>
+			<i class="material-icons">power_settings_new</i>
         </div>
         <div class="mute">
-            <img class='mute-button'>
-			<p>mute</p>
+			<div *ngIf="muted" (click)="toggleMute()">
+				<i class="material-icons">volume_off</i>
+			</div>
+			<div *ngIf="!muted" (click)="toggleMute()">
+				<i class="material-icons">volume_up</i>
+			</div>
         </div>
-        <div class="volume">
-			<p>volume</p>
+        <div class='volume'>
+			<md-slider vertical thumbLabel tickInterval='auto' (change)="updateVolume($event.value)"></md-slider>
         </div>
     </div>
 

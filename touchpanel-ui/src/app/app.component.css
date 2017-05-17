@@ -1,9 +1,14 @@
 html, body {
 	height: 100%;
+	margin: 0;
+}
+
+.basediv {
+	height: 100%;
+	min-height: 100%;
 }
 
 .basediv, .row {
-	height: 100%;
 	margin-left: 0;
 	margin-right: 0;	
 }
@@ -17,13 +22,55 @@ html, body {
 
 /* centered columns styles */
 .row-centered {
-    text-align:center;
+	display: flex;
+	justify-content: center;
 }
-.col-centered {
-    display:inline-block;
-    float:none;
-    /* reset the text-align */
-    text-align:left;
-    /* inline-block space fix */
-    margin-right:-4px;
+
+.output-devices {
+	margin-top: 10vh;
+	justify-content: space-around;
+}
+
+.input-devices {
+
+}
+
+.sidebar {
+	display: flex;
+	flex-direction: column;
+	justify-content: space-around;
+}
+
+.sidebar div {
+	display: flex;
+	justify-content: center;
+}
+
+.power i,
+.mute i {
+	font-size: 9vh;
+}
+
+.volume {
+	min-height: 40vh;	
+}
+
+.output-device,
+.input-device {
+	display: flex;
+	flex-direction: column;
+	justify-conent: center;
+	align-items: center;
+}
+
+.output-device i {
+	font-size: 11vh;
+}
+
+.input-device i {
+	font-size: 8vh;
+}
+
+.space {
+	height: 130%;
 }
