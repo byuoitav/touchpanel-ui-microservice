@@ -34,22 +34,22 @@ export class AppComponent {
 		this.getData();
 
 
-		this.socket.getEventListener().subscribe(event => {
-			if(event.type == MESSAGE) {
-				let data = JSON.parse(event.data.data);
-				
-				let e = new Event();
-				Object.assign(e, data);
-				this.events.push(e);
-
-				// do stuff with event
-				this.updateUI(e);
-			} else if(event.type == CLOSE) {
-				this.messages.push("The socket connection has been closed");
-			} else if(event.type == OPEN) {
-				this.messages.push("The socket connection has been opened");
-			}
-		})	
+//		this.socket.getEventListener().subscribe(event => {
+//			if(event.type == MESSAGE) {
+//				let data = JSON.parse(event.data.data);
+//				
+//				let e = new Event();
+//				Object.assign(e, data);
+//				this.events.push(e);
+//
+//				// do stuff with event
+//				this.updateUI(e);
+//			} else if(event.type == CLOSE) {
+//				this.messages.push("The socket connection has been closed");
+//			} else if(event.type == OPEN) {
+//				this.messages.push("The socket connection has been opened");
+//			}
+//		})	
 	} 
 
 	public ngOnDestroy() {

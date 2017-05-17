@@ -19,8 +19,6 @@ export class SocketService {
 		}
 
 		this.socket.onmessage = event => {
-//			console.log("Message recieved");
-//			console.log(event);
 			this.listener.emit({"type": MESSAGE, "data": event});
 		}
 	}

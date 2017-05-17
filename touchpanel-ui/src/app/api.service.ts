@@ -41,15 +41,14 @@ export class APIService {
 		let body = JSON.stringify(data);
 		console.log("putting:", data, "to", this.url, "with options", this.options);
 
-		return this.http.put(this.url, body, this.options).map((res: Response) => res.json())
-				.catch(this.handleError);
+		this.http.put(this.url, data, this.options).map((res: Response) => res.json()).subscribe();
 	}
 
 	publish(event: any) {
 		let body = JSON.stringify(event);
 		console.log("publishing:", event);
 
-		this.http.post("http://localhost:8888/publish", body, this.options).map((res: Response) => res.json());
+		this.http.post("http://localhost:8888/publish", body, this.options).map((res: Response) => res.json()).subscribe();
 	}
 
 	handleError(error: Response | any) {
