@@ -37,11 +37,11 @@ export class APIService {
 				.map(response => response.json());
 	}
 
-	postData(data: any) {
+	putData(data: any) {
 		let body = JSON.stringify(data);
-		console.log("posting:", data);	
+		console.log("putting:", data, "to", this.url, "with headers", this.headers);
 
-		this.http.post(this.url, body, this.options).map((res: Response) => res.json());
+		return this.http.put(this.url, body, this.options).map((res: Response) => res.json());
 	}
 
 	publish(event: any) {

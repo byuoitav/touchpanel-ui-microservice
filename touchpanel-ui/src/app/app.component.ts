@@ -18,13 +18,14 @@ export class AppComponent {
 	volume: number;
 	muted: boolean;
 	inputs: Array<DisplayInputMap>;
-	currInputs: Array<DisplayInputMap>;
+	displays: Array<DisplayInputMap>;
+	roomOutput: DisplayInputMap;
 
 	public constructor(private socket: SocketService, private api: APIService) {
 		this.messages = [];
 		this.events = [];
 		this.inputs = [];
-		this.currInputs = [];
+		this.displays = [];
 	}
 
 	public ngOnInit() {
@@ -55,6 +56,7 @@ export class AppComponent {
 		this.socket.close();
 	}
 
+	// this need to be done eventually
 	updateUI(e: Event) {
 		console.log("update ui based on event:", e);	
 
@@ -86,10 +88,6 @@ export class AppComponent {
 					this.setType(d);
 			}
 			
-//			for (let d of this.room.config.devices) {
-//				if (this.hasRole(d, 'VideoOut'))
-//					this.getInput(d);
-//			}
 			this.getInputs();
 		})
 	}
@@ -107,11 +105,25 @@ export class AppComponent {
 			this.muted = false;
 		else
 			this.muted = true;
+
+		let body = {
+			"name": this.roomOutput.name,
+			"muted": this.muted
+		}
+		this.api.putData(body);
 	}
 
 	updateVolume(volume: number) {
-		console.log("curr volume", volume);
 		this.volume = volume;
+
+		let body = {
+			"audioDevices": [{
+				"name": this.roomOutput.name,
+				"volume": this.volume
+			}]
+		};
+
+		this.api.putData(body);
 	}
 
 	setType(d: Device) {
@@ -141,12 +153,12 @@ export class AppComponent {
 					let dm = new DisplayInputMap();
 					dm.name = display.name;
 					dm.type = input.type; 
-					this.currInputs.push(dm);
+					this.displays.push(dm);
 				}
 			}	
 		}
 
-		for (let display of this.currInputs) {
+		for (let display of this.displays) {
 			for (let device of this.room.config.devices) {
 				if (display.name == device.name) {
 					display.displayName = device.display_name;
@@ -154,5 +166,7 @@ export class AppComponent {
 				}
 			}
 		}
+
+		this.roomOutput = this.displays[1];
 	}
 }

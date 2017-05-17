@@ -28,6 +28,7 @@ html, body {
 
 .output-devices {
 	margin-top: 10vh;
+	justify-content: space-around;
 }
 
 .input-devices {
@@ -63,13 +64,13 @@ html, body {
 }
 
 .output-device i {
-	font-size: 8vh;
+	font-size: 11vh;
 }
 
 .input-device i {
-	font-size: 7vh;
+	font-size: 8vh;
 }
 
 .space {
-	height: 150%;
+	height: 130%;
 }
