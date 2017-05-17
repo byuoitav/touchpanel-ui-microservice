@@ -4,16 +4,16 @@
 	<!-- main -->
     <div class='column col-sm-9 devices'>
         <div class='row row-centered output-devices'>
-            <div *ngFor='let device of room.config.devices'>
-				<div class='col-sm-1 col-centered output-device' *ngIf="hasRole(device, 'VideoOut')">
-               		<span class ='output-device-name'>{{device.name}}</span>
-               		<img class='output-device-icon'/>
+            <div *ngFor='let device of currInputs'>
+				<div class='col-sm-1 col-centered output-device'>
+               		<span class='output-device-name'>{{device.displayName}}</span>
+					<i class='material-icons'>{{device.type}}</i>
 				</div>
             </div>
         </div>
 
 		<!-- spacing between output/input devices -->
-		<div class='row row-centered'>
+		<div class='space'>
 		</div>
 
 		<!-- 
@@ -25,10 +25,10 @@
 		-->
 
         <div class='row row-centered input-devices'>
-            <div *ngFor='let device of room.config.devices'>
-				<div class='col-sm-1 col-centered input-device' *ngIf="hasRole(device, 'VideoOut')">
+            <div *ngFor='let device of inputs'>
+				<div class='col-sm-1 col-centered input-device'>
+					<i class='material-icons'>{{device.type}}</i>
                		<span class='input-device-name'>{{device.name}}</span>
-               		<img class='input-device-icon'/>
 				</div>
             </div>
         </div>
@@ -41,10 +41,15 @@
 			<i class="material-icons">power_settings_new</i>
         </div>
         <div class="mute">
-			<i class="material-icons">volume_up</i>
+			<div *ngIf="muted" (click)="toggleMute()">
+				<i class="material-icons">volume_off</i>
+			</div>
+			<div *ngIf="!muted" (click)="toggleMute()">
+				<i class="material-icons">volume_up</i>
+			</div>
         </div>
-        <div class="volume">
-			<md-slider vertical thumbLabel tickInterval="5"></md-slider>
+        <div class='volume'>
+			<md-slider vertical thumbLabel tickInterval='auto' (change)="updateVolume($event.value)"></md-slider>
         </div>
     </div>
 

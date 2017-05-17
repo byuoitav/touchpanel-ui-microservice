@@ -1,12 +1,16 @@
 html, body {
 	height: 100%;
+	margin: 0;
+}
+
+.basediv {
+	height: 100%;
+	min-height: 100%;
 }
 
 .basediv, .row {
-	height: 100%;
 	margin-left: 0;
 	margin-right: 0;	
-	min-height: 100%;
 }
 
 .sidebar {
@@ -43,9 +47,29 @@ html, body {
 
 .power i,
 .mute i {
-	font-size: 8vh;
+	font-size: 9vh;
 }
 
 .volume {
 	min-height: 40vh;	
+}
+
+.output-device,
+.input-device {
+	display: flex;
+	flex-direction: column;
+	justify-conent: center;
+	align-items: center;
+}
+
+.output-device i {
+	font-size: 8vh;
+}
+
+.input-device i {
+	font-size: 7vh;
+}
+
+.space {
+	height: 150%;
 }
