@@ -61,6 +61,8 @@ export class AppComponent {
 		console.log("update ui based on event:", e);	
 
 		switch(e.eventInfoKey) {
+			case "input":
+				break;
 			case "power":
 				break;
 			case "volume":
@@ -190,6 +192,6 @@ export class AppComponent {
 			}
 		}
 
-		this.roomOutput = this.displays[1];
+		this.roomOutput = this.displays[0];
 	}
 }
