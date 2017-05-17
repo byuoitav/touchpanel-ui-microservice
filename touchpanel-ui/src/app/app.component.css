@@ -29,3 +29,23 @@ html, body {
 .input-devices {
 
 }
+
+.sidebar {
+	display: flex;
+	flex-direction: column;
+	justify-content: space-around;
+}
+
+.sidebar div {
+	display: flex;
+	justify-content: center;
+}
+
+.power i,
+.mute i {
+	font-size: 8vh;
+}
+
+.volume {
+	min-height: 40vh;	
+}
