@@ -1,0 +1,77 @@
+<div class='basediv'>
+<div class='row'>
+
+	<!-- main -->
+    <div class='column col-sm-9 devices'>
+        <div class='row row-centered output-devices'>
+            <div *ngFor='let device of displays'>
+				<div class='col-sm-2 col-centered output-device' (click)="setOutputDevice(device)">
+               		<span class='output-device-name'>{{device.displayName}}</span>
+					<i class='material-icons'>{{device.type}}</i>
+				</div>
+            </div>
+        </div>
+
+		<!-- spacing between output/input devices -->
+		<div class='space'>
+		</div>
+
+		<!-- 
+		<div class='row row-centered blank'>
+			<div class='col-centered'>	
+				blank
+			</div>
+		</div>
+		-->
+
+        <div class='row row-centered input-devices'>
+            <div *ngFor='let device of inputs'>
+				<div class='col-sm-1 col-centered input-device' (click)="setInputDevice(device)">
+					<i class='material-icons'>{{device.type}}</i>
+               		<span class='input-device-name'>{{device.name}}</span>
+				</div>
+            </div>
+        </div>
+    </div>
+
+
+	<!-- sidebar -->
+    <div class='column col-sm-3 sidebar'>
+        <div class="power">
+			<i class="material-icons">power_settings_new</i>
+        </div>
+        <div class="mute">
+			<div *ngIf="muted" (click)="toggleMute()">
+				<i class="material-icons">volume_off</i>
+			</div>
+			<div *ngIf="!muted" (click)="toggleMute()">
+				<i class="material-icons">volume_up</i>
+			</div>
+        </div>
+        <div class='volume'>
+			<md-slider vertical thumbLabel tickInterval='auto' (change)="updateVolume($event.value)"></md-slider>
+        </div>
+    </div>
+
+</div>
+</div>
+
+<!--
+<h3>Messages</h3>
+<div *ngFor="let m of messages">
+	<pre>{{m | json}}</pre>
+</div>
+<h3>Events</h3>
+<div *ngFor="let event of events">
+	<pre>{{event | json}}</pre>
+</div>
+
+<h3>RoomData</h3>
+<pre>{{room | json}}</pre>
+
+<h3>Displays</h3>
+<pre>{{room.config.displays | json}}</pre>
+
+<h3>audioDevices</h3>
+<pre>{{room.config.audioDevices | json}}</pre>
+-->
