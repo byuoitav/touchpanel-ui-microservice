@@ -4,7 +4,6 @@ import { Observable } from 'rxjs/Rx';
 
 import { APIService } from './api.service';
 import { Room, RoomConfiguration, RoomStatus, Event, Device, DisplayInputMap } from './objects';
-
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -30,26 +29,27 @@ export class AppComponent {
 
 	public ngOnInit() {
 		this.api.setup("ITB", "1101");
+		this.muted = false;
 		this.room = new Room();
 		this.getData();
 
 
-//		this.socket.getEventListener().subscribe(event => {
-//			if(event.type == MESSAGE) {
-//				let data = JSON.parse(event.data.data);
-//				
-//				let e = new Event();
-//				Object.assign(e, data);
-//				this.events.push(e);
-//
-//				// do stuff with event
-//				this.updateUI(e);
-//			} else if(event.type == CLOSE) {
-//				this.messages.push("The socket connection has been closed");
-//			} else if(event.type == OPEN) {
-//				this.messages.push("The socket connection has been opened");
-//			}
-//		})	
+		this.socket.getEventListener().subscribe(event => {
+			if(event.type == MESSAGE) {
+				let data = JSON.parse(event.data.data);
+				
+				let e = new Event();
+				Object.assign(e, data);
+				this.events.push(e);
+
+				// do stuff with event
+				this.updateUI(e);
+			} else if(event.type == CLOSE) {
+				this.messages.push("The socket connection has been closed");
+			} else if(event.type == OPEN) {
+				this.messages.push("The socket connection has been opened");
+			}
+		})	
 	} 
 
 	public ngOnDestroy() {
@@ -64,6 +64,10 @@ export class AppComponent {
 			case "power":
 				break;
 			case "volume":
+				break;
+			case "Muted":
+				let isTrue = (e.eventInfoValue == 'true');
+				this.muted = isTrue; 
 				break;
 			default:
 				console.log("unknown eventInfoKey:", e.eventInfoKey);
@@ -107,9 +111,11 @@ export class AppComponent {
 			this.muted = true;
 
 		let body = {
-			"name": this.roomOutput.name,
-			"muted": this.muted
-		}
+			"audioDevices": [{
+				"name": this.roomOutput.name,
+				"muted": this.muted 
+			}]
+		};
 		this.api.putData(body);
 	}
 
@@ -122,7 +128,24 @@ export class AppComponent {
 				"volume": this.volume
 			}]
 		};
+		this.api.putData(body);
+	}
 
+	setOutputDevice(d: DisplayInputMap) {
+		console.log("changing output to", d.displayName);
+		this.roomOutput = d;
+	}
+
+	setInputDevice(d: DisplayInputMap) {
+		console.log("changing input of", this.roomOutput.displayName, "to", d.name);
+		this.roomOutput.type = d.type;
+		
+		let body = {
+			"displays": [{
+				"name": this.roomOutput.name,
+				"input": d.name 
+			}]
+		};
 		this.api.putData(body);
 	}
 

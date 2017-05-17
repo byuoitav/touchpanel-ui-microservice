@@ -5,7 +5,7 @@
     <div class='column col-sm-9 devices'>
         <div class='row row-centered output-devices'>
             <div *ngFor='let device of displays'>
-				<div class='col-sm-2 col-centered output-device'>
+				<div class='col-sm-2 col-centered output-device' (click)="setOutputDevice(device)">
                		<span class='output-device-name'>{{device.displayName}}</span>
 					<i class='material-icons'>{{device.type}}</i>
 				</div>
@@ -26,7 +26,7 @@
 
         <div class='row row-centered input-devices'>
             <div *ngFor='let device of inputs'>
-				<div class='col-sm-1 col-centered input-device'>
+				<div class='col-sm-1 col-centered input-device' (click)="setInputDevice(device)">
 					<i class='material-icons'>{{device.type}}</i>
                		<span class='input-device-name'>{{device.name}}</span>
 				</div>
