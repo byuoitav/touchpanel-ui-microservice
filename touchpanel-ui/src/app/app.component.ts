@@ -159,6 +159,7 @@ export class AppComponent {
 	updateVolume(volume: number) {
 		this.volume = volume;
 
+        //currently we only have videoout devices
 		let body = {
 			"audioDevices": [{
 				"name": this.roomOutput.name,
@@ -170,19 +171,23 @@ export class AppComponent {
 
 	setOutputDevice(d: DisplayInputMap) {
 		console.log("changing output to", d.displayName);
+        d.selected = !d.selected;
 		this.roomOutput = d;
 	}
 
 	setInputDevice(d: DisplayInputMap) {
 		console.log("changing input of", this.roomOutput.displayName, "to", d.name);
-		this.roomOutput.type = d.type;
-		
-		let body = {
-			"displays": [{
-				"name": this.roomOutput.name,
-				"input": d.name 
-			}]
-		};
+
+        var body = {displays: []}
+        for (let display of this.displays) {
+            if (display.selected) {
+                display.type = d.type;
+                body.displays.push({
+                        "name": display.name,
+                        "input": d.name 
+                    }); 
+            }
+        }
 		this.api.putData(body);
 	}
 
