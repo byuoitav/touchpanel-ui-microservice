@@ -5,9 +5,9 @@
     <div class='column col-sm-9 devices'>
         <div class='row row-centered output-devices'>
             <div *ngFor='let device of displays'>
-                <div  class='col-sm-2 col-centered output-device' (click)="setOutputDevice(device)">
-               		<span [class.inactive]="!device.selected" class='output-device-name'>{{device.displayName}}</span>
-					<i [class.inactive]="!device.selected" class='material-icons'>{{device.type}}</i>
+                <div [class.aligncenter]="!device.selected" class='col-sm-2 col-centered output-device icon-transition' (click)="setOutputDevice(device)">
+               		<span [class.inactive]="!device.selected" class='output-device-name icon-transition'>{{device.displayName}}</span>
+					<i [class.inactive]="!device.selected" class='material-icons icon-transition'>{{device.type}}</i>
 				</div>
             </div>
         </div>
@@ -27,7 +27,7 @@
         <div class='row row-centered input-devices'>
             <div *ngFor='let device of inputs'>
 				<div class='col-sm-1 col-centered input-device' (click)="setInputDevice(device)">
-					<i class='material-icons'>{{device.type}}</i>
+					<i class='material-icons icon-transition'>{{device.type}}</i>
                		<span class='input-device-name'>{{device.name}}</span>
 				</div>
             </div>
@@ -49,7 +49,7 @@
 			</div>
         </div>
         <div class='volume'>
-			<md-slider vertical thumbLabel tickInterval='auto' (change)="updateVolume($event.value)"></md-slider>
+			<md-slider vertical thumbLabel tickInterval='auto' [value]="volume" (change)="updateVolume($event.value)"></md-slider>
         </div>
     </div>
 
