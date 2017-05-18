@@ -2,10 +2,10 @@
 <div class='row'>
 
 	<!-- main -->
-    <div class='column col-sm-9 devices'>
+    <div class='column col-sm-9'>
         <div class='row row-centered output-devices'>
             <div *ngFor='let device of displays'>
-                <div [class.aligncenter]="!device.selected" class='col-sm-2 col-centered output-device icon-transition' (click)="setOutputDevice(device)">
+                <div class='output-device icon-transition' (click)="setOutputDevice(device)">
                		<span [class.inactive]="!device.selected" class='output-device-name icon-transition'>{{device.displayName}}</span>
 					<i [class.inactive]="!device.selected" class='material-icons icon-transition'>{{device.type}}</i>
 				</div>
@@ -25,8 +25,8 @@
 		-->
 
         <div class='row row-centered input-devices'>
-            <div *ngFor='let device of inputs'>
-				<div class='col-sm-1 col-centered input-device' (click)="setInputDevice(device)">
+            <div class="col-sm-2" *ngFor='let device of inputs'>
+				<div class='input-device' (click)="setInputDevice(device)">
 					<i class='material-icons icon-transition'>{{device.type}}</i>
                		<span class='input-device-name'>{{device.name}}</span>
 				</div>
@@ -55,8 +55,8 @@
 
 </div>
 </div>
-<div class='overlay basediv' *ngIf="!showing" [@fadeInOut] (click)="enterScreen()">
-    <img class='loading-img spinner' src='assets/byu_medallion_black_white.svg'>
+<div class='overlay basediv'  *ngIf="!showing" [@fadeInOut] (click)="enterScreen()">
+    <img class='loading-img' [class.spinner]='!startSpinning' [class.spin_fast]='startSpinning'  src='assets/byu_medallion_black_white.svg'>
 </div>
 <!--
 <h3>Messages</h3>

@@ -35,13 +35,15 @@ export class AppComponent {
     powerIcon: string;
     showing: boolean
     currentAudioLevel: number;
+    startSpinning: boolean;
 
 	public constructor(private socket: SocketService, private api: APIService) {
 		this.messages = [];
 		this.events = [];
 		this.inputs = [];
 		this.displays = [];
-        this.showing = true;
+        this.showing = false;
+        this.startSpinning = false;
 	}
 
 	public ngOnInit() {
@@ -76,12 +78,14 @@ export class AppComponent {
 	}
 
     enterScreen() {
+        this.startSpinning = true;
         let body = {
             "power": "on"
         };
         this.api.putData(body).subscribe(data => {
              this.showing = true;
              this.updateState();
+            this.startSpinning = false;
         });;
     }
 
