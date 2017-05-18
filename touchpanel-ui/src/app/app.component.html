@@ -37,8 +37,8 @@
 
 	<!-- sidebar -->
     <div class='column col-sm-3 sidebar'>
-        <div class="power">
-			<i class="material-icons">power_settings_new</i>
+        <div class="power" (click)="togglePower()">
+            <i class="material-icons">{{powerIcon}}</i>
         </div>
         <div class="mute">
 			<div *ngIf="muted" (click)="toggleMute()">
@@ -55,7 +55,9 @@
 
 </div>
 </div>
-
+<div class='overlay basediv' *ngIf="!showing" [@fadeInOut] (click)="enterScreen()">
+    <img class='loading-img spinner' src='assets/byu_medallion_black_white.svg'>
+</div>
 <!--
 <h3>Messages</h3>
 <div *ngFor="let m of messages">
