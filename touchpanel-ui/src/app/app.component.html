@@ -55,8 +55,8 @@
 
 </div>
 </div>
-<div class='overlay basediv' *ngIf="!showing" [@fadeInOut] (click)="enterScreen()">
-    <img class='loading-img spinner' src='assets/byu_medallion_black_white.svg'>
+<div class='overlay basediv'  *ngIf="!showing" [@fadeInOut] (click)="enterScreen()">
+    <img class='loading-img' [class.spinner]='!startSpinning' [class.spin_fast]='startSpinning'  src='assets/byu_medallion_black_white.svg'>
 </div>
 <!--
 <h3>Messages</h3>
