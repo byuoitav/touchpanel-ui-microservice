@@ -25,10 +25,16 @@
 		-->
 
         <div class='row row-centered input-devices'>
+			<div class="col-sm-2">
+				<div class='input-device' (click)="blank()">
+					<i class='material-icons icon-transition'>panorama_wide_angle</i>
+               		<span class='input-device-name'>Blank</span>
+				</div>
+			</div>
             <div class="col-sm-2" *ngFor='let device of inputs'>
 				<div class='input-device' (click)="setInputDevice(device)">
 					<i class='material-icons icon-transition'>{{device.type}}</i>
-               		<span class='input-device-name'>{{device.name}}</span>
+               		<span class='input-device-name'>{{device.displayName}}</span>
 				</div>
             </div>
         </div>

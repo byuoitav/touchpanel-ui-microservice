@@ -30,7 +30,6 @@ export class AppComponent {
 	muted: boolean;
 	inputs: Array<DisplayInputMap>;
 	displays: Array<DisplayInputMap>;
-	roomOutput: DisplayInputMap;
     powerState: boolean;
     powerIcon: string;
     showing: boolean
@@ -47,10 +46,9 @@ export class AppComponent {
 	}
 
 	public ngOnInit() {
-		this.api.setup("ITB", "1101");
+		this.getData();
 		this.muted = false;
 		this.room = new Room();
-		this.getData();
         this.powerState = false;
         this.powerIcon = "power_settings_new"
 
@@ -85,8 +83,8 @@ export class AppComponent {
         this.api.putData(body).subscribe(data => {
              this.showing = true;
              this.updateState();
-            this.startSpinning = false;
-        });;
+             this.startSpinning = false;
+        });
     }
 
 	// this need to be done eventually
@@ -99,6 +97,8 @@ export class AppComponent {
 			case "power":
 				break;
 			case "volume":
+				this.muted = false;
+				this.volume = Number(e.eventInfoValue);
 				break;
 			case "Muted":
 				let isTrue = (e.eventInfoValue == 'true');
@@ -120,23 +120,27 @@ export class AppComponent {
     }
 
 	getData()  {
-		this.api.getRoomConfig().subscribe(data => {
-			this.room.config = new RoomConfiguration();
-			Object.assign(this.room.config, data);
-			console.log("roomconfig:", this.room.config);
-		});
+		this.api.setup();
 
-		this.api.getRoomStatus().subscribe(data => {
-			this.room.status = new RoomStatus();
-			Object.assign(this.room.status, data);
-			console.log("roomstatus:", this.room.status);	
-
-			for (let d of this.room.config.devices) {
-				if (this.hasRole(d, 'VideoIn'))
-					this.setType(d);
-			}
-
-            this.getInputs();
+		this.api.loaded.subscribe(data => {
+			this.api.getRoomConfig().subscribe(data => {
+				this.room.config = new RoomConfiguration();
+				Object.assign(this.room.config, data);
+				console.log("roomconfig:", this.room.config);
+			});
+	
+			this.api.getRoomStatus().subscribe(data => {
+				this.room.status = new RoomStatus();
+				Object.assign(this.room.status, data);
+				console.log("roomstatus:", this.room.status);	
+	
+				for (let d of this.room.config.devices) {
+					if (this.hasRole(d, 'VideoIn'))
+						this.setType(d);
+				}
+	
+	            this.getInputs();
+			})
 		})
 	}
 
@@ -190,15 +194,26 @@ export class AppComponent {
 		this.api.putData(body);
 	}
 
+	blank() {
+        var body = {displays: []}
+        for (let display of this.displays) {
+            if (display.selected) {
+				display.type = "panorama_wide_angle"
+                body.displays.push({
+                        "name": display.name,
+                        "blanked": true 
+                    }); 
+            }
+        }
+		this.api.putData(body);
+	}
+
 	setOutputDevice(d: DisplayInputMap) {
 		console.log("changing output to", d.displayName);
         d.selected = !d.selected;
-		this.roomOutput = d;
 	}
 
 	setInputDevice(d: DisplayInputMap) {
-		console.log("changing input of", this.roomOutput.displayName, "to", d.name);
-
         var body = {displays: []}
         for (let display of this.displays) {
             if (display.selected) {
@@ -206,7 +221,8 @@ export class AppComponent {
                 display.input = d.name;
                 body.displays.push({
                         "name": display.name,
-                        "input": d.name 
+                        "input": d.name,
+						"blanked": false
                     }); 
             }
         }
@@ -216,12 +232,21 @@ export class AppComponent {
 	setType(d: Device) {
 		let dm = new DisplayInputMap();	
 		dm.name = d.name;
+		dm.displayName = d.display_name;
 		switch (d.type) {
 			case "hdmiin":
 				dm.type = "settings_input_hdmi";
 				break;
 			case "overflow":
-				dm.type = "people"
+				dm.type = "people";
+				break;
+			case "computer":
+				dm.type = "computer";
+				break;
+			case "iptv":
+				break;
+			case "appletv":
+				dm.type = "airplay";
 				break;
 			default:
 				dm.type = "generic input";
@@ -231,10 +256,6 @@ export class AppComponent {
 
 		console.log("added", dm.name, "of type", dm.type, "to inputs");
 	}
-
-    getIconForOutput() {
-
-    }
 
     updateInputs() {
         //go through the list of status and set the current input 
