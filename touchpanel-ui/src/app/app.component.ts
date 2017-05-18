@@ -1,6 +1,7 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, trigger, transition, style, animate, state} from '@angular/core';
 import { SocketService, OPEN, CLOSE, MESSAGE } from './socket.service';
 import { Observable } from 'rxjs/Rx';
+import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 
 import { APIService } from './api.service';
 import { Room, RoomConfiguration, RoomStatus, Event, Device, DisplayInputMap } from './objects';
@@ -8,7 +9,18 @@ import { Room, RoomConfiguration, RoomStatus, Event, Device, DisplayInputMap } f
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css'],
-  providers: [APIService, SocketService]
+  providers: [APIService, SocketService],
+  animations: [
+    trigger('fadeInOut', [
+      transition('void => *', [
+          style({opacity:0}), //style only for transition transition (after transiton it removes)
+          animate('2s', style({opacity:1})) // the new state of the transition(after transiton it removes)
+        ]),
+      transition('* => void', [
+          animate('2s', style({opacity:0})) // the new state of the transition(after transiton it removes)
+        ])
+    ])
+  ]
 })
 export class AppComponent {
 	messages: Array<any>;
@@ -19,12 +31,16 @@ export class AppComponent {
 	inputs: Array<DisplayInputMap>;
 	displays: Array<DisplayInputMap>;
 	roomOutput: DisplayInputMap;
+    powerState: boolean;
+    powerIcon: string;
+    showing: boolean
 
 	public constructor(private socket: SocketService, private api: APIService) {
 		this.messages = [];
 		this.events = [];
 		this.inputs = [];
 		this.displays = [];
+        this.showing = false;
 	}
 
 	public ngOnInit() {
@@ -32,6 +48,8 @@ export class AppComponent {
 		this.muted = false;
 		this.room = new Room();
 		this.getData();
+        this.powerState = false;
+        this.powerIcon = "power_settings_new"
 
 
 		this.socket.getEventListener().subscribe(event => {
@@ -55,6 +73,14 @@ export class AppComponent {
 	public ngOnDestroy() {
 		this.socket.close();
 	}
+
+    enterScreen() {
+        let body = {
+            "power": "on"
+        };
+        this.api.putData(body);
+        this.showing = true;
+    }
 
 	// this need to be done eventually
 	updateUI(e: Event) {
@@ -121,6 +147,15 @@ export class AppComponent {
 		this.api.putData(body);
 	}
 
+    togglePower() {
+        let body = {
+            "power": "standby"
+        };
+        this.powerIcon = "power_settings_new";
+        this.api.putData(body);
+        this.showing = !this.showing
+    }
+
 	updateVolume(volume: number) {
 		this.volume = volume;
 
@@ -170,8 +205,10 @@ export class AppComponent {
 		console.log("added", dm.name, "of type", dm.type, "to inputs");
 	}
 
+    //we need to allow for the case that the display is off, in which case it's status will come back with a blank input
 	getInputs() {
 		for (let display of this.room.status.displays) {
+            var has = false;
 			for (let input of this.inputs) {
 				if (display.input == input.name) {
 					console.log("display", display.name, "has input", input.name);
@@ -179,8 +216,15 @@ export class AppComponent {
 					dm.name = display.name;
 					dm.type = input.type; 
 					this.displays.push(dm);
+                    has = true;
 				}
 			}	
+            if (!has) {
+                let dm = new DisplayInputMap();
+                dm.name = display.name;
+                dm.type = "panorama_wide_angle";
+                this.displays.push(dm);
+            }
 		}
 
 		for (let display of this.displays) {
@@ -194,4 +238,4 @@ export class AppComponent {
 
 		this.roomOutput = this.displays[0];
 	}
-}
+} 
