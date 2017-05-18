@@ -34,13 +34,14 @@ export class AppComponent {
     powerState: boolean;
     powerIcon: string;
     showing: boolean
+    currentAudioLevel: number;
 
 	public constructor(private socket: SocketService, private api: APIService) {
 		this.messages = [];
 		this.events = [];
 		this.inputs = [];
 		this.displays = [];
-        this.showing = false;
+        this.showing = true;
 	}
 
 	public ngOnInit() {
@@ -78,8 +79,10 @@ export class AppComponent {
         let body = {
             "power": "on"
         };
-        this.api.putData(body);
-        this.showing = true;
+        this.api.putData(body).subscribe(data => {
+             this.showing = true;
+             this.updateState();
+        });;
     }
 
 	// this need to be done eventually
@@ -103,6 +106,15 @@ export class AppComponent {
 		}
 	}
 
+    updateState() {
+        this.api.getRoomStatus().subscribe(data => {
+			this.room.status = new RoomStatus();
+			Object.assign(this.room.status, data);
+			console.log("roomstatus:", this.room.status);	
+            this.updateInputs();
+        });
+    }
+
 	getData()  {
 		this.api.getRoomConfig().subscribe(data => {
 			this.room.config = new RoomConfiguration();
@@ -119,8 +131,8 @@ export class AppComponent {
 				if (this.hasRole(d, 'VideoIn'))
 					this.setType(d);
 			}
-			
-			this.getInputs();
+
+            this.getInputs();
 		})
 	}
 
@@ -137,13 +149,16 @@ export class AppComponent {
 			this.muted = false;
 		else
 			this.muted = true;
-
-		let body = {
-			"audioDevices": [{
-				"name": this.roomOutput.name,
-				"muted": this.muted 
-			}]
-		};
+        
+        var body = {audioDevices: []}
+        for (let speaker of this.displays) {
+            if (speaker.selected) {
+                body.audioDevices.push({
+    				"name": speaker.name,
+                    "muted": this.muted
+                });
+            }
+        }
 		this.api.putData(body);
 	}
 
@@ -159,30 +174,38 @@ export class AppComponent {
 	updateVolume(volume: number) {
 		this.volume = volume;
 
-		let body = {
-			"audioDevices": [{
-				"name": this.roomOutput.name,
-				"volume": this.volume
-			}]
-		};
+        var body = {audioDevices: []}
+        for (let speaker of this.displays) {
+            if (speaker.selected) {
+                body.audioDevices.push({
+    				"name": speaker.name,
+                    "volume": this.volume
+                });
+            }
+        }
 		this.api.putData(body);
 	}
 
 	setOutputDevice(d: DisplayInputMap) {
 		console.log("changing output to", d.displayName);
+        d.selected = !d.selected;
 		this.roomOutput = d;
 	}
 
 	setInputDevice(d: DisplayInputMap) {
 		console.log("changing input of", this.roomOutput.displayName, "to", d.name);
-		this.roomOutput.type = d.type;
-		
-		let body = {
-			"displays": [{
-				"name": this.roomOutput.name,
-				"input": d.name 
-			}]
-		};
+
+        var body = {displays: []}
+        for (let display of this.displays) {
+            if (display.selected) {
+                display.type = d.type;
+                display.input = d.name;
+                body.displays.push({
+                        "name": display.name,
+                        "input": d.name 
+                    }); 
+            }
+        }
 		this.api.putData(body);
 	}
 
@@ -205,6 +228,56 @@ export class AppComponent {
 		console.log("added", dm.name, "of type", dm.type, "to inputs");
 	}
 
+    getIconForOutput() {
+
+    }
+
+    updateInputs() {
+        //go through the list of status and set the current input 
+        for (let display of this.room.status.displays) {
+            for (let d of this.displays) {
+                //check to make sure we map
+                if (d.name == display.name) {
+                    //go through and get the device mapping to the input
+                    for (let input of this.inputs) {
+                        if (input.name == display.input) {
+                            d.input = input.name;
+                            d.type = input.type;
+                        }
+                    }
+                }
+            }
+        }
+
+
+        var first = true;
+        var count = 0;
+        //go through and get the volumes, if only one device is selected, set the current room volume to that level.
+        //else, i'm not sure. 
+        // for muted, if all are muted, set the icon to muted, else show it as open.
+        for (let speaker of this.room.status.audioDevices) {
+            for (let display of this.displays) {
+                if (speaker.name != display.name || !display.selected) {
+                    continue;
+                }
+                if (first) {
+                    //set the volume level
+                    this.volume = speaker.volume;
+                    count++;
+                    this.muted = speaker.muted;
+                } else {
+                    //average it in
+                    this.volume = ((this.volume * count) + speaker.volume)/ count + 1
+                    count++
+
+                    if (this.muted && !speaker.muted) {
+                        this.muted = false;
+                    }
+                }
+            }
+        }
+    }
+
     //we need to allow for the case that the display is off, in which case it's status will come back with a blank input
 	getInputs() {
 		for (let display of this.room.status.displays) {
@@ -215,6 +288,9 @@ export class AppComponent {
 					let dm = new DisplayInputMap();
 					dm.name = display.name;
 					dm.type = input.type; 
+
+                    //everything is selected by default;
+                    dm.selected = true;
 					this.displays.push(dm);
                     has = true;
 				}
@@ -223,6 +299,8 @@ export class AppComponent {
                 let dm = new DisplayInputMap();
                 dm.name = display.name;
                 dm.type = "panorama_wide_angle";
+                //everything is selected by default
+                dm.selected = true;
                 this.displays.push(dm);
             }
 		}
@@ -235,7 +313,5 @@ export class AppComponent {
 				}
 			}
 		}
-
-		this.roomOutput = this.displays[0];
 	}
 } 

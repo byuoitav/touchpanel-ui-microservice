@@ -19,9 +19,19 @@ html, body {
     align-items: center;
 } 
 
+.inactive {
+    color: rgba(0, 0, 0, 0.26);  
+    transform: scale(.75,.75) translatey(-20px);
+}
+
+
 .basediv {
 	height: 100%;
 	min-height: 100%;
+}
+
+.icon-transition {
+    transition: .2s; 
 }
 
 .basediv, .row {
@@ -29,6 +39,17 @@ html, body {
 	margin-right: 0;	
 }
 
+.selected {
+    background-color: #BDBDBD;
+}
+
+.selected:after {
+    background-color: #BDBDBD;
+}
+
+.selected:before {
+    background-color: #BDBDBD;
+}
 .sidebar {
 	background-color: #eee;
 	height: 100%;
@@ -45,16 +66,9 @@ html, body {
 .output-devices {
     margin-left: auto;
     margin-right: auto;
-	margin-top: 17%;
+	margin-top: 12%;
 	justify-content: space-around;
-    width: 80%
-}
-
-.output-device > div {
-} 
-
-.input-devices {
-
+    width: 80%;
 }
 
 .sidebar {
@@ -82,7 +96,16 @@ html, body {
 	display: flex;
 	flex-direction: column;
 	justify-conent: center;
+    align-items: center;
 }
+
+.input-device {
+
+}
+
+.aligncenter {
+    align-items:center; 
+} 
 
 .output-device i {
 	font-size: 16vh;
@@ -93,7 +116,7 @@ html, body {
 }
 
 .space {
-	height: 50%;
+	height: 60%;
 }
 
 .spinner {

@@ -54,4 +54,5 @@ export class DisplayInputMap {
 	displayName: string;
 	input: string;
 	type: string;
+    selected: boolean;
 }

@@ -37,11 +37,14 @@ export class APIService {
 				.map(response => response.json());
 	}
 
-	putData(data: any) {
+	putData(data: any): Observable<Object> {
 		let body = JSON.stringify(data);
 		console.log("putting:", data, "to", this.url, "with options", this.options);
 
-		this.http.put(this.url, data, this.options).map((res: Response) => res.json()).subscribe();
+        var val = this.http.put(this.url, data, this.options).map((res: Response) => res.json())
+        val.subscribe();
+
+		return val;
 	}
 
 	publish(event: any) {
