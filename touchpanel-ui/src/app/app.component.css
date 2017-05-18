@@ -24,10 +24,10 @@ html, body {
     transform: scale(.75,.75) translatey(-20px);
 }
 
-
 .basediv {
 	height: 100%;
 	min-height: 100%;
+	cursor: none;
 }
 
 .icon-transition {
