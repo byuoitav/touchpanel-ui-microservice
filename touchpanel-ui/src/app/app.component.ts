@@ -97,6 +97,8 @@ export class AppComponent {
 			case "power":
 				break;
 			case "volume":
+				this.muted = false;
+				this.volume = Number(e.eventInfoValue);
 				break;
 			case "Muted":
 				let isTrue = (e.eventInfoValue == 'true');
