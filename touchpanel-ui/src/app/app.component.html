@@ -44,7 +44,10 @@
 	<!-- sidebar -->
     <div class='column col-sm-3 sidebar'>
         <div class="power" (click)="togglePower()">
-            <i class="material-icons">{{powerIcon}}</i>
+            <i class="material-icons">power_settings_new</i>
+        </div>
+        <div class="help" (click)="showHelp()">
+            <i class="material-icons">help</i>
         </div>
         <div class="mute">
 			<div *ngIf="muted" (click)="toggleMute()">

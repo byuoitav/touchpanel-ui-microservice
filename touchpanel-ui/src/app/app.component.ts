@@ -5,6 +5,8 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 
 import { APIService } from './api.service';
 import { Room, RoomConfiguration, RoomStatus, Event, Device, DisplayInputMap } from './objects';
+declare var swal: any;
+
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -31,7 +33,6 @@ export class AppComponent {
 	inputs: Array<DisplayInputMap>;
 	displays: Array<DisplayInputMap>;
     powerState: boolean;
-    powerIcon: string;
     showing: boolean
     currentAudioLevel: number;
     startSpinning: boolean;
@@ -50,7 +51,6 @@ export class AppComponent {
 		this.muted = false;
 		this.room = new Room();
         this.powerState = false;
-        this.powerIcon = "power_settings_new"
 
 
 		this.socket.getEventListener().subscribe(event => {
@@ -101,8 +101,7 @@ export class AppComponent {
 				this.volume = Number(e.eventInfoValue);
 				break;
 			case "Muted":
-				let isTrue = (e.eventInfoValue == 'true');
-				this.muted = isTrue; 
+				this.muted = (e.eventInfoValue == 'true');
 				break;
 			default:
 				console.log("unknown eventInfoKey:", e.eventInfoKey);
@@ -144,6 +143,18 @@ export class AppComponent {
 		})
 	}
 
+	showHelp() {
+		swal({
+	 		title: 'Help',
+	  		type: 'info',
+	  		html:
+	    		'Please call the clerks at 801-111-111 for help.',
+	  		showCloseButton: true,
+	  		confirmButtonText:
+	    		'Done!',
+		})
+	}	
+
 	hasRole(d: Device, role: string): boolean {
 		for (let r of d.roles) {
 			if (r == role)
@@ -174,7 +185,6 @@ export class AppComponent {
         let body = {
             "power": "standby"
         };
-        this.powerIcon = "power_settings_new";
         this.api.putData(body);
         this.showing = !this.showing
     }

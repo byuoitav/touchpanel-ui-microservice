@@ -90,7 +90,8 @@ html, body {
 }
 
 .power i,
-.mute i {
+.mute i,
+.help i {
 	font-size: 9vh;
 }
 
