@@ -24,6 +24,34 @@ html, body {
     transform: scale(.75,.75) translatey(-20px);
 }
 
+.management {
+	position: fixed;
+	width: 100%;
+	height: 100%;
+}
+
+.management div {
+	position: fixed;
+	height: 20vh;
+	width: 20vh;
+}
+
+.top {
+	top: 0;
+}
+
+.right {
+	right: 0;	
+}
+
+.bottom {
+	bottom: 0;
+}
+
+.left {
+	left: 0;
+}
+
 .basediv {
 	height: 100%;
 	min-height: 100%;
@@ -90,7 +118,8 @@ html, body {
 }
 
 .power i,
-.mute i {
+.mute i,
+.help i {
 	font-size: 9vh;
 }
 
