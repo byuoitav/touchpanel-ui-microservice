@@ -39,6 +39,13 @@ func PublishEvent(context echo.Context) error {
 func Reboot(context echo.Context) error {
 	log.Printf("pi is rebooting")
 
-	exec.Command("sh", "-c", "reboot").Output()
+	out, err := exec.Command("sh", "-c", "reboot").Output()
+	if err != nil {
+		log.Printf("error rebooting %s", err.Error())
+		return context.JSON(http.StatusBadRequest, err.Error())
+	}
+
+	log.Printf("output of reboot: %s", out)
+
 	return nil
 }
