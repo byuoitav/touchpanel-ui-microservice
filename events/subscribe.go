@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+	"time"
 
 	"github.com/byuoitav/event-router-microservice/eventinfrastructure"
 	"github.com/gorilla/websocket"
@@ -38,10 +39,17 @@ func SubInit() {
 	var err error
 	Sub, err = subscriber.NewSubscriber(10)
 	if err != nil {
-		log.Fatalf("Could not create a subscriber. Error: %v\n", err.Error())
+		log.Printf("Could not create a subscriber. Error: %v\n", err.Error())
 	}
 
-	Sub.Subscribe("localhost:7000", []string{eventinfrastructure.UI})
+	for ok := true; ok; ok = (err != nil) {
+		err = Sub.Subscribe("localhost:7000", []string{eventinfrastructure.UI})
+		if err != nil {
+			log.Printf("Failed to subscribe to events on port :7000. Trying again...")
+			time.Sleep(1 * time.Second)
+		}
+	}
+
 	log.Printf("[Routing] Subscribed to %s events on port :7000", eventinfrastructure.UI)
 
 	go Manager.Start(UIFilter)
