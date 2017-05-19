@@ -47,6 +47,7 @@ export class AppComponent {
 	}
 
 	public ngOnInit() {
+		this.showManagement(); //remove me
 		this.getData();
 		this.muted = false;
 		this.room = new Room();
@@ -348,5 +349,98 @@ export class AppComponent {
 				}
 			}
 		}
+	}
+
+	man1: boolean;
+	man2: boolean;
+	man3: boolean;
+
+	management(n: number) {
+		switch(n) {
+			case 1:
+				if (!this.man1 && !this.man2 && !this.man3) {
+					this.man1 = true;
+					console.log("defcon 4");
+				}
+				else {
+					this.man1 = false;		
+					this.man2 = false;
+					this.man3 = false;
+					console.log("defcon 5");	
+				}
+				break;
+			case 2:
+				if (this.man1) {
+					this.man2 = true;
+					console.log("defcon 3");
+				}
+				else {
+					this.man1 = false;		
+					this.man2 = false;
+					this.man3 = false;
+					console.log("defcon 5");	
+				}
+				break;
+			case 3:
+				if (this.man1 && this.man2) {
+					this.man3 = true;
+					console.log("defcon 2");	
+				}
+				else {
+					this.man1 = false;
+					this.man2 = false;
+					this.man3 = false;
+					console.log("defcon 5");	
+				}
+				this.man3 = true;
+				break;
+			case 4:
+				if (this.man1 && this.man2 && this.man3) {
+					console.log("defcon 1");
+					this.man1 = false;
+					this.man2 = false;
+					this.man3 = false;
+					this.showManagement();
+				} else {
+					this.man1 = false;
+					this.man2 = false;
+					this.man3 = false;
+					console.log("defcon 5");	
+				}
+				break;
+			default:
+				this.man1 = false;
+				this.man2 = false;
+				this.man3 = false;
+				console.log("defcon 5");	
+				break;
+		}
+	}
+
+	showManagement() {
+		swal({
+	 		title: 'Management',
+	  		html:
+	    		`
+					<div style="display: flex; flex-direction: column; justify-content: center;">
+						<div style="display: flex; justify-content: center; padding-bottom: 2vh;">
+							<button class="btn btn-warning" onClick="refresh()">Refresh</button>
+						</div>
+						<div style="display: flex; justify-content: center; padding-bottom: 2vh;">
+							<button class="btn btn-info">Docker Status</button>
+						</div>
+						<div style="display: flex; justify-content: center;">
+							<button class="btn btn-danger" onClick="reboot()">Reboot</button>
+						</div>
+					</div>
+				`,
+	  		showCloseButton: true,
+	  		confirmButtonText:
+	    		'Done!',
+		})
+	}
+
+	refresh() {
+		console.log("refreshing page...");
 	}
 } 

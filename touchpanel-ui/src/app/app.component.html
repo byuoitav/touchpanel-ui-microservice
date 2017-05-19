@@ -66,7 +66,19 @@
 </div>
 <div class='overlay basediv'  *ngIf="!showing" [@fadeInOut] (click)="enterScreen()">
     <img class='loading-img' [class.spinner]='!startSpinning' [class.spin_fast]='startSpinning'  src='assets/byu_medallion_black_white.svg'>
+
 </div>
+	<!-- management dialog -->
+	<div class="management" *ngIf="!showing">
+		<div class="top right" (click)="management(1)">
+		</div>
+		<div class="top left" (click)="management(3)">
+		</div>
+		<div class="bottom left" (click)="management(2)">
+		</div>
+		<div class="bottom right" (click)="management(4)">
+		</div>
+	</div>
 <!--
 <h3>Messages</h3>
 <div *ngFor="let m of messages">
