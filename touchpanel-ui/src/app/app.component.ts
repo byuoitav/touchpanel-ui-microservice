@@ -47,6 +47,7 @@ export class AppComponent {
 	}
 
 	public ngOnInit() {
+		this.showManagement();
 		this.getData();
 		this.muted = false;
 		this.room = new Room();
@@ -431,6 +432,9 @@ export class AppComponent {
 					<div style="display: flex; flex-direction: column; justify-content: center;">
 						<div style="display: flex; justify-content: center; padding-bottom: 2vh;">
 							<button class="btn btn-warning" onClick="refresh()">Refresh</button>
+						</div>
+						<div style="display: flex; justify-content: center; padding-bottom: 2vh;">
+							<button class="btn btn-info" onClick="deviceInfo()">Device Info</button>
 						</div>
 						<div style="display: flex; justify-content: center; padding-bottom: 2vh;">
 							<button class="btn btn-info">Docker Status</button>
