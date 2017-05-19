@@ -47,7 +47,6 @@ export class AppComponent {
 	}
 
 	public ngOnInit() {
-		this.showManagement(); //remove me
 		this.getData();
 		this.muted = false;
 		this.room = new Room();
@@ -96,6 +95,13 @@ export class AppComponent {
 			case "input":
 				break;
 			case "power":
+				if (e.eventInfoValue == "on") {
+					this.showing = true;
+					this.updateState();
+					this.startSpinning = false;
+				} else {
+        			this.showing = false;
+				}
 				break;
 			case "volume":
 				this.muted = false;
@@ -182,7 +188,7 @@ export class AppComponent {
 		this.api.putData(body);
 	}
 
-    togglePower() {
+    powerOff() {
         let body = {
             "power": "standby"
         };
@@ -430,11 +436,11 @@ export class AppComponent {
 							<button class="btn btn-info">Docker Status</button>
 						</div>
 						<div style="display: flex; justify-content: center;">
-							<button class="btn btn-danger" onClick="reboot()">Reboot</button>
+							<button class="btn btn-danger" onClick="confirmreboot()">Reboot</button>
 						</div>
 					</div>
 				`,
-	  		showCloseButton: true,
+	  		showCloseButton: false,
 	  		confirmButtonText:
 	    		'Done!',
 		})

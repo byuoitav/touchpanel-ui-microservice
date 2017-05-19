@@ -1,8 +1,10 @@
 package handlers
 
 import (
+	"log"
 	"net/http"
 	"os"
+	"os/exec"
 
 	"github.com/byuoitav/event-router-microservice/eventinfrastructure"
 	"github.com/byuoitav/touchpanel-ui-microservice/events"
@@ -32,4 +34,11 @@ func PublishEvent(context echo.Context) error {
 	}
 
 	return context.JSON(http.StatusOK, event)
+}
+
+func Reboot(context echo.Context) error {
+	log.Printf("pi is rebooting")
+
+	exec.Command("sh", "-c", "reboot").Output()
+	return nil
 }
