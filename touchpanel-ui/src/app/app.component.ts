@@ -5,6 +5,8 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 
 import { APIService } from './api.service';
 import { Room, RoomConfiguration, RoomStatus, Event, Device, DisplayInputMap } from './objects';
+declare var swal: any;
+
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -31,7 +33,6 @@ export class AppComponent {
 	inputs: Array<DisplayInputMap>;
 	displays: Array<DisplayInputMap>;
     powerState: boolean;
-    powerIcon: string;
     showing: boolean
     currentAudioLevel: number;
     startSpinning: boolean;
@@ -50,7 +51,6 @@ export class AppComponent {
 		this.muted = false;
 		this.room = new Room();
         this.powerState = false;
-        this.powerIcon = "power_settings_new"
 
 
 		this.socket.getEventListener().subscribe(event => {
@@ -95,14 +95,20 @@ export class AppComponent {
 			case "input":
 				break;
 			case "power":
+				if (e.eventInfoValue == "on") {
+					this.showing = true;
+					this.updateState();
+					this.startSpinning = false;
+				} else {
+        			this.showing = false;
+				}
 				break;
 			case "volume":
 				this.muted = false;
 				this.volume = Number(e.eventInfoValue);
 				break;
 			case "Muted":
-				let isTrue = (e.eventInfoValue == 'true');
-				this.muted = isTrue; 
+				this.muted = (e.eventInfoValue == 'true');
 				break;
 			default:
 				console.log("unknown eventInfoKey:", e.eventInfoKey);
@@ -144,6 +150,18 @@ export class AppComponent {
 		})
 	}
 
+	showHelp() {
+		swal({
+	 		title: 'Help',
+	  		type: 'info',
+	  		html:
+	    		'Please call the clerks at 801-111-111 for help.',
+	  		showCloseButton: true,
+	  		confirmButtonText:
+	    		'Done!',
+		})
+	}	
+
 	hasRole(d: Device, role: string): boolean {
 		for (let r of d.roles) {
 			if (r == role)
@@ -170,11 +188,10 @@ export class AppComponent {
 		this.api.putData(body);
 	}
 
-    togglePower() {
+    powerOff() {
         let body = {
             "power": "standby"
         };
-        this.powerIcon = "power_settings_new";
         this.api.putData(body);
         this.showing = !this.showing
     }
@@ -338,5 +355,101 @@ export class AppComponent {
 				}
 			}
 		}
+	}
+
+	man1: boolean;
+	man2: boolean;
+	man3: boolean;
+
+	management(n: number) {
+		switch(n) {
+			case 1:
+				if (!this.man1 && !this.man2 && !this.man3) {
+					this.man1 = true;
+					console.log("defcon 4");
+				}
+				else {
+					this.man1 = false;		
+					this.man2 = false;
+					this.man3 = false;
+					console.log("defcon 5");	
+				}
+				break;
+			case 2:
+				if (this.man1) {
+					this.man2 = true;
+					console.log("defcon 3");
+				}
+				else {
+					this.man1 = false;		
+					this.man2 = false;
+					this.man3 = false;
+					console.log("defcon 5");	
+				}
+				break;
+			case 3:
+				if (this.man1 && this.man2) {
+					this.man3 = true;
+					console.log("defcon 2");	
+				}
+				else {
+					this.man1 = false;
+					this.man2 = false;
+					this.man3 = false;
+					console.log("defcon 5");	
+				}
+				this.man3 = true;
+				break;
+			case 4:
+				if (this.man1 && this.man2 && this.man3) {
+					console.log("defcon 1");
+					this.man1 = false;
+					this.man2 = false;
+					this.man3 = false;
+					this.showManagement();
+				} else {
+					this.man1 = false;
+					this.man2 = false;
+					this.man3 = false;
+					console.log("defcon 5");	
+				}
+				break;
+			default:
+				this.man1 = false;
+				this.man2 = false;
+				this.man3 = false;
+				console.log("defcon 5");	
+				break;
+		}
+	}
+
+	showManagement() {
+		swal({
+	 		title: 'Management',
+	  		html:
+	    		`
+					<div style="display: flex; flex-direction: column; justify-content: center;">
+						<div style="display: flex; justify-content: center; padding-bottom: 2vh;">
+							<button class="btn btn-warning" onClick="refresh()">Refresh</button>
+						</div>
+						<div style="display: flex; justify-content: center; padding-bottom: 2vh;">
+							<button class="btn btn-info" onClick="deviceInfo()">Device Info</button>
+						</div>
+						<div style="display: flex; justify-content: center; padding-bottom: 2vh;">
+							<button class="btn btn-info">Docker Status</button>
+						</div>
+						<div style="display: flex; justify-content: center;">
+							<button class="btn btn-danger" onClick="confirmreboot()">Reboot</button>
+						</div>
+					</div>
+				`,
+	  		showCloseButton: false,
+	  		confirmButtonText:
+	    		'Done!',
+		})
+	}
+
+	refresh() {
+		console.log("refreshing page...");
 	}
 } 

@@ -6,6 +6,7 @@ import (
 
 	"github.com/byuoitav/event-router-microservice/eventinfrastructure"
 	"github.com/byuoitav/touchpanel-ui-microservice/events"
+	"github.com/byuoitav/touchpanel-ui-microservice/helpers"
 	"github.com/labstack/echo"
 )
 
@@ -32,4 +33,13 @@ func PublishEvent(context echo.Context) error {
 	}
 
 	return context.JSON(http.StatusOK, event)
+}
+
+func GetDeviceInfo(context echo.Context) error {
+	di, err := helpers.GetDeviceInfo()
+	if err != nil {
+		return context.JSON(http.StatusBadRequest, err.Error())
+	}
+
+	return context.JSON(http.StatusOK, di)
 }

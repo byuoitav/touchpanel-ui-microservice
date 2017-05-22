@@ -23,6 +23,7 @@ func main() {
 	router.GET("/websocket", handlers.OpenWebSocket)
 	router.GET("/hostname", handlers.GetHostname)
 	router.PUT("/publish", handlers.PublishEvent)
+	router.GET("/deviceinfo", handlers.GetDeviceInfo)
 
 	router.Static("/", "dist")
 
