@@ -93,6 +93,21 @@ export class AppComponent {
 
 		switch(e.eventInfoKey) {
 			case "input":
+				let input: DisplayInputMap;
+				for (let i of this.inputs) {
+					if (i.name == e.eventInfoValue) {
+						input = i;
+						break;
+					}
+				}
+
+				for (let display of this.displays) {
+					if (display.name == e.device) {
+						display.type = input.type;
+						display.input = input.name;		
+						break;
+					}
+				}
 				break;
 			case "power":
 				if (e.eventInfoValue == "on") {
@@ -109,6 +124,9 @@ export class AppComponent {
 				break;
 			case "Muted":
 				this.muted = (e.eventInfoValue == 'true');
+				break;
+			case "blanked":
+					
 				break;
 			default:
 				console.log("unknown eventInfoKey:", e.eventInfoKey);
