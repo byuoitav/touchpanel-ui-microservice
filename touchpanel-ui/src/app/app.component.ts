@@ -103,6 +103,9 @@ export class AppComponent {
 
 				for (let display of this.displays) {
 					if (display.name == e.device) {
+						if (display.type == "panorama_wide_angle") {
+							break;	
+						}
 						display.type = input.type;
 						display.input = input.name;		
 						break;
