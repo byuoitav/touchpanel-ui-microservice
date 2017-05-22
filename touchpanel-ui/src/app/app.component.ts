@@ -126,7 +126,25 @@ export class AppComponent {
 				this.muted = (e.eventInfoValue == 'true');
 				break;
 			case "blanked":
-					
+				var d: DisplayInputMap;
+				for (let display of this.displays) {
+					if (display.name == e.device) {
+						d = display;
+						break;
+					}
+				}
+
+				if (e.eventInfoValue == "true") {
+					d.type = "panorama_wide_angle"	
+				}
+				else {
+					for (let i of this.inputs) {
+						if (i.name == d.input) {
+							d.type = i.type;	
+							break;
+						}
+					}
+				}
 				break;
 			default:
 				console.log("unknown eventInfoKey:", e.eventInfoKey);
