@@ -454,7 +454,7 @@ export class AppComponent {
 							<button class="btn btn-info" onClick="deviceInfo()">Device Info</button>
 						</div>
 						<div style="display: flex; justify-content: center; padding-bottom: 2vh;">
-							<button class="btn btn-info">Docker Status</button>
+							<button class="btn btn-info" onClick="dockerStatus()">Docker Status</button>
 						</div>
 						<div style="display: flex; justify-content: center;">
 							<button class="btn btn-danger" onClick="confirmreboot()">Reboot</button>
