@@ -227,6 +227,14 @@
 			"notests": true
 		},
 		{
+			"importpath": "github.com/xuther/go-message-router",
+			"repository": "https://github.com/xuther/go-message-router",
+			"vcs": "git",
+			"revision": "643f0df22553492f20c3932aaac8cbbd51b7d54d",
+			"branch": "master",
+			"notests": true
+		},
+		{
 			"importpath": "golang.org/x/crypto/ocsp",
 			"repository": "https://go.googlesource.com/crypto",
 			"vcs": "git",
