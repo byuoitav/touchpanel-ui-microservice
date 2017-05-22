@@ -1,13 +1,12 @@
 package handlers
 
 import (
-	"log"
 	"net/http"
 	"os"
-	"os/exec"
 
 	"github.com/byuoitav/event-router-microservice/eventinfrastructure"
 	"github.com/byuoitav/touchpanel-ui-microservice/events"
+	"github.com/byuoitav/touchpanel-ui-microservice/helpers"
 	"github.com/labstack/echo"
 )
 
@@ -36,16 +35,11 @@ func PublishEvent(context echo.Context) error {
 	return context.JSON(http.StatusOK, event)
 }
 
-func Reboot(context echo.Context) error {
-	log.Printf("pi is rebooting")
-
-	out, err := exec.Command("sh", "-c", "reboot").Output()
+func GetDeviceInfo(context echo.Context) error {
+	di, err := helpers.GetDeviceInfo()
 	if err != nil {
-		log.Printf("error rebooting %s", err.Error())
 		return context.JSON(http.StatusBadRequest, err.Error())
 	}
 
-	log.Printf("output of reboot: %s", out)
-
-	return nil
+	return context.JSON(http.StatusOK, di)
 }
