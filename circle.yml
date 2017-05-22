@@ -23,6 +23,7 @@ dependencies:
                 gvt fetch -branch stage github.com/byuoitav/av-api
             elif [ $CIRCLE_BRANCH = "production" ]; then 
                 gvt fetch -branch production github.com/byuoitav/av-api
+            fi
 
 compile:
     override:
