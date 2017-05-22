@@ -47,7 +47,6 @@ export class AppComponent {
 	}
 
 	public ngOnInit() {
-		this.showManagement();
 		this.getData();
 		this.muted = false;
 		this.room = new Room();
