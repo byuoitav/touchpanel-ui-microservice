@@ -33,7 +33,7 @@
 				console.log("rebooting");
 				$.ajax({
 					type: "GET",
-					url: "localhost:7010/reboot",
+					url: "http://localhost:8888/reboot",
 					headers: {
 						'Access-Control-Allow-Origin': '*'
 					},
@@ -84,7 +84,7 @@
 			var dockerstatus;
 			$.ajax({
 				type: "GET",
-					url: "localhost:7010/dockerStatus",
+					url: "http://localhost:8888/dockerstatus",
 					async: false,
 					headers: {
 						'Access-Control-Allow-Origin': '*'

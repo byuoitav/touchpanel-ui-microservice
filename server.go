@@ -24,6 +24,8 @@ func main() {
 	router.GET("/hostname", handlers.GetHostname)
 	router.PUT("/publish", handlers.PublishEvent)
 	router.GET("/deviceinfo", handlers.GetDeviceInfo)
+	router.GET("/reboot", handlers.Reboot)
+	router.GET("/dockerstatus", handlers.GetDockerStatus)
 
 	router.Static("/", "dist")
 
