@@ -57,6 +57,7 @@ html, body {
 	height: 100%;
 	min-height: 100%;
 	cursor: none;
+	min-width: 100%;
 }
 
 .icon-transition {
