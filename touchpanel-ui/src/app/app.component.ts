@@ -93,6 +93,24 @@ export class AppComponent {
 
 		switch(e.eventInfoKey) {
 			case "input":
+				let input: DisplayInputMap;
+				for (let i of this.inputs) {
+					if (i.name == e.eventInfoValue) {
+						input = i;
+						break;
+					}
+				}
+
+				for (let display of this.displays) {
+					if (display.name == e.device) {
+						if (display.type == "panorama_wide_angle") {
+							break;	
+						}
+						display.type = input.type;
+						display.input = input.name;		
+						break;
+					}
+				}
 				break;
 			case "power":
 				if (e.eventInfoValue == "on") {
@@ -109,6 +127,27 @@ export class AppComponent {
 				break;
 			case "Muted":
 				this.muted = (e.eventInfoValue == 'true');
+				break;
+			case "blanked":
+				var d: DisplayInputMap;
+				for (let display of this.displays) {
+					if (display.name == e.device) {
+						d = display;
+						break;
+					}
+				}
+
+				if (e.eventInfoValue == "true") {
+					d.type = "panorama_wide_angle"	
+				}
+				else {
+					for (let i of this.inputs) {
+						if (i.name == d.input) {
+							d.type = i.type;	
+							break;
+						}
+					}
+				}
 				break;
 			default:
 				console.log("unknown eventInfoKey:", e.eventInfoKey);
@@ -436,7 +475,7 @@ export class AppComponent {
 							<button class="btn btn-info" onClick="deviceInfo()">Device Info</button>
 						</div>
 						<div style="display: flex; justify-content: center; padding-bottom: 2vh;">
-							<button class="btn btn-info">Docker Status</button>
+							<button class="btn btn-info" onClick="dockerStatus()">Docker Status</button>
 						</div>
 						<div style="display: flex; justify-content: center;">
 							<button class="btn btn-danger" onClick="confirmreboot()">Reboot</button>

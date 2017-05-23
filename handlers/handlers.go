@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"io/ioutil"
 	"net/http"
 	"os"
 
@@ -42,4 +43,24 @@ func GetDeviceInfo(context echo.Context) error {
 	}
 
 	return context.JSON(http.StatusOK, di)
+}
+
+func Reboot(context echo.Context) error {
+	http.Get("http://localhost:7010/reboot")
+	return nil
+}
+
+func GetDockerStatus(context echo.Context) error {
+	resp, err := http.Get("http://localhost:7010/dockerStatus")
+	if err != nil {
+		return context.JSON(http.StatusBadRequest, err.Error())
+	}
+	defer resp.Body.Close()
+
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return context.JSON(http.StatusBadRequest, err.Error())
+	}
+
+	return context.String(http.StatusOK, string(body))
 }

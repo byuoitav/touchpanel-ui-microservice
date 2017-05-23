@@ -33,7 +33,7 @@
 				console.log("rebooting");
 				$.ajax({
 					type: "GET",
-					url: "http://localhost:7010/reboot",
+					url: "http://localhost:8888/reboot",
 					headers: {
 						'Access-Control-Allow-Origin': '*'
 					},
@@ -78,6 +78,38 @@
 
 			document.getElementById("di-hostname").innerHTML = deviceinfo.hostname;
 			document.getElementById("di-ipaddress").innerHTML = deviceinfo.ipaddress;
+		}
+
+		function dockerStatus() {
+			var dockerstatus;
+			$.ajax({
+				type: "GET",
+					url: "http://localhost:8888/dockerstatus",
+					async: false,
+					headers: {
+						'Access-Control-Allow-Origin': '*'
+					},
+					contentType: "application/json; charset=utf-8",
+					success: function(data) {
+						console.log("got docker status", data);
+						dockerstatus = data;
+						swal({
+							title: 'Docker Status',
+							html: 
+							`
+								<div style="overflow-y: hidden; overflow-x: hidden;">
+									<pre id="docker-status"></pre>
+								</div>
+							`,
+							confirmButtonText: 'Done',
+							confirmButtonClass: 'btn btn-success',
+						})
+					}
+				});		
+
+			$('.swal2-modal').css('overflow-y', 'hidden');	
+			$('.swal2-modal').css('margin-top', '');
+			document.getElementById("docker-status").innerHTML = dockerstatus;
 		}
 	</script>
 </head>
