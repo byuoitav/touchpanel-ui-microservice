@@ -125,7 +125,7 @@ export class AppComponent {
 				this.muted = false;
 				this.volume = Number(e.eventInfoValue);
 				break;
-			case "Muted":
+			case "muted":
 				this.muted = (e.eventInfoValue == 'true');
 				break;
 			case "blanked":
@@ -194,7 +194,7 @@ export class AppComponent {
 	 		title: 'Help',
 	  		type: 'info',
 	  		html:
-	    		'Please call the clerks at 801-111-111 for help.',
+	    		'Please call the clerks at 276-71 for help.',
 	  		showCloseButton: true,
 	  		confirmButtonText:
 	    		'Done!',
