@@ -81,6 +81,7 @@ export class AppComponent {
             "power": "on"
         };
         this.api.putData(body).subscribe(data => {
+			 this.blank();
              this.showing = true;
              this.updateState();
              this.startSpinning = false;
