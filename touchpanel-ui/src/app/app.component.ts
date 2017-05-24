@@ -125,7 +125,7 @@ export class AppComponent {
 				this.muted = false;
 				this.volume = Number(e.eventInfoValue);
 				break;
-			case "Muted":
+			case "muted":
 				this.muted = (e.eventInfoValue == 'true');
 				break;
 			case "blanked":
