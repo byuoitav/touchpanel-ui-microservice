@@ -78,7 +78,8 @@ export class AppComponent {
     enterScreen() {
         this.startSpinning = true;
         let body = {
-            "power": "on"
+            "power": "on",
+			"blanked": true
         };
         this.api.putData(body).subscribe(data => {
              this.showing = true;
@@ -317,6 +318,9 @@ export class AppComponent {
         //go through the list of status and set the current input 
         for (let display of this.room.status.displays) {
             for (let d of this.displays) {
+				if (d.type == "panorama_wide_angle") {
+					break;	
+				}
                 //check to make sure we map
                 if (d.name == display.name) {
                     //go through and get the device mapping to the input
