@@ -9,8 +9,8 @@ import (
 	"time"
 
 	"github.com/byuoitav/event-router-microservice/eventinfrastructure"
-	"github.com/xuther/go-message-router/common"
-	"github.com/xuther/go-message-router/publisher"
+	"github.com/byuoitav/go-message-router/common"
+	"github.com/byuoitav/go-message-router/publisher"
 )
 
 var Pub publisher.Publisher
