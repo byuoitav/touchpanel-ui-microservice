@@ -36,6 +36,7 @@ export class AppComponent {
     showing: boolean
     currentAudioLevel: number;
     startSpinning: boolean;
+	sendingOn: boolean;
 
 	public constructor(private socket: SocketService, private api: APIService) {
 		this.messages = [];
@@ -44,6 +45,7 @@ export class AppComponent {
 		this.displays = [];
         this.showing = false;
         this.startSpinning = false;
+		this.sendingOn = false;
 	}
 
 	public ngOnInit() {
@@ -76,6 +78,10 @@ export class AppComponent {
 	}
 
     enterScreen() {
+		if (this.sendingOn)
+			return;
+		
+		this.sendingOn = true;
         this.startSpinning = true;
         let body = {
             "power": "on",
@@ -85,6 +91,7 @@ export class AppComponent {
              this.showing = true;
              this.updateState();
              this.startSpinning = false;
+			 this.sendingOn = false;
         });
     }
 
