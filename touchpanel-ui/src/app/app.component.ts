@@ -202,7 +202,7 @@ export class AppComponent {
 	 		title: 'Help',
 	  		type: 'info',
 	  		html:
-	    		'Please call the clerks at 276-71 for help.',
+	    		'Please call AV Support at 801-422-7671 for help.',
 	  		showCloseButton: true,
 	  		confirmButtonText:
 	    		'Done!',
