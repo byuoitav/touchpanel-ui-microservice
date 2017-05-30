@@ -7,9 +7,9 @@ import (
 	"time"
 
 	"github.com/byuoitav/event-router-microservice/eventinfrastructure"
-	"github.com/byuoitav/go-message-router/common"
-	"github.com/byuoitav/go-message-router/subscriber"
 	"github.com/gorilla/websocket"
+	"github.com/xuther/go-message-router/common"
+	"github.com/xuther/go-message-router/subscriber"
 )
 
 var Sub subscriber.Subscriber
@@ -145,6 +145,7 @@ func SubListen() {
 
 	for {
 		message := Sub.Read()
+		log.Printf("[Subscriber] Recieved event: %s", message)
 		Manager.Broadcast <- message
 	}
 }
