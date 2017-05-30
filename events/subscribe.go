@@ -98,7 +98,7 @@ func (c *Client) write() {
 				return
 			}
 
-			log.Printf("[Client] Writing event %s", message)
+			log.Printf("[Client] Writing event to client")
 			c.socket.WriteMessage(websocket.TextMessage, message)
 		}
 	}
@@ -145,6 +145,7 @@ func SubListen() {
 
 	for {
 		message := Sub.Read()
+		log.Printf("[Subscriber] Recieved event: %s", message)
 		Manager.Broadcast <- message
 	}
 }
