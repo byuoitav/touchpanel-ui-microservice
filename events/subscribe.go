@@ -98,7 +98,7 @@ func (c *Client) write() {
 				return
 			}
 
-			log.Printf("[Client] Writing event to client")
+			log.Printf("[Client] Writing event %s", message)
 			c.socket.WriteMessage(websocket.TextMessage, message)
 		}
 	}
