@@ -3,33 +3,33 @@ import { Http } from '@angular/http'
 
 @Injectable()
 export class SocketService {
-	private socket: WebSocket;
-	private listener: EventEmitter<any> = new EventEmitter();
-	private http: Http;
+  private socket: WebSocket;
+  private listener: EventEmitter<any> = new EventEmitter();
+  private http: Http;
 
-	public constructor() {
-		this.socket = new WebSocket("ws://localhost:8888/websocket");
+  public constructor() {
+    this.socket = new WebSocket("ws://localhost:8888/websocket");
 
-		this.socket.onopen = event => {
-			this.listener.emit({"type": OPEN, "data": event});
-		}
+    this.socket.onopen = event => {
+      this.listener.emit({ "type": OPEN, "data": event });
+    }
 
-		this.socket.onclose = event => {
-			this.listener.emit({"type": CLOSE, "data": event});
-		}
+    this.socket.onclose = event => {
+      this.listener.emit({ "type": CLOSE, "data": event });
+    }
 
-		this.socket.onmessage = event => {
-			this.listener.emit({"type": MESSAGE, "data": event});
-		}
-	}
+    this.socket.onmessage = event => {
+      this.listener.emit({ "type": MESSAGE, "data": event });
+    }
+  }
 
-	public close() {
-		this.socket.close();
-	}
+  public close() {
+    this.socket.close();
+  }
 
-	public getEventListener() {
-		return this.listener;
-	}
+  public getEventListener() {
+    return this.listener;
+  }
 }
 
 export const OPEN: string = "open";

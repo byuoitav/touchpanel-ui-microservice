@@ -19,9 +19,9 @@ import { APIService } from './api.service';
     BrowserModule,
     FormsModule,
     HttpModule,
-	NgbModule.forRoot(),
-	BrowserAnimationsModule,
-	MdSliderModule
+    NgbModule.forRoot(),
+    BrowserAnimationsModule,
+    MdSliderModule
   ],
   providers: [SocketService, APIService],
   bootstrap: [AppComponent]
