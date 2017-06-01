@@ -61,6 +61,8 @@ export class DeviceData {
   name: string;
   displayName: string;
   input: string;
-  type: string;
+//  type: string;
   selected: boolean;
+  icon: string;
+  blanked: boolean;
 }

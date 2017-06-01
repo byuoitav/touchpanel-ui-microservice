@@ -24,7 +24,7 @@ export class APIService {
     this.options = new RequestOptions({ headers: this.headers });
 
     return this.getHostname().subscribe(data => {
-      console.log("data = ", data);
+      console.log("room =", data);
       let split = JSON.stringify(data).split('-');
       let b = split[0].substring(1);
 
@@ -34,7 +34,6 @@ export class APIService {
       this.url = "http://localhost:8000" + "/buildings/" + this.building + "/rooms/" + this.room;
       console.log("url =", this.url);
 
-      console.log(this.loaded);
       this.loaded.next(true);
     });
   }
@@ -45,23 +44,20 @@ export class APIService {
   }
 
   getRoomConfig(): Observable<Object> {
-    console.log("roomconfig url", this.url);
     return this.http.get(this.url + "/configuration")
       .map(response => response.json());
   }
 
   getRoomStatus(): Observable<Object> {
-    console.log("roomstatus url", this.url);
     return this.http.get(this.url)
       .map(response => response.json());
   }
 
-  putData(data: any): Observable<Object> {
+  putData(data: any) {
     let body = JSON.stringify(data);
-    console.log("putting:", data, "to", this.url, "with options", this.options);
+    console.log("PUT:", data, "to", this.url); //, "with options", this.options);
 
     var val = this.http.put(this.url, data, this.options).map((res: Response) => res.json())
-    val.subscribe();
 
     return val;
   }
