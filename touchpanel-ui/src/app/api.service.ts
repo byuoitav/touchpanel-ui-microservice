@@ -43,6 +43,21 @@ export class APIService {
       .map(response => response.json());
   }
 
+  getDeviceInfo(): Observable<Object> {
+    return this.http.get("http://localhost:8888/deviceinfo")
+      .map(response => response.json());
+  }
+
+  getDockerStatus(): Observable<Object> {
+    return this.http.get("http://localhost:8888/dockerstatus")
+      .map(response => response.json());
+  }
+
+  reboot(): Observable<Object> {
+    return this.http.get("http://localhost:8888/reboot")
+      .map(response => response.json());
+  }
+  
   getRoomConfig(): Observable<Object> {
     return this.http.get(this.url + "/configuration")
       .map(response => response.json());

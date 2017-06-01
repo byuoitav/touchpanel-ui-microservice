@@ -2,7 +2,7 @@
 <app-modal #helpmodal>
 	<div class="app-modal-body">
 		<div class="modal-icon">
-			<i class='material-icons'>info_outline</i>
+			<i class='material-icons helpdialog'>info_outline</i>
 		</div>
 		<div class="modal-title">
 			Help
@@ -27,18 +27,74 @@
 					<button class="btn btn-warning" (click)="refresh()">Refresh</button>
 				</div>
 				<div>
-					<button class="btn btn-info" (click)="deviceInfo()">Device Info</button>
+					<button class="btn btn-info" (click)="deviceinfo(); deviceinfomodal.show()">Device Info</button>
 				</div>
 				<div>
-					<button class="btn btn-info" (click)="dockerStatus()">Docker Status</button>
+					<button class="btn btn-info" (click)="dockerstatus(); dockerstatusmodal.show()">Docker Status</button>
 				</div>
 				<div>
-					<button class="btn btn-danger" (click)="confirmreboot()">Reboot</button>
+					<button class="btn btn-danger" (click)="confirmrebootmodal.show()">Reboot</button>
 				</div>
 			</div>
 		</div>
 		<div class="modal-bottom">
 			<button class="btn btn-primary" (click)="managementmodal.hide()">Done</button>
+		</div>
+	</div>
+</app-modal>
+
+<app-modal #deviceinfomodal>
+	<div class="app-modal-body">
+		<div class="modal-title">
+			Device Info
+		</div>
+		<div class="modal-body">
+			<div class="vert-align">
+				<div *ngIf="deviceInfo.hostname">
+					<span>Hostname:</span>
+					<span>{{deviceInfo.hostname}}</span>
+				</div>
+				<div *ngIf="deviceInfo.ipaddress">
+					<span>IP Address:</span>
+					<span>{{deviceInfo.ipaddress}}</span>
+				</div>
+			</div>
+		</div>
+		<div class="modal-bottom">
+			<button class="btn btn-primary" (click)="deviceinfomodal.hide()">Done</button>
+		</div>
+	</div>
+</app-modal>
+
+<app-modal #dockerstatusmodal>
+	<div class="app-modal-body">
+		<div class="modal-title">
+			Docker Status	
+		</div>
+		<div class="modal-body">
+			<div *ngIf="dockerStatus" style="overflow: hidden;">
+				<pre>{{dockerStatus}}</pre>
+			</div>
+		</div>
+		<div class="modal-bottom">
+			<button class="btn btn-primary" (click)="dockerstatusmodal.hide()">Done</button>
+		</div>
+	</div>
+</app-modal>
+
+<app-modal #confirmrebootmodal>
+	<div class="app-modal-body">
+		<div class="modal-icon">
+			<i class='material-icons rebootdialog'>info_outline</i>
+		</div>
+		<div class="modal-title">
+			Are you sure?	
+		</div>
+		<div class="modal-body">
+		</div>
+		<div class="modal-bottom">
+			<button class="btn btn-danger" (click)="confirmrebootmodal.hide()">Cancel</button>
+			<button class="btn btn-success" (click)="reboot()">Reboot</button>
 		</div>
 	</div>
 </app-modal>

@@ -4,7 +4,7 @@ import { Observable } from 'rxjs/Rx';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { APIService } from './api.service';
-import { Room, RoomConfiguration, RoomStatus, Event, Device, DeviceData, icons } from './objects';
+import { Room, RoomConfiguration, RoomStatus, Event, Device, DeviceData, icons, DeviceInfo } from './objects';
 import { ModalComponent } from './modal.component';
 
 @Component({
@@ -50,6 +50,10 @@ export class AppComponent {
     this.showing = false;
     this.startSpinning = false;
     this.sendingOn = false;
+
+	// management
+	this.deviceInfo = new Object();
+	this.dockerStatus = new Object();
   }
 
   public ngOnInit() {
@@ -495,5 +499,26 @@ export class AppComponent {
   refresh() {
     console.log("refreshing page...");
 	location.reload();
+  }
+
+  deviceInfo: any;
+  deviceinfo() {
+	 this.api.getDeviceInfo().subscribe(data => {
+		console.log("deviceinfo:", data);
+		Object.assign(this.deviceInfo, data);
+	 }) 	
+  }
+
+  dockerStatus: any;
+  dockerstatus() {
+ 	this.api.getDockerStatus().subscribe(data => {
+		console.log("dockerstatus:", data);
+		Object.assign(this.dockerStatus, data);	
+	}) 
+  }
+
+  reboot() {
+	console.log("rebooting");
+ 	this.api.reboot(); 
   }
 } 

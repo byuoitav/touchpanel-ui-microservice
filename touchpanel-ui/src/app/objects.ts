@@ -75,3 +75,8 @@ export class icons {
 	static readonly appletv = "airplay";
 	static readonly generic = "generic";
 }
+
+export class DeviceInfo {
+	hostname: string;
+	ipaddr: string;
+}

@@ -235,7 +235,14 @@ html, body {
 
 .modal-icon i {
 	font-size: 30vh;
+}
+
+.helpdialog {
 	color: blue;
+}
+
+.rebootdialog {
+	color: orange;
 }
 
 .modal-title {
