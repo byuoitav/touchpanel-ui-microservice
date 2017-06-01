@@ -4,7 +4,7 @@ import { Observable } from 'rxjs/Rx';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { APIService } from './api.service';
-import { Room, RoomConfiguration, RoomStatus, Event, Device, DeviceData } from './objects';
+import { Room, RoomConfiguration, RoomStatus, Event, Device, DeviceData, icons } from './objects';
 declare var swal: any;
 
 @Component({
@@ -26,8 +26,6 @@ declare var swal: any;
 })
 
 export class AppComponent {
-  // notes! 
-  // update config function?
     // event stuff
   messages: Array<any>;
   events: Array<Event>;
@@ -82,14 +80,15 @@ export class AppComponent {
     this.socket.close();
   }
 
-  put(body: any, after: Function): void {
+  put(body: any, err: Function = func => {}, completed: Function = func => {}): void {
 	this.api.putData(body).subscribe(
 		data => {},
 		error => {
 			console.log("error:", error);	
+			err();
 		},
 		() => {
-			after();	
+			completed();	
 		}
 	)
   }
@@ -122,7 +121,7 @@ export class AppComponent {
   //we need to allow for the case that the display is off, in which case it's status will come back with a blank input
   getInputs() {
     for (let display of this.room.status.displays) {
-      var has = false;
+      var hasinput = false;
       for (let input of this.inputs) {
         if (display.input == input.name) { // find where the display's input matches an input
           console.log("display", display.name, "has input", input.name);
@@ -133,24 +132,25 @@ export class AppComponent {
           //everything is selected by default;
           dd.selected = true;
           this.displays.push(dd);
-          has = true;
+          hasinput = true;
         }
-      }
-      if (!has) {
-        let dm = new DeviceData();
-        dm.name = display.name;
-        dm.icon = "panorama_wide_angle";
+      } 
+      if (!hasinput) {
+        let dd = new DeviceData();
+        dd.name = display.name;
+        dd.icon = icons.blanked; //constants for these?
         //everything is selected by default
-        dm.selected = true;
-        this.displays.push(dm);
+        dd.selected = true;
+        this.displays.push(dd);
       }
     }
 
+	// set the display names
     for (let display of this.displays) {
       for (let device of this.room.config.devices) {
         if (display.name == device.name) {
           display.displayName = device.display_name;
-          console.log("set display", display.name, "to have dn of", display.displayName);
+          console.log("set display", display.name, "to have display name of", display.displayName);
         }
       }
     }
@@ -167,9 +167,9 @@ export class AppComponent {
       "blanked": true
     };
 
-	this.put(body, func => {
+	this.put(body, null, func => {
+//		this.updateState(); // do we need this?
 		this.showing = true;
-		this.updateState();
 		this.startSpinning = false;
 		this.sendingOn = false;
 	});
@@ -190,7 +190,7 @@ export class AppComponent {
 
         for (let display of this.displays) {
           if (display.name == e.device) {
-            if (display.icon == "panorama_wide_angle") {
+            if (display.icon == icons.blanked) {
               break;
             }
             display.icon = input.icon;
@@ -225,7 +225,7 @@ export class AppComponent {
         }
 
         if (e.eventInfoValue == "true") {
-          d.icon = "panorama_wide_angle"
+          d.icon = icons.blanked
         }
         else {
           for (let i of this.inputs) {
@@ -242,65 +242,66 @@ export class AppComponent {
     }
   }
 
-  updateState() {
-    this.api.getRoomStatus().subscribe(
-	  data => {
-      	this.room.status = new RoomStatus();
-      	Object.assign(this.room.status, data);
-      	console.log("updated state:", this.room.status);
-      	this.updateInputs();
-      }
-	);
-  }
-
-  updateInputs() {
-    //go through the list of status and set the current input 
-    for (let display of this.room.status.displays) {
-      for (let d of this.displays) {
-        if (d.icon == "panorama_wide_angle") {
-          break;
-        }
-        //check to make sure we map
-        if (d.name == display.name) {
-          //go through and get the device mapping to the input
-          for (let input of this.inputs) {
-            if (input.name == display.input) {
-              d.input = input.name;
-              d.icon = input.icon;
-            }
-          }
-        }
-      }
-    }
+//  updateState() {
+//    this.api.getRoomStatus().subscribe(
+//	  data => {
+//      	this.room.status = new RoomStatus();
+//      	Object.assign(this.room.status, data);
+//      	console.log("updated state:", this.room.status);
+//      	this.updateInputs();
+//      }
+//	);
+//  }
 
 
-    var first = true;
-    var count = 0;
-    //go through and get the volumes, if only one device is selected, set the current room volume to that level.
-    //else, i'm not sure. 
-    // for muted, if all are muted, set the icon to muted, else show it as open.
-    for (let speaker of this.room.status.audioDevices) {
-      for (let display of this.displays) {
-        if (speaker.name != display.name || !display.selected) {
-          continue;
-        }
-        if (first) {
-          //set the volume level
-          this.volume = speaker.volume;
-          count++;
-          this.muted = speaker.muted;
-        } else {
-          //average it in
-          this.volume = ((this.volume * count) + speaker.volume) / count + 1
-          count++
-
-          if (this.muted && !speaker.muted) {
-            this.muted = false;
-          }
-        }
-      }
-    }
-  }
+//  updateInputs() {
+//    //go through the list of status and set the current input 
+//    for (let display of this.room.status.displays) {
+//      for (let d of this.displays) {
+//        if (d.icon == icons.blanked) {
+//          break;
+//        }
+//        //check to make sure we map
+//        if (d.name == display.name) {
+//          //go through and get the device mapping to the input
+//          for (let input of this.inputs) {
+//            if (input.name == display.input) {
+//              d.input = input.name;
+//              d.icon = input.icon;
+//            }
+//          }
+//        }
+//      }
+//    }
+//
+//
+//    var first = true;
+//    var count = 0;
+//    //go through and get the volumes, if only one device is selected, set the current room volume to that level.
+//    //else, i'm not sure. 
+//    // for muted, if all are muted, set the icon to muted, else show it as open.
+//    for (let speaker of this.room.status.audioDevices) {
+//      for (let display of this.displays) {
+//        if (speaker.name != display.name || !display.selected) {
+//          continue;
+//        }
+//        if (first) {
+//          //set the volume level
+//          this.volume = speaker.volume;
+//          count++;
+//          this.muted = speaker.muted;
+//        } else {
+//          //average it in
+//          this.volume = ((this.volume * count) + speaker.volume) / count + 1
+//          count++
+//
+//          if (this.muted && !speaker.muted) {
+//            this.muted = false;
+//          }
+//        }
+//      }
+//    }
+//  }
 
   showHelp() {
     swal({
@@ -337,15 +338,15 @@ export class AppComponent {
         });
       }
     }
-    this.api.putData(body);
+    this.put(body);
   }
 
   powerOff() {
     let body = {
       "power": "standby"
     };
-    this.api.putData(body);
-    this.showing = !this.showing
+    this.put(body, func=> {this.showing = !this.showing;});
+    this.showing = !this.showing;
   }
 
   updateVolume(volume: number) {
@@ -360,25 +361,24 @@ export class AppComponent {
         });
       }
     }
-    this.api.putData(body);
+    this.put(body);
   }
 
   blank() {
     var body = { displays: [] }
     for (let display of this.displays) {
       if (display.selected) {
-        display.icon = "panorama_wide_angle"
+        display.icon = icons.blanked
         body.displays.push({
           "name": display.name,
           "blanked": true
         });
       }
     }
-    this.api.putData(body);
+    this.put(body);
   }
 
   setOutputDevice(d: DeviceData) {
-    console.log("changing output to", d.displayName);
     d.selected = !d.selected;
   }
 
@@ -395,7 +395,7 @@ export class AppComponent {
         });
       }
     }
-    this.api.putData(body);
+    this.put(body);
   }
 
   createInputDeviceData(d: Device) {
@@ -404,26 +404,27 @@ export class AppComponent {
     dd.displayName = d.display_name;
     switch (d.type) {
       case "hdmiin":
-        dd.icon = "settings_input_hdmi";
+        dd.icon = icons.hdmi; 
         break;
       case "overflow":
-        dd.icon = "people";
+        dd.icon = icons.overflow;
         break;
       case "computer":
-        dd.icon = "computer";
+        dd.icon = icons.computer;
         break;
       case "iptv":
+		dd.icon = icons.iptv;
         break;
       case "appletv":
-        dd.icon = "airplay";
+        dd.icon = icons.appletv;
         break;
       default:
-        dd.icon = "generic input";
+        dd.icon = icons.generic;
         break;
     }
     this.inputs.push(dd);
 
-    console.log("added", dd.name, "of type", dd.icon, "to inputs. (icon= " + dd.icon + " )");
+    console.log("added", dd.name, "of type", dd.icon, "to inputs. (icon = " + dd.icon + " )");
   }
 
   man1: boolean;

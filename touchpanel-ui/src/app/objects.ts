@@ -61,8 +61,17 @@ export class DeviceData {
   name: string;
   displayName: string;
   input: string;
-//  type: string;
   selected: boolean;
   icon: string;
   blanked: boolean;
+}
+
+export class icons {
+	static readonly blanked = "panorama_wide_angle";
+	static readonly hdmi = "settings_input_hdmi";
+	static readonly overflow = "people";
+	static readonly computer = "computer";
+	static readonly iptv = "";
+	static readonly appletv = "airplay";
+	static readonly generic = "generic";
 }
