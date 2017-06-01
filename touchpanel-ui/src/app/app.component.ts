@@ -83,9 +83,11 @@ export class AppComponent {
     this.socket.close();
   }
 
-  put(body: any, err: Function = func => {}, completed: Function = func => {}): void {
+  put(body: any, success: Function = func => {}, err: Function = func => {}, completed: Function = func => {}): void {
 	this.api.putData(body).subscribe(
-		data => {},
+		data => {
+			success();	
+		},
 		error => {
 			console.log("error:", error);	
 			err();
@@ -93,7 +95,22 @@ export class AppComponent {
 		() => {
 			completed();	
 		}
-	)
+	);
+  }
+
+  get(url: string, success: Function = func => {}, err: Function = func => {}, completed: Function = func => {}): void {
+ 	this.api.get(url).subscribe(
+		data => {
+			success();	
+		},
+		error => {
+			console.log("error:", error);	
+			err();
+		},
+		() => {
+			completed();	
+		}	
+	); 
   }
 
   getData() {
@@ -118,8 +135,8 @@ export class AppComponent {
 
         this.getInputs();
 		this.statusUpdateVolume();
-      })
-    })
+      });
+    });
   }
 
   //we need to allow for the case that the display is off, in which case it's status will come back with a blank input
@@ -171,7 +188,7 @@ export class AppComponent {
       "blanked": true
     };
 
-	this.put(body, null, func => {
+	this.put(body, null, null , after => {
 		this.updateState(); // do we need this?
 		this.showing = true;
 		this.startSpinning = false;
@@ -367,7 +384,7 @@ export class AppComponent {
     let body = {
       "power": "standby"
     };
-    this.put(body, func=> {this.showing = !this.showing;});
+    this.put(body, null, err => {this.showing = !this.showing;});
     this.showing = !this.showing;
   }
 
@@ -421,7 +438,6 @@ export class AppComponent {
   }
 
   buttonpress(name: string) {
- 	console.log("buttonpress:", name); 
 	let event = {
 		"eventinfokey": "buttonpress",
 		"eventinfovalue": name	

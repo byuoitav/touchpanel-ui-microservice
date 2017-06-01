@@ -68,6 +68,11 @@ export class APIService {
       .map(response => response.json());
   }
 
+  get(url: string): Observable<Object> {
+ 	return this.http.get(url)
+   	  .map(response => response.json());	
+  }
+
   putData(data: any) {
     console.log("PUT:", data, "to", this.url); //, "with options", this.options);
 
@@ -77,8 +82,7 @@ export class APIService {
   }
 
   publish(event: any) {
-//    let body = JSON.stringify(event);
-    console.log("publishing:", event);
+    console.log("publishing:", event, "to", "http://localhost:8888/publish");
 
     this.http.put("http://localhost:8888/publish", event, this.options).map((res: Response) => res.json()).subscribe();
   }
