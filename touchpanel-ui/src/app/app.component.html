@@ -1,3 +1,23 @@
+<!-- pop-ups -->
+<app-modal #helpmodal>
+	<div class="app-modal-body">
+		<div class="modal-icon">
+			<i class='material-icons'>info_outline</i>
+		</div>
+		<div class="modal-title">
+			Help
+		</div>
+		<div class="modal-body">
+			<span>Please call AV Support at 801-422-7671 for help.</span>
+		</div>
+		<div class="modal-bottom">
+			<button class="btn btn-primary" (click)="helpmodal.hide()">Done</button>
+		</div>
+	</div>
+</app-modal>
+
+<!-- main body -->
+
 <div class='basediv'>
 <div class='row'>
 
@@ -46,7 +66,7 @@
         <div class="power" (click)="powerOff()">
             <i class="material-icons">power_settings_new</i>
         </div>
-        <div class="help" (click)="showHelp()">
+        <div class="help" (click)="helpmodal.show()">
             <i class="material-icons">help</i>
         </div>
         <div class="mute">

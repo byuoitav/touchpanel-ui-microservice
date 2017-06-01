@@ -214,3 +214,31 @@ html, body {
     98% { -webkit-transform: rotateY(8841.6deg )}
     100% { -webkit-transform: rotateY(9201.6deg )}
 }
+
+/* Modal stuff */
+.modal-icon {
+	display:flex;
+	justify-content: center;
+}
+
+.modal-icon i {
+	font-size: 30vh;
+	color: blue;
+}
+
+.modal-title {
+	display: flex;
+	justify-content: center;
+	font-size: 5vh;	
+	font-weight: bold;
+}
+
+.modal-body {
+	display: flex;
+	justify-content: center;
+}
+
+.modal-bottom {
+	display: flex;
+	justify-content: center;
+}

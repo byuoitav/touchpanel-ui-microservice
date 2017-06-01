@@ -5,7 +5,6 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { APIService } from './api.service';
 import { Room, RoomConfiguration, RoomStatus, Event, Device, DeviceData, icons } from './objects';
-declare var swal: any;
 
 @Component({
   selector: 'app-root',
@@ -305,15 +304,15 @@ export class AppComponent {
 //  }
 
   showHelp() {
-    swal({
-      title: 'Help',
-      type: 'info',
-      html:
-      'Please call AV Support at 801-422-7671 for help.',
-      showCloseButton: true,
-      confirmButtonText:
-      'Done!',
-    })
+//    swal({
+//      title: 'Help',
+//      type: 'info',
+//      html:
+//      'Please call AV Support at 801-422-7671 for help.',
+//      showCloseButton: true,
+//      confirmButtonText:
+//      'Done!',
+//    })
   }
 
   hasRole(d: Device, role: string): boolean {
@@ -494,6 +493,7 @@ export class AppComponent {
   }
 
   showManagement() {
+/*
     swal({
       title: 'Management',
       html:
@@ -517,6 +517,7 @@ export class AppComponent {
       confirmButtonText:
       'Done!',
     })
+   */
   }
 
   refresh() {
