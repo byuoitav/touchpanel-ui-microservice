@@ -16,6 +16,33 @@
 	</div>
 </app-modal>
 
+<app-modal #managementmodal>
+	<div class="app-modal-body">
+		<div class="modal-title">
+			Management
+		</div>
+		<div class="modal-body">
+			<div class="management-body">
+				<div>
+					<button class="btn btn-warning" (click)="refresh()">Refresh</button>
+				</div>
+				<div>
+					<button class="btn btn-info" (click)="deviceInfo()">Device Info</button>
+				</div>
+				<div>
+					<button class="btn btn-info" (click)="dockerStatus()">Docker Status</button>
+				</div>
+				<div>
+					<button class="btn btn-danger" (click)="confirmreboot()">Reboot</button>
+				</div>
+			</div>
+		</div>
+		<div class="modal-bottom">
+			<button class="btn btn-primary" (click)="managementmodal.hide()">Done</button>
+		</div>
+	</div>
+</app-modal>
+
 <!-- main body -->
 
 <div class='basediv'>
@@ -96,7 +123,9 @@
 	</div>
 	<div class="bottom left" (click)="management(2)">
 	</div>
-	<div class="bottom right" (click)="management(4)">
+	<div *ngIf="!man1 || !man2 || !man3" class="bottom right" (click)="management(4)">
+	</div>
+	<div *ngIf="man1 && man2 && man3" class="bottom right" (click)="management(4); managementmodal.show();">
 	</div>
 </div>
 <!--

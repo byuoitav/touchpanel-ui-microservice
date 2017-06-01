@@ -5,6 +5,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { APIService } from './api.service';
 import { Room, RoomConfiguration, RoomStatus, Event, Device, DeviceData, icons } from './objects';
+import { ModalComponent } from './modal.component';
 
 @Component({
   selector: 'app-root',
@@ -471,11 +472,10 @@ export class AppComponent {
         break;
       case 4:
         if (this.man1 && this.man2 && this.man3) {
-          console.log("defcon 1");
+	 	  console.log("defcon 1. showing management console.");
           this.man1 = false;
           this.man2 = false;
           this.man3 = false;
-          this.showManagement();
         } else {
           this.man1 = false;
           this.man2 = false;
@@ -492,35 +492,8 @@ export class AppComponent {
     }
   }
 
-  showManagement() {
-/*
-    swal({
-      title: 'Management',
-      html:
-      `
-					<div style="display: flex; flex-direction: column; justify-content: center;">
-						<div style="display: flex; justify-content: center; padding-bottom: 2vh;">
-							<button class="btn btn-warning" onClick="refresh()">Refresh</button>
-						</div>
-						<div style="display: flex; justify-content: center; padding-bottom: 2vh;">
-							<button class="btn btn-info" onClick="deviceInfo()">Device Info</button>
-						</div>
-						<div style="display: flex; justify-content: center; padding-bottom: 2vh;">
-							<button class="btn btn-info" onClick="dockerStatus()">Docker Status</button>
-						</div>
-						<div style="display: flex; justify-content: center;">
-							<button class="btn btn-danger" onClick="confirmreboot()">Reboot</button>
-						</div>
-					</div>
-				`,
-      showCloseButton: false,
-      confirmButtonText:
-      'Done!',
-    })
-   */
-  }
-
   refresh() {
     console.log("refreshing page...");
+	location.reload();
   }
 } 

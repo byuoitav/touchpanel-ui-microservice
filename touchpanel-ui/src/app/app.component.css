@@ -25,6 +25,18 @@ html, body {
     transform: scale(.75,.75) translatey(-20px);
 }
 
+.management-body {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+}
+
+.management-body div {
+	display: flex;
+	justify-content: center;
+	padding-bottom: 2vh;
+}
+
 .management {
 	position: fixed;
 	width: 100%;
