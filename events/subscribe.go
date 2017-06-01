@@ -51,7 +51,7 @@ func SubInit() {
 			}
 		}
 
-		log.Printf("[Routing] Subscribed to %s events on port :7000", eventinfrastructure.UI)
+		log.Printf("[Subscriber] Subscribed to %s events on port :7000", eventinfrastructure.UI)
 
 		go Manager.Start(UIFilter)
 		go SubListen()

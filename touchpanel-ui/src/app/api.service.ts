@@ -69,7 +69,6 @@ export class APIService {
   }
 
   putData(data: any) {
-    let body = JSON.stringify(data);
     console.log("PUT:", data, "to", this.url); //, "with options", this.options);
 
     var val = this.http.put(this.url, data, this.options).map((res: Response) => res.json())
@@ -78,10 +77,10 @@ export class APIService {
   }
 
   publish(event: any) {
-    let body = JSON.stringify(event);
+//    let body = JSON.stringify(event);
     console.log("publishing:", event);
 
-    this.http.post("http://localhost:8888/publish", body, this.options).map((res: Response) => res.json()).subscribe();
+    this.http.put("http://localhost:8888/publish", event, this.options).map((res: Response) => res.json()).subscribe();
   }
 
   handleError(error: Response | any) {

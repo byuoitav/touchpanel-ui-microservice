@@ -231,6 +231,7 @@ html, body {
 .modal-icon {
 	display:flex;
 	justify-content: center;
+	padding-bottom: 4vh;
 }
 
 .modal-icon i {

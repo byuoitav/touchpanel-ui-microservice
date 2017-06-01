@@ -308,16 +308,33 @@ export class AppComponent {
 //    }
 //  }
 
-  showHelp() {
-//    swal({
-//      title: 'Help',
-//      type: 'info',
-//      html:
-//      'Please call AV Support at 801-422-7671 for help.',
-//      showCloseButton: true,
-//      confirmButtonText:
-//      'Done!',
-//    })
+  createInputDeviceData(d: Device) {
+    let dd = new DeviceData();
+    dd.name = d.name;
+    dd.displayName = d.display_name;
+    switch (d.type) {
+      case "hdmiin":
+        dd.icon = icons.hdmi; 
+        break;
+      case "overflow":
+        dd.icon = icons.overflow;
+        break;
+      case "computer":
+        dd.icon = icons.computer;
+        break;
+      case "iptv":
+		dd.icon = icons.iptv;
+        break;
+      case "appletv":
+        dd.icon = icons.appletv;
+        break;
+      default:
+        dd.icon = icons.generic;
+        break;
+    }
+    this.inputs.push(dd);
+
+    console.log("added", dd.name, "of type", dd.icon, "to inputs. (icon = " + dd.icon + " )");
   }
 
   hasRole(d: Device, role: string): boolean {
@@ -403,34 +420,16 @@ export class AppComponent {
     this.put(body);
   }
 
-  createInputDeviceData(d: Device) {
-    let dd = new DeviceData();
-    dd.name = d.name;
-    dd.displayName = d.display_name;
-    switch (d.type) {
-      case "hdmiin":
-        dd.icon = icons.hdmi; 
-        break;
-      case "overflow":
-        dd.icon = icons.overflow;
-        break;
-      case "computer":
-        dd.icon = icons.computer;
-        break;
-      case "iptv":
-		dd.icon = icons.iptv;
-        break;
-      case "appletv":
-        dd.icon = icons.appletv;
-        break;
-      default:
-        dd.icon = icons.generic;
-        break;
-    }
-    this.inputs.push(dd);
-
-    console.log("added", dd.name, "of type", dd.icon, "to inputs. (icon = " + dd.icon + " )");
+  buttonpress(name: string) {
+ 	console.log("buttonpress:", name); 
+	let event = {
+		"eventinfokey": "buttonpress",
+		"eventinfovalue": name	
+	}
+	
+	this.api.publish(event);
   }
+
 
   man1: boolean;
   man2: boolean;
