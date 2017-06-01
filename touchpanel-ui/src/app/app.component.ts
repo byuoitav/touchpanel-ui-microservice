@@ -24,7 +24,6 @@ declare var swal: any;
     ])
   ]
 })
-
 export class AppComponent {
     // event stuff
   messages: Array<any>;
@@ -114,6 +113,7 @@ export class AppComponent {
         }
 
         this.getInputs();
+		this.statusUpdateVolume();
       })
     })
   }
@@ -157,7 +157,7 @@ export class AppComponent {
   }
 
   enterScreen() {
-    if (this.sendingOn)
+    if (this.sendingOn || this.room.status == null)
       return;
 
     this.sendingOn = true;
@@ -168,7 +168,7 @@ export class AppComponent {
     };
 
 	this.put(body, null, func => {
-//		this.updateState(); // do we need this?
+		this.updateState(); // do we need this?
 		this.showing = true;
 		this.startSpinning = false;
 		this.sendingOn = false;
@@ -242,17 +242,46 @@ export class AppComponent {
     }
   }
 
-//  updateState() {
-//    this.api.getRoomStatus().subscribe(
-//	  data => {
-//      	this.room.status = new RoomStatus();
-//      	Object.assign(this.room.status, data);
-//      	console.log("updated state:", this.room.status);
-//      	this.updateInputs();
-//      }
-//	);
-//  }
+  updateState() {
+    this.api.getRoomStatus().subscribe(
+	  data => {
+     	this.room.status = new RoomStatus();
+      	Object.assign(this.room.status, data);
+      	console.log("updated state:", this.room.status);
+//      this.updateInputs();
+//		this.statusUpdateVolume(); // only need this, because we will always get a "blanked" event when turning on
+							       // if we stop blanking on "power on", then we will have to update the inputs
+      }
+	);
+  }
 
+  statusUpdateVolume() {
+    var first = true;
+    var count = 0;
+    // go through and get the volumes, if only one device is selected, set the current room volume to that level.
+    // for muted, if all are muted, set the icon to muted, else show it as open.
+    for (let speaker of this.room.status.audioDevices) {
+      for (let display of this.displays) {
+        if (speaker.name != display.name || !display.selected) {
+          continue;
+        }
+        if (first) {
+          //set the volume level
+          this.volume = speaker.volume;
+          count++;
+          this.muted = speaker.muted;
+        } else {
+          //average it in
+          this.volume = ((this.volume * count) + speaker.volume) / count + 1
+          count++
+
+          if (this.muted && !speaker.muted) {
+            this.muted = false;
+          }
+        }
+      }
+    }
+  }
 
 //  updateInputs() {
 //    //go through the list of status and set the current input 
@@ -269,34 +298,6 @@ export class AppComponent {
 //              d.input = input.name;
 //              d.icon = input.icon;
 //            }
-//          }
-//        }
-//      }
-//    }
-//
-//
-//    var first = true;
-//    var count = 0;
-//    //go through and get the volumes, if only one device is selected, set the current room volume to that level.
-//    //else, i'm not sure. 
-//    // for muted, if all are muted, set the icon to muted, else show it as open.
-//    for (let speaker of this.room.status.audioDevices) {
-//      for (let display of this.displays) {
-//        if (speaker.name != display.name || !display.selected) {
-//          continue;
-//        }
-//        if (first) {
-//          //set the volume level
-//          this.volume = speaker.volume;
-//          count++;
-//          this.muted = speaker.muted;
-//        } else {
-//          //average it in
-//          this.volume = ((this.volume * count) + speaker.volume) / count + 1
-//          count++
-//
-//          if (this.muted && !speaker.muted) {
-//            this.muted = false;
 //          }
 //        }
 //      }
