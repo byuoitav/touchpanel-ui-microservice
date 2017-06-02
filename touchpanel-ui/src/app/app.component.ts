@@ -178,7 +178,7 @@ export class AppComponent {
   }
 
   enterScreen() {
-    if (this.sendingOn || this.room.status == null)
+    if (this.sendingOn)
       return;
 
     this.sendingOn = true;
@@ -270,7 +270,7 @@ export class AppComponent {
       	Object.assign(this.room.status, data);
       	console.log("updated state:", this.room.status);
 //      this.updateInputs();
-//		this.statusUpdateVolume(); // only need this, because we will always get a "blanked" event when turning on
+		this.statusUpdateVolume(); // only need this, because we will always get a "blanked" event when turning on
 							       // if we stop blanking on "power on", then we will have to update the inputs
       }
 	);
