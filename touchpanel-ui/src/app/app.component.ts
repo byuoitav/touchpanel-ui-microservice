@@ -524,6 +524,6 @@ export class AppComponent {
 
   reboot() {
 	console.log("rebooting");
- 	this.api.reboot(); 
+ 	this.api.reboot().subscribe(); 
   }
 } 
