@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"io/ioutil"
+	"log"
 	"net/http"
 	"os"
 
@@ -46,11 +47,13 @@ func GetDeviceInfo(context echo.Context) error {
 }
 
 func Reboot(context echo.Context) error {
+	log.Printf("[management] Rebooting pi")
 	http.Get("http://localhost:7010/reboot")
 	return nil
 }
 
 func GetDockerStatus(context echo.Context) error {
+	log.Printf("[management] Getting docker status")
 	resp, err := http.Get("http://localhost:7010/dockerStatus")
 	if err != nil {
 		return context.JSON(http.StatusBadRequest, err.Error())
