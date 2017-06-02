@@ -54,8 +54,6 @@ export class AppComponent {
 	// management
 	this.deviceInfo = new Object();
 	this.dockerStatus = new Object();
-
-	this.showing = true;
   }
 
   public ngOnInit() {
