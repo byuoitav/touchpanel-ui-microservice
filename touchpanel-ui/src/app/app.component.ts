@@ -4,7 +4,7 @@ import { Observable } from 'rxjs/Rx';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { APIService } from './api.service';
-import { Room, RoomConfiguration, RoomStatus, Event, Device, DeviceData, icons, DeviceInfo } from './objects';
+import { Room, RoomConfiguration, RoomStatus, Event, Device, DeviceData, icons } from './objects';
 import { ModalComponent } from './modal.component';
 
 @Component({
@@ -159,7 +159,7 @@ export class AppComponent {
       if (!hasinput) {
         let dd = new DeviceData();
         dd.name = display.name;
-        dd.icon = icons.blanked; //constants for these?
+        dd.icon = icons.blanked;
         //everything is selected by default
         dd.selected = true;
         this.displays.push(dd);
@@ -189,7 +189,7 @@ export class AppComponent {
     };
 
 	this.put(body, func => {} , func => {} , after => {
-		this.updateState(); // do we need this?
+		this.updateState();
 		this.showing = true;
 		this.startSpinning = false;
 		this.sendingOn = false;
@@ -211,9 +211,6 @@ export class AppComponent {
 
         for (let display of this.displays) {
           if (display.name == e.device) {
-            if (display.icon == icons.blanked) {
-              break;
-            }
             display.icon = input.icon;
             display.input = input.name;
             break;
@@ -223,7 +220,6 @@ export class AppComponent {
       case "power":
         if (e.eventInfoValue == "on") {
           this.showing = true;
-//          this.updateState();
           this.startSpinning = false;
         } else {
           this.showing = false;
@@ -245,17 +241,7 @@ export class AppComponent {
           }
         }
 
-        if (e.eventInfoValue == "true") {
-          d.icon = icons.blanked
-        }
-        else {
-          for (let i of this.inputs) {
-            if (i.name == d.input) {
-              d.icon = i.icon;
-              break;
-            }
-          }
-        }
+		d.blanked = (e.eventInfoValue == 'true');
         break;
       default:
         console.log("unknown eventInfoKey:", e.eventInfoKey);
@@ -410,7 +396,7 @@ export class AppComponent {
     var body = { displays: [] }
     for (let display of this.displays) {
       if (display.selected) {
-        display.icon = icons.blanked
+		display.blanked = true;
         body.displays.push({
           "name": display.name,
           "blanked": true
@@ -429,7 +415,7 @@ export class AppComponent {
     for (let display of this.displays) {
       if (display.selected) {
         display.icon = d.icon;
-        display.input = d.name;
+        display.blanked = false;
         body.displays.push({
           "name": display.name,
           "input": d.name,

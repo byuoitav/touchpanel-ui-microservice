@@ -109,7 +109,8 @@
             <div *ngFor='let device of displays'>
                 <div class='output-device icon-transition' (click)="buttonpress(device.name); setOutputDevice(device)">
                		<span [class.inactive]="!device.selected" class='output-device-name icon-transition'>{{device.displayName}}</span>
-					<i [class.inactive]="!device.selected" class='material-icons icon-transition'>{{device.icon}}</i>
+					<i *ngIf="device.blanked" [class.inactive]="!device.selected" class='material-icons icon-transition'>panorama_wide_angle</i>
+					<i *ngIf="!device.blanked" [class.inactive]="!device.selected" class='material-icons icon-transition'>{{device.icon}}</i>
 				</div>
             </div>
         </div>

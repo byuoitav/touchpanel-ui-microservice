@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/byuoitav/event-router-microservice/eventinfrastructure"
@@ -60,6 +61,7 @@ func SubInit() {
 }
 
 func (manager *ClientManager) Start(f filter) {
+	go manager.keepalive()
 	for {
 		select {
 		case conn := <-manager.register:
@@ -89,6 +91,25 @@ func (manager *ClientManager) Start(f filter) {
 				}
 			}
 		}
+	}
+}
+
+func (manager *ClientManager) keepalive() {
+	var e eventinfrastructure.Event
+	e.Hostname = os.Getenv("PI_HOSTNAME")
+	e.Timestamp = time.Now().Format(time.RFC3339)
+	e.Event.EventInfoKey = "keepalive"
+	msg, err := json.Marshal(&e)
+	if err != nil {
+		log.Fatalf("[error] %s", err.Error())
+	}
+
+	for {
+		for k, _ := range manager.clients {
+			log.Printf("[client] Sending keep alive message")
+			k.send <- msg
+		}
+		time.Sleep(45 * time.Second)
 	}
 }
 
