@@ -41,7 +41,7 @@ func Publish(event eventinfrastructure.EventInfo) error {
 	e.Room = Room
 	e.Event.Type = eventinfrastructure.USERACTION
 	e.Event.EventCause = eventinfrastructure.USERINPUT
-	e.Event.Device = event.Device
+	e.Event.Device = e.Hostname
 	e.Event.EventInfoKey = event.EventInfoKey
 	e.Event.EventInfoValue = event.EventInfoValue
 	if len(e.Event.Device) == 0 || len(e.Event.EventInfoKey) == 0 || len(e.Event.EventInfoValue) == 0 {
@@ -56,7 +56,7 @@ func Publish(event eventinfrastructure.EventInfo) error {
 	header := [24]byte{}
 	copy(header[:], []byte(eventinfrastructure.UI))
 
-	log.Printf("[Routing] Publishing event: %s", toSend)
+	log.Printf("[Publisher] Publishing event: %s", toSend)
 	err = Pub.Write(common.Message{MessageHeader: header, MessageBody: toSend})
 	if err != nil {
 		return err

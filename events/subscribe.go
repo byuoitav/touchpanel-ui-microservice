@@ -42,18 +42,21 @@ func SubInit() {
 		log.Printf("Could not create a subscriber. Error: %v\n", err.Error())
 	}
 
-	for ok := true; ok; ok = (err != nil) {
-		err = Sub.Subscribe("localhost:7000", []string{eventinfrastructure.UI})
-		if err != nil {
-			log.Printf("Failed to subscribe to events on port :7000. Trying again...")
-			time.Sleep(1 * time.Second)
+	go func() {
+		for ok := true; ok; ok = (err != nil) {
+			err = Sub.Subscribe("localhost:7000", []string{eventinfrastructure.UI})
+			if err != nil {
+				log.Printf("Failed to subscribe to events on port :7000. Trying again...")
+				time.Sleep(1 * time.Second)
+			}
 		}
-	}
 
-	log.Printf("[Routing] Subscribed to %s events on port :7000", eventinfrastructure.UI)
+		log.Printf("[Subscriber] Subscribed to %s events on port :7000", eventinfrastructure.UI)
 
-	go Manager.Start(UIFilter)
-	go SubListen()
+		go Manager.Start(UIFilter)
+		go SubListen()
+	}()
+
 }
 
 func (manager *ClientManager) Start(f filter) {

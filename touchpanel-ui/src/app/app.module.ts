@@ -8,20 +8,22 @@ import { MdSliderModule } from '@angular/material';
 import 'hammerjs';
 
 import { AppComponent } from './app.component';
+import { ModalComponent } from './modal.component';
 import { SocketService } from './socket.service';
 import { APIService } from './api.service';
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+	ModalComponent
   ],
   imports: [
     BrowserModule,
     FormsModule,
     HttpModule,
-	NgbModule.forRoot(),
-	BrowserAnimationsModule,
-	MdSliderModule
+    NgbModule.forRoot(),
+    BrowserAnimationsModule,
+    MdSliderModule
   ],
   providers: [SocketService, APIService],
   bootstrap: [AppComponent]

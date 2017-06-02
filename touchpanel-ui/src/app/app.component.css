@@ -25,6 +25,18 @@ html, body {
     transform: scale(.75,.75) translatey(-20px);
 }
 
+.management-body {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+}
+
+.management-body div {
+	display: flex;
+	justify-content: center;
+	padding-bottom: 2vh;
+}
+
 .management {
 	position: fixed;
 	width: 100%;
@@ -213,4 +225,51 @@ html, body {
     96% { -webkit-transform: rotateY(8488.8deg )}
     98% { -webkit-transform: rotateY(8841.6deg )}
     100% { -webkit-transform: rotateY(9201.6deg )}
+}
+
+/* Modal stuff */
+.modal-icon {
+	display:flex;
+	justify-content: center;
+	padding-bottom: 4vh;
+}
+
+.modal-icon i {
+	font-size: 30vh;
+}
+
+.helpdialog {
+	color: blue;
+}
+
+.rebootdialog {
+	color: orange;
+}
+
+.modal-title {
+	display: flex;
+	justify-content: center;
+	font-size: 5vh;	
+	font-weight: bold;
+}
+
+.modal-body {
+	display: flex;
+	justify-content: center;
+}
+
+.modal-bottom {
+	display: flex;
+	justify-content: center;
+}
+
+.table-icon {
+	/*
+	-webkit-mask: url("/assets/table-icon.svg") no-repeat;
+	background: #292b2c;
+	*/
+	height: 13vh;
+	width: 13vh;
+	position: relative;
+	bottom: -1vh;
 }
