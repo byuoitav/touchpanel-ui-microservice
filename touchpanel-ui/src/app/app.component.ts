@@ -379,6 +379,7 @@ export class AppComponent {
 
   updateVolume(volume: number) {
     this.volume = volume;
+	this.muted = false;
 
     var body = { audioDevices: [] }
     for (let speaker of this.displays) {
