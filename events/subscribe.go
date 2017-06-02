@@ -4,12 +4,13 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/byuoitav/event-router-microservice/eventinfrastructure"
-	"github.com/byuoitav/go-message-router/common"
-	"github.com/byuoitav/go-message-router/subscriber"
 	"github.com/gorilla/websocket"
+	"github.com/xuther/go-message-router/common"
+	"github.com/xuther/go-message-router/subscriber"
 )
 
 var Sub subscriber.Subscriber
@@ -42,21 +43,25 @@ func SubInit() {
 		log.Printf("Could not create a subscriber. Error: %v\n", err.Error())
 	}
 
-	for ok := true; ok; ok = (err != nil) {
-		err = Sub.Subscribe("localhost:7000", []string{eventinfrastructure.UI})
-		if err != nil {
-			log.Printf("Failed to subscribe to events on port :7000. Trying again...")
-			time.Sleep(1 * time.Second)
+	go func() {
+		for ok := true; ok; ok = (err != nil) {
+			err = Sub.Subscribe("localhost:7000", []string{eventinfrastructure.UI})
+			if err != nil {
+				log.Printf("Failed to subscribe to events on port :7000. Trying again...")
+				time.Sleep(1 * time.Second)
+			}
 		}
-	}
 
-	log.Printf("[Routing] Subscribed to %s events on port :7000", eventinfrastructure.UI)
+		log.Printf("[Subscriber] Subscribed to %s events on port :7000", eventinfrastructure.UI)
 
-	go Manager.Start(UIFilter)
-	go SubListen()
+		go Manager.Start(UIFilter)
+		go SubListen()
+	}()
+
 }
 
 func (manager *ClientManager) Start(f filter) {
+	go manager.keepalive()
 	for {
 		select {
 		case conn := <-manager.register:
@@ -86,6 +91,25 @@ func (manager *ClientManager) Start(f filter) {
 				}
 			}
 		}
+	}
+}
+
+func (manager *ClientManager) keepalive() {
+	var e eventinfrastructure.Event
+	e.Hostname = os.Getenv("PI_HOSTNAME")
+	e.Timestamp = time.Now().Format(time.RFC3339)
+	e.Event.EventInfoKey = "keepalive"
+	msg, err := json.Marshal(&e)
+	if err != nil {
+		log.Fatalf("[error] %s", err.Error())
+	}
+
+	for {
+		for k, _ := range manager.clients {
+			log.Printf("[client] Sending keep alive message")
+			k.send <- msg
+		}
+		time.Sleep(45 * time.Second)
 	}
 }
 
@@ -145,6 +169,7 @@ func SubListen() {
 
 	for {
 		message := Sub.Read()
+		log.Printf("[Subscriber] Recieved event: %s", message)
 		Manager.Broadcast <- message
 	}
 }
