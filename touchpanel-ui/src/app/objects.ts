@@ -74,7 +74,7 @@ export class icons {
 	static readonly iptv = "";
 	static readonly appletv = "airplay";
 	static readonly generic = "generic";
-	static readonly table= "&#xEA40;";
+	static readonly table= "byu_table_input";
 }
 
 export class DeviceInfo {
