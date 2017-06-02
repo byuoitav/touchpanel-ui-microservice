@@ -125,6 +125,12 @@
                		<span class='input-device-name'>Blank</span>
 				</div>
 			</div>
+			<div class="col-sm-2">
+				<div class='input-device' (click)="buttonpress('blank'); blank()">
+					<i class='table-icon icon-transition'></i>
+               		<span class='input-device-name'>Table</span>
+				</div>
+			</div>
             <div class="col-sm-2" *ngFor='let device of inputs'>
 				<div class='input-device' (click)="buttonpress(device.name); setInputDevice(device)">
 					<i class='material-icons icon-transition'>{{device.icon}}</i>
@@ -160,7 +166,6 @@
 </div>
 <div class='overlay basediv'  *ngIf="!showing" [@fadeInOut] (click)="buttonpress('power on'); enterScreen()">
     <img class='loading-img' [class.spinner]='!startSpinning' [class.spin_fast]='startSpinning'  src='assets/byu_medallion_black_white.svg'>
-
 </div>
 
 	<!-- management dialog -->

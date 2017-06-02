@@ -262,3 +262,9 @@ html, body {
 	display: flex;
 	justify-content: center;
 }
+
+.table-icon {
+	background: url("/assets/table-icon.svg");
+	height: 30vh;
+	width: 30vh;
+}
