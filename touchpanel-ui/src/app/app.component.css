@@ -264,8 +264,10 @@ html, body {
 }
 
 .table-icon {
+	/*
 	-webkit-mask: url("/assets/table-icon.svg") no-repeat;
 	background: #292b2c;
+	*/
 	height: 13vh;
 	width: 13vh;
 	position: relative;

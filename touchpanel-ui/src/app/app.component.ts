@@ -347,6 +347,9 @@ export class AppComponent {
       case "appletv":
         dd.icon = icons.appletv;
         break;
+	  case "table":
+		dd.icon = icons.table;
+	    break;
       default:
         dd.icon = icons.generic;
         break;
