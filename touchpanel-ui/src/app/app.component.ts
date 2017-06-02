@@ -188,7 +188,7 @@ export class AppComponent {
       "blanked": true
     };
 
-	this.put(body, null, null , after => {
+	this.put(body, func => {} , func => {} , after => {
 		this.updateState(); // do we need this?
 		this.showing = true;
 		this.startSpinning = false;
@@ -387,7 +387,7 @@ export class AppComponent {
     let body = {
       "power": "standby"
     };
-    this.put(body, null, err => {this.showing = !this.showing;});
+    this.put(body, func => {}, err => {this.showing = !this.showing;});
     this.showing = !this.showing;
   }
 
