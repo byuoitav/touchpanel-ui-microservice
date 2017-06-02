@@ -12,14 +12,22 @@ export class SocketService {
 
     this.socket.onopen = event => {
       this.listener.emit({ "type": OPEN, "data": event });
+	  console.log("opened websocket");
     }
 
     this.socket.onclose = event => {
       this.listener.emit({ "type": CLOSE, "data": event });
+	  console.log("websocket on close event recieved");
+	  this.socket = new WebSocket("ws://localhost:8888/websocket");
     }
 
     this.socket.onmessage = event => {
-      this.listener.emit({ "type": MESSAGE, "data": event });
+	  if (event.data.includes("keepalive")) {
+	 	// send a keep alive back?
+		console.log("keep alive message recieved.");
+	  } else {
+      	this.listener.emit({ "type": MESSAGE, "data": event });
+	  }
     }
   }
 
