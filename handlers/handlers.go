@@ -7,6 +7,7 @@ import (
 	"os"
 
 	"github.com/byuoitav/event-router-microservice/eventinfrastructure"
+	"github.com/byuoitav/event-router-microservice/subscription"
 	"github.com/byuoitav/touchpanel-ui-microservice/events"
 	"github.com/byuoitav/touchpanel-ui-microservice/helpers"
 	"github.com/labstack/echo"
@@ -15,6 +16,24 @@ import (
 func OpenWebSocket(context echo.Context) error {
 	events.StartWebClient(context.Response(), context.Request())
 	return nil
+}
+
+func Subscribe(context echo.Context) error {
+	var sr subscription.SubscribeRequest
+	err := context.Bind(&sr)
+	if err != nil {
+		log.Printf("[error] %s", err.Error())
+		return context.JSON(http.StatusBadRequest, err.Error())
+	}
+
+	log.Printf("Subscribing to %s", sr.Address)
+	err = events.Sub.Subscribe(sr.Address, []string{eventinfrastructure.UI})
+	if err != nil {
+		log.Printf("[error] %s", err.Error())
+		return context.JSON(http.StatusInternalServerError, err.Error())
+	}
+
+	return context.JSON(http.StatusOK, context)
 }
 
 func GetHostname(context echo.Context) error {
