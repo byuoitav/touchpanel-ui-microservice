@@ -11,7 +11,7 @@ import (
 )
 
 func main() {
-	events.Init()
+	go events.Init()
 
 	port := ":8888"
 	router := echo.New()
@@ -21,6 +21,7 @@ func main() {
 	router.GET("/health", echo.WrapHandler(http.HandlerFunc(health.Check)))
 
 	router.GET("/websocket", handlers.OpenWebSocket)
+	router.POST("/subscribe", handlers.Subscribe)
 	router.GET("/hostname", handlers.GetHostname)
 	router.PUT("/publish", handlers.PublishEvent)
 	router.GET("/deviceinfo", handlers.GetDeviceInfo)
