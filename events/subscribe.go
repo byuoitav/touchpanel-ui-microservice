@@ -53,7 +53,7 @@ func SubInit() {
 		log.Printf("[error] %s", err)
 	}
 
-	log.Printf("Subscribing to router")
+	log.Printf("Creating two-way connection with router")
 	_, err = http.Post("http://localhost:6999/subscribe", "application/json", bytes.NewBuffer(body))
 	for err != nil {
 		log.Printf("[error] failed to connect to the router. Trying again...")
@@ -61,7 +61,8 @@ func SubInit() {
 		_, err = http.Post("http://localhost:6999/subscribe", "application/json", bytes.NewBuffer(body))
 	}
 
-	log.Printf("Subscribe message sent")
+	go Manager.Start(UIFilter)
+	go SubListen()
 }
 
 func (manager *ClientManager) Start(f filter) {
