@@ -74,6 +74,7 @@ func Reboot(context echo.Context) error {
 func GetDockerStatus(context echo.Context) error {
 	log.Printf("[management] Getting docker status")
 	resp, err := http.Get("http://localhost:7010/dockerStatus")
+	log.Printf("docker status response: %s", resp)
 	if err != nil {
 		return context.JSON(http.StatusBadRequest, err.Error())
 	}
