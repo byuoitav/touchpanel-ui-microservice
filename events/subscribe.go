@@ -1,6 +1,7 @@
 package events
 
 import (
+	"bytes"
 	"encoding/json"
 	"log"
 	"net/http"
@@ -8,6 +9,7 @@ import (
 	"time"
 
 	"github.com/byuoitav/event-router-microservice/eventinfrastructure"
+	"github.com/byuoitav/event-router-microservice/subscription"
 	"github.com/gorilla/websocket"
 	"github.com/xuther/go-message-router/common"
 	"github.com/xuther/go-message-router/subscriber"
@@ -43,21 +45,24 @@ func SubInit() {
 		log.Printf("Could not create a subscriber. Error: %v\n", err.Error())
 	}
 
-	go func() {
-		for ok := true; ok; ok = (err != nil) {
-			err = Sub.Subscribe("localhost:7000", []string{eventinfrastructure.UI})
-			if err != nil {
-				log.Printf("Failed to subscribe to events on port :7000. Trying again...")
-				time.Sleep(1 * time.Second)
-			}
-		}
+	var s subscription.SubscribeRequest
+	s.Address = "localhost:7003" // address of our publisher
+	s.PubAddress = "localhost:8888/subscribe"
+	body, err := json.Marshal(s)
+	if err != nil {
+		log.Printf("[error] %s", err)
+	}
 
-		log.Printf("[Subscriber] Subscribed to %s events on port :7000", eventinfrastructure.UI)
+	log.Printf("Creating two-way connection with router")
+	_, err = http.Post("http://localhost:6999/subscribe", "application/json", bytes.NewBuffer(body))
+	for err != nil {
+		log.Printf("[error] failed to connect to the router. Trying again...")
+		time.Sleep(3 * time.Second)
+		_, err = http.Post("http://localhost:6999/subscribe", "application/json", bytes.NewBuffer(body))
+	}
 
-		go Manager.Start(UIFilter)
-		go SubListen()
-	}()
-
+	go Manager.Start(UIFilter)
+	go SubListen()
 }
 
 func (manager *ClientManager) Start(f filter) {
