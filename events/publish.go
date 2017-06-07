@@ -25,9 +25,10 @@ func Init() {
 	if err != nil {
 		log.Fatalf("Could not start publisher. Error: %v\n", err.Error())
 	}
+	log.Printf("Started publisher on :7003")
 
 	go Pub.Listen()
-	SubInit()
+	go SubInit()
 }
 
 func Publish(event eventinfrastructure.EventInfo) error {
@@ -59,6 +60,7 @@ func Publish(event eventinfrastructure.EventInfo) error {
 	log.Printf("[Publisher] Publishing event: %s", toSend)
 	err = Pub.Write(common.Message{MessageHeader: header, MessageBody: toSend})
 	if err != nil {
+		log.Printf("error: %s", err.Error())
 		return err
 	}
 

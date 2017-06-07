@@ -26,7 +26,7 @@ func Subscribe(context echo.Context) error {
 		return context.JSON(http.StatusBadRequest, err.Error())
 	}
 
-	log.Printf("Subscribing to %s", sr.Address)
+	log.Printf("[handler] Subscribing to %s", sr.Address)
 	err = events.Sub.Subscribe(sr.Address, []string{eventinfrastructure.UI})
 	if err != nil {
 		log.Printf("[error] %s", err.Error())

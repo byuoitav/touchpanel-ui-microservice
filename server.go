@@ -11,7 +11,7 @@ import (
 )
 
 func main() {
-	go events.Init()
+	events.Init()
 
 	port := ":8888"
 	router := echo.New()
