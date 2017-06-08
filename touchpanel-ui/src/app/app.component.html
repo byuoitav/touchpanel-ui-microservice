@@ -114,8 +114,20 @@
 	<!-- single device control -->
 	<div class='main-control-h'>
 	<div class='main-control-v'>
+		<!-- 
 		<div class='circle'>
 			<i class='material-icons'>panorama_wide_angle</i>
+		</div>
+		-->
+		<div style="display:block">
+			<canvas baseChart
+					[data]="donutChartData"
+					[labels]="donutChartLabels"
+					[chartType]="donutChartType"
+	   				[options]="donutChartOptions"
+					(chartHover)="chartHovered($event)"
+					(chartClick)="chartClicked($event)">
+			</canvas>
 		</div>
 	</div>
 	</div>
