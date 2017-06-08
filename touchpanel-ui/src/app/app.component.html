@@ -101,9 +101,46 @@
 
 <!-- main body -->
 <div class='basediv'>
+	<!-- power, help -->
+	<div class='power-row'>
+       	<div class='power' (click)="buttonpress('power'); powerOff()">
+			<i class='material-icons'>power_settings_new</i>
+	    </div>
+	    <div class='help' (click)="buttonpress('help'); helpmodal.show()">
+	        <i class='material-icons'>help</i>
+	    </div>
+	</div>
+
+	<!-- main control -->
+	<div class='main-control-h'>
+	<div class='main-control-v'>
+		<div class='circle'>
+		</div>
+	</div>
+	</div>
+
+
+	<!-- sidebar -->
+    <div class='column col-sm-1 sidebar'>
+        <div class='volume'>
+			<md-slider vertical [value]="volume" (change)="buttonpress('volume slider'); updateVolume($event.value)"></md-slider>
+        </div>
+        <div class="mute">
+			<div *ngIf="muted" (click)="buttonpress('unmute'); toggleMute()">
+				<i class="material-icons">volume_off</i>
+			</div>
+			<div *ngIf="!muted" (click)="buttonpress('mute'); toggleMute()">
+				<i class="material-icons">volume_up</i>
+			</div>
+        </div>
+	</div>
+</div>
+
+<!-- main body 
+<div class='basediv'>
 <div class='row'>
 
-	<!-- main -->
+	// main 
     <div class='column col-sm-9'>
         <div class='row row-centered output-devices'>
             <div *ngFor='let device of displays'>
@@ -115,7 +152,7 @@
             </div>
         </div>
 
-		<!-- spacing between output/input devices -->
+		// spacing between output/input devices
 		<div class='space'>
 		</div>
 
@@ -135,8 +172,7 @@
         </div>
     </div>
 
-
-	<!-- sidebar -->
+	// sidebar
     <div class='column col-sm-3 sidebar'>
         <div class="power" (click)="buttonpress('power'); powerOff()">
 			<i class="material-icons">power_settings_new</i>
@@ -156,9 +192,9 @@
 			<md-slider vertical thumbLabel tickInterval='auto' [value]="volume" (change)="buttonpress('volume slider'); updateVolume($event.value)"></md-slider>
         </div>
     </div>
-
 </div>
 </div>
+-->
 <div class='overlay basediv'  *ngIf="!showing" [@fadeInOut] (click)="buttonpress('power on'); enterScreen()">
     <img class='loading-img' [class.spinner]='!startSpinning' [class.spin_fast]='startSpinning'  src='assets/byu_medallion_black_white.svg'>
 </div>

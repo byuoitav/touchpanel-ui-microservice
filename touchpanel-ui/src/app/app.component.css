@@ -93,10 +93,47 @@ html, body {
     background-color: #BDBDBD;
 }
 .sidebar {
-	background-color: #eee;
+/*	background-color: #eee; */
 	height: 100%;
 	position: fixed;
-	right:0;
+	right: 1%;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+}
+
+.sidebar div {
+	display: flex;
+}
+
+.power-row {
+	position: fixed;
+	top: 4vh;
+	left: 3%;
+	width: 20%;
+	display: flex;
+	justify-content: space-around;
+}
+
+.main-control-h {
+	position: fixed;
+	width: 100%;
+	height: 100%;
+	display: flex;
+	justify-content: center;
+}
+
+.main-control-v {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+}
+
+.circle {
+	border-radius: 50%;
+	width: 55vh;
+	height: 55vh;
+	background-color: yellow;
 }
 
 /* centered columns styles */
@@ -120,17 +157,6 @@ html, body {
     width: 95%;
 }
 
-.sidebar {
-	display: flex;
-	flex-direction: column;
-	justify-content: space-around;
-}
-
-.sidebar div {
-	display: flex;
-	justify-content: center;
-}
-
 .power i,
 .mute i,
 .help i {
@@ -138,7 +164,7 @@ html, body {
 }
 
 .volume {
-	min-height: 40vh;	
+	min-height: 80vh;	
 }
 
 .output-device,
@@ -272,4 +298,9 @@ html, body {
 	width: 13vh;
 	position: relative;
 	bottom: -1vh;
+}
+
+.color {
+	color: #eee;
+	background-color: #eee;
 }

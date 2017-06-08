@@ -57,6 +57,7 @@ export class AppComponent {
   }
 
   public ngOnInit() {
+	this.showing = true;
     this.api.setup();
     this.getData();
 
