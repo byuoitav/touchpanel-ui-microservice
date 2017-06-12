@@ -6,7 +6,6 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
 import { MdSliderModule } from '@angular/material';
 import 'hammerjs';
-import { ChartsModule } from 'ng2-charts';
 
 import { AppComponent } from './app.component';
 import { ModalComponent } from './modal.component';
@@ -24,8 +23,7 @@ import { APIService } from './api.service';
     HttpModule,
     NgbModule.forRoot(),
     BrowserAnimationsModule,
-    MdSliderModule,
-	ChartsModule
+    MdSliderModule
   ],
   providers: [SocketService, APIService],
   bootstrap: [AppComponent]

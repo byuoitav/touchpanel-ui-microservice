@@ -42,28 +42,6 @@ export class AppComponent {
   startSpinning: boolean;
   sendingOn: boolean;
   	// donut chart stuff
-  public donutChartLabels: string[] = ['HDMIIn', 'Aux'];
-  public donutChartData: number[] = [500, 500];
-  public donutChartType: string = 'doughnut';
-  public donutChartOptions: any = {
-	"legend": {
-		display: false,
-	},
- 	"tooltips": {
-		"callbacks": {
-			"custom": function(tooltipModel) {
-					
-			}	
-		}
-	} 
-  }
-	// donut events
-  public chartClicked(e: any): void {
- 	console.log(e); 
-  }
-  public chartHovered(e: any): void {
- 	console.log(e); 
-  }
 
   public constructor(private socket: SocketService, private api: APIService) {
     this.messages = [];
