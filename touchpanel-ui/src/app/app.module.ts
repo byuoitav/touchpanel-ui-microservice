@@ -11,11 +11,13 @@ import { AppComponent } from './app.component';
 import { ModalComponent } from './modal.component';
 import { SocketService } from './socket.service';
 import { APIService } from './api.service';
+import { RingComponent } from './ring.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-	ModalComponent
+	ModalComponent,
+	RingComponent
   ],
   imports: [
     BrowserModule,
@@ -23,7 +25,7 @@ import { APIService } from './api.service';
     HttpModule,
     NgbModule.forRoot(),
     BrowserAnimationsModule,
-    MdSliderModule
+    MdSliderModule,
   ],
   providers: [SocketService, APIService],
   bootstrap: [AppComponent]
