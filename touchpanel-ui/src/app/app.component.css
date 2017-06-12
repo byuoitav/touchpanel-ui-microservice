@@ -127,8 +127,8 @@ html, body {
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
-	width: 60%;
-	height: 40%;
+	width: 60%; /* adjust size of circle */
+	height: 100%;
 }
 
 .circle {
