@@ -10,7 +10,7 @@ import { ModalComponent } from './modal.component';
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css', 'ring.component.scss'],
+  styleUrls: ['./app.component.scss'],
   providers: [APIService, SocketService],
   animations: [
     trigger('fadeInOut', [
