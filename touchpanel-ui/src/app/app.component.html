@@ -46,7 +46,7 @@
             <md-slider vertical [value]="volume" (change)="buttonpress('volume slider'); updateVolume($event.value)"></md-slider>
         </div>
         <div class="mute">
-            <div *ngIf="muted" (click)="buttonpress('unmute'); toggleMute()">
+            <div *ngIf="muted" [class.red]="muted" (click)="buttonpress('unmute'); toggleMute()">
                 <i class="material-icons">volume_off</i>
             </div>
             <div *ngIf="!muted" (click)="buttonpress('mute'); toggleMute()">
@@ -54,6 +54,11 @@
             </div>
         </div>
     </div>
+	<!-- blank -->
+	<!-- this guy should be somewhere else in the future -->
+	<div class="blank" [class.red]="blanked" (click)="buttonpress('blank'); blank()">
+		<i class="material-icons">panorama_wide_angle</i>
+	</div>
 
     <!-- slice of the circle -->
 <svg id='svg-block' width="0" height="0">

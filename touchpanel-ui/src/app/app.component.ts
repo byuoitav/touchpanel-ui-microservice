@@ -36,6 +36,7 @@ export class AppComponent { // event stuff
   inputs: Array<DeviceData>;
   displays: Array<DeviceData>;
   powerState: boolean;
+  blanked: boolean;
   // "lock" screen
   showing: boolean
   currentAudioLevel: number;
@@ -65,6 +66,7 @@ export class AppComponent { // event stuff
     this.showing = true;
     this.api.setup();
     this.getData();
+	this.blanked = true;
 
     // setup socket to recieve events
     this.socket.getEventListener().subscribe(event => {
@@ -310,6 +312,7 @@ export class AppComponent { // event stuff
         }
 
         d.blanked = (e.eventInfoValue == 'true');
+		this.blanked = (e.eventInfoValue == 'true');
         break;
       default:
         console.log("unknown eventInfoKey:", e.eventInfoKey);
@@ -462,6 +465,7 @@ export class AppComponent { // event stuff
   }
 
   blank() {
+	this.blanked = !this.blanked;
     var body = { displays: [] }
     for (let display of this.displays) {
       if (display.selected) {

@@ -120,6 +120,12 @@ body {
 	z-index: 100;
 }
 
+.blank {
+	position: fixed;
+	bottom: 3.6vh;
+	right: 13%;
+}
+
 .main-control-h {
     position: fixed;
     width: 100%;
@@ -254,6 +260,7 @@ p {
 
 .power i,
 .mute i,
+.blank i,
 .help i {
     font-size: 9vh;
 }
@@ -511,4 +518,8 @@ p {
 .color {
     color: #eee;
     background-color: #eee;
+}
+
+.red {
+	color: red;
 }
