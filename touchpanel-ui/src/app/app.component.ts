@@ -24,8 +24,7 @@ import { ModalComponent } from './modal.component';
     ])
   ]
 })
-export class AppComponent {
-  // event stuff
+export class AppComponent { // event stuff
   messages: Array<any>;
   events: Array<Event>;
   // room data
@@ -44,6 +43,7 @@ export class AppComponent {
   // circle stuff
   @ViewChild('ring') ring: ElementRef;
   arcpath: string;
+  ringopen: boolean;
 
   public constructor(private socket: SocketService, private api: APIService) {
     this.messages = [];
@@ -53,6 +53,7 @@ export class AppComponent {
     this.showing = false;
     this.startSpinning = false;
     this.sendingOn = false;
+	this.ringopen = false;
 
     // management
     this.deviceInfo = new Object();
@@ -579,5 +580,10 @@ export class AppComponent {
   reboot() {
     console.log("rebooting");
     this.api.reboot().subscribe();
+  }
+
+  openring() {
+	this.ringopen = !this.ringopen;
+	console.log("ringopen:", this.ringopen);
   }
 } 

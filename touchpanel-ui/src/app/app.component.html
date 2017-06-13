@@ -13,10 +13,10 @@
     <!-- single device control -->
     <div class='main-control-h'>
         <div class='main-control-v'>
-            <div class='circle'>
+            <div class='circle' [class.circle-shrink]="ringopen" (click)="openring();">
                 <i class='material-icons'>panorama_wide_angle</i>
             </div>
-            <ul #ring class="ring">
+            <ul #ring class="ring" [class.ring-grow]="ringopen">
                 <li *ngFor="let i of inputs" class="slice">
                     <a href="#">
                         <span class="icon">{{i.name}}</span>
@@ -43,10 +43,10 @@
     </div>
 
     <!-- slice of the circle -->
-    <svg id='svg-block' height="0" width="0">
+<svg id='svg-block' height="0" width="0">
   <defs>
     <clipPath clipPathUnits="objectBoundingBox" id="sector">
-	<path fill="transparent" stroke="#111" stroke-width="1" class="sector" [attr.d]="arcpath"></path>
+		<path fill="transparent" stroke="#111" stroke-width="1" class="sector" [attr.d]="arcpath"></path>
     </clipPath>
   </defs>
 </svg>
