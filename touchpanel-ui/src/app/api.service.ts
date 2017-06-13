@@ -57,7 +57,7 @@ export class APIService {
     return this.http.get("http://localhost:8888/reboot")
       .map(response => response.json());
   }
-  
+
   getRoomConfig(): Observable<Object> {
     return this.http.get(this.url + "/configuration")
       .map(response => response.json());
@@ -69,8 +69,8 @@ export class APIService {
   }
 
   get(url: string): Observable<Object> {
- 	return this.http.get(url)
-   	  .map(response => response.json());	
+    return this.http.get(url)
+      .map(response => response.json());
   }
 
   putData(data: any) {

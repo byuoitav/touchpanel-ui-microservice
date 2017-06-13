@@ -1,49 +1,49 @@
 <!-- main body -->
 <div class='basediv'>
-	<!-- power, help -->
-	<div class='power-row'>
-       	<div class='power' (click)="buttonpress('power'); powerOff()">
-			<i class='material-icons'>power_settings_new</i>
-	    </div>
-	    <div class='help' (click)="buttonpress('help'); helpmodal.show()">
-	        <i class='material-icons'>help</i>
-	    </div>
-	</div>
+    <!-- power, help -->
+    <div class='power-row'>
+        <div class='power' (click)="buttonpress('power'); powerOff()">
+            <i class='material-icons'>power_settings_new</i>
+        </div>
+        <div class='help' (click)="buttonpress('help'); helpmodal.show()">
+            <i class='material-icons'>help</i>
+        </div>
+    </div>
 
-	<!-- single device control -->
-	<div class='main-control-h'>
-	<div class='main-control-v'>
-		<div class='circle'>
-			<i class='material-icons'>panorama_wide_angle</i>
-		</div>
-		<ul #ring class="ring">
-			<li *ngFor="let i of inputs" class="slice">
-				<a href="#">
-					<span class="icon">{{i.name}}</span>
-				</a>
-			</li>
-		</ul>
-	</div>
-	</div>
+    <!-- single device control -->
+    <div class='main-control-h'>
+        <div class='main-control-v'>
+            <div class='circle'>
+                <i class='material-icons'>panorama_wide_angle</i>
+            </div>
+            <ul #ring class="ring">
+                <li *ngFor="let i of inputs" class="slice">
+                    <a href="#">
+                        <span class="icon">{{i.name}}</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
 
 
-	<!-- sidebar -->
+    <!-- sidebar -->
     <div class='column col-sm-1 sidebar'>
         <div class='volume'>
-			<md-slider vertical [value]="volume" (change)="buttonpress('volume slider'); updateVolume($event.value)"></md-slider>
+            <md-slider vertical [value]="volume" (change)="buttonpress('volume slider'); updateVolume($event.value)"></md-slider>
         </div>
         <div class="mute">
-			<div *ngIf="muted" (click)="buttonpress('unmute'); toggleMute()">
-				<i class="material-icons">volume_off</i>
-			</div>
-			<div *ngIf="!muted" (click)="buttonpress('mute'); toggleMute()">
-				<i class="material-icons">volume_up</i>
-			</div>
+            <div *ngIf="muted" (click)="buttonpress('unmute'); toggleMute()">
+                <i class="material-icons">volume_off</i>
+            </div>
+            <div *ngIf="!muted" (click)="buttonpress('mute'); toggleMute()">
+                <i class="material-icons">volume_up</i>
+            </div>
         </div>
-	</div>
+    </div>
 
-<!-- slice of the circle -->
-<svg id='svg-block' height="0" width="0">
+    <!-- slice of the circle -->
+    <svg id='svg-block' height="0" width="0">
   <defs>
     <clipPath clipPathUnits="objectBoundingBox" id="sector">
 	<path fill="transparent" stroke="#111" stroke-width="1" class="sector" [attr.d]="arcpath"></path>
@@ -52,123 +52,122 @@
 </svg>
 </div>
 
-<div class='overlay basediv'  *ngIf="!showing" [@fadeInOut] (click)="buttonpress('power on'); enterScreen()">
-    <img class='loading-img' [class.spinner]='!startSpinning' [class.spin_fast]='startSpinning'  src='assets/byu_medallion_black_white.svg'>
+<div class='overlay basediv' *ngIf="!showing" [@fadeInOut] (click)="buttonpress('power on'); enterScreen()">
+    <img class='loading-img' [class.spinner]='!startSpinning' [class.spin_fast]='startSpinning' src='assets/byu_medallion_black_white.svg'>
 </div>
 
-	<!-- management dialog -->
+<!-- management dialog -->
 <div class="management basediv" *ngIf="!showing">
-	<div class="top right" (click)="management(1)">
-	</div>
-	<div class="top left" (click)="management(3)">
-	</div>
-	<div class="bottom left" (click)="management(2)">
-	</div>
-	<div *ngIf="!man1 || !man2 || !man3" class="bottom right" (click)="management(4)">
-	</div>
-	<div *ngIf="man1 && man2 && man3" class="bottom right" (click)="management(4); managementmodal.show();">
-	</div>
+    <div class="top right" (click)="management(1)">
+    </div>
+    <div class="top left" (click)="management(3)">
+    </div>
+    <div class="bottom left" (click)="management(2)">
+    </div>
+    <div *ngIf="!man1 || !man2 || !man3" class="bottom right" (click)="management(4)">
+    </div>
+    <div *ngIf="man1 && man2 && man3" class="bottom right" (click)="management(4); managementmodal.show();">
+    </div>
 </div>
 
 
 <!-- pop-ups -->
 <app-modal #helpmodal>
-	<div class="app-modal-body">
-		<div class="modal-icon">
-			<i class='material-icons helpdialog'>info_outline</i>
-		</div>
-		<div class="modal-title">
-			Help
-		</div>
-		<div class="modal-body">
-			<span>Please call AV Support at 801-422-7671 for help.</span>
-		</div>
-		<div class="modal-bottom">
-			<button class="btn btn-primary" (click)="helpmodal.hide()">Done</button>
-		</div>
-	</div>
+    <div class="app-modal-body">
+        <div class="modal-icon">
+            <i class='material-icons helpdialog'>info_outline</i>
+        </div>
+        <div class="modal-title">
+            Help
+        </div>
+        <div class="modal-body">
+            <span>Please call AV Support at 801-422-7671 for help.</span>
+        </div>
+        <div class="modal-bottom">
+            <button class="btn btn-primary" (click)="helpmodal.hide()">Done</button>
+        </div>
+    </div>
 </app-modal>
 
 <app-modal #managementmodal>
-	<div class="app-modal-body">
-		<div class="modal-title">
-			Management
-		</div>
-		<div class="modal-body">
-			<div class="management-body">
-				<div>
-					<button class="btn btn-warning" (click)="refresh()">Refresh</button>
-				</div>
-				<div>
-					<button class="btn btn-info" (click)="deviceinfo(); deviceinfomodal.show()">Device Info</button>
-				</div>
-				<div>
-					<button class="btn btn-info" (click)="dockerstatus(); dockerstatusmodal.show()">Docker Status</button>
-				</div>
-				<div>
-					<button class="btn btn-danger" (click)="confirmrebootmodal.show()">Reboot</button>
-				</div>
-			</div>
-		</div>
-		<div class="modal-bottom">
-			<button class="btn btn-primary" (click)="managementmodal.hide()">Done</button>
-		</div>
-	</div>
+    <div class="app-modal-body">
+        <div class="modal-title">
+            Management
+        </div>
+        <div class="modal-body">
+            <div class="management-body">
+                <div>
+                    <button class="btn btn-warning" (click)="refresh()">Refresh</button>
+                </div>
+                <div>
+                    <button class="btn btn-info" (click)="deviceinfo(); deviceinfomodal.show()">Device Info</button>
+                </div>
+                <div>
+                    <button class="btn btn-info" (click)="dockerstatus(); dockerstatusmodal.show()">Docker Status</button>
+                </div>
+                <div>
+                    <button class="btn btn-danger" (click)="confirmrebootmodal.show()">Reboot</button>
+                </div>
+            </div>
+        </div>
+        <div class="modal-bottom">
+            <button class="btn btn-primary" (click)="managementmodal.hide()">Done</button>
+        </div>
+    </div>
 </app-modal>
 
 <app-modal #deviceinfomodal>
-	<div class="app-modal-body">
-		<div class="modal-title">
-			Device Info
-		</div>
-		<div class="modal-body">
-			<div class="vert-align">
-				<div *ngIf="deviceInfo.hostname">
-					<span>Hostname:</span>
-					<span>{{deviceInfo.hostname}}</span>
-				</div>
-				<div *ngIf="deviceInfo.ipaddress">
-					<span>IP Address:</span>
-					<span>{{deviceInfo.ipaddress}}</span>
-				</div>
-			</div>
-		</div>
-		<div class="modal-bottom">
-			<button class="btn btn-primary" (click)="deviceinfomodal.hide()">Done</button>
-		</div>
-	</div>
+    <div class="app-modal-body">
+        <div class="modal-title">
+            Device Info
+        </div>
+        <div class="modal-body">
+            <div class="vert-align">
+                <div *ngIf="deviceInfo.hostname">
+                    <span>Hostname:</span>
+                    <span>{{deviceInfo.hostname}}</span>
+                </div>
+                <div *ngIf="deviceInfo.ipaddress">
+                    <span>IP Address:</span>
+                    <span>{{deviceInfo.ipaddress}}</span>
+                </div>
+            </div>
+        </div>
+        <div class="modal-bottom">
+            <button class="btn btn-primary" (click)="deviceinfomodal.hide()">Done</button>
+        </div>
+    </div>
 </app-modal>
 
 <app-modal #dockerstatusmodal>
-	<div class="app-modal-body">
-		<div class="modal-title">
-			Docker Status	
-		</div>
-		<div class="modal-body">
-			<div *ngIf="dockerStatus" style="overflow: hidden;">
-				<pre>{{dockerStatus}}</pre>
-			</div>
-		</div>
-		<div class="modal-bottom">
-			<button class="btn btn-primary" (click)="dockerstatusmodal.hide()">Done</button>
-		</div>
-	</div>
+    <div class="app-modal-body">
+        <div class="modal-title">
+            Docker Status
+        </div>
+        <div class="modal-body">
+            <div *ngIf="dockerStatus" style="overflow: hidden;">
+                <pre>{{dockerStatus}}</pre>
+            </div>
+        </div>
+        <div class="modal-bottom">
+            <button class="btn btn-primary" (click)="dockerstatusmodal.hide()">Done</button>
+        </div>
+    </div>
 </app-modal>
 
 <app-modal #confirmrebootmodal>
-	<div class="app-modal-body">
-		<div class="modal-icon">
-			<i class='material-icons rebootdialog'>info_outline</i>
-		</div>
-		<div class="modal-title">
-			Are you sure?	
-		</div>
-		<div class="modal-body">
-		</div>
-		<div class="modal-bottom">
-			<button class="btn btn-danger" (click)="confirmrebootmodal.hide()">Cancel</button>
-			<button class="btn btn-success" (click)="reboot()">Reboot</button>
-		</div>
-	</div>
+    <div class="app-modal-body">
+        <div class="modal-icon">
+            <i class='material-icons rebootdialog'>info_outline</i>
+        </div>
+        <div class="modal-title">
+            Are you sure?
+        </div>
+        <div class="modal-body">
+        </div>
+        <div class="modal-bottom">
+            <button class="btn btn-danger" (click)="confirmrebootmodal.hide()">Cancel</button>
+            <button class="btn btn-success" (click)="reboot()">Reboot</button>
+        </div>
+    </div>
 </app-modal>
-
