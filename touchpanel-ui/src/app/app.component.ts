@@ -61,7 +61,7 @@ export class AppComponent { // event stuff
   }
 
   public ngOnInit() {
-    this.showing = true;
+//    this.showing = true;
     this.api.setup();
     this.getData();
 
