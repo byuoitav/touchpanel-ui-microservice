@@ -11,13 +11,11 @@ import { AppComponent } from './app.component';
 import { ModalComponent } from './modal.component';
 import { SocketService } from './socket.service';
 import { APIService } from './api.service';
-import { RingComponent } from './ring.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-	ModalComponent,
-	RingComponent
+	ModalComponent
   ],
   imports: [
     BrowserModule,

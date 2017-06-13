@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, trigger, transition, style, animate, state } from '@angular/core';
+import { Component, OnInit, OnDestroy, trigger, transition, style, animate, state, ViewChild, ElementRef } from '@angular/core';
 import { SocketService, OPEN, CLOSE, MESSAGE } from './socket.service';
 import { Observable } from 'rxjs/Rx';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -10,7 +10,7 @@ import { ModalComponent } from './modal.component';
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css'],
+  styleUrls: ['./app.component.css', 'ring.component.scss'],
   providers: [APIService, SocketService],
   animations: [
     trigger('fadeInOut', [
@@ -41,7 +41,9 @@ export class AppComponent {
   currentAudioLevel: number;
   startSpinning: boolean;
   sendingOn: boolean;
-  	// donut chart stuff
+  	// circle stuff
+  @ViewChild('ring') ring: ElementRef;
+  arcpath: string;
 
   public constructor(private socket: SocketService, private api: APIService) {
     this.messages = [];
@@ -137,7 +139,9 @@ export class AppComponent {
 
         this.getInputs();
 		this.statusUpdateVolume();
-      });
+		// hacky but it works?
+		setTimeout(() => {this.buildInputMenu();}, 0)
+	  });
     });
   }
 
@@ -177,6 +181,54 @@ export class AppComponent {
         }
       }
     }
+  }
+
+  buildInputMenu() {
+	console.log("ring:", this.ring);	
+	let numOfChildren = this.ring.nativeElement.childElementCount;
+	console.log("num of children:", numOfChildren);
+	let children = this.ring.nativeElement.children;
+	let angle = 360 / numOfChildren; 
+	console.log("angle", angle);
+	// svg arc length 
+	this.arcpath = this.getArc(.5, .5, .5, 0, angle);	
+	
+	// apply styles to children
+	for (let i = 0; i < numOfChildren; i++) {
+		console.log("children[" + i + "]", children[i]);
+		
+		// rotate the slice
+		let rotate = "rotate(" + String(angle * -i) + "deg)";
+		children[i].style.transform = rotate; 
+
+		// color it
+		let darkenstr = "hsl(193, 76%, " + String(80 - (i * 5)) + "%)" ;	
+		children[i].style.backgroundColor = darkenstr;
+	}
+  }
+
+  getArc(x, y, radius, startAngle, endAngle) {
+ 	let start = this.polarToCart(x, y, radius, endAngle); 
+	let end = this.polarToCart(x, y, radius, startAngle);
+
+	let largeArc = endAngle - startAngle <= 180 ? "0" : "1";
+
+	let d = [
+		"M", start.x, start.y,
+		"A", radius, radius, 0, largeArc, 0, end.x, end.y,
+		"L", x,y,
+		"L", start.x, start.y	
+	].join(" ");
+	return d;
+  }
+
+  polarToCart(cx, cy, r, angle) {
+ 	let angleInRad = (angle-90) * Math.PI / 180.0; 
+
+	return {
+	  x: cx + (r * Math.cos(angleInRad)),
+  	  y:  cy + (r * Math.sin(angleInRad))	  
+	};
   }
 
   enterScreen() {

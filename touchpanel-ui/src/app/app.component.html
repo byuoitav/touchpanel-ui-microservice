@@ -1,3 +1,88 @@
+<!-- main body -->
+<div class='basediv'>
+	<!-- power, help -->
+	<div class='power-row'>
+       	<div class='power' (click)="buttonpress('power'); powerOff()">
+			<i class='material-icons'>power_settings_new</i>
+	    </div>
+	    <div class='help' (click)="buttonpress('help'); helpmodal.show()">
+	        <i class='material-icons'>help</i>
+	    </div>
+	</div>
+
+	<!-- single device control -->
+	<div class='main-control-h'>
+	<div class='main-control-v'>
+		<!-- 
+		<div class='circle'>
+			<i class='material-icons'>panorama_wide_angle</i>
+		</div>
+		-->
+		<ul #ring class="ring">
+			<li *ngFor="let i of inputs" class="slice">
+				<a href="#">
+					<span class="icon">{{i.name}}</span>
+				</a>
+			</li>
+		</ul>
+	</div>
+	</div>
+
+
+	<!-- sidebar -->
+    <div class='column col-sm-1 sidebar'>
+        <div class='volume'>
+			<md-slider vertical [value]="volume" (change)="buttonpress('volume slider'); updateVolume($event.value)"></md-slider>
+        </div>
+        <div class="mute">
+			<div *ngIf="muted" (click)="buttonpress('unmute'); toggleMute()">
+				<i class="material-icons">volume_off</i>
+			</div>
+			<div *ngIf="!muted" (click)="buttonpress('mute'); toggleMute()">
+				<i class="material-icons">volume_up</i>
+			</div>
+        </div>
+	</div>
+
+<!-- one part of the circle -->
+<!-- 
+<svg id='svg-block' height="0" width="0">
+  <defs>
+    <clipPath clipPathUnits="objectBoundingBox" id="sector">
+      <path fill="none" stroke="#111" stroke-width="1" class="sector" d="M0.5,0.5 l0.5,0 A0.5,0.5 0 0,0 0.75,.066987298 z"></path>
+    </clipPath>
+  </defs>
+</svg>
+-->
+
+<svg id='svg-block' height="0" width="0">
+  <defs>
+    <clipPath clipPathUnits="objectBoundingBox" id="sector">
+	<path fill="transparent" stroke="#111" stroke-width="1" class="sector" [attr.d]="arcpath"></path>
+    </clipPath>
+  </defs>
+</svg>
+</div>
+
+<div class='overlay basediv'  *ngIf="!showing" [@fadeInOut] (click)="buttonpress('power on'); enterScreen()">
+    <img class='loading-img' [class.spinner]='!startSpinning' [class.spin_fast]='startSpinning'  src='assets/byu_medallion_black_white.svg'>
+</div>
+
+	<!-- management dialog -->
+<div class="management basediv" *ngIf="!showing">
+	<div class="top right" (click)="management(1)">
+	</div>
+	<div class="top left" (click)="management(3)">
+	</div>
+	<div class="bottom left" (click)="management(2)">
+	</div>
+	<div *ngIf="!man1 || !man2 || !man3" class="bottom right" (click)="management(4)">
+	</div>
+	<div *ngIf="man1 && man2 && man3" class="bottom right" (click)="management(4); managementmodal.show();">
+	</div>
+</div>
+
+
 <!-- pop-ups -->
 <app-modal #helpmodal>
 	<div class="app-modal-body">
@@ -99,120 +184,3 @@
 	</div>
 </app-modal>
 
-<!-- main body -->
-<div class='basediv'>
-	<!-- power, help -->
-	<div class='power-row'>
-       	<div class='power' (click)="buttonpress('power'); powerOff()">
-			<i class='material-icons'>power_settings_new</i>
-	    </div>
-	    <div class='help' (click)="buttonpress('help'); helpmodal.show()">
-	        <i class='material-icons'>help</i>
-	    </div>
-	</div>
-
-	<!-- single device control -->
-	<div class='main-control-h'>
-	<div class='main-control-v'>
-		<!-- 
-		<div class='circle'>
-			<i class='material-icons'>panorama_wide_angle</i>
-		</div>
-		-->
-		<ring></ring>
-	</div>
-	</div>
-
-
-	<!-- sidebar -->
-    <div class='column col-sm-1 sidebar'>
-        <div class='volume'>
-			<md-slider vertical [value]="volume" (change)="buttonpress('volume slider'); updateVolume($event.value)"></md-slider>
-        </div>
-        <div class="mute">
-			<div *ngIf="muted" (click)="buttonpress('unmute'); toggleMute()">
-				<i class="material-icons">volume_off</i>
-			</div>
-			<div *ngIf="!muted" (click)="buttonpress('mute'); toggleMute()">
-				<i class="material-icons">volume_up</i>
-			</div>
-        </div>
-	</div>
-</div>
-
-<!-- main body 
-<div class='basediv'>
-<div class='row'>
-
-	// main 
-    <div class='column col-sm-9'>
-        <div class='row row-centered output-devices'>
-            <div *ngFor='let device of displays'>
-                <div class='output-device icon-transition' (click)="buttonpress(device.name); setOutputDevice(device)">
-               		<span [class.inactive]="!device.selected" class='output-device-name icon-transition'>{{device.displayName}}</span>
-					<i *ngIf="device.blanked" [class.inactive]="!device.selected" class='material-icons icon-transition'>panorama_wide_angle</i>
-					<i *ngIf="!device.blanked" [class.inactive]="!device.selected" class='material-icons icon-transition'>{{device.icon}}</i>
-				</div>
-            </div>
-        </div>
-
-		// spacing between output/input devices
-		<div class='space'>
-		</div>
-
-        <div class='row row-centered input-devices'>
-			<div class="col-sm-2">
-				<div class='input-device' (click)="buttonpress('blank'); blank()">
-					<i class='material-icons icon-transition'>panorama_wide_angle</i>
-               		<span class='input-device-name'>Blank</span>
-				</div>
-			</div>
-            <div class="col-sm-2" *ngFor='let device of inputs'>
-				<div class='input-device' (click)="buttonpress(device.name); setInputDevice(device)">
-					<i class='material-icons icon-transition'>{{device.icon}}</i>
-               		<span class='input-device-name'>{{device.displayName}}</span>
-				</div>
-            </div>
-        </div>
-    </div>
-
-	// sidebar
-    <div class='column col-sm-3 sidebar'>
-        <div class="power" (click)="buttonpress('power'); powerOff()">
-			<i class="material-icons">power_settings_new</i>
-        </div>
-        <div class="help" (click)="buttonpress('help'); helpmodal.show()">
-            <i class="material-icons">help</i>
-        </div>
-        <div class="mute">
-			<div *ngIf="muted" (click)="buttonpress('unmute'); toggleMute()">
-				<i class="material-icons">volume_off</i>
-			</div>
-			<div *ngIf="!muted" (click)="buttonpress('mute'); toggleMute()">
-				<i class="material-icons">volume_up</i>
-			</div>
-        </div>
-        <div class='volume'>
-			<md-slider vertical thumbLabel tickInterval='auto' [value]="volume" (change)="buttonpress('volume slider'); updateVolume($event.value)"></md-slider>
-        </div>
-    </div>
-</div>
-</div>
--->
-<div class='overlay basediv'  *ngIf="!showing" [@fadeInOut] (click)="buttonpress('power on'); enterScreen()">
-    <img class='loading-img' [class.spinner]='!startSpinning' [class.spin_fast]='startSpinning'  src='assets/byu_medallion_black_white.svg'>
-</div>
-
-	<!-- management dialog -->
-<div class="management basediv" *ngIf="!showing">
-	<div class="top right" (click)="management(1)">
-	</div>
-	<div class="top left" (click)="management(3)">
-	</div>
-	<div class="bottom left" (click)="management(2)">
-	</div>
-	<div *ngIf="!man1 || !man2 || !man3" class="bottom right" (click)="management(4)">
-	</div>
-	<div *ngIf="man1 && man2 && man3" class="bottom right" (click)="management(4); managementmodal.show();">
-	</div>
-</div>

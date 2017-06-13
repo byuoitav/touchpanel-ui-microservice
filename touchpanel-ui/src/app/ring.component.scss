@@ -2,7 +2,7 @@
 
 $base: #A5E2F3;
 
-.menu {
+.ring {
   padding: 0;
   list-style: none;
   position: relative;
@@ -12,7 +12,7 @@ $base: #A5E2F3;
   padding-top: 70%;
 }
 
-.menu li { 
+.ring li { 
   position: absolute;
   top: 0;
   left: 0;
@@ -30,36 +30,6 @@ $base: #A5E2F3;
   &:hover {
     background-color: gold;
   }
-}
-
-.one {
-  background-color: $base;
-  transform: rotate(0deg);
-}
-
-.two {
-  background-color: darken($base, 7%);
-  transform: rotate(-60deg);
-}
-
-.three {
-  background-color: darken($base, 14%);
-  transform: rotate(-120deg);
-}
-
-.four {
-  background-color: darken($base, 21%);
-  transform: rotate(-180deg);
-}
-
-.five {
-  background-color: darken($base, 28%);
-  transform: rotate(-240deg);
-}
-
-.six {
-  background-color: darken($base, 35%);
-  transform: rotate(-300deg);
 }
 
 .icon {
@@ -80,4 +50,8 @@ p {
   text-align: center;
   width: 80%;
   margin: 0 auto;
+}
+
+#svg-block {
+//	display: none;
 }
