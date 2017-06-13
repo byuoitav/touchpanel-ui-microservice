@@ -29,6 +29,7 @@ export class AppComponent { // event stuff
   events: Array<Event>;
   // room data
   room: Room;
+  roomname: string;
   // display information	
   volume: number;
   muted: boolean;
@@ -61,7 +62,7 @@ export class AppComponent { // event stuff
   }
 
   public ngOnInit() {
-//    this.showing = true;
+    this.showing = true;
     this.api.setup();
     this.getData();
 
@@ -122,6 +123,7 @@ export class AppComponent { // event stuff
     this.room = new Room();
 
     this.api.loaded.subscribe(data => {
+		this.roomname = this.api.building + " " + this.api.room;
       this.api.getRoomConfig().subscribe(data => {
         this.room.config = new RoomConfiguration();
         Object.assign(this.room.config, data);
@@ -194,8 +196,19 @@ export class AppComponent { // event stuff
     // svg arc length 
     this.arcpath = this.getArc(.5, .5, .5, 0, angle);
 
+	// apply styles to first two (title area)
+	for (let i = 0; i < 2; i++) {
+	  console.log("room name slice", i + ":", children[i]);	
+
+      let rotate = "rotate(" + String(angle * -i) + "deg)";
+      children[i].style.transform = rotate;
+
+      let darkenstr = "hsl(193, 76%, " + String(80 - (.5 * 5)) + "%)";
+      children[i].style.backgroundColor = darkenstr;
+	}
+
     // apply styles to children
-    for (let i = 0; i < numOfChildren; i++) {
+    for (let i = 2; i < numOfChildren; i++) {
       console.log("children[" + i + "]", children[i]);
 
       // rotate the slice

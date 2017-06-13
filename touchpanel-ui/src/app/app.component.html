@@ -12,11 +12,24 @@
 
     <!-- single device control -->
     <div class='main-control-h'>
+		<div class='roomname' [class.roomname-transition]="ringopen">
+			<span>{{roomname}}</span>
+		</div>
         <div class='main-control-v'>
             <div class='circle' [class.circle-shrink]="ringopen" (click)="openring();">
                 <i class='material-icons'>panorama_wide_angle</i>
             </div>
             <ul #ring class="ring" [class.ring-grow]="ringopen">
+				<li class="slice">
+					<a href='#'>
+						<span></span>
+					</a>
+				</li>
+				<li class="slice">
+					<a href='#'>
+						<span></span>
+					</a>
+				</li>
                 <li *ngFor="let i of inputs" class="slice">
                     <a href="#">
                         <span class="icon">{{i.name}}</span>

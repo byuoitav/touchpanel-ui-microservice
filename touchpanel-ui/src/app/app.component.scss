@@ -99,7 +99,7 @@ body {
 .sidebar {
     height: 100%;
     position: fixed;
-    right: 1%;
+    right: 2%;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -137,6 +137,23 @@ body {
     height: 100%;
 }
 
+.roomname {
+	position: fixed;
+	display: flex;
+	flex-direction: column;
+	justify-content: flex-start;
+	width: 60%;
+	height: 100%;
+	text-align: center;
+	z-index: 1;
+	top: 10vh;
+	transition: .2s ease all;
+}
+
+.roomname-transition {
+	top: 18vh;
+}
+
 .circle {
     z-index: 1;
     position: fixed;
@@ -153,8 +170,8 @@ body {
 }
 
 .circle-shrink {
-	width: 45vh;
-	height: 45vh;
+	width: 43vh;
+	height: 43vh;
 }
 
 .ring {
@@ -162,8 +179,8 @@ body {
     list-style: none;
     position: relative;
     margin: 30px auto;
-    width: 50%;          // these two together control the 
-    padding-top: 50%;    // size of the ring. they must be the same:) who knows why. 
+    width: 10%;          // these two together control the 
+    padding-top: 10%;    // size of the ring. they must be the same:) who knows why. 
     height: 0;
 	transition: .2s ease-in all;
 }
@@ -241,15 +258,25 @@ p {
     font-size: 9vh;
 }
 
+.mute {
+//	display: flex;
+//	justify-content: center;
+//	flex-direction: row;
+//	min-width: 100%;
+}
+
 .volume {
     min-height: 80vh;
+//	display: flex;
+//	justify-content: flex-start;
+//	flex-direction: row;
 }
 
 .output-device,
 .input-device {
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: flex-start;
     align-items: center;
 }
 
