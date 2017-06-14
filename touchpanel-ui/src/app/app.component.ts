@@ -21,8 +21,8 @@ import { ModalComponent } from './modal.component';
       transition('* => void', [
         animate('2s', style({ opacity: 0 })) // the new state of the transition(after transiton it removes)
       ])
-    ])
-  ]
+    ]),
+  ],
 })
 export class AppComponent { // event stuff
   messages: Array<any>;
@@ -46,8 +46,11 @@ export class AppComponent { // event stuff
   @ViewChild('ring') ring: ElementRef;
   arcpath: string;
   ringopen: boolean;
-  // short term stuff (until multiple displays happens)
+  // display selection
+  displayselection: boolean; 
+  // multi-display data 
   currentInput: DeviceData;
+  selectedDisplay: DeviceData; 
 
   public constructor(private socket: SocketService, private api: APIService) {
     this.messages = [];
@@ -65,18 +68,13 @@ export class AppComponent { // event stuff
   }
 
   public ngOnInit() {
-	this.currentInput = {
-		name: "D1",
-	 	displayName: "Flatpanel",
-		input: "HDMIIn",
-		selected: true,
-		icon: icons.hdmi,
-		blanked: true
-	}
+	this.currentInput = new DeviceData(); 
+	this.selectedDisplay = new DeviceData();
     this.showing = true;
     this.api.setup();
     this.getData();
 	this.blanked = true;
+	this.displayselection = true;
 
     // setup socket to recieve events
     this.socket.getEventListener().subscribe(event => {
@@ -615,5 +613,10 @@ export class AppComponent { // event stuff
   openring() {
 	this.ringopen = !this.ringopen;
 	console.log("ringopen:", this.ringopen);
+  }
+
+  goToSingleControl(d: DeviceData) {
+	this.displayselection = false;
+	this.selectedDisplay = d;	
   }
 } 

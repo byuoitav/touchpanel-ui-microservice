@@ -10,14 +10,28 @@
         </div>
     </div>
 
-    <!-- single device control -->
-    <div class='main-control-h'>
+
+	<!-- display-selection -->
+	<div [class.hidden]='!displayselection' class='main-control-h'>
+		<div class='display-selection'>
+			<div *ngFor="let device of displays" [class.movetocenter]="device === selectedDisplay" (click)="goToSingleControl(device)">
+				<div class='multi-circle-title'>
+					<span>{{device.displayName}}</span>
+				</div>
+				<div class='multi-circle'>
+					<i class='material-icons'>{{device.icon}}</i>
+				</div>
+			</div>
+		</div>
+	</div>
+    <!-- display control -->
+    <div [class.hidden]='displayselection' class='main-control-h'>
 		<div class='roomname' [class.roomname-transition]="ringopen">
-			<span>{{currentInput.displayName}}</span>
+			<span>{{selectedDisplay.displayName}}</span>
 		</div>
         <div class='main-control-v'>
             <div class='circle' [class.circle-shrink]="ringopen" (click)="openring();">
-				<i class='material-icons'>{{currentInput.icon}}</i>
+				<i class='material-icons'>{{selectedDisplay.icon}}</i>
             </div>
             <ul #ring class="ring" [class.ring-grow]="ringopen">
 				<li class="slice">
