@@ -176,12 +176,21 @@ body {
     text-align: center;
 	transition: .2s ease all;
 //	display: none;
+	
+	i {
+		font-size: 13vh;	
+		transition: .2s ease all;
+	}
 }
 
 .circle-shrink {
 	width: 43vh;
 	height: 43vh;
 	background-color: #ddd;
+
+	i {
+		font-size: 10vh;	
+	}
 }
 
 .ring {

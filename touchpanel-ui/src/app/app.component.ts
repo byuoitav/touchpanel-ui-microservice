@@ -46,6 +46,8 @@ export class AppComponent { // event stuff
   @ViewChild('ring') ring: ElementRef;
   arcpath: string;
   ringopen: boolean;
+  // short term stuff (until multiple displays happens)
+  currentInput: DeviceData;
 
   public constructor(private socket: SocketService, private api: APIService) {
     this.messages = [];
@@ -63,6 +65,14 @@ export class AppComponent { // event stuff
   }
 
   public ngOnInit() {
+	this.currentInput = {
+		name: "D1",
+	 	displayName: "Flatpanel",
+		input: "HDMIIn",
+		selected: true,
+		icon: icons.hdmi,
+		blanked: true
+	}
     this.showing = true;
     this.api.setup();
     this.getData();

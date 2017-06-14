@@ -13,11 +13,11 @@
     <!-- single device control -->
     <div class='main-control-h'>
 		<div class='roomname' [class.roomname-transition]="ringopen">
-			<span>{{roomname}}</span>
+			<span>{{currentInput.displayName}}</span>
 		</div>
         <div class='main-control-v'>
             <div class='circle' [class.circle-shrink]="ringopen" (click)="openring();">
-                <i class='material-icons'>panorama_wide_angle</i>
+				<i class='material-icons'>{{currentInput.icon}}</i>
             </div>
             <ul #ring class="ring" [class.ring-grow]="ringopen">
 				<li class="slice">
@@ -55,8 +55,11 @@
     </div>
 	<!-- blank -->
 	<!-- this guy should be somewhere else in the future -->
-	<div class="blank" [class.red]="blanked" (click)="buttonpress('blank'); blank()">
+	<div *ngIf="!blanked" class="blank" [class.red]="blanked" (click)="buttonpress('blank'); blank()">
 		<i class="material-icons">panorama_wide_angle</i>
+	</div>
+	<div *ngIf="blanked" class="blank" [class.red]="blanked" (click)="buttonpress('blank'); blank()">
+		<i class="material-icons">do_not_disturb</i>
 	</div>
 
     <!-- slice of the circle -->
