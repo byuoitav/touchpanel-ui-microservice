@@ -216,6 +216,9 @@ export class AppComponent { // event stuff
       // rotate the slice
       let rotate = "rotate(" + String(angle * -i) + "deg)";
       children[i].style.transform = rotate;
+	  // rotate the text
+      rotate = "rotate(" + String(angle * i) + "deg)";
+	  children[i].firstElementChild.style.transform = rotate; 
 
       // color it
       let darkenstr = "hsl(193, 76%, " + String(80 - (i * 5)) + "%)";
@@ -483,7 +486,7 @@ export class AppComponent { // event stuff
     d.selected = !d.selected;
   }
 
-  setInputDevice(d: DeviceData) {
+  switchInput(d: DeviceData) {
     var body = { displays: [] }
     for (let display of this.displays) {
       if (display.selected) {

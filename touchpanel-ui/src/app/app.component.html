@@ -21,19 +21,18 @@
             </div>
             <ul #ring class="ring" [class.ring-grow]="ringopen">
 				<li class="slice">
-					<a href='#'>
-						<span></span>
-					</a>
+					<div>
+					</div>
 				</li>
 				<li class="slice">
-					<a href='#'>
-						<span></span>
-					</a>
+					<div>
+					</div>
 				</li>
-                <li *ngFor="let i of inputs" class="slice">
-                    <a href="#">
-                        <span class="icon">{{i.name}}</span>
-                    </a>
+                <li *ngFor="let i of inputs" class="slice input-slice" (click)='switchInput(i)'>
+					<div class='input'>
+						<i class='material-icons'>{{i.icon}}</i>
+						<span>{{i.name}}</span>
+					</div>
                 </li>
             </ul>
         </div>
