@@ -73,6 +73,7 @@ body {
     min-height: 100%;
     cursor: none;
     min-width: 100%;
+	background-image: url(/assets/bg1.jpg);
 }
 
 .icon-transition {
@@ -156,6 +157,7 @@ body {
 	top: 10vh;
 	transition: .2s ease all;
 	font-size: 4vh;
+	color: #001a1a;
 }
 
 .roomname-transition {
@@ -169,7 +171,7 @@ body {
     border-radius: 50%;
     width: 65vh;
     height: 65vh;
-    background-color: #eee;
+    background-color: #99ffff;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -179,18 +181,19 @@ body {
 //	display: none;
 	
 	i {
-		font-size: 13vh;	
+		font-size: 27vh;	
 		transition: .2s ease all;
+		color: #003333;
 	}
 }
 
 .circle-shrink {
 	width: 43vh;
 	height: 43vh;
-	background-color: #ddd;
+	background-color: #66ffff;
 
 	i {
-		font-size: 10vh;	
+		font-size: 17vh;	
 	}
 }
 
@@ -203,6 +206,8 @@ body {
     padding-top: 10%;    // size of the ring. they must be the same:) who knows why. 
     height: 0;
 	transition: .2s ease-in all;
+
+	border: 10px;
 }
 
 .ring-grow {
@@ -226,16 +231,17 @@ body {
 
 .input {
     position: absolute;
-    right: 15.6vh;
+    right: 16vh;
     top: 7vh;
 	display: flex;
 	justify-content: center;
 	flex-direction: column;
 	text-align: center;
 
-	font-size: 3vh;
+	font-size: 2.5vh;
 	.material-icons {
-		font-size: 7vh;	
+		font-size: 11vh;	
+		color: #003333;
 	}
 }
 
@@ -252,6 +258,7 @@ body {
 .all-control i,
 .help i {
     font-size: 9vh;
+	color: #ccffff;
 }
 
 .mute {
@@ -479,7 +486,7 @@ body {
 }
 
 .red {
-	color: red;
+	color: #00e6e6 !important; 
 }
 
 .hidden {
@@ -504,7 +511,7 @@ body {
     border-radius: 50%;
     width: 35vh;  // set these dynamically based on number of displays?
     height: 35vh;
-    background-color: #eee;
+    background-color: #99ffff;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -512,12 +519,15 @@ body {
     text-align: center;
 	
 	i {
-		font-size: 10vh;	
+		font-size: 18vh;	
+		color: #003333;
 	}
 }
 
 .multi-circle-title {
 	text-align: center;
+	padding-bottom: 1vh;
+	color: #001a1a;
 }
 
 .fadeout {
