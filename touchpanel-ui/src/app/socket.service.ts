@@ -8,7 +8,7 @@ export class SocketService {
   private http: Http;
 
   public constructor() {
-    this.socket = new WebSocket("ws://localhost:8888/websocket");
+	this.socket = new WebSocket("ws://localhost:8888/websocket");
 
     this.socket.onopen = event => {
       this.listener.emit({ "type": OPEN, "data": event });
@@ -18,8 +18,10 @@ export class SocketService {
     this.socket.onclose = event => {
       this.listener.emit({ "type": CLOSE, "data": event });
 	  console.log("websocket on close event recieved");
-	  this.socket = new WebSocket("ws://localhost:8888/websocket");
     }
+
+	this.socket.onerror = event => {
+	}
 
     this.socket.onmessage = event => {
 	  if (event.data.includes("keepalive")) {

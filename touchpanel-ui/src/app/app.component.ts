@@ -328,6 +328,10 @@ export class AppComponent { // event stuff
         d.blanked = (e.eventInfoValue == 'true');
 		this.blanked = (e.eventInfoValue == 'true');
         break;
+	  case "refresh": 
+		  console.log("refresh message recieved");
+	  	  this.refresh();
+		  break;
       default:
         console.log("unknown eventInfoKey:", e.eventInfoKey);
         break;

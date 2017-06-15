@@ -63,6 +63,7 @@ func SubInit() {
 
 	go Manager.Start(UIFilter)
 	go SubListen()
+	Manager.refresh()
 }
 
 func (manager *ClientManager) Start(f filter) {
@@ -96,6 +97,21 @@ func (manager *ClientManager) Start(f filter) {
 				}
 			}
 		}
+	}
+}
+
+func (manager *ClientManager) refresh() {
+	var e eventinfrastructure.Event
+	e.Hostname = os.Getenv("PI_HOSTNAME")
+	e.Timestamp = time.Now().Format(time.RFC3339)
+	e.Event.EventInfoKey = "refresh"
+	msg, err := json.Marshal(&e)
+	if err != nil {
+		log.Fatalf("[error] %s", err.Error())
+	}
+	for k, _ := range manager.clients {
+		log.Printf("[client] Sending refresh message")
+		k.send <- msg
 	}
 }
 
