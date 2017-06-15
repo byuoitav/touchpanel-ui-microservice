@@ -78,7 +78,7 @@ export class AppComponent { // event stuff
     this.getData();
 	this.blanked = true;
 	this.helprequested = false;
-    this.showing = true;
+//    this.showing = true;
 
     // setup socket to recieve events
     this.socket.getEventListener().subscribe(event => {
