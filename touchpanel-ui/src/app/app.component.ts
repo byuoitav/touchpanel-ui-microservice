@@ -74,11 +74,11 @@ export class AppComponent { // event stuff
   public ngOnInit() {
 	this.currentInput = new DeviceData(); 
 	this.selectedDisplay = new DeviceData();
-//    this.showing = true;
     this.api.setup();
     this.getData();
 	this.blanked = true;
 	this.helprequested = false;
+    this.showing = true;
 
     // setup socket to recieve events
     this.socket.getEventListener().subscribe(event => {
@@ -218,7 +218,7 @@ export class AppComponent { // event stuff
       let rotate = "rotate(" + String(angle * -i) + "deg)";
       children[i].style.transform = rotate;
 
-      let darkenstr = "hsl(193, 76%, " + String(80 - (.5 * 5)) + "%)";
+      let darkenstr = "hsl(180, 90%, 50%)";
       children[i].style.backgroundColor = darkenstr;
 	}
 
@@ -234,7 +234,9 @@ export class AppComponent { // event stuff
 	  children[i].firstElementChild.style.transform = rotate; 
 
       // color it
-      let darkenstr = "hsl(193, 76%, " + String(80 - (i * 5)) + "%)";
+//		different color for each slice
+//      let darkenstr = "hsl(193, 76%, " + String(80 - (i * 5)) + "%)";
+	  let darkenstr = "hsl(190, 90%, 40%)";
       children[i].style.backgroundColor = darkenstr;
     }
 	// start out all control mode
