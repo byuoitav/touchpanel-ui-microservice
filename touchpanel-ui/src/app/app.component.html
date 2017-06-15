@@ -12,9 +12,9 @@
 
 
 	<!-- display-selection -->
-	<div [class.hidden]='!displayselection' class='main-control-h'>
+	<div class='main-control-h'>
 		<div class='display-selection'>
-			<div *ngFor="let device of displays" [class.movetocenter]="device === selectedDisplay" (click)="goToSingleControl(device)">
+			<div *ngFor="let device of displays" [class.fadeout]="!(device === selectedDisplay) && !displayselection" (click)="goToSingleControl(device)">
 				<div class='multi-circle-title'>
 					<span>{{device.displayName}}</span>
 				</div>
@@ -27,7 +27,8 @@
     <!-- display control -->
     <div [class.hidden]='displayselection' class='main-control-h'>
 		<div class='roomname' [class.roomname-transition]="ringopen">
-			<span>{{selectedDisplay.displayName}}</span>
+			<span *ngIf="!allcontrol">{{selectedDisplay.displayName}}</span>
+			<span *ngIf="allcontrol">All Control</span>
 		</div>
         <div class='main-control-v'>
             <div class='circle' [class.circle-shrink]="ringopen" (click)="openring();">
@@ -51,6 +52,12 @@
             </ul>
         </div>
     </div>
+
+	<!-- bottom left control -->
+	<div class='all-control'>
+		<i *ngIf="allcontrol || singlecontrol" class='material-icons' (click)="goToDisplaySelection()">group_work</i>
+		<i *ngIf="!allcontrol && !singlecontrol" class='material-icons' (click)="goToSingleControl('all')">album</i>
+	</div>
 
 
     <!-- sidebar -->

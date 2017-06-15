@@ -248,6 +248,7 @@ body {
 .power i,
 .mute i,
 .blank i,
+.all-control i,
 .help i {
     font-size: 9vh;
 }
@@ -471,17 +472,6 @@ body {
     justify-content: center;
 }
 
-.table-icon {
-    /*
-	-webkit-mask: url("/assets/table-icon.svg") no-repeat;
-	background: #292b2c;
-	*/
-    height: 13vh;
-    width: 13vh;
-    position: relative;
-    bottom: -1vh;
-}
-
 .color {
     color: #eee;
     background-color: #eee;
@@ -519,12 +509,9 @@ body {
     justify-content: center;
     align-self: center;
     text-align: center;
-	transition: .2s ease all;
-//	display: none;
 	
 	i {
 		font-size: 10vh;	
-		transition: .2s ease all;
 	}
 }
 
@@ -532,6 +519,12 @@ body {
 	text-align: center;
 }
 
-.movetocenter {
-		
+.fadeout {
+	display: none;	
+}
+
+.all-control {
+	position: fixed;
+	left: 6%;
+	bottom: 3.6vh;	
 }

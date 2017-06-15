@@ -51,6 +51,8 @@ export class AppComponent { // event stuff
   // multi-display data 
   currentInput: DeviceData;
   selectedDisplay: DeviceData; 
+  allcontrol: boolean;
+  singlecontrol: boolean;
 
   public constructor(private socket: SocketService, private api: APIService) {
     this.messages = [];
@@ -75,6 +77,7 @@ export class AppComponent { // event stuff
     this.getData();
 	this.blanked = true;
 	this.displayselection = true;
+	this.allcontrol = false;
 
     // setup socket to recieve events
     this.socket.getEventListener().subscribe(event => {
@@ -483,7 +486,7 @@ export class AppComponent { // event stuff
         display.blanked = true;
         body.displays.push({
           "name": display.name,
-          "blanked": true
+          "blanked": this.blanked
         });
       }
     }
@@ -495,6 +498,7 @@ export class AppComponent { // event stuff
   }
 
   switchInput(d: DeviceData) {
+	this.blanked = false; 
     var body = { displays: [] }
     for (let display of this.displays) {
       if (display.selected) {
@@ -615,8 +619,36 @@ export class AppComponent { // event stuff
 	console.log("ringopen:", this.ringopen);
   }
 
-  goToSingleControl(d: DeviceData) {
+  goToSingleControl(d) {
+	if (d == 'all') {
+		console.log("going to all control");	
+    	for (let display of this.displays) {
+			display.selected = true;
+		}
+		this.selectedDisplay = this.displays[0];
+		this.switchInput(this.inputs[0]);
+	    this.allcontrol = true;
+		this.singlecontrol = false;
+	} else {
+		for (let display of this.displays) {
+			if (d === display) {
+				display.selected = true;	
+			} else {
+				display.selected = false;	
+			}
+		}
+		this.selectedDisplay = d;	
+		this.singlecontrol = true;
+		this.allcontrol = false;
+	}
 	this.displayselection = false;
-	this.selectedDisplay = d;	
+  }
+
+  goToDisplaySelection() {
+ 	console.log("going to display selection") 
+	this.allcontrol = false;
+	this.singlecontrol = false;
+	this.ringopen = false;
+	this.displayselection = !this.displayselection;
   }
 } 
