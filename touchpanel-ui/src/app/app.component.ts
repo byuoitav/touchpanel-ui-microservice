@@ -80,6 +80,7 @@ export class AppComponent { // event stuff
     // setup socket to recieve events
     this.socket.getEventListener().subscribe(event => {
       if (event.type == MESSAGE) {
+		console.log("event:", event);
         let data = JSON.parse(event.data.data);
 
         let e = new Event();

@@ -1,40 +1,46 @@
 import { Injectable, EventEmitter } from '@angular/core'
 import { Http } from '@angular/http'
+import { $WebSocket, WebSocketConfig } from 'angular2-websocket/angular2-websocket'
 
 @Injectable()
 export class SocketService {
-  private socket: WebSocket;
+  private socket: $WebSocket;
   private listener: EventEmitter<any> = new EventEmitter();
   private http: Http;
+  private webSocketConfig: WebSocketConfig = {
+ 	initialTimeout: 100,
+    maxTimeout: 1000,
+	reconnectIfNotNormalClose: true	
+  }
 
   public constructor() {
-	this.socket = new WebSocket("ws://localhost:8888/websocket");
+	this.socket = new $WebSocket("ws://localhost:8888/websocket", null, this.webSocketConfig);
 
-    this.socket.onopen = event => {
-      this.listener.emit({ "type": OPEN, "data": event });
-	  console.log("opened websocket");
-    }
-
-    this.socket.onclose = event => {
-      this.listener.emit({ "type": CLOSE, "data": event });
-	  console.log("websocket on close event recieved");
-    }
-
-	this.socket.onerror = event => {
-	}
-
-    this.socket.onmessage = event => {
-	  if (event.data.includes("keepalive")) {
+	this.socket.onMessage((msg) => {
+	  if (msg.data.includes("keepalive")) {
 	 	// send a keep alive back?
 		console.log("keep alive message recieved.");
 	  } else {
-      	this.listener.emit({ "type": MESSAGE, "data": event });
+	  	this.listener.emit({ "type": MESSAGE, "data": msg });
 	  }
-    }
+	}, {autoApply: false}
+	);
+	
+	this.socket.onOpen((msg) => {
+		console.log("websocket opened", msg);	
+	});
+
+	this.socket.onError((msg) => {
+		console.log("websocket closed.", msg);	
+	});
+	
+	this.socket.onClose((msg) => {
+		console.log("trying again", msg);	
+	});
   }
 
   public close() {
-    this.socket.close();
+    this.socket.close(false);
   }
 
   public getEventListener() {

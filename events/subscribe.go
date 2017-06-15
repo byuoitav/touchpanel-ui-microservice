@@ -16,6 +16,7 @@ import (
 )
 
 var Sub subscriber.Subscriber
+var refresh chan common.Message
 
 type filter func(common.Message) eventinfrastructure.EventInfo
 
@@ -39,6 +40,8 @@ var Manager = &ClientManager{
 }
 
 func SubInit() {
+	refresh = make(chan common.Message)
+
 	var err error
 	Sub, err = subscriber.NewSubscriber(10)
 	if err != nil {
@@ -63,7 +66,7 @@ func SubInit() {
 
 	go Manager.Start(UIFilter)
 	go SubListen()
-	Manager.refresh()
+	go waitForRefresh()
 }
 
 func (manager *ClientManager) Start(f filter) {
@@ -100,7 +103,7 @@ func (manager *ClientManager) Start(f filter) {
 	}
 }
 
-func (manager *ClientManager) refresh() {
+func Refresh() {
 	var e eventinfrastructure.Event
 	e.Hostname = os.Getenv("PI_HOSTNAME")
 	e.Timestamp = time.Now().Format(time.RFC3339)
@@ -109,10 +112,11 @@ func (manager *ClientManager) refresh() {
 	if err != nil {
 		log.Fatalf("[error] %s", err.Error())
 	}
-	for k, _ := range manager.clients {
-		log.Printf("[client] Sending refresh message")
-		k.send <- msg
-	}
+
+	header := [24]byte{}
+	copy(header[:], []byte(eventinfrastructure.UI))
+
+	refresh <- common.Message{MessageHeader: header, MessageBody: msg}
 }
 
 func (manager *ClientManager) keepalive() {
@@ -192,5 +196,20 @@ func SubListen() {
 		message := Sub.Read()
 		log.Printf("[Subscriber] Recieved event: %s", message)
 		Manager.Broadcast <- message
+	}
+}
+
+func waitForRefresh() {
+	log.Printf("[Subscriber] Waiting for refresh messages")
+	for {
+		select {
+		case msg, ok := <-refresh:
+			if ok {
+				log.Printf("Writing refresh")
+				Manager.Broadcast <- msg
+			} else {
+				log.Printf("[Subscriber] refresh chan closed")
+			}
+		}
 	}
 }
