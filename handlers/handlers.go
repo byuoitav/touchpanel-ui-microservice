@@ -3,6 +3,7 @@ package handlers
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -106,6 +107,9 @@ func Help(context echo.Context) error {
 
 	log.Printf("Requesting help in building %s, room %s", sh.Building, sh.Room)
 	url := os.Getenv("HELP_SLACKBOT_WEBHOOK")
+	if len(url) == 0 {
+		panic(fmt.Sprintf("HELP_SLACKBOT_WEBHOOK is not set."))
+	}
 
 	// build json payload
 	// attachment
@@ -132,14 +136,12 @@ func Help(context echo.Context) error {
 	attachment.Actions = append(attachment.Actions, actionOne)
 	sh.Attachments = append(sh.Attachments, attachment)
 
-	log.Printf("sh: %s", sh)
 	json, err := json.Marshal(sh)
 	if err != nil {
 		log.Printf("failed to marshal sh: %s", sh)
 		return context.JSON(http.StatusInternalServerError, err.Error())
 	}
 
-	log.Printf("body: %s", json)
 	req, err := http.NewRequest("POST", url, bytes.NewBuffer(json))
 	req.Header.Set("Content-Type", "application/json")
 
