@@ -67,6 +67,9 @@ func SubInit() {
 	go Manager.Start(UIFilter)
 	go SubListen()
 	go waitForRefresh()
+
+	time.Sleep(10 * time.Second)
+	Refresh()
 }
 
 func (manager *ClientManager) Start(f filter) {
