@@ -53,6 +53,8 @@ export class AppComponent { // event stuff
   selectedDisplay: DeviceData; 
   allcontrol: boolean;
   singlecontrol: boolean;
+  // help
+  helprequested: boolean;
 
   public constructor(private socket: SocketService, private api: APIService) {
     this.messages = [];
@@ -76,6 +78,7 @@ export class AppComponent { // event stuff
     this.api.setup();
     this.getData();
 	this.blanked = true;
+	this.helprequested = false;
 
     // setup socket to recieve events
     this.socket.getEventListener().subscribe(event => {
@@ -655,5 +658,17 @@ export class AppComponent { // event stuff
 	this.singlecontrol = false;
 	this.ringopen = false;
 	this.displayselection = !this.displayselection;
+  }
+
+  requestHelp() {
+	this.helprequested = true;
+	console.log("help requested");
+	let body = {
+		"building": this.api.building,
+		"room": this.api.room	
+	}
+ 	this.api.postHelp(body).subscribe(data => {
+		console.log("data:", data);	
+	}) 
   }
 } 

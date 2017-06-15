@@ -81,6 +81,11 @@ export class APIService {
     return val;
   }
 
+  postHelp(data) {
+ 	console.log("POST", data, "to", "http://localhost:8888/help") 
+	return this.http.post("http://localhost:8888/help", data, this.options).map((res: Response) => res.json());
+  }
+
   publish(event: any) {
     console.log("publishing:", event, "to", "http://localhost:8888/publish");
 

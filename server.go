@@ -29,6 +29,8 @@ func main() {
 	router.GET("/reboot", handlers.Reboot)
 	router.GET("/dockerstatus", handlers.GetDockerStatus)
 
+	router.POST("/help", handlers.Help)
+
 	router.Static("/", "dist")
 
 	router.Start(port)

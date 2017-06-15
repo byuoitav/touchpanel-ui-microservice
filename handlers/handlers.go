@@ -1,6 +1,8 @@
 package handlers
 
 import (
+	"bytes"
+	"encoding/json"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -93,4 +95,62 @@ func GetDockerStatus(context echo.Context) error {
 	}
 
 	return context.String(http.StatusOK, string(body))
+}
+
+func Help(context echo.Context) error {
+	var sh helpers.SlackHelp
+	err := context.Bind(&sh)
+	if err != nil {
+		return context.JSON(http.StatusBadRequest, err.Error())
+	}
+
+	log.Printf("Requesting help in building %s, room %s", sh.Building, sh.Room)
+	url := os.Getenv("HELP_SLACKBOT_WEBHOOK")
+
+	// build json payload
+	// attachment
+	var attachment helpers.Attachment
+	attachment.Title = "help request"
+	// fields
+	var fieldOne helpers.Field
+	var fieldTwo helpers.Field
+	fieldOne.Title = "building"
+	fieldOne.Value = sh.Building
+	fieldOne.Short = true
+	fieldTwo.Title = "room"
+	fieldTwo.Value = sh.Room
+	fieldTwo.Short = true
+	// actions
+	var actionOne helpers.Action
+	actionOne.Name = "accepthelp"
+	actionOne.Text = "help"
+	actionOne.Type = "button"
+	actionOne.Value = "true"
+	// put into sh
+	attachment.Fields = append(attachment.Fields, fieldOne)
+	attachment.Fields = append(attachment.Fields, fieldTwo)
+	attachment.Actions = append(attachment.Actions, actionOne)
+	sh.Attachments = append(sh.Attachments, attachment)
+
+	log.Printf("sh: %s", sh)
+	json, err := json.Marshal(sh)
+	if err != nil {
+		log.Printf("failed to marshal sh: %s", sh)
+		return context.JSON(http.StatusInternalServerError, err.Error())
+	}
+
+	log.Printf("body: %s", json)
+	req, err := http.NewRequest("POST", url, bytes.NewBuffer(json))
+	req.Header.Set("Content-Type", "application/json")
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		panic(err)
+	}
+	defer resp.Body.Close()
+
+	body, _ := ioutil.ReadAll(resp.Body)
+
+	return context.JSON(http.StatusOK, string(body))
 }

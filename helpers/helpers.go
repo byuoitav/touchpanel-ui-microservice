@@ -11,6 +11,31 @@ type DeviceInfo struct {
 	IPAddress string `json:"ipaddress"`
 }
 
+type SlackHelp struct {
+	Building    string       `json:"building"`
+	Room        string       `json:"room"`
+	Attachments []Attachment `json:"attachments"`
+}
+
+type Attachment struct {
+	Title   string   `json:"title"`
+	Fields  []Field  `json:"fields"`
+	Actions []Action `json:"actions"`
+}
+
+type Field struct {
+	Title string `json:"title"`
+	Value string `json:"value"`
+	Short bool   `json:"short"`
+}
+
+type Action struct {
+	Name  string `json:"name"`
+	Text  string `json:"text"`
+	Type  string `json:"type"`
+	Value string `json:"value"`
+}
+
 func GetDeviceInfo() (DeviceInfo, error) {
 	log.Printf("getting device info")
 	hn, err := exec.Command("sh", "-c", "hostname").Output()
