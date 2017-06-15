@@ -15,7 +15,7 @@ import { APIService } from './api.service';
 @NgModule({
   declarations: [
     AppComponent,
-	ModalComponent
+    ModalComponent
   ],
   imports: [
     BrowserModule,
@@ -23,7 +23,7 @@ import { APIService } from './api.service';
     HttpModule,
     NgbModule.forRoot(),
     BrowserAnimationsModule,
-    MdSliderModule
+    MdSliderModule,
   ],
   providers: [SocketService, APIService],
   bootstrap: [AppComponent]

@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, trigger, transition, style, animate, state } from '@angular/core';
+import { Component, OnInit, OnDestroy, trigger, transition, style, animate, state, ViewChild, ElementRef } from '@angular/core';
 import { SocketService, OPEN, CLOSE, MESSAGE } from './socket.service';
 import { Observable } from 'rxjs/Rx';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -10,7 +10,7 @@ import { ModalComponent } from './modal.component';
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css'],
+  styleUrls: ['./app.component.scss'],
   providers: [APIService, SocketService],
   animations: [
     trigger('fadeInOut', [
@@ -21,26 +21,38 @@ import { ModalComponent } from './modal.component';
       transition('* => void', [
         animate('2s', style({ opacity: 0 })) // the new state of the transition(after transiton it removes)
       ])
-    ])
-  ]
+    ]),
+  ],
 })
-export class AppComponent {
-    // event stuff
+export class AppComponent { // event stuff
   messages: Array<any>;
   events: Array<Event>;
-  	// room data
+  // room data
   room: Room;
-  	// display information	
+  roomname: string;
+  // display information	
   volume: number;
   muted: boolean;
   inputs: Array<DeviceData>;
   displays: Array<DeviceData>;
   powerState: boolean;
-	// "lock" screen
+  blanked: boolean;
+  // "lock" screen
   showing: boolean
   currentAudioLevel: number;
   startSpinning: boolean;
   sendingOn: boolean;
+  // circle stuff
+  @ViewChild('ring') ring: ElementRef;
+  arcpath: string;
+  ringopen: boolean;
+  // display selection
+  displayselection: boolean; 
+  // multi-display data 
+  currentInput: DeviceData;
+  selectedDisplay: DeviceData; 
+  allcontrol: boolean;
+  singlecontrol: boolean;
 
   public constructor(private socket: SocketService, private api: APIService) {
     this.messages = [];
@@ -50,17 +62,24 @@ export class AppComponent {
     this.showing = false;
     this.startSpinning = false;
     this.sendingOn = false;
+	this.ringopen = false;
 
-	// management
-	this.deviceInfo = new Object();
-	this.dockerStatus = new Object();
+    // management
+    this.deviceInfo = new Object();
+    this.dockerStatus = new Object();
   }
 
   public ngOnInit() {
+	this.currentInput = new DeviceData(); 
+	this.selectedDisplay = new DeviceData();
+    this.showing = true;
     this.api.setup();
     this.getData();
+	this.blanked = true;
+	this.displayselection = true;
+	this.allcontrol = false;
 
-	// setup socket to recieve events
+    // setup socket to recieve events
     this.socket.getEventListener().subscribe(event => {
       if (event.type == MESSAGE) {
         let data = JSON.parse(event.data.data);
@@ -83,40 +102,41 @@ export class AppComponent {
     this.socket.close();
   }
 
-  put(body: any, success: Function = func => {}, err: Function = func => {}, completed: Function = func => {}): void {
-	this.api.putData(body).subscribe(
-		data => {
-			success();	
-		},
-		error => {
-			console.log("error:", error);	
-			err();
-		},
-		() => {
-			completed();	
-		}
-	);
+  put(body: any, success: Function = func => { }, err: Function = func => { }, completed: Function = func => { }): void {
+    this.api.putData(body).subscribe(
+      data => {
+        success();
+      },
+      error => {
+        console.log("error:", error);
+        err();
+      },
+      () => {
+        completed();
+      }
+    );
   }
 
-  get(url: string, success: Function = func => {}, err: Function = func => {}, completed: Function = func => {}): void {
- 	this.api.get(url).subscribe(
-		data => {
-			success();	
-		},
-		error => {
-			console.log("error:", error);	
-			err();
-		},
-		() => {
-			completed();	
-		}	
-	); 
+  get(url: string, success: Function = func => { }, err: Function = func => { }, completed: Function = func => { }): void {
+    this.api.get(url).subscribe(
+      data => {
+        success();
+      },
+      error => {
+        console.log("error:", error);
+        err();
+      },
+      () => {
+        completed();
+      }
+    );
   }
 
   getData() {
-	this.room = new Room();
+    this.room = new Room();
 
     this.api.loaded.subscribe(data => {
+		this.roomname = this.api.building + " " + this.api.room;
       this.api.getRoomConfig().subscribe(data => {
         this.room.config = new RoomConfiguration();
         Object.assign(this.room.config, data);
@@ -134,7 +154,9 @@ export class AppComponent {
         }
 
         this.getInputs();
-		this.statusUpdateVolume();
+        this.statusUpdateVolume();
+        // hacky but it works?
+        setTimeout(() => { this.buildInputMenu(); }, 0)
       });
     });
   }
@@ -155,7 +177,7 @@ export class AppComponent {
           this.displays.push(dd);
           hasinput = true;
         }
-      } 
+      }
       if (!hasinput) {
         let dd = new DeviceData();
         dd.name = display.name;
@@ -166,7 +188,7 @@ export class AppComponent {
       }
     }
 
-	// set the display names
+    // set the display names
     for (let display of this.displays) {
       for (let device of this.room.config.devices) {
         if (display.name == device.name) {
@@ -175,6 +197,68 @@ export class AppComponent {
         }
       }
     }
+  }
+
+  buildInputMenu() {
+    console.log("ring:", this.ring);
+    let numOfChildren = this.ring.nativeElement.childElementCount;
+    console.log("num of children:", numOfChildren);
+    let children = this.ring.nativeElement.children;
+    let angle = 360 / numOfChildren;
+    console.log("angle", angle);
+    // svg arc length 
+    this.arcpath = this.getArc(.5, .5, .5, 0, angle);
+
+	// apply styles to first two (title area)
+	for (let i = 0; i < 2; i++) {
+	  console.log("room name slice", i + ":", children[i]);	
+
+      let rotate = "rotate(" + String(angle * -i) + "deg)";
+      children[i].style.transform = rotate;
+
+      let darkenstr = "hsl(193, 76%, " + String(80 - (.5 * 5)) + "%)";
+      children[i].style.backgroundColor = darkenstr;
+	}
+
+    // apply styles to children
+    for (let i = 2; i < numOfChildren; i++) {
+      console.log("children[" + i + "]", children[i]);
+
+      // rotate the slice
+      let rotate = "rotate(" + String(angle * -i) + "deg)";
+      children[i].style.transform = rotate;
+	  // rotate the text
+      rotate = "rotate(" + String(angle * i) + "deg)";
+	  children[i].firstElementChild.style.transform = rotate; 
+
+      // color it
+      let darkenstr = "hsl(193, 76%, " + String(80 - (i * 5)) + "%)";
+      children[i].style.backgroundColor = darkenstr;
+    }
+  }
+
+  getArc(x, y, radius, startAngle, endAngle) {
+    let start = this.polarToCart(x, y, radius, endAngle);
+    let end = this.polarToCart(x, y, radius, startAngle);
+
+    let largeArc = endAngle - startAngle <= 180 ? "0" : "1";
+
+    let d = [
+      "M", start.x, start.y,
+      "A", radius, radius, 0, largeArc, 0, end.x, end.y,
+      "L", x, y,
+      "L", start.x, start.y
+    ].join(" ");
+    return d;
+  }
+
+  polarToCart(cx, cy, r, angle) {
+    let angleInRad = (angle - 90) * Math.PI / 180.0;
+
+    return {
+      x: cx + (r * Math.cos(angleInRad)),
+      y: cy + (r * Math.sin(angleInRad))
+    };
   }
 
   enterScreen() {
@@ -188,12 +272,12 @@ export class AppComponent {
       "blanked": true
     };
 
-	this.put(body, func => {} , func => {} , after => {
-		this.updateState();
-		this.showing = true;
-		this.startSpinning = false;
-		this.sendingOn = false;
-	});
+    this.put(body, func => { }, func => { }, after => {
+      this.updateState();
+      this.showing = true;
+      this.startSpinning = false;
+      this.sendingOn = false;
+    });
   }
 
   updateUI(e: Event) {
@@ -241,7 +325,8 @@ export class AppComponent {
           }
         }
 
-		d.blanked = (e.eventInfoValue == 'true');
+        d.blanked = (e.eventInfoValue == 'true');
+		this.blanked = (e.eventInfoValue == 'true');
         break;
       default:
         console.log("unknown eventInfoKey:", e.eventInfoKey);
@@ -251,15 +336,15 @@ export class AppComponent {
 
   updateState() {
     this.api.getRoomStatus().subscribe(
-	  data => {
-     	this.room.status = new RoomStatus();
-      	Object.assign(this.room.status, data);
-      	console.log("updated state:", this.room.status);
-//      this.updateInputs();
-		this.statusUpdateVolume(); // only need this, because we will always get a "blanked" event when turning on
-							       // if we stop blanking on "power on", then we will have to update the inputs
+      data => {
+        this.room.status = new RoomStatus();
+        Object.assign(this.room.status, data);
+        console.log("updated state:", this.room.status);
+        //      this.updateInputs();
+        this.statusUpdateVolume(); // only need this, because we will always get a "blanked" event when turning on
+        // if we stop blanking on "power on", then we will have to update the inputs
       }
-	);
+    );
   }
 
   statusUpdateVolume() {
@@ -290,26 +375,26 @@ export class AppComponent {
     }
   }
 
-//  updateInputs() {
-//    //go through the list of status and set the current input 
-//    for (let display of this.room.status.displays) {
-//      for (let d of this.displays) {
-//        if (d.icon == icons.blanked) {
-//          break;
-//        }
-//        //check to make sure we map
-//        if (d.name == display.name) {
-//          //go through and get the device mapping to the input
-//          for (let input of this.inputs) {
-//            if (input.name == display.input) {
-//              d.input = input.name;
-//              d.icon = input.icon;
-//            }
-//          }
-//        }
-//      }
-//    }
-//  }
+  //  updateInputs() {
+  //    //go through the list of status and set the current input 
+  //    for (let display of this.room.status.displays) {
+  //      for (let d of this.displays) {
+  //        if (d.icon == icons.blanked) {
+  //          break;
+  //        }
+  //        //check to make sure we map
+  //        if (d.name == display.name) {
+  //          //go through and get the device mapping to the input
+  //          for (let input of this.inputs) {
+  //            if (input.name == display.input) {
+  //              d.input = input.name;
+  //              d.icon = input.icon;
+  //            }
+  //          }
+  //        }
+  //      }
+  //    }
+  //  }
 
   createInputDeviceData(d: Device) {
     let dd = new DeviceData();
@@ -317,7 +402,7 @@ export class AppComponent {
     dd.displayName = d.display_name;
     switch (d.type) {
       case "hdmiin":
-        dd.icon = icons.hdmi; 
+        dd.icon = icons.hdmi;
         break;
       case "overflow":
         dd.icon = icons.overflow;
@@ -326,14 +411,14 @@ export class AppComponent {
         dd.icon = icons.computer;
         break;
       case "iptv":
-		dd.icon = icons.iptv;
+        dd.icon = icons.iptv;
         break;
       case "appletv":
         dd.icon = icons.appletv;
         break;
-	  case "table":
-		dd.icon = icons.table;
-	    break;
+      case "table":
+        dd.icon = icons.table;
+        break;
       default:
         dd.icon = icons.generic;
         break;
@@ -373,13 +458,13 @@ export class AppComponent {
     let body = {
       "power": "standby"
     };
-    this.put(body, func => {}, err => {this.showing = !this.showing;});
+    this.put(body, func => { }, err => { this.showing = !this.showing; });
     this.showing = !this.showing;
   }
 
   updateVolume(volume: number) {
     this.volume = volume;
-	this.muted = false;
+    this.muted = false;
 
     var body = { audioDevices: [] }
     for (let speaker of this.displays) {
@@ -394,13 +479,14 @@ export class AppComponent {
   }
 
   blank() {
+	this.blanked = !this.blanked;
     var body = { displays: [] }
     for (let display of this.displays) {
       if (display.selected) {
-		display.blanked = true;
+        display.blanked = true;
         body.displays.push({
           "name": display.name,
-          "blanked": true
+          "blanked": this.blanked
         });
       }
     }
@@ -411,7 +497,8 @@ export class AppComponent {
     d.selected = !d.selected;
   }
 
-  setInputDevice(d: DeviceData) {
+  switchInput(d: DeviceData) {
+	this.blanked = false; 
     var body = { displays: [] }
     for (let display of this.displays) {
       if (display.selected) {
@@ -428,12 +515,12 @@ export class AppComponent {
   }
 
   buttonpress(name: string) {
-	let event = {
-		"eventinfokey": "buttonpress",
-		"eventinfovalue": name	
-	}
-	
-	this.api.publish(event);
+    let event = {
+      "eventinfokey": "buttonpress",
+      "eventinfovalue": name
+    }
+
+    this.api.publish(event);
   }
 
 
@@ -481,7 +568,7 @@ export class AppComponent {
         break;
       case 4:
         if (this.man1 && this.man2 && this.man3) {
-	 	  console.log("defcon 1. showing management console.");
+          console.log("defcon 1. showing management console.");
           this.man1 = false;
           this.man2 = false;
           this.man3 = false;
@@ -503,27 +590,65 @@ export class AppComponent {
 
   refresh() {
     console.log("refreshing page...");
-	location.reload();
+    location.reload();
   }
 
   deviceInfo: any;
   deviceinfo() {
-	 this.api.getDeviceInfo().subscribe(data => {
-		console.log("deviceinfo:", data);
-		Object.assign(this.deviceInfo, data);
-	 }) 	
+    this.api.getDeviceInfo().subscribe(data => {
+      console.log("deviceinfo:", data);
+      Object.assign(this.deviceInfo, data);
+    })
   }
 
   dockerStatus: any;
   dockerstatus() {
- 	this.api.getDockerStatus().subscribe(data => {
-		console.log("dockerstatus:", data);
-		Object.assign(this.dockerStatus, data);	
-	}) 
+    this.api.getDockerStatus().subscribe(data => {
+      console.log("dockerstatus:", data);
+      Object.assign(this.dockerStatus, data);
+    })
   }
 
   reboot() {
-	console.log("rebooting");
- 	this.api.reboot().subscribe(); 
+    console.log("rebooting");
+    this.api.reboot().subscribe();
+  }
+
+  openring() {
+	this.ringopen = !this.ringopen;
+	console.log("ringopen:", this.ringopen);
+  }
+
+  goToSingleControl(d) {
+	if (d == 'all') {
+		console.log("going to all control");	
+    	for (let display of this.displays) {
+			display.selected = true;
+		}
+		this.selectedDisplay = this.displays[0];
+		this.switchInput(this.inputs[0]);
+	    this.allcontrol = true;
+		this.singlecontrol = false;
+	} else {
+		for (let display of this.displays) {
+			if (d === display) {
+				display.selected = true;	
+			} else {
+				display.selected = false;	
+			}
+		}
+		this.selectedDisplay = d;	
+		this.singlecontrol = true;
+		this.allcontrol = false;
+	}
+	this.displayselection = false;
+  }
+
+  goToDisplaySelection() {
+ 	console.log("going to display selection") 
+	this.allcontrol = false;
+	this.singlecontrol = false;
+	this.ringopen = false;
+	this.displayselection = !this.displayselection;
   }
 } 
