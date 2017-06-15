@@ -72,12 +72,10 @@ export class AppComponent { // event stuff
   public ngOnInit() {
 	this.currentInput = new DeviceData(); 
 	this.selectedDisplay = new DeviceData();
-    this.showing = true;
+//    this.showing = true;
     this.api.setup();
     this.getData();
 	this.blanked = true;
-	this.displayselection = true;
-	this.allcontrol = false;
 
     // setup socket to recieve events
     this.socket.getEventListener().subscribe(event => {
@@ -235,6 +233,8 @@ export class AppComponent { // event stuff
       let darkenstr = "hsl(193, 76%, " + String(80 - (i * 5)) + "%)";
       children[i].style.backgroundColor = darkenstr;
     }
+	// start out all control mode
+	this.goToSingleControl('all');
   }
 
   getArc(x, y, radius, startAngle, endAngle) {
