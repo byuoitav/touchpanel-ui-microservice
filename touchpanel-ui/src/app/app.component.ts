@@ -80,6 +80,7 @@ export class AppComponent { // event stuff
     // setup socket to recieve events
     this.socket.getEventListener().subscribe(event => {
       if (event.type == MESSAGE) {
+		console.log("event:", event);
         let data = JSON.parse(event.data.data);
 
         let e = new Event();
@@ -328,6 +329,10 @@ export class AppComponent { // event stuff
         d.blanked = (e.eventInfoValue == 'true');
 		this.blanked = (e.eventInfoValue == 'true');
         break;
+	  case "refresh": 
+		  console.log("refresh message recieved");
+	  	  this.refresh();
+		  break;
       default:
         console.log("unknown eventInfoKey:", e.eventInfoKey);
         break;

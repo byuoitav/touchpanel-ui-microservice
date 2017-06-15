@@ -65,6 +65,13 @@ func GetDeviceInfo(context echo.Context) error {
 	return context.JSON(http.StatusOK, di)
 }
 
+func Refresh(context echo.Context) error {
+	log.Printf("[management] Refreshing webpage")
+	events.Refresh()
+
+	return nil
+}
+
 func Reboot(context echo.Context) error {
 	log.Printf("[management] Rebooting pi")
 	http.Get("http://localhost:7010/reboot")
