@@ -19,7 +19,7 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-	z-index: 9999;
+	z-index: 999;
 }
 
 .inactive {
@@ -43,6 +43,7 @@ body {
     position: fixed;
     width: 100%;
     height: 100%;
+	z-index: 1000;
 }
 
 .management div {
