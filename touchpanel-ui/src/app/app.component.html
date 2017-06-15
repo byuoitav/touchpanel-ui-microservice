@@ -126,7 +126,8 @@
             <span>Please call AV Support at 801-422-7671 for help.</span>
         </div>
         <div class="modal-bottom">
-            <button class="btn btn-primary" (click)="helpmodal.hide()">Done</button>
+            <button class="btn btn-primary" (click)="helpmodal.hide(); helprequested=false">Done</button>
+			<button class="btn btn-warning" [disabled]="helprequested" (click)="requestHelp()">Request Help</button>
         </div>
     </div>
 </app-modal>
