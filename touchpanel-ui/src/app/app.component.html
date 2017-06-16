@@ -12,7 +12,7 @@
 
 
 	<!-- display-selection -->
-	<div class='main-control-h'>
+	<div *ngIf="multipledisplays" class='main-control-h'>
 		<div class='display-selection'>
 			<div *ngFor="let device of displays" [class.fadeout]="!(device === selectedDisplay) && !displayselection" (click)="goToSingleControl(device)">
 				<div class='multi-circle-title'>
@@ -54,7 +54,7 @@
     </div>
 
 	<!-- bottom left control -->
-	<div class='all-control'>
+	<div *ngIf="multipledisplays" class='all-control'>
 		<i *ngIf="allcontrol || singlecontrol" class='material-icons' (click)="goToDisplaySelection()">group_work</i>
 		<i *ngIf="!allcontrol && !singlecontrol" class='material-icons' (click)="goToSingleControl('all')">album</i>
 	</div>
