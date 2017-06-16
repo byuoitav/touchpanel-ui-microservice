@@ -14,7 +14,7 @@ export class SocketService {
   }
 
   public constructor() {
-	this.socket = new $WebSocket("ws://localhost:8888/websocket", null, this.webSocketConfig);
+	this.socket = new $WebSocket("ws://" + location.hostname +":8888/websocket", null, this.webSocketConfig);
 
 	this.socket.onMessage((msg) => {
 	  if (msg.data.includes("keepalive")) {

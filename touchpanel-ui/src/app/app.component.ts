@@ -615,7 +615,7 @@ export class AppComponent { // event stuff
   dockerstatus() {
     this.api.getDockerStatus().subscribe(data => {
       console.log("dockerstatus:", data);
-      Object.assign(this.dockerStatus, data);
+	  this.dockerStatus = data;
     })
   }
 
