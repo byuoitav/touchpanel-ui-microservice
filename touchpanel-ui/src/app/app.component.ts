@@ -49,6 +49,7 @@ export class AppComponent { // event stuff
   // display selection
   displayselection: boolean; 
   // multi-display data 
+  multipledisplays: boolean;
   currentInput: DeviceData;
   selectedDisplay: DeviceData; 
   allcontrol: boolean;
@@ -78,12 +79,11 @@ export class AppComponent { // event stuff
     this.getData();
 	this.blanked = true;
 	this.helprequested = false;
-//    this.showing = true;
+    this.showing = true;
 
     // setup socket to recieve events
     this.socket.getEventListener().subscribe(event => {
       if (event.type == MESSAGE) {
-		console.log("event:", event);
         let data = JSON.parse(event.data.data);
 
         let e = new Event();
@@ -236,11 +236,19 @@ export class AppComponent { // event stuff
       // color it
 //		different color for each slice
 //      let darkenstr = "hsl(193, 76%, " + String(80 - (i * 5)) + "%)";
+	  // single color for each slice
 	  let darkenstr = "hsl(190, 90%, 40%)";
       children[i].style.backgroundColor = darkenstr;
     }
 	// start out all control mode
-	this.goToSingleControl('all');
+	if (this.displays.length == 1) {
+		console.log("only one display");	
+		this.multipledisplays = false;
+		this.goToSingleControl(this.displays[0]);
+	} else {
+		this.multipledisplays = true;	
+		this.goToSingleControl('all');
+	}
   }
 
   getArc(x, y, radius, startAngle, endAngle) {
