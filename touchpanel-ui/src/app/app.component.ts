@@ -286,6 +286,10 @@ export class AppComponent { // event stuff
 	 let Nright = ((this.inputs.length - 1) * total) / (this.inputs.length);
 	 let Ntop = Nright / (this.inputs.length - 1);
 
+	 if (this.inputs.length == 2 || this.inputs.length == 3) {
+		Nright++;
+	 }
+
 	 this.rightoffset = String(Nright) + "%";
 	 console.log("right offset:", this.rightoffset);
 	 this.topoffset = String(Ntop) + "%";
