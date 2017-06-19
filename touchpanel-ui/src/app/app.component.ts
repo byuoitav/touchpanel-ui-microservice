@@ -361,7 +361,6 @@ export class AppComponent { // event stuff
         }
 
         d.blanked = (e.eventInfoValue == 'true');
-		this.blanked = (e.eventInfoValue == 'true');
         break;
 	  case "refresh": 
 		  console.log("refresh message recieved");
@@ -518,14 +517,13 @@ export class AppComponent { // event stuff
   }
 
   blank() {
-	this.blanked = !this.blanked;
     var body = { displays: [] }
     for (let display of this.displays) {
       if (display.selected) {
-        display.blanked = true;
+        display.blanked = !display.blanked;
         body.displays.push({
           "name": display.name,
-          "blanked": this.blanked
+          "blanked": display.blanked 
         });
       }
     }

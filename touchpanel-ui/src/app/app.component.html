@@ -26,15 +26,20 @@
 	</div>
     <!-- display control -->
     <div [class.hidden]='displayselection' class='main-control-h'>
-		<div class='roomname' [class.roomname-transition]="ringopen">
+		<div class='roomname' [class.roomname-transition]="!selectedDisplay.blanked">
 			<span *ngIf="!allcontrol">{{selectedDisplay.displayName}}</span>
 			<span *ngIf="allcontrol">All Control</span>
 		</div>
-        <div class='main-control-v'>
-            <div class='circle' [class.circle-shrink]="ringopen" (click)="openring();">
-				<i class='material-icons'>{{selectedDisplay.icon}}</i>
+        <div class='main-control-v' >
+            <div class='circle' [class.circle-shrink]="!selectedDisplay.blanked" (click)="blank();">
+				<!-- 
+				<iclass='material-icons'>{{selectedDisplay.icon}}</i>
+				-->
+				<i class='material-icons'>panorama_wide_angle</i>
+				<span *ngIf="!selectedDisplay.blanked">Blank</span>
+				<span *ngIf="selectedDisplay.blanked">Unblank</span>
             </div>
-            <ul #ring class="ring" [class.ring-grow]="ringopen">
+            <ul #ring class="ring" [class.ring-grow]="!selectedDisplay.blanked">
 				<li class="slice">
 					<div>
 					</div>
@@ -43,7 +48,7 @@
 					<div>
 					</div>
 				</li>
-                <li *ngFor="let i of inputs"  class="slice input-slice" (click)='switchInput(i)'>
+                <li *ngFor="let i of inputs"  class="slice input-slice" [class.selectedInput]="selectedDisplay.input == i.name" (click)='switchInput(i)'>
 					<div [style.right]="rightoffset" [style.top]="topoffset" class='input'>
 						<i class='material-icons'>{{i.icon}}</i>
 						<span>{{i.name}}</span>
@@ -75,13 +80,14 @@
         </div>
     </div>
 	<!-- blank -->
-	<!-- this guy should be somewhere else in the future -->
+	<!-- this guy should be somewhere else in the future 
 	<div *ngIf="!blanked" class="blank" (click)="buttonpress('blank'); blank()">
 		<i class="material-icons" [class.red]="blanked">panorama_wide_angle</i>
 	</div>
 	<div *ngIf="blanked" class="blank" (click)="buttonpress('blank'); blank()">
 		<i class="material-icons" [class.red]="blanked">do_not_disturb</i>
 	</div>
+	-->
 
     <!-- slice of the circle -->
 <svg id='svg-block' width="0" height="0">
