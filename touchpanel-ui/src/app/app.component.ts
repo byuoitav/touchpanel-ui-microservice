@@ -22,6 +22,22 @@ import { ModalComponent } from './modal.component';
         animate('2s', style({ opacity: 0 })) // the new state of the transition(after transiton it removes)
       ])
     ]),
+    trigger('blankedIcon', [
+      transition('void => *', [
+        animate('.2s', style({ fontSize: '17vh'})) 
+      ]),
+      transition('* => void', [
+        animate('.2s', style({ fontSize: '0vh'})) 
+      ])
+    ]),
+    trigger('inputIcon', [
+      transition('void => *', [
+        animate('.2s', style({ fontSize: '27vh'})) 
+      ]),
+      transition('* => void', [
+        animate('.2s', style({ fontSize: '0vh'})) 
+      ])
+    ]),
   ],
 })
 export class AppComponent { // event stuff
