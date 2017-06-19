@@ -43,8 +43,8 @@
 					<div>
 					</div>
 				</li>
-                <li *ngFor="let i of inputs" class="slice input-slice" (click)='switchInput(i)'>
-					<div class='input'>
+                <li *ngFor="let i of inputs"  class="slice input-slice" (click)='switchInput(i)'>
+					<div [style.right]="rightoffset" [style.top]="topoffset" class='input'>
 						<i class='material-icons'>{{i.icon}}</i>
 						<span>{{i.name}}</span>
 					</div>

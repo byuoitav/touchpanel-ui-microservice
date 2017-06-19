@@ -46,6 +46,8 @@ export class AppComponent { // event stuff
   @ViewChild('ring') ring: ElementRef;
   arcpath: string;
   ringopen: boolean;
+  rightoffset: string;
+  topoffset: string;
   // display selection
   displayselection: boolean; 
   // multi-display data 
@@ -79,6 +81,8 @@ export class AppComponent { // event stuff
     this.getData();
 	this.blanked = true;
 	this.helprequested = false;
+	
+	// uncomment for local testing
 //    this.showing = true;
 
     // setup socket to recieve events
@@ -249,6 +253,7 @@ export class AppComponent { // event stuff
 		this.multipledisplays = true;	
 		this.goToSingleControl('all');
 	}
+	this.getInputOffset();
   }
 
   getArc(x, y, radius, startAngle, endAngle) {
@@ -273,6 +278,18 @@ export class AppComponent { // event stuff
       x: cx + (r * Math.cos(angleInRad)),
       y: cy + (r * Math.sin(angleInRad))
     };
+  }
+
+  getInputOffset() {
+ 	 let total = (this.inputs.length * 2) + 24;	 
+
+	 let Nright = ((this.inputs.length - 1) * total) / (this.inputs.length);
+	 let Ntop = Nright / (this.inputs.length - 1);
+
+	 this.rightoffset = String(Nright) + "%";
+	 console.log("right offset:", this.rightoffset);
+	 this.topoffset = String(Ntop) + "%";
+	 console.log("top offset:", this.topoffset);
   }
 
   enterScreen() {
