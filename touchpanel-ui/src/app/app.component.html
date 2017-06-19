@@ -32,11 +32,8 @@
 		</div>
         <div class='main-control-v' >
             <div class='circle' [class.circle-shrink]="!selectedDisplay.blanked" (click)="blank();">
-				<!-- 
-				<iclass='material-icons'>{{selectedDisplay.icon}}</i>
-				-->
-				<i *ngIf="!selectedDisplay.blanked" class='material-icons'>panorama_wide_angle</i>
-				<i *ngIf="selectedDisplay.blanked" class='material-icons'>{{selectedDisplay.icon}}</i>
+				<i *ngIf="!selectedDisplay.blanked" [@blankedIcon] class='material-icons'>panorama_wide_angle</i>
+				<i *ngIf="selectedDisplay.blanked" [@inputIcon] class='material-icons'>{{selectedDisplay.icon}}</i>
 				<span *ngIf="!selectedDisplay.blanked">Blank</span>
 				<span *ngIf="selectedDisplay.blanked">Unblank</span>
             </div>

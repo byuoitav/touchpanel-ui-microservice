@@ -179,7 +179,6 @@ body {
     align-self: center;
     text-align: center;
 	transition: .2s ease all;
-//	display: none;
 	
 	i {
 		font-size: 27vh;	
@@ -521,6 +520,7 @@ body {
     justify-content: center;
     align-self: center;
     text-align: center;
+	align-content: space-around;
 	
 	i {
 		font-size: 18vh;	
