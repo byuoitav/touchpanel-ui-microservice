@@ -233,8 +233,6 @@ body {
 
 .input {
     position: absolute;
-    right: 16vh;
-    top: 7vh;
 	display: flex;
 	justify-content: center;
 	flex-direction: column;
@@ -245,6 +243,10 @@ body {
 		font-size: 11vh;	
 		color: #b3ffff;
 	}
+}
+
+.selectedInput {
+	background-color: #006666 !important;
 }
 
 /* centered columns styles */
