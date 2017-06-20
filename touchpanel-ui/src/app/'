@@ -180,44 +180,24 @@ body {
     background-color: #B0BEC5;
     display: flex;
     flex-direction: column;
-    justify-content: center; 
+    justify-content: center;
     align-self: center;
     text-align: center;
 	transition: .2s ease all;
-	border: 0vh solid #b71c1c;
 	overflow: hidden;
 	
 	i {
-		margin-bottom: 32%;
 		font-size: 27vh;	
 		transition: .2s ease all;
 		color: #EEEEEE;
 	}
 
 	.blank {
-		position: absolute;
-		display: flex;
-		flex-direction: column;
-		justify-content: center;
-		height: 40%;
+		height: 35%;
 		width: 100%;
-		background-color: #0277BD;
-		bottom: 0;
-		transition: .2s ease all;
-
-		span {
-			font-size: 4vh;	
-			color: #E0E0E0;
-		}
+		background-color: #3949AB;
+		margin-top: auto;
 	}
-}
-
-.circle-blanked { 
-	border: .5vh solid #b71c1c;
-}
-
-.redbackground {
-	background-color: #b71c1c !important;
 }
 
 .circle-shrink {
