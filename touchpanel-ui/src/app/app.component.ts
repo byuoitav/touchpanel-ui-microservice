@@ -158,7 +158,7 @@ export class AppComponent { // event stuff
     this.room = new Room();
 
     this.api.loaded.subscribe(data => {
-		this.roomname = this.api.building + " " + this.api.room;
+	  this.roomname = this.api.building + " " + this.api.room;
       this.api.getRoomConfig().subscribe(data => {
         this.room.config = new RoomConfiguration();
         Object.assign(this.room.config, data);
@@ -304,6 +304,9 @@ export class AppComponent { // event stuff
 
 	 if (this.inputs.length == 2 || this.inputs.length == 3) {
 		Nright++;
+	 } else if (this.inputs.length == 1) {
+		Nright = 10;
+		Ntop = 21;
 	 }
 
 	 this.rightoffset = String(Nright) + "%";
