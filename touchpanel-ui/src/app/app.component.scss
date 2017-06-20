@@ -23,7 +23,7 @@ body {
 }
 
 .inactive {
-    color: rgba(0, 0, 0, 0.26);
+    color: #CFD8DC;
     transform: scale(.75, .75) translatey(-20px);
 }
 
@@ -73,7 +73,8 @@ body {
     min-height: 100%;
     cursor: none;
     min-width: 100%;
-	background-image: url(/assets/bg1.jpg);
+    background-color: #212121;
+	/*background-image: url(/assets/bg1.jpg);*/
 	background-size: cover;
 }
 
@@ -88,15 +89,15 @@ body {
 }
 
 .selected {
-    background-color: #BDBDBD;
+    background-color: #78909C;
 }
 
 .selected:after {
-    background-color: #BDBDBD;
+    background-color: #78909C;
 }
 
 .selected:before {
-    background-color: #BDBDBD;
+    background-color: #78909C;
 }
 
 .sidebar {
@@ -162,7 +163,7 @@ body {
 	top: 10vh;
 	transition: .2s ease all;
 	font-size: 4vh;
-	color: #001a1a;
+	color: #E0E0E0;
 }
 
 .roomname-transition {
@@ -176,7 +177,7 @@ body {
     border-radius: 50%;
     width: 65vh;
     height: 65vh;
-    background-color: #99ffff;
+    background-color: #B0BEC5;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -187,14 +188,13 @@ body {
 	i {
 		font-size: 27vh;	
 		transition: .2s ease all;
-		color: #003333;
+		color: #EEEEEE;
 	}
 }
 
 .circle-shrink {
 	width: 43vh;
 	height: 43vh;
-	background-color: #66ffff;
 
 	i {
 		font-size: 17vh;	
@@ -227,7 +227,7 @@ body {
     height: 100%;
 
     clip-path: url(#sector);
-	color: #b3ffff;
+	color: #E0E0E0;
 }
 
 .input-slice {
@@ -244,12 +244,12 @@ body {
 	font-size: 2.5vh;
 	.material-icons {
 		font-size: 11vh;	
-		color: #b3ffff;
+		color: #E0E0E0;
 	}
 }
 
-.selectedInput {
-	background-color: #006666 !important;
+.selectedInput, .circle-shrink {
+	background-color: #014A87 !important;
 }
 
 /* centered columns styles */
@@ -265,7 +265,24 @@ body {
 .all-control i,
 .help i {
     font-size: 9vh;
-	color: #ccffff;
+    color: #E0E0E0;
+
+}
+
+.power i {
+    color: #43A047;
+}
+
+#colored-slider .mat-slider .mat-slider-thumb, #colored-slider .md-track-fill, #colored-slider .md-focus-thumb, #colored-slider .md-focus-ring {
+    background-color: #388E3C !important;
+}
+
+.mat-accent .mat-slider-thumb, .mat-accent .mat-slider-thumb-label, .mat-accent .mat-slider-track-fill {
+    background-color: #388E3C !important;
+}
+
+#colored-slider {
+    color: #388E3C !important;
 }
 
 .mute {
@@ -493,7 +510,7 @@ body {
 }
 
 .red {
-	color: #00e6e6 !important; 
+	color: #b71c1c !important; 
 }
 
 .hidden {
@@ -545,3 +562,4 @@ body {
 .alignleft {
 	margin-right: 50%;
 }
+
