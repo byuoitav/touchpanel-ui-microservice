@@ -158,7 +158,7 @@ export class AppComponent { // event stuff
     this.room = new Room();
 
     this.api.loaded.subscribe(data => {
-		this.roomname = this.api.building + " " + this.api.room;
+	  this.roomname = this.api.building + " " + this.api.room;
       this.api.getRoomConfig().subscribe(data => {
         this.room.config = new RoomConfiguration();
         Object.assign(this.room.config, data);

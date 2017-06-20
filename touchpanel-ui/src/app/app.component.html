@@ -57,7 +57,7 @@
 	<!-- bottom-right control -->
     <div class='blank-row'>
 		<!-- blank -->
-		<div *ngIf="!selectedDisplay.blanked" class="blank" (click)="buttonpress('blank'); blank()">
+		<div *ngIf="!selectedDisplay.blanked" class="blank" [class.alignleft]="!multipledisplays" (click)="buttonpress('blank'); blank()">
 			<i class="material-icons">panorama_wide_angle</i>
 		</div>
 		<div *ngIf="selectedDisplay.blanked" class="blank" (click)="buttonpress('blank'); blank()">
