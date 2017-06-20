@@ -68,7 +68,7 @@ func SubInit() {
 	go SubListen()
 	go waitForRefresh()
 
-	time.Sleep(10 * time.Second)
+	time.Sleep(12 * time.Second)
 	Refresh()
 }
 
