@@ -9,7 +9,7 @@ export class SocketService {
   private http: Http;
   private webSocketConfig: WebSocketConfig = {
  	initialTimeout: 100,
-    maxTimeout: 1000,
+    maxTimeout: 500,
 	reconnectIfNotNormalClose: true	
   }
 
