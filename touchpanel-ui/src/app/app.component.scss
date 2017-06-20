@@ -123,10 +123,14 @@ body {
 	z-index: 100;
 }
 
-.blank {
-	position: fixed;
-	bottom: 3.6vh;
-	right: 13%;
+.blank-row {
+    position: fixed;
+    bottom: 4vh;
+    left: 3%;
+    width: 20%;
+    display: flex;
+    justify-content: space-around;
+	z-index: 100;
 }
 
 .main-control-h {
@@ -536,10 +540,4 @@ body {
 
 .fadeout {
 	display: none;	
-}
-
-.all-control {
-	position: fixed;
-	left: 6%;
-	bottom: 3.6vh;	
 }
