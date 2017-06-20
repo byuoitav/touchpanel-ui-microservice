@@ -99,7 +99,7 @@ export class AppComponent { // event stuff
 	this.helprequested = false;
 	
 	// uncomment for local testing
-    this.showing = true;
+//    this.showing = true;
 
     // setup socket to recieve events
     this.socket.getEventListener().subscribe(event => {
@@ -304,6 +304,9 @@ export class AppComponent { // event stuff
 
 	 if (this.inputs.length == 2 || this.inputs.length == 3) {
 		Nright++;
+	 } else if (this.inputs.length == 1) {
+		Nright = 10;
+		Ntop = 21;
 	 }
 
 	 this.rightoffset = String(Nright) + "%";
