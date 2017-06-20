@@ -1,33 +1,34 @@
 package main
 
 import (
-	"html/template"
 	"net/http"
 
-	"github.com/byuoitav/touchpanel-ui-microservice/helpers"
-	"github.com/byuoitav/touchpanel-ui-microservice/views"
+	"github.com/byuoitav/touchpanel-ui-microservice/events"
+	"github.com/byuoitav/touchpanel-ui-microservice/handlers"
 	"github.com/jessemillar/health"
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
 )
 
 func main() {
+	events.Init()
+
 	port := ":8888"
 	router := echo.New()
 	router.Pre(middleware.RemoveTrailingSlash())
 	router.Use(middleware.CORS())
 
-	templateEngine := &helpers.Template{
-		Templates: template.Must(template.ParseGlob("public/*/*.html")),
-	}
-
-	router.Renderer = templateEngine
-
 	router.GET("/health", echo.WrapHandler(http.HandlerFunc(health.Check)))
 
-	// Views
-	router.Static("/*", "public")
-	router.GET("/", views.Main)
+	router.GET("/websocket", handlers.OpenWebSocket)
+	router.POST("/subscribe", handlers.Subscribe)
+	router.GET("/hostname", handlers.GetHostname)
+	router.PUT("/publish", handlers.PublishEvent)
+	router.GET("/deviceinfo", handlers.GetDeviceInfo)
+	router.GET("/reboot", handlers.Reboot)
+	router.GET("/dockerstatus", handlers.GetDockerStatus)
+
+	router.Static("/", "dist")
 
 	router.Start(port)
 }
