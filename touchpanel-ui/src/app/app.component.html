@@ -28,7 +28,7 @@
     <div [class.hidden]='displayselection' class='main-control-h'>
 		<div class='roomname' [class.roomname-transition]="!selectedDisplay.blanked || true">
 			<span *ngIf="!allcontrol">{{selectedDisplay.displayName}}</span>
-			<span *ngIf="allcontrol">All Control</span>
+			<span *ngIf="allcontrol">All Displays</span>
 		</div>
         <div class='main-control-v' >
             <div class='circle' [class.circle-shrink]="!selectedDisplay.blanked || true">
@@ -77,7 +77,7 @@
     <!-- sidebar -->
     <div class='column col-sm-1 sidebar'>
         <div class='volume'>
-            <md-slider vertical [value]="volume" (change)="buttonpress('volume slider'); updateVolume($event.value)"></md-slider>
+            <md-slider id="colored-slider" vertical [value]="volume" (change)="buttonpress('volume slider'); updateVolume($event.value)"></md-slider>
         </div>
         <div class="mute">
             <div *ngIf="muted" (click)="buttonpress('unmute'); toggleMute()">
@@ -101,7 +101,7 @@
 </div>
 
 <div class='overlay basediv' *ngIf="!showing" [@fadeInOut] (click)="buttonpress('power on'); enterScreen()">
-    <img class='loading-img' [class.spinner]='!startSpinning' [class.spin_fast]='startSpinning' src='assets/byu_medallion_black_white.svg'>
+    <img class='loading-img' [class.spinner]='!startSpinning' [class.spin_fast]='startSpinning' src='assets/byu_medallion_white.svg'>
 </div>
 
 <!-- management dialog -->

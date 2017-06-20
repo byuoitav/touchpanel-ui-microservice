@@ -99,7 +99,7 @@ export class AppComponent { // event stuff
 	this.helprequested = false;
 	
 	// uncomment for local testing
-//    this.showing = true;
+    this.showing = true;
 
     // setup socket to recieve events
     this.socket.getEventListener().subscribe(event => {
@@ -238,7 +238,7 @@ export class AppComponent { // event stuff
       let rotate = "rotate(" + String(angle * -i) + "deg)";
       children[i].style.transform = rotate;
 
-      let darkenstr = "hsl(180, 90%, 50%)";
+      let darkenstr = "#455A64";
       children[i].style.backgroundColor = darkenstr;
 	}
 
@@ -257,7 +257,7 @@ export class AppComponent { // event stuff
 //		different color for each slice
 //      let darkenstr = "hsl(193, 76%, " + String(80 - (i * 5)) + "%)";
 	  // single color for each slice
-	  let darkenstr = "hsl(190, 90%, 40%)";
+	  let darkenstr = "#90A4AE";
       children[i].style.backgroundColor = darkenstr;
     }
 	// start out all control mode
