@@ -34,8 +34,8 @@
             <div class='circle' [class.circle-shrink]="!selectedDisplay.blanked || true" [class.circle-blanked]="selectedDisplay.blanked">
 				<i class='material-icons'>{{selectedDisplay.icon}}</i>
 				<div class='blank' [class.redbackground]="selectedDisplay.blanked" (click)="blank()">
-					<span *ngIf="!selectedDisplay.blanked">Blank</span>
-					<span *ngIf="selectedDisplay.blanked">Unblank</span>
+					<span *ngIf="!selectedDisplay.blanked">Blank Display</span>
+					<span *ngIf="selectedDisplay.blanked">Unblank Display</span>
 				</div>
             </div>
             <ul #ring class="ring" [class.ring-grow]="!selectedDisplay.blanked || true">
@@ -125,11 +125,12 @@
             Help
         </div>
         <div class="modal-body">
-            <span>Please call AV Support at 801-422-7671 for help.</span>
+            <span id="helpwords">Please call AV Support at 801-422-7671 for help, or request help by pressing 'Request Help'</span>
         </div>
         <div class="modal-bottom">
-            <button class="btn btn-primary" (click)="helpmodal.hide(); helprequested=false">Done</button>
 			<button class="btn btn-warning" [disabled]="helprequested" (click)="requestHelp()">Request Help</button>
+			<div class="btnspacing"></div>
+            <button class="btn btn-primary" (click)="helpmodal.hide(); helprequested=false">Done</button>
         </div>
     </div>
 </app-modal>
