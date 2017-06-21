@@ -550,7 +550,11 @@ export class AppComponent { // event stuff
   }
 
   setOutputDevice(d: DeviceData) {
-    d.selected = !d.selected;
+	  // hotfix because there is only one display in all our rooms rn
+	  // and i'm pushing it into stage and not testing:)  
+	  //
+	  // and we arent keeping this ui anyways
+//    d.selected = !d.selected;
   }
 
   switchInput(d: DeviceData) {
