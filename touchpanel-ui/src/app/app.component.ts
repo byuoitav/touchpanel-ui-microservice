@@ -99,7 +99,7 @@ export class AppComponent { // event stuff
 	this.helprequested = false;
 	
 	// uncomment for local testing
-//    this.showing = true;
+    this.showing = true;
 
     // setup socket to recieve events
     this.socket.getEventListener().subscribe(event => {
@@ -558,12 +558,10 @@ export class AppComponent { // event stuff
     for (let display of this.displays) {
       if (display.selected) {
         display.icon = d.icon;
-        display.blanked = false;
 		display.input = d.name;	// for appearances? faster (click)?
         body.displays.push({
           "name": display.name,
-          "input": d.name,
-          "blanked": false
+          "input": d.name
         });
       }
     }
