@@ -25,8 +25,11 @@ func main() {
 	router.GET("/hostname", handlers.GetHostname)
 	router.PUT("/publish", handlers.PublishEvent)
 	router.GET("/deviceinfo", handlers.GetDeviceInfo)
+	router.GET("/refresh", handlers.Refresh)
 	router.GET("/reboot", handlers.Reboot)
 	router.GET("/dockerstatus", handlers.GetDockerStatus)
+
+	router.POST("/help", handlers.Help)
 
 	router.Static("/", "dist")
 

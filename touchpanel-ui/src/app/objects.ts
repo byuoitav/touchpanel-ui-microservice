@@ -67,12 +67,12 @@ export class DeviceData {
 }
 
 export class icons {
-	static readonly blanked = "panorama_wide_angle";
-	static readonly hdmi = "settings_input_hdmi";
-	static readonly overflow = "people";
-	static readonly computer = "computer";
-	static readonly iptv = "";
-	static readonly appletv = "airplay";
-	static readonly generic = "generic";
-	static readonly table= "byu_table_input";
+  static readonly blanked = "panorama_wide_angle";
+  static readonly hdmi = "settings_input_hdmi";
+  static readonly overflow = "people";
+  static readonly computer = "computer";
+  static readonly iptv = "";
+  static readonly appletv = "airplay";
+  static readonly generic = "generic";
+  static readonly table = "byu_table_input";
 }

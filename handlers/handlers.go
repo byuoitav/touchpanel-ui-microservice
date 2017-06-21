@@ -1,6 +1,9 @@
 package handlers
 
 import (
+	"bytes"
+	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -65,6 +68,13 @@ func GetDeviceInfo(context echo.Context) error {
 	return context.JSON(http.StatusOK, di)
 }
 
+func Refresh(context echo.Context) error {
+	log.Printf("[management] Refreshing webpage")
+	events.Refresh()
+
+	return nil
+}
+
 func Reboot(context echo.Context) error {
 	log.Printf("[management] Rebooting pi")
 	http.Get("http://localhost:7010/reboot")
@@ -86,4 +96,63 @@ func GetDockerStatus(context echo.Context) error {
 	}
 
 	return context.String(http.StatusOK, string(body))
+}
+
+func Help(context echo.Context) error {
+	var sh helpers.SlackHelp
+	err := context.Bind(&sh)
+	if err != nil {
+		return context.JSON(http.StatusBadRequest, err.Error())
+	}
+
+	log.Printf("Requesting help in building %s, room %s", sh.Building, sh.Room)
+	url := os.Getenv("HELP_SLACKBOT_WEBHOOK")
+	if len(url) == 0 {
+		panic(fmt.Sprintf("HELP_SLACKBOT_WEBHOOK is not set."))
+	}
+
+	// build json payload
+	// attachment
+	var attachment helpers.Attachment
+	attachment.Title = "help request"
+	// fields
+	var fieldOne helpers.Field
+	var fieldTwo helpers.Field
+	fieldOne.Title = "building"
+	fieldOne.Value = sh.Building
+	fieldOne.Short = true
+	fieldTwo.Title = "room"
+	fieldTwo.Value = sh.Room
+	fieldTwo.Short = true
+	// actions
+	var actionOne helpers.Action
+	actionOne.Name = "accepthelp"
+	actionOne.Text = "help"
+	actionOne.Type = "button"
+	actionOne.Value = "true"
+	// put into sh
+	attachment.Fields = append(attachment.Fields, fieldOne)
+	attachment.Fields = append(attachment.Fields, fieldTwo)
+	attachment.Actions = append(attachment.Actions, actionOne)
+	sh.Attachments = append(sh.Attachments, attachment)
+
+	json, err := json.Marshal(sh)
+	if err != nil {
+		log.Printf("failed to marshal sh: %s", sh)
+		return context.JSON(http.StatusInternalServerError, err.Error())
+	}
+
+	req, err := http.NewRequest("POST", url, bytes.NewBuffer(json))
+	req.Header.Set("Content-Type", "application/json")
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		panic(err)
+	}
+	defer resp.Body.Close()
+
+	body, _ := ioutil.ReadAll(resp.Body)
+
+	return context.JSON(http.StatusOK, string(body))
 }

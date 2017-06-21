@@ -17,6 +17,7 @@ var Pub publisher.Publisher
 var Building string
 var Room string
 var Name string
+var dev bool
 
 func Init() {
 	getBuildingAndRoomAndName()
@@ -27,6 +28,12 @@ func Init() {
 	}
 	log.Printf("Started publisher on :7003")
 
+	dev = false
+	if len(os.Getenv("DEVELOPMENT_HOSTNAME")) != 0 {
+		dev = true
+		log.Printf("Development machine. Using hostname %s", os.Getenv("DEVELOPMENT_HOSTNAME"))
+	}
+
 	go Pub.Listen()
 	go SubInit()
 }
@@ -36,6 +43,9 @@ func Publish(event eventinfrastructure.EventInfo) error {
 
 	// create the event
 	e.Hostname = os.Getenv("PI_HOSTNAME")
+	if dev {
+		e.Hostname = os.Getenv("DEVELOPMENT_HOSTNAME")
+	}
 	e.Timestamp = time.Now().Format(time.RFC3339)
 	e.LocalEnvironment = len(os.Getenv("LOCAL_ENVIRONMENT")) > 0
 	e.Building = Building

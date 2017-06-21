@@ -8,6 +8,7 @@ import 'rxjs/add/operator/map';
 export class APIService {
   public building: string;
   public room: string;
+  public baseurl: string;
   public url: string;
   public loaded: Subject<boolean>;
   private hostname: string;
@@ -22,6 +23,9 @@ export class APIService {
     this.headers = new Headers();
     this.headers.append('Content-Type', 'application/json');
     this.options = new RequestOptions({ headers: this.headers });
+	let base = location.origin.split(':');
+	this.baseurl = base[0] + ":" + base[1];
+	console.log("baseurl:", this.baseurl);
 
     return this.getHostname().subscribe(data => {
       console.log("room =", data);
@@ -31,7 +35,7 @@ export class APIService {
       this.building = b;
       this.room = split[1];
 
-      this.url = "http://localhost:8000" + "/buildings/" + this.building + "/rooms/" + this.room;
+      this.url = this.baseurl + ":8000" + "/buildings/" + this.building + "/rooms/" + this.room;
       console.log("url =", this.url);
 
       this.loaded.next(true);
@@ -39,25 +43,25 @@ export class APIService {
   }
 
   getHostname(): Observable<Object> {
-    return this.http.get("http://localhost:8888/hostname")
+    return this.http.get(this.baseurl + ":8888/hostname")
       .map(response => response.json());
   }
 
   getDeviceInfo(): Observable<Object> {
-    return this.http.get("http://localhost:8888/deviceinfo")
+    return this.http.get(this.baseurl + ":8888/deviceinfo")
       .map(response => response.json());
   }
 
   getDockerStatus(): Observable<Object> {
-    return this.http.get("http://localhost:8888/dockerstatus")
-      .map(response => response.json());
+    return this.http.get(this.baseurl + ":8888/dockerstatus")
+      .map(response => response.text());
   }
 
   reboot(): Observable<Object> {
-    return this.http.get("http://localhost:8888/reboot")
+    return this.http.get(this.baseurl + ":8888/reboot")
       .map(response => response.json());
   }
-  
+
   getRoomConfig(): Observable<Object> {
     return this.http.get(this.url + "/configuration")
       .map(response => response.json());
@@ -69,8 +73,8 @@ export class APIService {
   }
 
   get(url: string): Observable<Object> {
- 	return this.http.get(url)
-   	  .map(response => response.json());	
+    return this.http.get(url)
+      .map(response => response.json());
   }
 
   putData(data: any) {
@@ -81,10 +85,15 @@ export class APIService {
     return val;
   }
 
-  publish(event: any) {
-    console.log("publishing:", event, "to", "http://localhost:8888/publish");
+  postHelp(data) {
+ 	console.log("POST", data, "to", this.baseurl + ":8888/help") 
+	return this.http.post(this.baseurl + ":8888/help", data, this.options).map((res: Response) => res.json());
+  }
 
-    this.http.put("http://localhost:8888/publish", event, this.options).map((res: Response) => res.json()).subscribe();
+  publish(event: any) {
+    console.log("publishing:", event, "to", this.baseurl + ":8888/publish");
+
+    this.http.put(this.baseurl + ":8888/publish", event, this.options).map((res: Response) => res.json()).subscribe();
   }
 
   handleError(error: Response | any) {
