@@ -218,7 +218,7 @@ export class AppComponent { // event stuff
     }
 
     // set the display names
-    for (let display of this.displaysToShow) { // maybe this.displays?
+    for (let display of this.displays) { // maybe this.displays?
       for (let device of this.room.config.devices) {
         if (display.name == device.name) {
           display.displayName = device.display_name;
@@ -226,6 +226,25 @@ export class AppComponent { // event stuff
         }
       }
     }
+	
+	this.syncDisplayArrays();
+  }
+
+  syncDisplayArrays() {
+	// update info in this.displaysToShow with info in this.displays
+	console.log("syncing display objects");
+	for (let ds of this.displaysToShow) {
+		for (let d of this.displays) {
+			if (ds.name == d.name) {
+				console.log("syncing", ds, "from displaysToShow with", d, "from displays");
+				ds.displayName = (d.displayName) ? d.displayName : "";
+				ds.input = (d.input) ? d.input : this.inputsToShow[0].name;
+				ds.selected = (d.selected) ? d.selected : true;
+				ds.icon = (d.icon && (d.icon != icons.blanked)) ? d.icon : this.inputsToShow[0].icon;
+				ds.blanked = (d.blanked) ? d.blanked : true;
+			}		
+		}
+	}
   }
 
   buildInputMenu() {
@@ -360,12 +379,17 @@ export class AppComponent { // event stuff
         break;
       case "blanked":
         var d: DeviceData;
+
+	  	console.log("displaystoshow", this.displaysToShow);
         for (let display of this.displaysToShow) {
           if (display.name == e.device) {
+			console.log("here");
             d = display;
             break;
           }
         }
+
+		console.log("device", d);
 
         d.blanked = (e.eventInfoValue == 'true');
         break;
@@ -438,6 +462,8 @@ export class AppComponent { // event stuff
         }
       }
     }
+
+	this.syncDisplayArrays();
   }
 
   createInputDeviceData(d: Device) {
@@ -469,7 +495,7 @@ export class AppComponent { // event stuff
     }
     this.inputs.push(dd);
 
-    console.log("added", dd.name, "of type", dd.icon, "to inputs. (icon = " + dd.icon + " )");
+    console.log("added", dd.name, "of type", d.type, "to inputs. (icon = " + dd.icon + " )");
   }
 
   hasRole(d: Device, role: string): boolean {
@@ -494,7 +520,8 @@ export class AppComponent { // event stuff
 		body.displays.push({
 			"name": display.name,
       		"power": "on",
-      		"blanked": true
+      		"blanked": true,
+			"input": this.inputsToShow[0].name
 		});	
 	}
 
