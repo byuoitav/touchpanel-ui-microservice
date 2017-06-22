@@ -59,8 +59,12 @@
 
 	<!-- bottom-right control -->
     <div class='blank-row'>
+		<!-- display to all -->
+		<div *ngIf="displayToAll" class="displaytoall" [class.excite]="sendingDTA" [class.alignleft]="!multipledisplays">
+			<i *ngIf="true" class='material-icons' [class.excite]="sendingDTA" (click)="sendDisplayToAll();">people</i>
+		</div>
 		<!-- all control -->
-		<div *ngIf="multipledisplays" class="all-control alignleft">
+		<div *ngIf="multipledisplays" class="all-control" [class.alignleft]="!displayToAll">
 			<i *ngIf="allcontrol || singlecontrol" class='material-icons' (click)="goToDisplaySelection()">group_work</i>
 			<i *ngIf="!allcontrol && !singlecontrol" class='material-icons' (click)="goToSingleControl('all')">album</i>
 		</div>
@@ -155,6 +159,9 @@
                     <button class="btn btn-info" (click)="dockerstatus(); dockerstatusmodal.show()">Docker Status</button>
                 </div>
                 <div>
+                    <button class="btn btn-warning" (click)="deleteCookies()">Clear Local Data</button>
+                </div>
+                <div>
                     <button class="btn btn-danger" (click)="confirmrebootmodal.show()">Reboot</button>
                 </div>
             </div>
@@ -192,7 +199,23 @@
 			</ul>
         </div>
         <div class="modal-bottom">
-            <button class="btn btn-primary" (click)="inputsmodal.hide(); createToShowCookies();">Done</button>
+            <button class="btn btn-primary" (click)="inputsmodal.hide(); extrafeaturesmodal.show()">Next</button>
+        </div>
+    </div>
+</app-modal>
+
+<app-modal #extrafeaturesmodal>
+    <div class="app-modal-body">
+        <div class="modal-title">
+			Select any extra features	
+        </div>
+        <div class="modal-body">
+			<ul class='list-group'>
+				<li class='list-group-item' [class.list-group-item-info]="isExtraFeatureOn('dta')" (click)="toggleExtraFeatures('dta');">Display To All</li>
+			</ul>
+        </div>
+        <div class="modal-bottom">
+            <button class="btn btn-primary" (click)="extrafeaturesmodal.hide(); createToShowCookies();">Done</button>
         </div>
     </div>
 </app-modal>

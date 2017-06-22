@@ -293,10 +293,10 @@ body {
 .mute i,
 .blank i,
 .all-control i,
+.displaytoall i,
 .help i {
     font-size: 9vh;
     color: #E0E0E0;
-
 }
 
 .power i {
@@ -605,4 +605,120 @@ body {
 	flex-wrap: wrap;
 	align-content: space-around;
 	max-height: 50vh;
+}
+
+.excite {
+    -webkit-animation: growBounce 1s 1 linear;
+}
+
+@-webkit-keyframes growBounce {
+	0% {
+		font-size: 9vh;	
+		transform: rotate(0deg);
+		margin-right: 50%;
+	}
+	5% {
+		font-size: 12vh;	
+		transform: rotate(5deg);
+		margin-right: 45%;
+		color: #FFCA28;
+	}
+	10% {
+		font-size: 14vh;	
+		transform: rotate(-5deg);
+		margin-right: 40%;
+	}
+	15% {
+		font-size: 16vh;	
+		transform: rotate(0deg);
+		margin-right: 35%;
+	}
+	20% {
+		font-size: 18vh;	
+		transform: rotate(0deg);
+		margin-right: 30%;
+	}
+	25% {
+		font-size: 19vh;	
+		transform: rotate(10deg);
+		margin-right: 25%;
+	}
+	30% {
+		font-size: 20vh;	
+		transform: rotate(-10deg);
+		margin-right: 20%;
+	}
+	35% {
+		font-size: 21vh;	
+		transform: rotate(0deg);
+		margin-right: 15%;
+		color: #2196F3;
+	}
+	40% {
+		font-size: 22vh;	
+		transform: rotate(0deg);
+		margin-right: 10%;
+	}
+	45% {
+		font-size: 22.5vh;	
+		transform: rotate(15deg);
+		margin-right: 5%;
+	}
+	50% {
+		font-size: 23vh;	
+		transform: rotate(-15deg);
+		margin-right: 0%;
+	}
+	55% {
+		font-size: 22.5vh;	
+		transform: rotate(0deg);
+		margin-right: 5%;
+	}
+	60% {
+		font-size: 22vh;	
+		transform: rotate(0deg);
+		margin-right: 10%;
+		color: #6A1B9A;
+	}
+	65% {
+		font-size: 21vh;	
+		transform: rotate(20deg);
+		margin-right: 15%;
+	}
+	70% {
+		font-size: 20vh;	
+		transform: rotate(-20deg);
+		margin-right: 20%;
+	}
+	75% {
+		font-size: 19vh;	
+		transform: rotate(0deg);
+		margin-right: 25%;
+	}
+	80% {
+		font-size: 18vh;	
+		transform: rotate(0deg);
+		margin-right: 30%;
+	}
+	85% {
+		font-size: 16vh;	
+		transform: rotate(25deg);
+		margin-right: 35%;
+	}
+	90% {
+		font-size: 14vh;	
+		transform: rotate(-25deg);
+		margin-right: 40%;
+	}
+	95% {
+		font-size: 12vh;	
+		transform: rotate(0deg);
+		margin-right: 45%;
+		color: #FFCA28;
+	}
+	100% {
+		font-size: 9vh;	
+		transform: rotate(0deg);
+		margin-right: 50%;
+	}
 }

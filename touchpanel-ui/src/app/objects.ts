@@ -80,4 +80,5 @@ export class icons {
 export class cookies {
   static readonly inputs = "inputsToShow";
   static readonly displays = "displaysToShow";
+  static readonly dta = "displayToAll";
 }

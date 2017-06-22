@@ -96,7 +96,6 @@ export class AppComponent { // event stuff
   }
 
   public ngOnInit() {
-//	this.cookie.removeAll();
 	this.readToShowCookies();
 	this.currentInput = new DeviceData(); 
 	this.selectedDisplay = new DeviceData();
@@ -380,10 +379,8 @@ export class AppComponent { // event stuff
       case "blanked":
         var d: DeviceData;
 
-	  	console.log("displaystoshow", this.displaysToShow);
         for (let display of this.displaysToShow) {
           if (display.name == e.device) {
-			console.log("here");
             d = display;
             break;
           }
@@ -605,10 +602,30 @@ export class AppComponent { // event stuff
 		display.input = d.name;	// for appearances? faster (click)?
         body.displays.push({
           "name": display.name,
-          "input": d.name
+          "input": d.name,
         });
       }
     }
+    this.put(body);
+  }
+
+  sendingDTA: boolean;
+  sendDisplayToAll() {
+	if (this.sendingDTA)
+		return;	
+
+	this.sendingDTA = true;
+    setTimeout(() => { this.sendingDTA = false }, 5000); //milliseconds of button timeout
+	console.log("sending display to all");
+ 	let body = { displays: [] }
+    for (let display of this.displays) {
+		body.displays.push({
+			"name": display.name,
+			"power": "on",
+			"input": this.inputsToShow[0].name,
+		  	"blanked": false
+		}) // gonna have to find the right input somehow	
+	}	
     this.put(body);
   }
 
@@ -766,7 +783,7 @@ export class AppComponent { // event stuff
 
   // stuff for displays to show/ inputs to show
 
-  isInDisplaysToShow(d: DeviceData): boolean {
+  isInDisplaysToShow(d): boolean {
 	for (let x of this.displaysToShow) {
 		if (d.name == x.name) {
 			return true;
@@ -785,7 +802,7 @@ export class AppComponent { // event stuff
 	}
   }
 
-  isInInputsToShow(d: DeviceData): boolean {
+  isInInputsToShow(d): boolean {
 	for (let x of this.inputsToShow) {
 		if (d.name == x.name) {
 			return true;
@@ -804,9 +821,27 @@ export class AppComponent { // event stuff
 	}
   }
 
+  // extra features
+  displayToAll: boolean;
+  isExtraFeatureOn(s: String): boolean {
+ 	switch (s) {
+	case 'dta':
+		return this.displayToAll;
+	} 
+  }
+
+  toggleExtraFeatures(s: String) {
+ 	switch (s) {
+	case 'dta':
+		this.displayToAll = !this.displayToAll;	
+		break;
+	} 
+  }
+
   createToShowCookies() {
 	this.cookie.putObject(cookies.inputs, this.inputsToShow);
 	this.cookie.putObject(cookies.displays, this.displaysToShow);
+	this.cookie.putObject(cookies.dta, this.displayToAll);
 	this.refresh();
   }
 
@@ -828,7 +863,16 @@ export class AppComponent { // event stuff
 		this.displaysToShow.push(c);
 	}
 
+	this.displayToAll = (this.cookie.get(cookies.dta) == 'true');
+
 	console.log("displaysToShow from cookies:", this.displaysToShow);
 	console.log("inputsToShow from cookies:", this.inputsToShow);
+	console.log("displayToAll from cookies:", this.displayToAll);
+  }
+
+  deleteCookies() {
+	console.log("deleting all cookies");
+	this.cookie.removeAll();
+	this.refresh();
   }
 } 
