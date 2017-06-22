@@ -2,9 +2,10 @@ import { Component, OnInit, OnDestroy, trigger, transition, style, animate, stat
 import { SocketService, OPEN, CLOSE, MESSAGE } from './socket.service';
 import { Observable } from 'rxjs/Rx';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { CookieService } from 'ngx-cookie';
 
 import { APIService } from './api.service';
-import { Room, RoomConfiguration, RoomStatus, Event, Device, DeviceData, icons } from './objects';
+import { Room, RoomConfiguration, RoomStatus, Event, Device, DeviceData, icons, cookies } from './objects';
 import { ModalComponent } from './modal.component';
 
 @Component({
@@ -50,7 +51,9 @@ export class AppComponent { // event stuff
   volume: number;
   muted: boolean;
   inputs: Array<DeviceData>;
+  inputsToShow: Array<DeviceData>;
   displays: Array<DeviceData>;
+  displaysToShow: Array<DeviceData>;
   powerState: boolean;
   blanked: boolean;
   // "lock" screen
@@ -75,10 +78,12 @@ export class AppComponent { // event stuff
   // help
   helprequested: boolean;
 
-  public constructor(private socket: SocketService, private api: APIService) {
+  public constructor(private socket: SocketService, private api: APIService, private cookie: CookieService) {
     this.messages = [];
     this.events = [];
     this.inputs = [];
+	this.inputsToShow = [];
+	this.displaysToShow = [];
     this.displays = [];
     this.showing = false;
     this.startSpinning = false;
@@ -91,12 +96,17 @@ export class AppComponent { // event stuff
   }
 
   public ngOnInit() {
+//	this.cookie.removeAll();
+	this.readToShowCookies();
 	this.currentInput = new DeviceData(); 
 	this.selectedDisplay = new DeviceData();
     this.api.setup();
     this.getData();
 	this.blanked = true;
 	this.helprequested = false;
+	this.management(1);
+	this.management(2);
+	this.management(3);
 	
 	// uncomment for local testing
 //    this.showing = true;
@@ -716,5 +726,73 @@ export class AppComponent { // event stuff
  	this.api.postHelp(body).subscribe(data => {
 		console.log("data:", data);	
 	}) 
+  }
+
+
+  // stuff for displays to show/ inputs to show
+
+  isInDisplaysToShow(d: DeviceData): boolean {
+	for (let x of this.displaysToShow) {
+		if (d.name == x.name) {
+			return true;
+		}	
+	}
+	return false;
+  }
+
+  toggleDisplayToShow(d: DeviceData) {
+	if (this.isInDisplaysToShow(d)) {
+ 		console.log("removing from displaysToShow:", d); 
+		this.displaysToShow.splice(this.displaysToShow.indexOf(d), 1);
+	} else {
+ 		console.log("adding to displaysToShow:", d); 
+		this.displaysToShow.push(d);
+	}
+  }
+
+  isInInputsToShow(d: DeviceData): boolean {
+	for (let x of this.inputsToShow) {
+		if (d.name == x.name) {
+			return true;
+		}	
+	}
+	return false;
+  }
+
+  toggleInputToShow(d: DeviceData) {
+	if (this.isInInputsToShow(d)) {
+ 		console.log("removing from inputsToShow:", d); 
+		this.inputsToShow.splice(this.inputsToShow.indexOf(d), 1);
+	} else {
+ 		console.log("adding to inputsToShow:", d); 
+		this.inputsToShow.push(d);
+	}
+  }
+
+  createToShowCookies() {
+	this.cookie.putObject(cookies.inputs, this.inputsToShow);
+	this.cookie.putObject(cookies.displays, this.displaysToShow);
+  }
+
+  readToShowCookies() {
+	let i = new Array<Object>();
+	let d = new Array<Object>();
+	Object.assign(i, this.cookie.getObject(cookies.inputs));
+	Object.assign(d, this.cookie.getObject(cookies.displays));
+	let c: DeviceData;
+	for (let x of i) {
+		c = new DeviceData();
+		Object.assign(c, x); 
+		this.inputsToShow.push(c);
+	}
+	
+	for (let x of d) {
+		c = new DeviceData();
+		Object.assign(c, x); 
+		this.displaysToShow.push(c);
+	}
+
+	console.log("displaysToShow from cookies:", this.displaysToShow);
+	console.log("inputsToShow from cookies:", this.inputsToShow);
   }
 } 

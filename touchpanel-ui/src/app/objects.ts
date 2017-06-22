@@ -76,3 +76,8 @@ export class icons {
   static readonly generic = "generic";
   static readonly table = "byu_table_input";
 }
+
+export class cookies {
+  static readonly inputs = "inputsToShow";
+  static readonly displays = "displaysToShow";
+}

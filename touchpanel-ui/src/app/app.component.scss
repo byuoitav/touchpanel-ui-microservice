@@ -599,3 +599,9 @@ body {
 .btnspacing {
 	width: 5%;
 }
+
+.list-group {
+	flex-wrap: wrap;
+	align-content: space-around;
+	max-height: 50vh;
+}
