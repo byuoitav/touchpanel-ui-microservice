@@ -14,7 +14,7 @@
 	<!-- display-selection -->
 	<div *ngIf="multipledisplays" class='main-control-h'>
 		<div class='display-selection'>
-			<div *ngFor="let device of displays" [class.fadeout]="!(device === selectedDisplay) && !displayselection" (click)="goToSingleControl(device)">
+			<div *ngFor="let device of displaysToShow" [class.fadeout]="!(device === selectedDisplay) && !displayselection" (click)="goToSingleControl(device)">
 				<div class='multi-circle-title'>
 					<span>{{device.displayName}}</span>
 				</div>
@@ -47,7 +47,7 @@
 					<div>
 					</div>
 				</li>
-                <li *ngFor="let i of inputs"  class="slice input-slice" [class.selectedInput]="selectedDisplay.input == i.name" (click)="buttonpress('change input'); switchInput(i)">
+                <li *ngFor="let i of inputsToShow"  class="slice input-slice" [class.selectedInput]="selectedDisplay.input == i.name" (click)="buttonpress('change input'); switchInput(i)">
 					<div [style.right]="rightoffset" [style.top]="topoffset" class='input'>
 						<i class='material-icons'>{{i.icon}}</i>
 						<span>{{i.name}}</span>

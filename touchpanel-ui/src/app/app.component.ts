@@ -104,9 +104,6 @@ export class AppComponent { // event stuff
     this.getData();
 	this.blanked = true;
 	this.helprequested = false;
-	this.management(1);
-	this.management(2);
-	this.management(3);
 	
 	// uncomment for local testing
 //    this.showing = true;
@@ -221,7 +218,7 @@ export class AppComponent { // event stuff
     }
 
     // set the display names
-    for (let display of this.displays) {
+    for (let display of this.displaysToShow) { // maybe this.displays?
       for (let device of this.room.config.devices) {
         if (display.name == device.name) {
           display.displayName = device.display_name;
@@ -271,12 +268,12 @@ export class AppComponent { // event stuff
       children[i].style.backgroundColor = darkenstr;
     }
 	// start out all control mode
-	if (this.displays.length == 1) {
+	if (this.displaysToShow.length == 1) {
 		console.log("only one display");	
 		this.multipledisplays = false;
-		this.goToSingleControl(this.displays[0]);
+		this.goToSingleControl(this.displaysToShow[0]);
 	} else {
-		this.multipledisplays = true;	
+		this.multipledisplays = true;
 		this.goToSingleControl('all');
 	}
 	this.getInputOffset();
@@ -307,14 +304,14 @@ export class AppComponent { // event stuff
   }
 
   getInputOffset() {
- 	 let total = (this.inputs.length * 2) + 24;	 
+ 	 let total = (this.inputsToShow.length * 2) + 24;	 
 
-	 let Nright = ((this.inputs.length - 1) * total) / (this.inputs.length);
-	 let Ntop = Nright / (this.inputs.length - 1);
+	 let Nright = ((this.inputsToShow.length - 1) * total) / (this.inputsToShow.length);
+	 let Ntop = Nright / (this.inputsToShow.length - 1);
 
-	 if (this.inputs.length == 2 || this.inputs.length == 3) {
+	 if (this.inputsToShow.length == 2 || this.inputsToShow.length == 3) {
 		Nright++;
-	 } else if (this.inputs.length == 1) {
+	 } else if (this.inputsToShow.length == 1) {
 		Nright = 10;
 		Ntop = 21;
 	 }
@@ -323,25 +320,6 @@ export class AppComponent { // event stuff
 	 console.log("right offset:", this.rightoffset);
 	 this.topoffset = String(Ntop) + "%";
 	 console.log("top offset:", this.topoffset);
-  }
-
-  enterScreen() {
-    if (this.sendingOn)
-      return;
-
-    this.sendingOn = true;
-    this.startSpinning = true;
-    let body = {
-      "power": "on",
-      "blanked": true
-    };
-
-    this.put(body, func => { }, func => { }, after => {
-      this.updateState();
-      this.showing = true;
-      this.startSpinning = false;
-      this.sendingOn = false;
-    });
   }
 
   updateUI(e: Event) {
@@ -357,7 +335,7 @@ export class AppComponent { // event stuff
           }
         }
 
-        for (let display of this.displays) {
+        for (let display of this.displaysToShow) {
           if (display.name == e.device) {
             display.icon = input.icon;
             display.input = input.name;
@@ -382,7 +360,7 @@ export class AppComponent { // event stuff
         break;
       case "blanked":
         var d: DeviceData;
-        for (let display of this.displays) {
+        for (let display of this.displaysToShow) {
           if (display.name == e.device) {
             d = display;
             break;
@@ -407,9 +385,8 @@ export class AppComponent { // event stuff
         this.room.status = new RoomStatus();
         Object.assign(this.room.status, data);
         console.log("updated state:", this.room.status);
-        //      this.updateInputs();
-        this.statusUpdateVolume(); // only need this, because we will always get a "blanked" event when turning on
-        // if we stop blanking on "power on", then we will have to update the inputs
+        this.updateInputs();
+        this.statusUpdateVolume();
       }
     );
   }
@@ -420,7 +397,7 @@ export class AppComponent { // event stuff
     // go through and get the volumes, if only one device is selected, set the current room volume to that level.
     // for muted, if all are muted, set the icon to muted, else show it as open.
     for (let speaker of this.room.status.audioDevices) {
-      for (let display of this.displays) {
+      for (let display of this.displaysToShow) {
         if (speaker.name != display.name || !display.selected) {
           continue;
         }
@@ -442,26 +419,26 @@ export class AppComponent { // event stuff
     }
   }
 
-  //  updateInputs() {
-  //    //go through the list of status and set the current input 
-  //    for (let display of this.room.status.displays) {
-  //      for (let d of this.displays) {
-  //        if (d.icon == icons.blanked) {
-  //          break;
-  //        }
-  //        //check to make sure we map
-  //        if (d.name == display.name) {
-  //          //go through and get the device mapping to the input
-  //          for (let input of this.inputs) {
-  //            if (input.name == display.input) {
-  //              d.input = input.name;
-  //              d.icon = input.icon;
-  //            }
-  //          }
-  //        }
-  //      }
-  //    }
-  //  }
+  updateInputs() {
+    //go through the list of status and set the current input 
+    for (let display of this.room.status.displays) {
+      for (let d of this.displaysToShow) {
+        if (d.icon == icons.blanked) {
+          break;
+        }
+        //check to make sure we map
+        if (d.name == display.name) {
+          //go through and get the device mapping to the input
+          for (let input of this.inputs) {
+            if (input.name == display.input) {
+              d.input = input.name;
+              d.icon = input.icon;
+            }
+          }
+        }
+      }
+    }
+  }
 
   createInputDeviceData(d: Device) {
     let dd = new DeviceData();
@@ -503,6 +480,32 @@ export class AppComponent { // event stuff
     return false;
   }
 
+  //
+  // commands
+  // 
+  enterScreen() {
+    if (this.sendingOn)
+      return;
+
+    this.sendingOn = true;
+    this.startSpinning = true;
+	let body = { displays: [] }
+	for (let display of this.displaysToShow) {
+		body.displays.push({
+			"name": display.name,
+      		"power": "on",
+      		"blanked": true
+		});	
+	}
+
+    this.put(body, func => { }, func => { }, after => {
+      this.updateState();
+      this.showing = true;
+      this.startSpinning = false;
+      this.sendingOn = false;
+    });
+  }
+
   toggleMute() {
     if (this.muted)
       this.muted = false;
@@ -510,7 +513,7 @@ export class AppComponent { // event stuff
       this.muted = true;
 
     var body = { audioDevices: [] }
-    for (let speaker of this.displays) {
+    for (let speaker of this.displaysToShow) {
       if (speaker.selected) {
         body.audioDevices.push({
           "name": speaker.name,
@@ -522,9 +525,13 @@ export class AppComponent { // event stuff
   }
 
   powerOff() {
-    let body = {
-      "power": "standby"
-    };
+	let body = { displays: [] }
+	for (let display of this.displaysToShow) {
+		body.displays.push({
+			"name": display.name,
+      		"power": "standby",
+		});	
+	}
     this.put(body, func => { }, err => { this.showing = !this.showing; });
     this.showing = !this.showing;
   }
@@ -534,7 +541,7 @@ export class AppComponent { // event stuff
     this.muted = false;
 
     var body = { audioDevices: [] }
-    for (let speaker of this.displays) {
+    for (let speaker of this.displaysToShow) {
       if (speaker.selected) {
         body.audioDevices.push({
           "name": speaker.name,
@@ -547,7 +554,7 @@ export class AppComponent { // event stuff
 
   blank() {
     var body = { displays: [] }
-    for (let display of this.displays) {
+    for (let display of this.displaysToShow) {
       if (display.selected) {
         display.blanked = !display.blanked;
         body.displays.push({
@@ -565,7 +572,7 @@ export class AppComponent { // event stuff
 
   switchInput(d: DeviceData) {
     var body = { displays: [] }
-    for (let display of this.displays) {
+    for (let display of this.displaysToShow) {
       if (display.selected) {
         display.icon = d.icon;
 		display.input = d.name;	// for appearances? faster (click)?
@@ -686,22 +693,23 @@ export class AppComponent { // event stuff
   goToSingleControl(d) {
 	if (d == 'all') {
 		console.log("going to all control");	
-    	for (let display of this.displays) {
+    	for (let display of this.displaysToShow) {
 			display.selected = true;
 		}
-		this.selectedDisplay = this.displays[0];
-		this.switchInput(this.inputs[0]);
+		this.selectedDisplay = this.displaysToShow[0];
+		this.displaysToShow[0].input = "";
+//		this.switchInput(this.inputsToShow[0]);
 	    this.allcontrol = true;
 		this.singlecontrol = false;
 	} else {
-		for (let display of this.displays) {
+		for (let display of this.displaysToShow) {
 			if (d === display) {
-				display.selected = true;	
+				display.selected = true;
 			} else {
 				display.selected = false;	
 			}
 		}
-		this.selectedDisplay = d;	
+		this.selectedDisplay = d;
 		this.singlecontrol = true;
 		this.allcontrol = false;
 	}
@@ -772,6 +780,7 @@ export class AppComponent { // event stuff
   createToShowCookies() {
 	this.cookie.putObject(cookies.inputs, this.inputsToShow);
 	this.cookie.putObject(cookies.displays, this.displaysToShow);
+	this.refresh();
   }
 
   readToShowCookies() {
