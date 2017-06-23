@@ -77,6 +77,9 @@ export class AppComponent { // event stuff
   singlecontrol: boolean;
   // help
   helprequested: boolean;
+  // audio data
+  microphone: boolean;
+  microphonecontrol: boolean;
 
   public constructor(private socket: SocketService, private api: APIService, private cookie: CookieService) {
     this.messages = [];
@@ -105,7 +108,9 @@ export class AppComponent { // event stuff
 	this.helprequested = false;
 	
 	// uncomment for local testing
-//    this.showing = true;
+    this.showing = true;
+	this.microphone = true;
+	this.microphonecontrol = true;
 
     // setup socket to recieve events
     this.socket.getEventListener().subscribe(event => {
