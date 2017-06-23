@@ -14,7 +14,7 @@
 	<!-- display-selection -->
 	<div *ngIf="multipledisplays" class='main-control-h'>
 		<div class='display-selection'>
-			<div *ngFor="let device of displays" [class.fadeout]="!(device === selectedDisplay) && !displayselection" (click)="goToSingleControl(device)">
+			<div *ngFor="let device of displaysToShow" [class.fadeout]="!(device === selectedDisplay) && !displayselection" (click)="goToSingleControl(device)">
 				<div class='multi-circle-title'>
 					<span>{{device.displayName}}</span>
 				</div>
@@ -47,7 +47,7 @@
 					<div>
 					</div>
 				</li>
-                <li *ngFor="let i of inputs"  class="slice input-slice" [class.selectedInput]="selectedDisplay.input == i.name" (click)="buttonpress('change input'); switchInput(i)">
+                <li *ngFor="let i of inputsToShow"  class="slice input-slice" [class.selectedInput]="selectedDisplay.input == i.name" (click)="buttonpress('change input'); switchInput(i)">
 					<div [style.right]="rightoffset" [style.top]="topoffset" class='input'>
 						<i class='material-icons'>{{i.icon}}</i>
 						<span>{{i.name}}</span>
@@ -59,8 +59,12 @@
 
 	<!-- bottom-right control -->
     <div class='blank-row'>
+		<!-- display to all -->
+		<div *ngIf="displayToAll" class="displaytoall" [class.excite]="sendingDTA" [class.alignleft]="!multipledisplays">
+			<i *ngIf="true" class='material-icons' [class.excite]="sendingDTA" (click)="sendDisplayToAll();">people</i>
+		</div>
 		<!-- all control -->
-		<div *ngIf="multipledisplays" class="all-control alignleft">
+		<div *ngIf="multipledisplays" class="all-control" [class.alignleft]="!displayToAll">
 			<i *ngIf="allcontrol || singlecontrol" class='material-icons' (click)="goToDisplaySelection()">group_work</i>
 			<i *ngIf="!allcontrol && !singlecontrol" class='material-icons' (click)="goToSingleControl('all')">album</i>
 		</div>
@@ -143,6 +147,9 @@
         <div class="modal-body">
             <div class="management-body">
                 <div>
+					<button class="btn btn-success" (click)="clearToShow(); readToShowCookies(); displaysmodal.show()">Setup</button>
+                </div>
+                <div>
                     <button class="btn btn-warning" (click)="refresh()">Refresh</button>
                 </div>
                 <div>
@@ -152,12 +159,63 @@
                     <button class="btn btn-info" (click)="dockerstatus(); dockerstatusmodal.show()">Docker Status</button>
                 </div>
                 <div>
+                    <button class="btn btn-warning" (click)="deleteCookies()">Clear Local Data</button>
+                </div>
+                <div>
                     <button class="btn btn-danger" (click)="confirmrebootmodal.show()">Reboot</button>
                 </div>
             </div>
         </div>
         <div class="modal-bottom">
             <button class="btn btn-primary" (click)="managementmodal.hide()">Done</button>
+        </div>
+    </div>
+</app-modal>
+
+<app-modal #displaysmodal>
+    <div class="app-modal-body">
+        <div class="modal-title">
+           	Select default displays for this panel 
+        </div>
+        <div class="modal-body">
+			<ul class='list-group'>
+				<li *ngFor="let d of displays" class='list-group-item' [class.list-group-item-info]="isInDisplaysToShow(d)" (click)="toggleDisplayToShow(d);">{{d.name}} ({{d.displayName}})</li>
+			</ul>
+        </div>
+        <div class="modal-bottom">
+            <button class="btn btn-primary" (click)="displaysmodal.hide(); inputsmodal.show();">Next</button>
+        </div>
+    </div>
+</app-modal>
+
+<app-modal #inputsmodal>
+    <div class="app-modal-body">
+        <div class="modal-title">
+			Select inputs to offer
+        </div>
+        <div class="modal-body">
+			<ul class='list-group'>
+				<li *ngFor="let d of inputs" class='list-group-item' [class.list-group-item-info]="isInInputsToShow(d)" (click)="toggleInputToShow(d)">{{d.name}}</li>
+			</ul>
+        </div>
+        <div class="modal-bottom">
+            <button class="btn btn-primary" (click)="inputsmodal.hide(); extrafeaturesmodal.show()">Next</button>
+        </div>
+    </div>
+</app-modal>
+
+<app-modal #extrafeaturesmodal>
+    <div class="app-modal-body">
+        <div class="modal-title">
+			Select any extra features	
+        </div>
+        <div class="modal-body">
+			<ul class='list-group'>
+				<li class='list-group-item' [class.list-group-item-info]="isExtraFeatureOn('dta')" (click)="toggleExtraFeatures('dta');">Display To All</li>
+			</ul>
+        </div>
+        <div class="modal-bottom">
+            <button class="btn btn-primary" (click)="extrafeaturesmodal.hide(); createToShowCookies();">Done</button>
         </div>
     </div>
 </app-modal>
