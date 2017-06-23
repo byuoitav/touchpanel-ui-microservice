@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy, trigger, transition, style, animate, stat
 import { SocketService, OPEN, CLOSE, MESSAGE } from './socket.service';
 import { Observable } from 'rxjs/Rx';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { CookieService } from 'ngx-cookie';
+import { CookieService, CookieOptions } from 'ngx-cookie';
 
 import { APIService } from './api.service';
 import { Room, RoomConfiguration, RoomStatus, Event, Device, DeviceData, icons, cookies } from './objects';
@@ -183,7 +183,7 @@ export class AppComponent { // event stuff
 
         this.getInputs();
         this.statusUpdateVolume();
-        // hacky but it works?
+        setTimeout(() => { this.checkEmpty(); }, 0)
         setTimeout(() => { this.buildInputMenu(); }, 0)
       });
     });
@@ -244,8 +244,28 @@ export class AppComponent { // event stuff
 			}		
 		}
 	}
+
   }
 
+  checkEmpty() {
+	// if the toShow arrays are empty, fill them will everything
+	if (this.displaysToShow.length == 0) {
+		console.log("displays to show is empty, filling it...");
+		for (let d of this.displays) {
+			this.displaysToShow.push(d);	
+		}
+		console.log("done.", this.displaysToShow);
+	}
+	if (this.inputsToShow.length == 0) {
+		console.log("inputs to show is empty, filling it...");
+		for (let d of this.inputs) {
+			this.inputsToShow.push(d);	
+		}
+		console.log("done.", this.inputsToShow);
+	}
+  }
+
+  // build the input menu
   buildInputMenu() {
     console.log("ring:", this.ring);
     let numOfChildren = this.ring.nativeElement.childElementCount;
@@ -839,9 +859,14 @@ export class AppComponent { // event stuff
   }
 
   createToShowCookies() {
-	this.cookie.putObject(cookies.inputs, this.inputsToShow);
-	this.cookie.putObject(cookies.displays, this.displaysToShow);
-	this.cookie.putObject(cookies.dta, this.displayToAll);
+	// get a date 20 years away.
+	// IN 20 YEARS AFTER SETTING, SOMEONE WILL HAVE TO REDO THEM
+	let date = new Date(new Date().setFullYear(new Date().getFullYear() + 20));
+	console.log("date", date);
+	let co: CookieOptions = {expires: date};
+	this.cookie.putObject(cookies.inputs, this.inputsToShow, co);
+	this.cookie.putObject(cookies.displays, this.displaysToShow, co);
+	this.cookie.putObject(cookies.dta, this.displayToAll, co);
 	this.refresh();
   }
 
@@ -868,6 +893,11 @@ export class AppComponent { // event stuff
 	console.log("displaysToShow from cookies:", this.displaysToShow);
 	console.log("inputsToShow from cookies:", this.inputsToShow);
 	console.log("displayToAll from cookies:", this.displayToAll);
+  }
+
+  clearToShow() {
+	  this.displaysToShow.length = 0;
+	  this.inputsToShow.length = 0;
   }
 
   deleteCookies() {
