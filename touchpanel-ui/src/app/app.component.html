@@ -92,7 +92,7 @@
 
 	<!-- bottom right control -->
     <div class="audio-row">
-		<div *ngIf="microphone" class="microphone">
+		<div *ngIf="microphone" class="microphone" (click)="microphonecontrol = !microphonecontrol">
 			<i class="material-icons">mic</i>
 		</div>
        	<div (click)="buttonpress('mute'); toggleMute()" [class.alignright]="!microphone">
@@ -103,19 +103,9 @@
 
     <!-- sidebar -->
     <div class='sidebar'>
-        <div class='volume'>
+        <div class='volume alignright'>
             <md-slider id="colored-slider" vertical [value]="volume" (change)="buttonpress('volume slider'); updateVolume($event.value)"></md-slider>
         </div>
-		<!-- 
-        <div class="mute">
-            <div *ngIf="muted" (click)="buttonpress('unmute'); toggleMute()">
-                <i class="material-icons" [class.red]="muted">volume_off</i>
-            </div>
-            <div *ngIf="!muted" (click)="buttonpress('mute'); toggleMute()">
-                <i class="material-icons" [class.red]="muted">volume_up</i>
-            </div>
-        </div>
-		-->
     </div>
 
     <!-- slice of the circle -->
