@@ -110,7 +110,6 @@ export class AppComponent { // event stuff
 	// uncomment for local testing
 //   this.showing = true;
 //	this.microphone = true;
-//	this.microphonecontrol = true;
 
     // setup socket to recieve events
     this.socket.getEventListener().subscribe(event => {
@@ -517,7 +516,7 @@ export class AppComponent { // event stuff
     }
     this.inputs.push(dd);
 
-    console.log("added", dd.name, "of type", d.type, "to inputs. (icon = " + dd.icon + " )");
+    console.log("added", dd.name, "(display name =", dd.displayName + ")", "of type", d.type, "to inputs. (icon = " + dd.icon + " )");
   }
 
   hasRole(d: Device, role: string): boolean {
