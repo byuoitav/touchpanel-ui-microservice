@@ -101,17 +101,13 @@ body {
 }
 
 .sidebar {
-    height: 100%;
     position: fixed;
-    right: 2%;
+    top: 4vh;
+    right: 2.8%;
+    width: 20%;
     display: flex;
-    flex-direction: column;
-    justify-content: center;
+    justify-content: space-around;
 	z-index: 100;
-}
-
-.sidebar div {
-    display: flex;
 }
 
 .power-row {
@@ -122,6 +118,16 @@ body {
     display: flex;
     justify-content: space-around;
 	z-index: 100;
+}
+
+.audio-row {
+    position: fixed;
+    bottom: 4vh;
+    right: 3%;
+    width: 20%;
+    display: flex;
+    justify-content: space-around;
+	z-index: 101;
 }
 
 .blank-row {
@@ -290,8 +296,9 @@ body {
 }
 
 .power i,
-.mute i,
+.audio-row i,
 .blank i,
+.mic-mute i,
 .all-control i,
 .displaytoall i,
 .help i {
@@ -315,18 +322,9 @@ body {
     color: #388E3C !important;
 }
 
-.mute {
-//	display: flex;
-//	justify-content: center;
-//	flex-direction: row;
-//	min-width: 100%;
-}
-
 .volume {
     min-height: 80vh;
-//	display: flex;
-//	justify-content: flex-start;
-//	flex-direction: row;
+	display: flex;
 }
 
 .spinner {
@@ -559,6 +557,38 @@ body {
 	align-content: space-around;
 }
 
+.microphone-selection {
+	position: absolute;
+	width: 70%;
+	height: 50vh;
+	top: 25vh;
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-around;
+	align-items: center;
+	text-align: center;
+}
+
+.mic-title {
+	color: white;	
+}
+
+.mic {
+	display: flex;
+	flex-direction: column;
+	justify-content: space-around;
+}
+
+.mic-volume {
+	min-height: 40vh;
+	display: flex;
+	margin-left: auto;
+}
+
+.mic-mute i {
+    font-size: 8vh;
+}
+
 .multi-circle {
     z-index: 2;
     position: relative;
@@ -591,6 +621,10 @@ body {
 
 .alignleft {
 	margin-right: 50%;
+}
+
+.alignright {
+	margin-left: 50%;
 }
 
 #helpwords {

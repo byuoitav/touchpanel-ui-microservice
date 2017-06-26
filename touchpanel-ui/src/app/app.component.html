@@ -24,8 +24,28 @@
 			</div>
 		</div>
 	</div>
+
+	<!-- microphone control -->
+	<div *ngIf="microphonecontrol" class='main-control-h'>
+		<div class='microphone-selection'>
+			<div class='mic'>
+				<div class='mic-title'>
+					<span>Volume</span>
+				</div>
+				<div class='mic-volume'>
+	            	<md-slider id="colored-slider" vertical [value]="volume" (change)="buttonpress('volume slider'); updateVolume($event.value)"></md-slider>
+				</div>
+				<div class='mic-mute'>
+					<!-- muted should be device.muted? -->
+       	    		<i *ngIf="muted" class="material-icons" [class.red]="muted">volume_off</i>
+       	    		<i *ngIf="!muted" class="material-icons">volume_up</i>
+				</div>
+			</div>
+		</div>
+	</div>
+
     <!-- display control -->
-    <div [class.hidden]='displayselection' class='main-control-h'>
+    <div [class.hidden]='displayselection || microphonecontrol' class='main-control-h'>
 		<div class='roomname' [class.roomname-transition]="!selectedDisplay.blanked || true">
 			<span *ngIf="!allcontrol">{{selectedDisplay.displayName}}</span>
 			<span *ngIf="allcontrol">All Displays</span>
@@ -57,7 +77,7 @@
         </div>
     </div>
 
-	<!-- bottom-right control -->
+	<!-- bottom left control -->
     <div class='blank-row'>
 		<!-- display to all -->
 		<div *ngIf="displayToAll" class="displaytoall" [class.excite]="sendingDTA" [class.alignleft]="!multipledisplays">
@@ -70,22 +90,21 @@
 		</div>
     </div>
 
-	<!-- bottom left control -->
-
-
+	<!-- bottom right control -->
+    <div class="audio-row">
+		<div *ngIf="microphone" class="microphone" (click)="microphonecontrol = !microphonecontrol">
+			<i class="material-icons">mic</i>
+		</div>
+       	<div (click)="buttonpress('mute'); toggleMute()" [class.alignright]="!microphone">
+       	    <i *ngIf="muted" class="material-icons" [class.red]="muted">volume_off</i>
+       	    <i *ngIf="!muted" class="material-icons">volume_up</i>
+       	</div>
+    </div>
 
     <!-- sidebar -->
-    <div class='column col-sm-1 sidebar'>
-        <div class='volume'>
+    <div class='sidebar'>
+        <div class='volume alignright'>
             <md-slider id="colored-slider" vertical [value]="volume" (change)="buttonpress('volume slider'); updateVolume($event.value)"></md-slider>
-        </div>
-        <div class="mute">
-            <div *ngIf="muted" (click)="buttonpress('unmute'); toggleMute()">
-                <i class="material-icons" [class.red]="muted">volume_off</i>
-            </div>
-            <div *ngIf="!muted" (click)="buttonpress('mute'); toggleMute()">
-                <i class="material-icons" [class.red]="muted">volume_up</i>
-            </div>
         </div>
     </div>
 
