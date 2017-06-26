@@ -109,8 +109,8 @@ export class AppComponent { // event stuff
 	
 	// uncomment for local testing
     this.showing = true;
-	this.microphone = true;
-	this.microphonecontrol = true;
+//	this.microphone = true;
+//	this.microphonecontrol = true;
 
     // setup socket to recieve events
     this.socket.getEventListener().subscribe(event => {

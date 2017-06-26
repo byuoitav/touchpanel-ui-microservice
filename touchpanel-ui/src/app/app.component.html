@@ -35,6 +35,11 @@
 				<div class='mic-volume'>
 	            	<md-slider id="colored-slider" vertical [value]="volume" (change)="buttonpress('volume slider'); updateVolume($event.value)"></md-slider>
 				</div>
+				<div class='mic-mute'>
+					<!-- muted should be device.muted? -->
+       	    		<i *ngIf="muted" class="material-icons" [class.red]="muted">volume_off</i>
+       	    		<i *ngIf="!muted" class="material-icons">volume_up</i>
+				</div>
 			</div>
 		</div>
 	</div>
@@ -90,14 +95,14 @@
 		<div *ngIf="microphone" class="microphone">
 			<i class="material-icons">mic</i>
 		</div>
-       	<div (click)="buttonpress('mute'); toggleMute()">
+       	<div (click)="buttonpress('mute'); toggleMute()" [class.alignright]="!microphone">
        	    <i *ngIf="muted" class="material-icons" [class.red]="muted">volume_off</i>
        	    <i *ngIf="!muted" class="material-icons">volume_up</i>
        	</div>
     </div>
 
     <!-- sidebar -->
-    <div class='column col-sm-1 sidebar'>
+    <div class='sidebar'>
         <div class='volume'>
             <md-slider id="colored-slider" vertical [value]="volume" (change)="buttonpress('volume slider'); updateVolume($event.value)"></md-slider>
         </div>

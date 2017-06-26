@@ -102,16 +102,11 @@ body {
 
 .sidebar {
     height: 100%;
-    position: fixed;
-    right: 2%;
+    position: absolute;
     display: flex;
     flex-direction: column;
     justify-content: center;
 	z-index: 100;
-}
-
-.sidebar div {
-    display: flex;
 }
 
 .power-row {
@@ -131,7 +126,7 @@ body {
     width: 20%;
     display: flex;
     justify-content: space-around;
-	z-index: 100;
+	z-index: 101;
 }
 
 .blank-row {
@@ -302,6 +297,7 @@ body {
 .power i,
 .audio-row i,
 .blank i,
+.mic-mute i,
 .all-control i,
 .displaytoall i,
 .help i {
@@ -327,6 +323,7 @@ body {
 
 .volume {
     min-height: 80vh;
+	display: flex;
 }
 
 .spinner {
@@ -563,7 +560,7 @@ body {
 	position: absolute;
 	width: 70%;
 	height: 50vh;
-	top: 30vh;
+	top: 25vh;
 	display: flex;
 	flex-wrap: wrap;
 	justify-content: space-around;
@@ -583,6 +580,12 @@ body {
 
 .mic-volume {
 	min-height: 40vh;
+	display: flex;
+	margin-left: auto;
+}
+
+.mic-mute i {
+    font-size: 8vh;
 }
 
 .multi-circle {
@@ -617,6 +620,10 @@ body {
 
 .alignleft {
 	margin-right: 50%;
+}
+
+.alignright {
+	margin-left: 50%;
 }
 
 #helpwords {
