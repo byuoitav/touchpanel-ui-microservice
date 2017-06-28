@@ -30,6 +30,8 @@ func main() {
 	router.GET("/dockerstatus", handlers.GetDockerStatus)
 
 	router.POST("/help", handlers.Help)
+	router.POST("/confirmhelp", handlers.ConfirmHelp)
+	router.POST("/cancelhelp", handlers.CancelHelp)
 
 	router.Static("/", "dist")
 

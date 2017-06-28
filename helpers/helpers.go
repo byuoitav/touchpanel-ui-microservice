@@ -17,6 +17,10 @@ type SlackHelp struct {
 	Attachments []Attachment `json:"attachments"`
 }
 
+type SlackMessage struct {
+	Text string `json:"text"`
+}
+
 type Attachment struct {
 	Title   string   `json:"title"`
 	Fields  []Field  `json:"fields"`

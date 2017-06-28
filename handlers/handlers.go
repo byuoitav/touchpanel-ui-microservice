@@ -156,3 +156,78 @@ func Help(context echo.Context) error {
 
 	return context.JSON(http.StatusOK, string(body))
 }
+
+func ConfirmHelp(context echo.Context) error {
+	var sh helpers.SlackHelp
+	err := context.Bind(&sh)
+	if err != nil {
+		return context.JSON(http.StatusBadRequest, err.Error())
+	}
+
+	log.Printf("Confirming help in building %s, room %s", sh.Building, sh.Room)
+	url := os.Getenv("HELP_SLACKBOT_WEBHOOK")
+	if len(url) == 0 {
+		panic(fmt.Sprintf("HELP_SLACKBOT_WEBHOOK is not set."))
+	}
+
+	var shm helpers.SlackMessage
+
+	shm.Text = fmt.Sprintf("Confirmation of request for help in building %s and room %s", sh.Building, sh.Room)
+	json, err := json.Marshal(shm)
+	if err != nil {
+		log.Printf("failed to marshal shm: %s", shm)
+		return context.JSON(http.StatusInternalServerError, err.Error())
+	}
+
+	req, err := http.NewRequest("POST", url, bytes.NewBuffer(json))
+	req.Header.Set("Content-Type", "application/json")
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		panic(err)
+	}
+	defer resp.Body.Close()
+
+	body, _ := ioutil.ReadAll(resp.Body)
+
+	return context.JSON(http.StatusOK, string(body))
+}
+
+func CancelHelp(context echo.Context) error {
+	var sh helpers.SlackHelp
+	err := context.Bind(&sh)
+	if err != nil {
+		return context.JSON(http.StatusBadRequest, err.Error())
+	}
+
+	log.Printf("Canceling request for help %s, room %s", sh.Building, sh.Room)
+	url := os.Getenv("HELP_SLACKBOT_WEBHOOK")
+	if len(url) == 0 {
+		panic(fmt.Sprintf("HELP_SLACKBOT_WEBHOOK is not set."))
+	}
+
+	var shm helpers.SlackMessage
+
+	shm.Text = fmt.Sprintf("Cancellation of request for help in building %s and room %s", sh.Building, sh.Room)
+	json, err := json.Marshal(shm)
+	if err != nil {
+		log.Printf("failed to marshal shm: %s", shm)
+		return context.JSON(http.StatusInternalServerError, err.Error())
+	}
+
+	req, err := http.NewRequest("POST", url, bytes.NewBuffer(json))
+	req.Header.Set("Content-Type", "application/json")
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		panic(err)
+	}
+	defer resp.Body.Close()
+
+	body, _ := ioutil.ReadAll(resp.Body)
+
+	return context.JSON(http.StatusOK, string(body))
+
+}
