@@ -523,6 +523,9 @@ export class AppComponent { // event stuff
       case "table":
         dd.icon = icons.table;
         break;
+	  case "blu-ray":
+		dd.icon = icons.bluray;
+	  	break;
       default:
         dd.icon = icons.generic;
         break;

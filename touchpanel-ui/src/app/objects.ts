@@ -77,6 +77,7 @@ export class icons {
   static readonly table = "byu_table_input";
   static readonly tv = "tv";
   static readonly projector = "videocam";
+  static readonly bluray = "album";
 }
 
 export class cookies {
