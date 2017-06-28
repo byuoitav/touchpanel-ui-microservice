@@ -287,8 +287,8 @@ export class AppComponent { // event stuff
       let rotate = "rotate(" + String(angle * -i) + "deg)";
       children[i].style.transform = rotate;
 
-      let darkenstr = "#455A64";
-      children[i].style.backgroundColor = darkenstr;
+     // let darkenstr = "#455A64";
+      //children[i].style.backgroundColor = darkenstr;
 	}
 
     // apply styles to children

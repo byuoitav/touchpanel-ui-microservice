@@ -163,18 +163,23 @@ body {
 	display: flex;
 	flex-direction: column;
 	justify-content: flex-start;
-	width: 60%;
-	height: 100%;
+	width: 25%;
 	text-align: center;
 	top: 10vh;
 	transition: .2s ease all;
 	font-size: 4vh;
 	color: #E0E0E0;
+	align-self: center;
 }
 
 .roomname-transition {
 	top: 18vh;
 	font-size: 5vh;
+}
+
+.displayname {
+	font-size: 4vh;
+	color: #E0E0E0;
 }
 
 .circle {
@@ -194,7 +199,7 @@ body {
 	overflow: hidden;
 	
 	i {
-		margin-bottom: 32%;
+		margin-top: 10%;
 		font-size: 27vh;	
 		transition: .2s ease all;
 		color: #EEEEEE;
@@ -221,7 +226,19 @@ body {
 }
 
 .circle-blanked { 
-	border: .5vh solid #b71c1c;
+	border: .8vh solid #b71c1c;
+}
+
+.circle-blanked:after {
+	position: absolute;
+	left: 0;
+	top: 50%;
+	height: 1vh;
+	background: #b71c1c;
+	content: "";
+	width: 100%;
+	display: block;
+	transform: rotate(-45deg);
 }
 
 .redbackground {
@@ -268,6 +285,10 @@ body {
 
 .input-slice {
 	z-index: 1;
+}
+
+.blank-slice {
+	background-color: #455A64;
 }
 
 .input {

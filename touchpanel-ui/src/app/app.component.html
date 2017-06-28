@@ -46,24 +46,24 @@
 
     <!-- display control -->
     <div [class.hidden]='displayselection || microphonecontrol' class='main-control-h'>
-		<div class='roomname' [class.roomname-transition]="!selectedDisplay.blanked || true">
-			<span *ngIf="!allcontrol">{{selectedDisplay.displayName}}</span>
-			<span *ngIf="allcontrol">All Displays</span>
-		</div>
         <div class='main-control-v' >
+			<div class='roomname' [class.roomname-transition]="!selectedDisplay.blanked || true" (click)="buttonpress('blank'); blank();">
+				<span *ngIf="!selectedDisplay.blanked">Blank Display</span>
+				<span *ngIf="selectedDisplay.blanked">Unblank Display</span>
+			</div>
             <div class='circle' [class.circle-shrink]="!selectedDisplay.blanked || true" [class.circle-blanked]="selectedDisplay.blanked">
-				<i class='material-icons'>{{selectedDisplay.icon}}</i>
-				<div class='blank' [class.redbackground]="selectedDisplay.blanked" (click)="buttonpress('blank'); blank()">
-					<span *ngIf="!selectedDisplay.blanked">Blank Display</span>
-					<span *ngIf="selectedDisplay.blanked">Unblank Display</span>
+				<div class="displayname">
+					<span *ngIf="!allcontrol">{{selectedDisplay.displayName}}</span>
+					<span *ngIf="allcontrol">All Displays</span>
 				</div>
+				<i class='material-icons'>{{selectedDisplay.icon}}</i>
             </div>
             <ul #ring class="ring" [class.ring-grow]="!selectedDisplay.blanked || true">
-				<li class="slice">
+				<li class="slice blank-slice" [class.redbackground]="selectedDisplay.blanked" (click)="buttonpress('blank'); blank();">
 					<div>
 					</div>
 				</li>
-				<li class="slice">
+				<li class="slice blank-slice" [class.redbackground]="selectedDisplay.blanked"(click)="buttonpress('blank'); blank();">
 					<div>
 					</div>
 				</li>
