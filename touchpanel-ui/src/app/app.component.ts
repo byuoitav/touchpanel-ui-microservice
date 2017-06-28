@@ -202,7 +202,7 @@ export class AppComponent { // event stuff
           console.log("display", display.name, "has input", input.name);
           let dd = new DeviceData();
           dd.name = display.name;
-          dd.icon = input.icon;
+//          dd.icon = input.icon;
 
           //everything is selected by default;
           dd.selected = true;
@@ -226,6 +226,7 @@ export class AppComponent { // event stuff
         if (display.name == device.name) {
           display.displayName = device.display_name;
           console.log("set display", display.name, "to have display name of", display.displayName);
+		  display.icon = this.getDisplayIcon(device);
         }
       }
     }
@@ -243,12 +244,24 @@ export class AppComponent { // event stuff
 				ds.displayName = (d.displayName) ? d.displayName : "";
 				ds.input = (d.input) ? d.input : this.inputsToShow[0].name;
 				ds.selected = (d.selected) ? d.selected : true;
-				ds.icon = (d.icon && (d.icon != icons.blanked)) ? d.icon : this.inputsToShow[0].icon;
+//				ds.icon = (d.icon && (d.icon != icons.blanked)) ? d.icon : this.inputsToShow[0].icon;
+				ds.icon = d.icon;
 				ds.blanked = (d.blanked) ? d.blanked : true;
 			}		
 		}
 	}
+  }
 
+  getDisplayIcon(d): string { 
+	console.log("d", d);
+	switch(d.type) {	
+	case "tv":
+		return icons.tv;
+	case "sony-projector":
+		return icons.projector;
+	default:
+		return icons.blanked;
+	}
   }
 
   checkEmpty() {
@@ -379,7 +392,7 @@ export class AppComponent { // event stuff
 
         for (let display of this.displaysToShow) {
           if (display.name == e.device) {
-            display.icon = input.icon;
+//            display.icon = input.icon;
             display.input = input.name;
             break;
           }
@@ -477,7 +490,7 @@ export class AppComponent { // event stuff
           for (let input of this.inputs) {
             if (input.name == display.input) {
               d.input = input.name;
-              d.icon = input.icon;
+//              d.icon = input.icon;
             }
           }
         }
@@ -536,14 +549,19 @@ export class AppComponent { // event stuff
 
     this.sendingOn = true;
     this.startSpinning = true;
-	let body = { displays: [] }
+	let body = { displays: [], audioDevices: [] }
 	for (let display of this.displaysToShow) {
 		body.displays.push({
 			"name": display.name,
       		"power": "on",
       		"blanked": true,
-			"input": this.inputsToShow[0].name
+			"input": this.inputsToShow[0].name,
 		});	
+		body.audioDevices.push({
+			"name": display.name,
+			"muted": false,
+			"volume": 30	
+		});
 	}
 
     this.put(body, func => { }, func => { }, after => {
@@ -626,7 +644,7 @@ export class AppComponent { // event stuff
     var body = { displays: [] }
     for (let display of this.displaysToShow) {
       if (display.selected) {
-        display.icon = d.icon;
+//        display.icon = d.icon;
 		display.input = d.name;	// for appearances? faster (click)?
         body.displays.push({
           "name": display.name,
