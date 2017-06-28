@@ -246,7 +246,7 @@ export class AppComponent { // event stuff
 				ds.selected = (d.selected) ? d.selected : true;
 //				ds.icon = (d.icon && (d.icon != icons.blanked)) ? d.icon : this.inputsToShow[0].icon;
 				ds.icon = d.icon;
-				ds.blanked = (d.blanked) ? d.blanked : true;
+				ds.blanked = false;
 			}		
 		}
 	}
