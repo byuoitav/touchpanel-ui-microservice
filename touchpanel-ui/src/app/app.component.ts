@@ -2,9 +2,10 @@ import { Component, OnInit, OnDestroy, trigger, transition, style, animate, stat
 import { SocketService, OPEN, CLOSE, MESSAGE } from './socket.service';
 import { Observable } from 'rxjs/Rx';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { CookieService, CookieOptions } from 'ngx-cookie';
 
 import { APIService } from './api.service';
-import { Room, RoomConfiguration, RoomStatus, Event, Device, DeviceData, icons } from './objects';
+import { Room, RoomConfiguration, RoomStatus, Event, Device, DeviceData, icons, cookies } from './objects';
 import { ModalComponent } from './modal.component';
 
 @Component({
@@ -50,7 +51,9 @@ export class AppComponent { // event stuff
   volume: number;
   muted: boolean;
   inputs: Array<DeviceData>;
+  inputsToShow: Array<DeviceData>;
   displays: Array<DeviceData>;
+  displaysToShow: Array<DeviceData>;
   powerState: boolean;
   blanked: boolean;
   // "lock" screen
@@ -74,11 +77,16 @@ export class AppComponent { // event stuff
   singlecontrol: boolean;
   // help
   helprequested: boolean;
+  // audio data
+  microphone: boolean;
+  microphonecontrol: boolean;
 
-  public constructor(private socket: SocketService, private api: APIService) {
+  public constructor(private socket: SocketService, private api: APIService, private cookie: CookieService) {
     this.messages = [];
     this.events = [];
     this.inputs = [];
+	this.inputsToShow = [];
+	this.displaysToShow = [];
     this.displays = [];
     this.showing = false;
     this.startSpinning = false;
@@ -91,6 +99,7 @@ export class AppComponent { // event stuff
   }
 
   public ngOnInit() {
+	this.readToShowCookies();
 	this.currentInput = new DeviceData(); 
 	this.selectedDisplay = new DeviceData();
     this.api.setup();
@@ -99,7 +108,8 @@ export class AppComponent { // event stuff
 	this.helprequested = false;
 	
 	// uncomment for local testing
-//    this.showing = true;
+//   this.showing = true;
+//	this.microphone = true;
 
     // setup socket to recieve events
     this.socket.getEventListener().subscribe(event => {
@@ -177,7 +187,7 @@ export class AppComponent { // event stuff
 
         this.getInputs();
         this.statusUpdateVolume();
-        // hacky but it works?
+        setTimeout(() => { this.checkEmpty(); }, 0)
         setTimeout(() => { this.buildInputMenu(); }, 0)
       });
     });
@@ -211,7 +221,7 @@ export class AppComponent { // event stuff
     }
 
     // set the display names
-    for (let display of this.displays) {
+    for (let display of this.displays) { // maybe this.displays?
       for (let device of this.room.config.devices) {
         if (display.name == device.name) {
           display.displayName = device.display_name;
@@ -219,8 +229,47 @@ export class AppComponent { // event stuff
         }
       }
     }
+	
+	this.syncDisplayArrays();
   }
 
+  syncDisplayArrays() {
+	// update info in this.displaysToShow with info in this.displays
+	console.log("syncing display objects");
+	for (let ds of this.displaysToShow) {
+		for (let d of this.displays) {
+			if (ds.name == d.name) {
+				console.log("syncing", ds, "from displaysToShow with", d, "from displays");
+				ds.displayName = (d.displayName) ? d.displayName : "";
+				ds.input = (d.input) ? d.input : this.inputsToShow[0].name;
+				ds.selected = (d.selected) ? d.selected : true;
+				ds.icon = (d.icon && (d.icon != icons.blanked)) ? d.icon : this.inputsToShow[0].icon;
+				ds.blanked = (d.blanked) ? d.blanked : true;
+			}		
+		}
+	}
+
+  }
+
+  checkEmpty() {
+	// if the toShow arrays are empty, fill them will everything
+	if (this.displaysToShow.length == 0) {
+		console.log("displays to show is empty, filling it...");
+		for (let d of this.displays) {
+			this.displaysToShow.push(d);	
+		}
+		console.log("done.", this.displaysToShow);
+	}
+	if (this.inputsToShow.length == 0) {
+		console.log("inputs to show is empty, filling it...");
+		for (let d of this.inputs) {
+			this.inputsToShow.push(d);	
+		}
+		console.log("done.", this.inputsToShow);
+	}
+  }
+
+  // build the input menu
   buildInputMenu() {
     console.log("ring:", this.ring);
     let numOfChildren = this.ring.nativeElement.childElementCount;
@@ -261,12 +310,12 @@ export class AppComponent { // event stuff
       children[i].style.backgroundColor = darkenstr;
     }
 	// start out all control mode
-	if (this.displays.length == 1) {
+	if (this.displaysToShow.length == 1) {
 		console.log("only one display");	
 		this.multipledisplays = false;
-		this.goToSingleControl(this.displays[0]);
+		this.goToSingleControl(this.displaysToShow[0]);
 	} else {
-		this.multipledisplays = true;	
+		this.multipledisplays = true;
 		this.goToSingleControl('all');
 	}
 	this.getInputOffset();
@@ -297,14 +346,14 @@ export class AppComponent { // event stuff
   }
 
   getInputOffset() {
- 	 let total = (this.inputs.length * 2) + 24;	 
+ 	 let total = (this.inputsToShow.length * 2) + 24;	 
 
-	 let Nright = ((this.inputs.length - 1) * total) / (this.inputs.length);
-	 let Ntop = Nright / (this.inputs.length - 1);
+	 let Nright = ((this.inputsToShow.length - 1) * total) / (this.inputsToShow.length);
+	 let Ntop = Nright / (this.inputsToShow.length - 1);
 
-	 if (this.inputs.length == 2 || this.inputs.length == 3) {
+	 if (this.inputsToShow.length == 2 || this.inputsToShow.length == 3) {
 		Nright++;
-	 } else if (this.inputs.length == 1) {
+	 } else if (this.inputsToShow.length == 1) {
 		Nright = 10;
 		Ntop = 21;
 	 }
@@ -313,25 +362,6 @@ export class AppComponent { // event stuff
 	 console.log("right offset:", this.rightoffset);
 	 this.topoffset = String(Ntop) + "%";
 	 console.log("top offset:", this.topoffset);
-  }
-
-  enterScreen() {
-    if (this.sendingOn)
-      return;
-
-    this.sendingOn = true;
-    this.startSpinning = true;
-    let body = {
-      "power": "on",
-      "blanked": true
-    };
-
-    this.put(body, func => { }, func => { }, after => {
-      this.updateState();
-      this.showing = true;
-      this.startSpinning = false;
-      this.sendingOn = false;
-    });
   }
 
   updateUI(e: Event) {
@@ -347,7 +377,7 @@ export class AppComponent { // event stuff
           }
         }
 
-        for (let display of this.displays) {
+        for (let display of this.displaysToShow) {
           if (display.name == e.device) {
             display.icon = input.icon;
             display.input = input.name;
@@ -372,12 +402,15 @@ export class AppComponent { // event stuff
         break;
       case "blanked":
         var d: DeviceData;
-        for (let display of this.displays) {
+
+        for (let display of this.displaysToShow) {
           if (display.name == e.device) {
             d = display;
             break;
           }
         }
+
+		console.log("device", d);
 
         d.blanked = (e.eventInfoValue == 'true');
         break;
@@ -397,9 +430,8 @@ export class AppComponent { // event stuff
         this.room.status = new RoomStatus();
         Object.assign(this.room.status, data);
         console.log("updated state:", this.room.status);
-        //      this.updateInputs();
-        this.statusUpdateVolume(); // only need this, because we will always get a "blanked" event when turning on
-        // if we stop blanking on "power on", then we will have to update the inputs
+        this.updateInputs();
+        this.statusUpdateVolume();
       }
     );
   }
@@ -410,7 +442,7 @@ export class AppComponent { // event stuff
     // go through and get the volumes, if only one device is selected, set the current room volume to that level.
     // for muted, if all are muted, set the icon to muted, else show it as open.
     for (let speaker of this.room.status.audioDevices) {
-      for (let display of this.displays) {
+      for (let display of this.displaysToShow) {
         if (speaker.name != display.name || !display.selected) {
           continue;
         }
@@ -432,26 +464,28 @@ export class AppComponent { // event stuff
     }
   }
 
-  //  updateInputs() {
-  //    //go through the list of status and set the current input 
-  //    for (let display of this.room.status.displays) {
-  //      for (let d of this.displays) {
-  //        if (d.icon == icons.blanked) {
-  //          break;
-  //        }
-  //        //check to make sure we map
-  //        if (d.name == display.name) {
-  //          //go through and get the device mapping to the input
-  //          for (let input of this.inputs) {
-  //            if (input.name == display.input) {
-  //              d.input = input.name;
-  //              d.icon = input.icon;
-  //            }
-  //          }
-  //        }
-  //      }
-  //    }
-  //  }
+  updateInputs() {
+    //go through the list of status and set the current input 
+    for (let display of this.room.status.displays) {
+      for (let d of this.displaysToShow) {
+        if (d.icon == icons.blanked) {
+          break;
+        }
+        //check to make sure we map
+        if (d.name == display.name) {
+          //go through and get the device mapping to the input
+          for (let input of this.inputs) {
+            if (input.name == display.input) {
+              d.input = input.name;
+              d.icon = input.icon;
+            }
+          }
+        }
+      }
+    }
+
+	this.syncDisplayArrays();
+  }
 
   createInputDeviceData(d: Device) {
     let dd = new DeviceData();
@@ -482,7 +516,7 @@ export class AppComponent { // event stuff
     }
     this.inputs.push(dd);
 
-    console.log("added", dd.name, "of type", dd.icon, "to inputs. (icon = " + dd.icon + " )");
+    console.log("added", dd.name, "(display name =", dd.displayName + ")", "of type", d.type, "to inputs. (icon = " + dd.icon + " )");
   }
 
   hasRole(d: Device, role: string): boolean {
@@ -493,6 +527,33 @@ export class AppComponent { // event stuff
     return false;
   }
 
+  //
+  // commands
+  // 
+  enterScreen() {
+    if (this.sendingOn)
+      return;
+
+    this.sendingOn = true;
+    this.startSpinning = true;
+	let body = { displays: [] }
+	for (let display of this.displaysToShow) {
+		body.displays.push({
+			"name": display.name,
+      		"power": "on",
+      		"blanked": true,
+			"input": this.inputsToShow[0].name
+		});	
+	}
+
+    this.put(body, func => { }, func => { }, after => {
+      this.updateState();
+      this.showing = true;
+      this.startSpinning = false;
+      this.sendingOn = false;
+    });
+  }
+
   toggleMute() {
     if (this.muted)
       this.muted = false;
@@ -500,7 +561,7 @@ export class AppComponent { // event stuff
       this.muted = true;
 
     var body = { audioDevices: [] }
-    for (let speaker of this.displays) {
+    for (let speaker of this.displaysToShow) {
       if (speaker.selected) {
         body.audioDevices.push({
           "name": speaker.name,
@@ -512,9 +573,13 @@ export class AppComponent { // event stuff
   }
 
   powerOff() {
-    let body = {
-      "power": "standby"
-    };
+	let body = { displays: [] }
+	for (let display of this.displaysToShow) {
+		body.displays.push({
+			"name": display.name,
+      		"power": "standby",
+		});	
+	}
     this.put(body, func => { }, err => { this.showing = !this.showing; });
     this.showing = !this.showing;
   }
@@ -524,7 +589,7 @@ export class AppComponent { // event stuff
     this.muted = false;
 
     var body = { audioDevices: [] }
-    for (let speaker of this.displays) {
+    for (let speaker of this.displaysToShow) {
       if (speaker.selected) {
         body.audioDevices.push({
           "name": speaker.name,
@@ -537,7 +602,7 @@ export class AppComponent { // event stuff
 
   blank() {
     var body = { displays: [] }
-    for (let display of this.displays) {
+    for (let display of this.displaysToShow) {
       if (display.selected) {
         display.blanked = !display.blanked;
         body.displays.push({
@@ -559,16 +624,36 @@ export class AppComponent { // event stuff
 
   switchInput(d: DeviceData) {
     var body = { displays: [] }
-    for (let display of this.displays) {
+    for (let display of this.displaysToShow) {
       if (display.selected) {
         display.icon = d.icon;
 		display.input = d.name;	// for appearances? faster (click)?
         body.displays.push({
           "name": display.name,
-          "input": d.name
+          "input": d.name,
         });
       }
     }
+    this.put(body);
+  }
+
+  sendingDTA: boolean;
+  sendDisplayToAll() {
+	if (this.sendingDTA)
+		return;	
+
+	this.sendingDTA = true;
+    setTimeout(() => { this.sendingDTA = false }, 5000); //milliseconds of button timeout
+	console.log("sending display to all");
+ 	let body = { displays: [] }
+    for (let display of this.displays) {
+		body.displays.push({
+			"name": display.name,
+			"power": "on",
+			"input": this.inputsToShow[0].name,
+		  	"blanked": false
+		}) // gonna have to find the right input somehow	
+	}	
     this.put(body);
   }
 
@@ -680,22 +765,23 @@ export class AppComponent { // event stuff
   goToSingleControl(d) {
 	if (d == 'all') {
 		console.log("going to all control");	
-    	for (let display of this.displays) {
+    	for (let display of this.displaysToShow) {
 			display.selected = true;
 		}
-		this.selectedDisplay = this.displays[0];
-		this.switchInput(this.inputs[0]);
+		this.selectedDisplay = this.displaysToShow[0];
+		this.displaysToShow[0].input = "";
+//		this.switchInput(this.inputsToShow[0]);
 	    this.allcontrol = true;
 		this.singlecontrol = false;
 	} else {
-		for (let display of this.displays) {
+		for (let display of this.displaysToShow) {
 			if (d === display) {
-				display.selected = true;	
+				display.selected = true;
 			} else {
 				display.selected = false;	
 			}
 		}
-		this.selectedDisplay = d;	
+		this.selectedDisplay = d;
 		this.singlecontrol = true;
 		this.allcontrol = false;
 	}
@@ -720,5 +806,111 @@ export class AppComponent { // event stuff
  	this.api.postHelp(body).subscribe(data => {
 		console.log("data:", data);	
 	}) 
+  }
+
+
+  // stuff for displays to show/ inputs to show
+
+  isInDisplaysToShow(d): boolean {
+	for (let x of this.displaysToShow) {
+		if (d.name == x.name) {
+			return true;
+		}	
+	}
+	return false;
+  }
+
+  toggleDisplayToShow(d: DeviceData) {
+	if (this.isInDisplaysToShow(d)) {
+ 		console.log("removing from displaysToShow:", d); 
+		this.displaysToShow.splice(this.displaysToShow.indexOf(d), 1);
+	} else {
+ 		console.log("adding to displaysToShow:", d); 
+		this.displaysToShow.push(d);
+	}
+  }
+
+  isInInputsToShow(d): boolean {
+	for (let x of this.inputsToShow) {
+		if (d.name == x.name) {
+			return true;
+		}	
+	}
+	return false;
+  }
+
+  toggleInputToShow(d: DeviceData) {
+	if (this.isInInputsToShow(d)) {
+ 		console.log("removing from inputsToShow:", d); 
+		this.inputsToShow.splice(this.inputsToShow.indexOf(d), 1);
+	} else {
+ 		console.log("adding to inputsToShow:", d); 
+		this.inputsToShow.push(d);
+	}
+  }
+
+  // extra features
+  displayToAll: boolean;
+  isExtraFeatureOn(s: String): boolean {
+ 	switch (s) {
+	case 'dta':
+		return this.displayToAll;
+	} 
+  }
+
+  toggleExtraFeatures(s: String) {
+ 	switch (s) {
+	case 'dta':
+		this.displayToAll = !this.displayToAll;	
+		break;
+	} 
+  }
+
+  createToShowCookies() {
+	// get a date 20 years away.
+	// IN 20 YEARS AFTER SETTING, SOMEONE WILL HAVE TO REDO THEM
+	let date = new Date(new Date().setFullYear(new Date().getFullYear() + 20));
+	console.log("date", date);
+	let co: CookieOptions = {expires: date};
+	this.cookie.putObject(cookies.inputs, this.inputsToShow, co);
+	this.cookie.putObject(cookies.displays, this.displaysToShow, co);
+	this.cookie.putObject(cookies.dta, this.displayToAll, co);
+	this.refresh();
+  }
+
+  readToShowCookies() {
+	let i = new Array<Object>();
+	let d = new Array<Object>();
+	Object.assign(i, this.cookie.getObject(cookies.inputs));
+	Object.assign(d, this.cookie.getObject(cookies.displays));
+	let c: DeviceData;
+	for (let x of i) {
+		c = new DeviceData();
+		Object.assign(c, x); 
+		this.inputsToShow.push(c);
+	}
+	
+	for (let x of d) {
+		c = new DeviceData();
+		Object.assign(c, x); 
+		this.displaysToShow.push(c);
+	}
+
+	this.displayToAll = (this.cookie.get(cookies.dta) == 'true');
+
+	console.log("displaysToShow from cookies:", this.displaysToShow);
+	console.log("inputsToShow from cookies:", this.inputsToShow);
+	console.log("displayToAll from cookies:", this.displayToAll);
+  }
+
+  clearToShow() {
+	  this.displaysToShow.length = 0;
+	  this.inputsToShow.length = 0;
+  }
+
+  deleteCookies() {
+	console.log("deleting all cookies");
+	this.cookie.removeAll();
+	this.refresh();
   }
 } 
