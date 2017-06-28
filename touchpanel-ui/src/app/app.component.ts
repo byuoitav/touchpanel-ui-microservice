@@ -104,7 +104,7 @@ export class AppComponent { // event stuff
 	this.selectedDisplay = new DeviceData();
     this.api.setup();
     this.getData();
-	this.blanked = true;
+	this.blanked = false;
 	this.helprequested = false;
 	
 	// uncomment for local testing
@@ -557,7 +557,7 @@ export class AppComponent { // event stuff
 		body.displays.push({
 			"name": display.name,
       		"power": "on",
-      		"blanked": true,
+      		"blanked": false,
 			"input": this.inputsToShow[0].name,
 		});	
 		body.audioDevices.push({
