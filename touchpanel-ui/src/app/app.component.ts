@@ -817,18 +817,18 @@ export class AppComponent { // event stuff
 	this.displayselection = !this.displayselection;
   }
 
-  requestHelp() {
+  help(s: String) {
+	console.log("help called:", s);
 	this.helprequested = true;
-	console.log("help requested");
+    setTimeout(() => { this.helprequested = false }, 20000); //milliseconds of button timeout
 	let body = {
 		"building": this.api.building,
 		"room": this.api.room	
-	}
- 	this.api.postHelp(body).subscribe(data => {
+	};
+ 	this.api.postHelp(body, s).subscribe(data => {
 		console.log("data:", data);	
-	}) 
+	}); 
   }
-
 
   // stuff for displays to show/ inputs to show
 

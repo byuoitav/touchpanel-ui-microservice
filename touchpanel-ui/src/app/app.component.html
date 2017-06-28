@@ -151,9 +151,28 @@
             <span id="helpwords">Please call AV Support at 801-422-7671 for help, or request help by pressing 'Request Help'</span>
         </div>
         <div class="modal-bottom">
-			<button class="btn btn-warning" [disabled]="helprequested" (click)="requestHelp()">Request Help</button>
+			<button class="btn btn-warning" [disabled]="helprequested" (click)="slackconfirmmodal.show(); help('help')">Request Help</button>
 			<div class="btnspacing"></div>
-            <button class="btn btn-primary" (click)="helpmodal.hide(); helprequested=false">Done</button>
+            <button class="btn btn-primary" (click)="helpmodal.hide();">Done</button>
+        </div>
+    </div>
+</app-modal>
+
+<app-modal #slackconfirmmodal>
+    <div class="app-modal-body">
+        <div class="modal-icon">
+            <i class='material-icons helpdialog'>info_outline</i>
+        </div>
+        <div class="modal-title">
+            Confirm
+        </div>
+        <div class="modal-body">
+            <span id="helpwords">Request recieved! A technician is on their way.</span>
+        </div>
+        <div class="modal-bottom">
+			<button class="btn btn-success" (click)="help('confirm'); helpmodal.hide(); slackconfirmmodal.hide();">Ok</button>
+			<div class="btnspacing"></div>
+            <button class="btn btn-primary" (click)="help('cancel'); helpmodal.hide(); slackconfirmmodal.hide();">Cancel</button>
         </div>
     </div>
 </app-modal>
