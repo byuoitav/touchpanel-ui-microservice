@@ -85,9 +85,17 @@ export class APIService {
     return val;
   }
 
-  postHelp(data) {
+  postHelp(data, type) {
  	console.log("POST", data, "to", this.baseurl + ":8888/help") 
-	return this.http.post(this.baseurl + ":8888/help", data, this.options).map((res: Response) => res.json());
+	if (type == "help") {
+		return this.http.post(this.baseurl + ":8888/help", data, this.options).map((res: Response) => res.json());
+	} else if (type == "confirm") {
+		return this.http.post(this.baseurl + ":8888/confirmhelp", data, this.options).map((res: Response) => res.json());
+	} else if (type == "cancel") {
+		return this.http.post(this.baseurl + ":8888/cancelhelp", data, this.options).map((res: Response) => res.json());
+	} else {
+		return;	
+	}
   }
 
   publish(event: any) {
