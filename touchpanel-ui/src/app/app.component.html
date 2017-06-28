@@ -51,7 +51,7 @@
 				<span *ngIf="!selectedDisplay.blanked">Blank Display</span>
 				<span *ngIf="selectedDisplay.blanked">Unblank Display</span>
 			</div>
-            <div class='circle' [class.circle-shrink]="!selectedDisplay.blanked || true" [class.circle-blanked]="selectedDisplay.blanked">
+            <div class='circle' [class.circle-shrink]="!selectedDisplay.blanked || true" [class.circle-blanked]="selectedDisplay.blanked" (click)="buttonpress('blank'); blank();">
 				<div class="displayname">
 					<span *ngIf="!allcontrol">{{selectedDisplay.displayName}}</span>
 					<span *ngIf="allcontrol">All Displays</span>

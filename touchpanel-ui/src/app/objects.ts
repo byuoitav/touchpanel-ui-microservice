@@ -75,6 +75,8 @@ export class icons {
   static readonly appletv = "airplay";
   static readonly generic = "generic";
   static readonly table = "byu_table_input";
+  static readonly tv = "tv";
+  static readonly projector = "videocam";
 }
 
 export class cookies {
