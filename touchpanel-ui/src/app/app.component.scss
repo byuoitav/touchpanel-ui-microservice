@@ -101,17 +101,13 @@ body {
 }
 
 .sidebar {
-    height: 100%;
     position: fixed;
-    right: 2%;
+    top: 4vh;
+    right: 2.8%;
+    width: 20%;
     display: flex;
-    flex-direction: column;
-    justify-content: center;
+    justify-content: space-around;
 	z-index: 100;
-}
-
-.sidebar div {
-    display: flex;
 }
 
 .power-row {
@@ -122,6 +118,16 @@ body {
     display: flex;
     justify-content: space-around;
 	z-index: 100;
+}
+
+.audio-row {
+    position: fixed;
+    bottom: 4vh;
+    right: 3%;
+    width: 20%;
+    display: flex;
+    justify-content: space-around;
+	z-index: 101;
 }
 
 .blank-row {
@@ -157,18 +163,23 @@ body {
 	display: flex;
 	flex-direction: column;
 	justify-content: flex-start;
-	width: 60%;
-	height: 100%;
+	width: 25%;
 	text-align: center;
 	top: 10vh;
 	transition: .2s ease all;
 	font-size: 4vh;
 	color: #E0E0E0;
+	align-self: center;
 }
 
 .roomname-transition {
 	top: 18vh;
 	font-size: 5vh;
+}
+
+.displayname {
+	font-size: 4vh;
+	color: #E0E0E0;
 }
 
 .circle {
@@ -188,7 +199,7 @@ body {
 	overflow: hidden;
 	
 	i {
-		margin-bottom: 32%;
+		margin-top: 10%;
 		font-size: 27vh;	
 		transition: .2s ease all;
 		color: #EEEEEE;
@@ -204,6 +215,7 @@ body {
 		background-color: #0277BD;
 		bottom: 0;
 		transition: .2s ease all;
+		border-radius: 0 0 50vh 50vh;
 
 		span {
 			font-size: 4vh;	
@@ -214,7 +226,19 @@ body {
 }
 
 .circle-blanked { 
-	border: .5vh solid #b71c1c;
+	border: .8vh solid #b71c1c;
+}
+
+.circle-blanked:after {
+	position: absolute;
+	left: 0;
+	top: 50%;
+	height: 1vh;
+	background: #b71c1c;
+	content: "";
+	width: 100%;
+	display: block;
+	transform: rotate(-45deg);
 }
 
 .redbackground {
@@ -263,6 +287,10 @@ body {
 	z-index: 1;
 }
 
+.blank-slice {
+	background-color: #455A64;
+}
+
 .input {
     position: absolute;
 	display: flex;
@@ -289,13 +317,14 @@ body {
 }
 
 .power i,
-.mute i,
+.audio-row i,
 .blank i,
+.mic-mute i,
 .all-control i,
+.displaytoall i,
 .help i {
     font-size: 9vh;
     color: #E0E0E0;
-
 }
 
 .power i {
@@ -314,18 +343,9 @@ body {
     color: #388E3C !important;
 }
 
-.mute {
-//	display: flex;
-//	justify-content: center;
-//	flex-direction: row;
-//	min-width: 100%;
-}
-
 .volume {
     min-height: 80vh;
-//	display: flex;
-//	justify-content: flex-start;
-//	flex-direction: row;
+	display: flex;
 }
 
 .spinner {
@@ -558,6 +578,38 @@ body {
 	align-content: space-around;
 }
 
+.microphone-selection {
+	position: absolute;
+	width: 70%;
+	height: 50vh;
+	top: 25vh;
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-around;
+	align-items: center;
+	text-align: center;
+}
+
+.mic-title {
+	color: white;	
+}
+
+.mic {
+	display: flex;
+	flex-direction: column;
+	justify-content: space-around;
+}
+
+.mic-volume {
+	min-height: 40vh;
+	display: flex;
+	margin-left: auto;
+}
+
+.mic-mute i {
+    font-size: 8vh;
+}
+
 .multi-circle {
     z-index: 2;
     position: relative;
@@ -592,10 +644,136 @@ body {
 	margin-right: 50%;
 }
 
+.alignright {
+	margin-left: 50%;
+}
+
 #helpwords {
 	text-align: center;
 }
 
 .btnspacing {
 	width: 5%;
+}
+
+.list-group {
+	flex-wrap: wrap;
+	align-content: space-around;
+	max-height: 50vh;
+}
+
+.excite {
+    -webkit-animation: growBounce 1s 1 linear;
+}
+
+@-webkit-keyframes growBounce {
+	0% {
+		font-size: 9vh;	
+		transform: rotate(0deg);
+		margin-right: 50%;
+	}
+	5% {
+		font-size: 12vh;	
+		transform: rotate(5deg);
+		margin-right: 45%;
+		color: #FFCA28;
+	}
+	10% {
+		font-size: 14vh;	
+		transform: rotate(-5deg);
+		margin-right: 40%;
+	}
+	15% {
+		font-size: 16vh;	
+		transform: rotate(0deg);
+		margin-right: 35%;
+	}
+	20% {
+		font-size: 18vh;	
+		transform: rotate(0deg);
+		margin-right: 30%;
+	}
+	25% {
+		font-size: 19vh;	
+		transform: rotate(10deg);
+		margin-right: 25%;
+	}
+	30% {
+		font-size: 20vh;	
+		transform: rotate(-10deg);
+		margin-right: 20%;
+	}
+	35% {
+		font-size: 21vh;	
+		transform: rotate(0deg);
+		margin-right: 15%;
+		color: #2196F3;
+	}
+	40% {
+		font-size: 22vh;	
+		transform: rotate(0deg);
+		margin-right: 10%;
+	}
+	45% {
+		font-size: 22.5vh;	
+		transform: rotate(15deg);
+		margin-right: 5%;
+	}
+	50% {
+		font-size: 23vh;	
+		transform: rotate(-15deg);
+		margin-right: 0%;
+	}
+	55% {
+		font-size: 22.5vh;	
+		transform: rotate(0deg);
+		margin-right: 5%;
+	}
+	60% {
+		font-size: 22vh;	
+		transform: rotate(0deg);
+		margin-right: 10%;
+		color: #6A1B9A;
+	}
+	65% {
+		font-size: 21vh;	
+		transform: rotate(20deg);
+		margin-right: 15%;
+	}
+	70% {
+		font-size: 20vh;	
+		transform: rotate(-20deg);
+		margin-right: 20%;
+	}
+	75% {
+		font-size: 19vh;	
+		transform: rotate(0deg);
+		margin-right: 25%;
+	}
+	80% {
+		font-size: 18vh;	
+		transform: rotate(0deg);
+		margin-right: 30%;
+	}
+	85% {
+		font-size: 16vh;	
+		transform: rotate(25deg);
+		margin-right: 35%;
+	}
+	90% {
+		font-size: 14vh;	
+		transform: rotate(-25deg);
+		margin-right: 40%;
+	}
+	95% {
+		font-size: 12vh;	
+		transform: rotate(0deg);
+		margin-right: 45%;
+		color: #FFCA28;
+	}
+	100% {
+		font-size: 9vh;	
+		transform: rotate(0deg);
+		margin-right: 50%;
+	}
 }

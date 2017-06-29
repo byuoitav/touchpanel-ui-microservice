@@ -6,6 +6,7 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
 import { MdSliderModule } from '@angular/material';
 import 'hammerjs';
+import { CookieModule } from 'ngx-cookie';
 
 import { AppComponent } from './app.component';
 import { ModalComponent } from './modal.component';
@@ -24,6 +25,7 @@ import { APIService } from './api.service';
     NgbModule.forRoot(),
     BrowserAnimationsModule,
     MdSliderModule,
+	CookieModule.forRoot()
   ],
   providers: [SocketService, APIService],
   bootstrap: [AppComponent]
