@@ -359,17 +359,23 @@ export class AppComponent { // event stuff
   }
 
   getInputOffset() {
- 	 let total = (this.inputsToShow.length * 2) + 24;	 
+	 let total = (this.inputsToShow.length * 2) + 24;
 
 	 let Nright = ((this.inputsToShow.length - 1) * total) / (this.inputsToShow.length);
 	 let Ntop = Nright / (this.inputsToShow.length - 1);
 
-	 if (this.inputsToShow.length == 2 || this.inputsToShow.length == 3) {
+   switch(this.inputsToShow.length) {
+	case 3:
 		Nright++;
-	 } else if (this.inputsToShow.length == 1) {
+	   	break;
+	case 2:
+		Nright++;
+	   	break;
+	case 1:
 		Nright = 10;
 		Ntop = 21;
-	 }
+		break;	
+   }
 
 	 this.rightoffset = String(Nright) + "%";
 	 console.log("right offset:", this.rightoffset);
@@ -573,6 +579,12 @@ export class AppComponent { // event stuff
       this.startSpinning = false;
       this.sendingOn = false;
     });
+
+	for (let display of this.displaysToShow) {
+		display.blanked = false;
+		display.input = this.inputsToShow[0].name;
+		this.muted = false;
+	}
   }
 
   toggleMute() {
