@@ -48,15 +48,20 @@
     <div [class.hidden]='displayselection || microphonecontrol' class='main-control-h'>
         <div class='main-control-v' >
 			<div class='roomname' [class.roomname-transition]="!selectedDisplay.blanked || true" (click)="buttonpress('blank'); blank();">
-				<span *ngIf="!selectedDisplay.blanked">Blank Display</span>
-				<span *ngIf="selectedDisplay.blanked">Unblank Display</span>
+				<span *ngIf="!allcontrol">{{selectedDisplay.displayName}}</span>
+				<span *ngIf="allcontrol">all displays</span>
 			</div>
             <div class='circle' [class.circle-shrink]="!selectedDisplay.blanked || true" [class.circle-blanked]="selectedDisplay.blanked" (click)="buttonpress('blank'); blank();">
-				<div class="displayname">
-					<span *ngIf="!allcontrol">{{selectedDisplay.displayName}}</span>
-					<span *ngIf="allcontrol">All Displays</span>
-				</div>
 				<i class='material-icons'>{{selectedDisplay.icon}}</i>
+				<!-- blanking -->
+				<span *ngIf="!selectedDisplay.blanked" class='blank'>picture on</span>
+				<span *ngIf="selectedDisplay.blanked" class='blank'>picture off</span>
+				<div class='switch-wrapper'>
+					<label class="switch">
+						<input [checked]="!selectedDisplay.blanked" type="checkbox">
+						<div class="slider round"></div>
+					</label>
+				</div>
             </div>
             <ul #ring class="ring" [class.ring-grow]="!selectedDisplay.blanked || true">
 				<li class="slice blank-slice" [class.redbackground]="selectedDisplay.blanked" (click)="buttonpress('blank'); blank();">
