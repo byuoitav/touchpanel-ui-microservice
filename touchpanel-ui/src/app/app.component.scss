@@ -160,9 +160,6 @@ body {
 .roomname {
 	z-index: 1;
 	position: fixed;
-	display: flex;
-	flex-direction: column;
-	justify-content: flex-start;
 	width: 25%;
 	text-align: center;
 	top: 10vh;
@@ -170,6 +167,7 @@ body {
 	font-size: 4vh;
 	color: #E0E0E0;
 	align-self: center;
+	white-space: nowrap;
 }
 
 .roomname-transition {
@@ -199,29 +197,16 @@ body {
 	overflow: hidden;
 	
 	i {
-		margin-top: 10%;
+		margin-bottom: 6%;
 		font-size: 27vh;	
 		transition: .2s ease all;
 		color: #EEEEEE;
 	}
 
 	.blank {
-		position: absolute;
-		display: flex;
-		flex-direction: column;
-		justify-content: center;
-		height: 40%;
-		width: 100%;
-		background-color: #0277BD;
-		bottom: 0;
-		transition: .2s ease all;
-		border-radius: 0 0 50vh 50vh;
-
-		span {
-			font-size: 4vh;	
-			color: #E0E0E0;
-			margin-bottom: 6%;
-		}
+		margin-bottom: 2%;
+		font-size: 3vh;
+		color: #E0E0E0;
 	}
 }
 
@@ -250,7 +235,7 @@ body {
 	height: 43vh;
 
 	i {
-		font-size: 17vh;	
+		font-size: 19vh;	
 	}
 }
 
@@ -776,4 +761,57 @@ body {
 		transform: rotate(0deg);
 		margin-right: 50%;
 	}
+}
+
+.switch-wrapper {
+
+}
+
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 15vh;
+  height: 6.3vh;
+}
+
+.switch input {display:none;}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #b71c1c;
+  transition: .4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 4.7vh; 
+  width: 4.7vh;
+  left: 1vh;
+  bottom: .8vh;
+  background-color: white;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+input:checked + .slider {
+  background-color: #00E676;
+}
+
+input:checked + .slider:before {
+  transform: translateX(8.5vh);
+}
+
+/* Rounded sliders */
+.slider.round {
+  border-radius: 3vh;
+}
+
+.slider.round:before {
+  border-radius: 50%;
 }
