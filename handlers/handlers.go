@@ -231,3 +231,32 @@ func CancelHelp(context echo.Context) error {
 	return context.JSON(http.StatusOK, string(body))
 
 }
+
+func GetJSON(context echo.Context) error {
+	log.Printf("getting json object from raspi-deployment-microservice")
+	address := os.Getenv("UI_CONFIGURATION_ADDRESS")
+	if len(address) == 0 {
+		return context.JSON(http.StatusInternalServerError, "UI_CONFIGURATION_ADDRESS is not set.")
+	}
+	resp, err := http.Get(address)
+	if err != nil {
+		return context.JSON(http.StatusGatewayTimeout, err.Error())
+	}
+	defer resp.Body.Close()
+
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return context.JSON(http.StatusInternalServerError, err.Error())
+	}
+
+	var data map[string]interface{}
+	err = json.Unmarshal(body, &data)
+	if err != nil {
+		return context.JSON(http.StatusInternalServerError, err.Error())
+	}
+
+	hn := os.Getenv("PI_HOSTNAME")
+	ret := data[hn]
+	log.Printf("%s", ret)
+	return context.JSON(http.StatusOK, ret)
+}
