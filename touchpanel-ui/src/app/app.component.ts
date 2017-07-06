@@ -99,7 +99,6 @@ export class AppComponent { // event stuff
   }
 
   public ngOnInit() {
-	this.readToShowCookies();
 	this.currentInput = new DeviceData(); 
 	this.selectedDisplay = new DeviceData();
     this.api.setup();
@@ -108,7 +107,7 @@ export class AppComponent { // event stuff
 	this.helprequested = false;
 	
 	// uncomment for local testing
-//   this.showing = true;
+   this.showing = true;
 //	this.microphone = true;
 
     // setup socket to recieve events
@@ -173,6 +172,7 @@ export class AppComponent { // event stuff
         this.room.config = new RoomConfiguration();
         Object.assign(this.room.config, data);
         console.log("roomconfig:", this.room.config);
+		this.setup(); //GET RID OF ME
       });
 
       this.api.getRoomStatus().subscribe(data => {
@@ -185,6 +185,7 @@ export class AppComponent { // event stuff
             this.createInputDeviceData(d);
         }
 
+        setTimeout(() => { this.setup(); }, 0)
         this.getInputs();
         this.statusUpdateVolume();
         setTimeout(() => { this.checkEmpty(); }, 0)
@@ -843,42 +844,21 @@ export class AppComponent { // event stuff
   }
 
   // stuff for displays to show/ inputs to show
+  setup() {
+ 	for (let device of this.api.uiconfig.devices) {
+		console.log("device", device);	
+		for (let d of this.displays) {
+			for (let i of device.inputs) {
+				console.log("input:", i);	
+			}
+//			if (device.name == d.name) {
+//				this.displaysToShow.push(d);	
+//			}
+		}
+	} 
 
-  isInDisplaysToShow(d): boolean {
-	for (let x of this.displaysToShow) {
-		if (d.name == x.name) {
-			return true;
-		}	
-	}
-	return false;
-  }
-
-  toggleDisplayToShow(d: DeviceData) {
-	if (this.isInDisplaysToShow(d)) {
- 		console.log("removing from displaysToShow:", d); 
-		this.displaysToShow.splice(this.displaysToShow.indexOf(d), 1);
-	} else {
- 		console.log("adding to displaysToShow:", d); 
-		this.displaysToShow.push(d);
-	}
-  }
-
-  isInInputsToShow(d): boolean {
-	for (let x of this.inputsToShow) {
-		if (d.name == x.name) {
-			return true;
-		}	
-	}
-	return false;
-  }
-
-  toggleInputToShow(d: DeviceData) {
-	if (this.isInInputsToShow(d)) {
- 		console.log("removing from inputsToShow:", d); 
-		this.inputsToShow.splice(this.inputsToShow.indexOf(d), 1);
-	} else {
- 		console.log("adding to inputsToShow:", d); 
-		this.inputsToShow.push(d);
+	for (let feature of this.api.uiconfig.features) {
+		console.log("feature:", feature);	
 	}
   }
 
@@ -897,43 +877,6 @@ export class AppComponent { // event stuff
 		this.displayToAll = !this.displayToAll;	
 		break;
 	} 
-  }
-
-  createToShowCookies() {
-	// get a date 20 years away.
-	// IN 20 YEARS AFTER SETTING, SOMEONE WILL HAVE TO REDO THEM
-	let date = new Date(new Date().setFullYear(new Date().getFullYear() + 20));
-	console.log("date", date);
-	let co: CookieOptions = {expires: date};
-	this.cookie.putObject(cookies.inputs, this.inputsToShow, co);
-	this.cookie.putObject(cookies.displays, this.displaysToShow, co);
-	this.cookie.putObject(cookies.dta, this.displayToAll, co);
-	this.refresh();
-  }
-
-  readToShowCookies() {
-	let i = new Array<Object>();
-	let d = new Array<Object>();
-	Object.assign(i, this.cookie.getObject(cookies.inputs));
-	Object.assign(d, this.cookie.getObject(cookies.displays));
-	let c: DeviceData;
-	for (let x of i) {
-		c = new DeviceData();
-		Object.assign(c, x); 
-		this.inputsToShow.push(c);
-	}
-	
-	for (let x of d) {
-		c = new DeviceData();
-		Object.assign(c, x); 
-		this.displaysToShow.push(c);
-	}
-
-	this.displayToAll = (this.cookie.get(cookies.dta) == 'true');
-
-	console.log("displaysToShow from cookies:", this.displaysToShow);
-	console.log("inputsToShow from cookies:", this.inputsToShow);
-	console.log("displayToAll from cookies:", this.displayToAll);
   }
 
   clearToShow() {

@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Http, Response, Headers, RequestOptions } from '@angular/http';
 import { Observable, Subject } from 'rxjs/Rx';
+import { UIConfiguration } from './objects'
 
 import 'rxjs/add/operator/map';
 
@@ -11,13 +12,14 @@ export class APIService {
   public baseurl: string;
   public url: string;
   public loaded: Subject<boolean>;
+  public uiconfig: UIConfiguration; 
   private hostname: string;
   private bool: boolean;
 
   private options: RequestOptions;
   private headers: Headers;
 
-  constructor(private http: Http) { this.loaded = new Subject<boolean>(); }
+  constructor(private http: Http) { this.loaded = new Subject<boolean>(); this.uiconfig = new UIConfiguration();}
 
   setup() {
     this.headers = new Headers();
@@ -38,8 +40,17 @@ export class APIService {
       this.url = this.baseurl + ":8000" + "/buildings/" + this.building + "/rooms/" + this.room;
       console.log("url =", this.url);
 
-      this.loaded.next(true);
+	  this.getJSON().subscribe(data => {
+		Object.assign(this.uiconfig, data);
+		console.log("uiconfig", this.uiconfig);
+      	this.loaded.next(true);
+	  })
     });
+  }
+
+  getJSON(): Observable<Object> {
+ 	return this.http.get(this.baseurl + ":8888/json")
+   		.map(response => response.json());	
   }
 
   getHostname(): Observable<Object> {

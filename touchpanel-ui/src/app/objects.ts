@@ -66,6 +66,24 @@ export class DeviceData {
   blanked: boolean;
 }
 
+export class UIConfiguration {
+	devices: UIConfiguration_Output[];
+	features: string[];
+	ui: string;
+}
+
+class UIConfiguration_Output {
+	name: string;
+	inputs: UIConfiguration_Input[];
+	defaultinput: string;
+	icon: string;
+}
+
+class UIConfiguration_Input {
+	name: string;
+	icon: string;	
+}
+
 export class icons {
   static readonly blanked = "panorama_wide_angle";
   static readonly hdmi = "settings_input_hdmi";

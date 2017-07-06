@@ -34,12 +34,12 @@ $persimmion: #ff8300;
 
 // icons when selected (where applicable)
 .red {
-	color: $dragonfruit !important;
+	color: $materialred !important;
 }
 
 // divs that get a red background (title bar)
 .redbackground {
-	background-color: $dragonfruit !important;
+	background-color: $materialred !important;
 }
 
 // title bar
@@ -64,13 +64,13 @@ $persimmion: #ff8300;
 
 // center circle
 .circle-shrink {
-	background-color: $powerblue;
+	background-color: $lazuliblue;
 }
 
 // ring/bar around center
 .circle-blanked,
 .circle-blanked:after {
-	border: .8vh solid $dragonfruit;
+	border: .8vh solid $materialred;
 }
 
 .ring {
@@ -120,7 +120,7 @@ $persimmion: #ff8300;
 
 // slider in 'disabled' state 
 .slider {
-	background-color: $dragonfruit;
+	background-color: $materialred;
 }
 
 // slider in 'enabled' state 
