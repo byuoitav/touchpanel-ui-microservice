@@ -319,8 +319,8 @@ export class AppComponent { // event stuff
 //		different color for each slice
 //      let darkenstr = "hsl(193, 76%, " + String(80 - (i * 5)) + "%)";
 	  // single color for each slice
-	  let darkenstr = "#90A4AE";
-      children[i].style.backgroundColor = darkenstr;
+//	  let darkenstr = "#90A4AE";
+//     children[i].style.backgroundColor = darkenstr;
     }
 	// start out all control mode
 	if (this.displaysToShow.length == 1) {

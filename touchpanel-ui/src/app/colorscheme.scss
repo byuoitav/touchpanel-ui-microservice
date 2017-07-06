@@ -1,0 +1,134 @@
+// material colors
+$materialred: #b71c1c; 
+
+// new 'byu' color palatte
+$byublue: #002C5C;
+$midnightblue: #041e41;
+$alabasterwhite: #fbfbfb;
+$powerblue: #00a2dc;
+$lazuliblue: #0076a9; 
+$darkknightblue: #004876;
+$skyblue: #6ec4e9;
+$ninjagrey: #333e48;
+$sharknadogrey: #5c6670;
+$millergrey: #7d868c;
+$edwardiangrey: #a4a0ad;
+$pumicegrey: #c3c6c8;
+$sterlinggrey: #d1d3d3;
+$platinumgrey: #ecf0f1;
+$pomelo: #94d500;
+$passionfruit: #ffa300;
+$strawberryguava: #ff4337;
+$dragonfruit: #d50053;
+$pricklypear: #b41782;
+$persimmion: #ff8300;
+
+// background color
+.basediv, 
+.overlay {
+	background-color: $midnightblue;
+	// background image
+//	background-image: url(/assets/bg1.jpg);
+//	background-size: cover;
+}
+
+// icons when selected (where applicable)
+.red {
+	color: $dragonfruit !important;
+}
+
+// divs that get a red background (title bar)
+.redbackground {
+	background-color: $dragonfruit !important;
+}
+
+// title bar
+.blank-slice {
+	background-color: $ninjagrey;
+}
+
+// title bar text
+.roomname {
+	color: $alabasterwhite;
+}
+
+// color to animate to when removing ring/bar around center 
+.circle {
+	border: 0vh solid $byublue;
+
+	// color of icon in center of circle
+	i {
+		color: $alabasterwhite;	
+	}
+}
+
+// center circle
+.circle-shrink {
+	background-color: $powerblue;
+}
+
+// ring/bar around center
+.circle-blanked,
+.circle-blanked:after {
+	border: .8vh solid $dragonfruit;
+}
+
+.ring {
+	// input text  
+	li {
+		color: $alabasterwhite;	
+	}
+
+}
+
+.input {
+	// input icon
+	.material-icons {
+		color: $alabasterwhite;	
+	}
+}
+
+// selected input slice color
+.selectedInput {
+	background-color: $powerblue !important;
+}
+
+// unselected input slice color
+.input-slice {
+	background-color: $byublue;
+}
+
+// power icon
+.power i {
+	color: $pomelo;
+}
+
+// (most) icons in corners
+.audio-row i,
+.blank i,
+.mic-mute i,
+.all-control i,
+.displaytoall i,
+.help i {
+    color: $alabasterwhite;
+}
+
+// help icon
+.helpdialog {
+    color: $byublue;
+}
+
+// slider in 'disabled' state 
+.slider {
+	background-color: $dragonfruit;
+}
+
+// slider in 'enabled' state 
+input:checked + .slider {
+	background-color: $pomelo;
+}
+
+// slider knob color
+.slider:before {
+	background-color: $alabasterwhite;
+}
