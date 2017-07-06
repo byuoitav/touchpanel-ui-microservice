@@ -48,7 +48,7 @@
     <div [class.hidden]='displayselection || microphonecontrol' class='main-control-h'>
         <div class='main-control-v' >
 			<div class='roomname' [class.roomname-transition]="!selectedDisplay.blanked || true" (click)="buttonpress('blank'); blank();">
-				<span *ngIf="!allcontrol">{{selectedDisplay.displayName}}</span>
+				<span *ngIf="!allcontrol">{{selectedDisplay.displayName | lowercase}}</span>
 				<span *ngIf="allcontrol">all displays</span>
 			</div>
             <div class='circle' [class.circle-shrink]="!selectedDisplay.blanked || true" [class.circle-blanked]="selectedDisplay.blanked" (click)="buttonpress('blank'); blank();">
@@ -59,7 +59,7 @@
 				<div class='switch-wrapper'>
 					<label class="switch">
 						<input [checked]="!selectedDisplay.blanked" type="checkbox">
-						<div class="slider round"></div>
+						<div class="slider round" (click)="buttonpress('blank'); blank();"></div>
 					</label>
 				</div>
             </div>
@@ -75,7 +75,7 @@
                 <li *ngFor="let i of inputsToShow"  class="slice input-slice" [class.selectedInput]="selectedDisplay.input == i.name" (click)="buttonpress('change input'); switchInput(i)">
 					<div [style.right]="rightoffset" [style.top]="topoffset" class='input'>
 						<i class='material-icons'>{{i.icon}}</i>
-						<span>{{i.displayName}}</span>
+						<span>{{i.displayName | lowercase}}</span>
 					</div>
                 </li>
             </ul>
