@@ -42,6 +42,7 @@ import { ModalComponent } from './modal.component';
   ],
 })
 export class AppComponent { // event stuff
+  // events
   messages: Array<any>;
   events: Array<Event>;
   // room data
@@ -253,6 +254,7 @@ export class AppComponent { // event stuff
 	}
   }
 
+  /*
   getDisplayIcon(d): string { 
 	console.log("d", d);
 	switch(d.type) {	
@@ -264,6 +266,7 @@ export class AppComponent { // event stuff
 		return icons.blanked;
 	}
   }
+ */
 
   checkEmpty() {
 	// if the toShow arrays are empty, fill them will everything
@@ -399,7 +402,6 @@ export class AppComponent { // event stuff
 
         for (let display of this.displaysToShow) {
           if (display.name == e.device) {
-//            display.icon = input.icon;
             display.input = input.name;
             break;
           }
@@ -648,19 +650,10 @@ export class AppComponent { // event stuff
     this.put(body);
   }
 
-  setOutputDevice(d: DeviceData) {
-	  // hotfix because there is only one display in all our rooms rn
-	  // and i'm pushing it into stage and not testing:)  
-	  //
-	  // and we arent keeping this ui anyways
-//    d.selected = !d.selected;
-  }
-
   switchInput(d: DeviceData) {
     var body = { displays: [] }
     for (let display of this.displaysToShow) {
       if (display.selected) {
-//        display.icon = d.icon;
 		display.input = d.name;	// for appearances? faster (click)?
         body.displays.push({
           "name": display.name,
@@ -789,11 +782,6 @@ export class AppComponent { // event stuff
   reboot() {
     console.log("rebooting");
     this.api.reboot().subscribe();
-  }
-
-  openring() {
-	this.ringopen = !this.ringopen;
-	console.log("ringopen:", this.ringopen);
   }
 
   goToSingleControl(d) {

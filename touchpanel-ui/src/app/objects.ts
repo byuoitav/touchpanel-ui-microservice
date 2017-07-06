@@ -67,21 +67,27 @@ export class DeviceData {
 }
 
 export class UIConfiguration {
-	devices: UIConfiguration_Output[];
+	devices: OutputDevice[];
 	features: string[];
 	ui: string;
 }
 
-class UIConfiguration_Output {
+class OutputDevice {
 	name: string;
-	inputs: UIConfiguration_Input[];
-	defaultinput: string;
+	displayname: string;
 	icon: string;
+	volume: number;
+	blanked: boolean;
+	muted: boolean;
+	selected: boolean;
+	defaultinput: string;
+	inputs: InputDevice[];
 }
 
-class UIConfiguration_Input {
+class InputDevice {
 	name: string;
-	icon: string;	
+	displayname: string;
+	icon: string;
 }
 
 export class icons {
