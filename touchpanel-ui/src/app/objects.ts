@@ -72,22 +72,24 @@ export class UIConfiguration {
 	ui: string;
 }
 
-class OutputDevice {
+export class OutputDevice {
 	name: string;
 	displayname: string;
 	icon: string;
-	volume: number;
+	input: InputDevice;
 	blanked: boolean;
+	volume: number;
 	muted: boolean;
 	selected: boolean;
 	defaultinput: string;
 	inputs: InputDevice[];
 }
 
-class InputDevice {
+export class InputDevice {
 	name: string;
 	displayname: string;
 	icon: string;
+	selected: boolean;
 }
 
 export class icons {

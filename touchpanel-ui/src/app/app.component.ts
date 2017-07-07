@@ -5,7 +5,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { CookieService, CookieOptions } from 'ngx-cookie';
 
 import { APIService } from './api.service';
-import { Room, RoomConfiguration, RoomStatus, Event, Device, DeviceData, icons, cookies } from './objects';
+import { Room, RoomConfiguration, RoomStatus, Event, Device, DeviceData, OutputDevice, icons, InputDevice } from './objects';
 import { ModalComponent } from './modal.component';
 
 @Component({
@@ -173,7 +173,6 @@ export class AppComponent { // event stuff
         this.room.config = new RoomConfiguration();
         Object.assign(this.room.config, data);
         console.log("roomconfig:", this.room.config);
-		this.setup(); //GET RID OF ME
       });
 
       this.api.getRoomStatus().subscribe(data => {
@@ -181,22 +180,45 @@ export class AppComponent { // event stuff
         Object.assign(this.room.status, data);
         console.log("roomstatus:", this.room.status);
 
-        for (let d of this.room.config.devices) {
-          if (this.hasRole(d, 'VideoIn'))
-            this.createInputDeviceData(d);
-        }
-
-        setTimeout(() => { this.setup(); }, 0)
-        this.getInputs();
+		this.createInputDevices();
+        this.createOutputDevices();
         this.statusUpdateVolume();
+		this.setup(); 
         setTimeout(() => { this.checkEmpty(); }, 0)
         setTimeout(() => { this.buildInputMenu(); }, 0)
       });
     });
   }
 
+  createInputDevices() {
+  
+  }
+
   //we need to allow for the case that the display is off, in which case it's status will come back with a blank input
-  getInputs() {
+  createOutputDevices() {
+	for (let display of this.room.status.displays) {
+		console.log("display", display);		
+		for (let cdisplay of this.room.config.devices) {
+			if (display.name == cdisplay.name) {
+				for (let jdisplay of this.api.uiconfig.devices) {
+					if (jdisplay.name == display.name) {
+						let d = new OutputDevice();
+						d.name = display.name;
+						d.displayname = cdisplay.display_name;
+						d.icon = jdisplay.icon;
+//						d.input = 
+						d.blanked = display.blanked;
+		//				d.volume = 
+		//				d.muted = 
+		//				d.selected = true;
+		//				d.defaultinput = 
+		//				d.inputs =
+					}
+				}
+			}
+		}	
+	}
+	/*
     for (let display of this.room.status.displays) {
       var hasinput = false;
       for (let input of this.inputs) {
@@ -234,6 +256,7 @@ export class AppComponent { // event stuff
     }
 	
 	this.syncDisplayArrays();
+   */
   }
 
   syncDisplayArrays() {
@@ -254,7 +277,6 @@ export class AppComponent { // event stuff
 	}
   }
 
-  /*
   getDisplayIcon(d): string { 
 	console.log("d", d);
 	switch(d.type) {	
@@ -266,7 +288,6 @@ export class AppComponent { // event stuff
 		return icons.blanked;
 	}
   }
- */
 
   checkEmpty() {
 	// if the toShow arrays are empty, fill them will everything
@@ -507,41 +528,6 @@ export class AppComponent { // event stuff
     }
 
 	this.syncDisplayArrays();
-  }
-
-  createInputDeviceData(d: Device) {
-    let dd = new DeviceData();
-    dd.name = d.name;
-    dd.displayName = d.display_name;
-    switch (d.type) {
-      case "hdmiin":
-        dd.icon = icons.hdmi;
-        break;
-      case "overflow":
-        dd.icon = icons.overflow;
-        break;
-      case "computer":
-        dd.icon = icons.computer;
-        break;
-      case "iptv":
-        dd.icon = icons.iptv;
-        break;
-      case "appletv":
-        dd.icon = icons.appletv;
-        break;
-      case "table":
-        dd.icon = icons.table;
-        break;
-	  case "blu-ray":
-		dd.icon = icons.bluray;
-	  	break;
-      default:
-        dd.icon = icons.generic;
-        break;
-    }
-    this.inputs.push(dd);
-
-    console.log("added", dd.name, "(display name =", dd.displayName + ")", "of type", d.type, "to inputs. (icon = " + dd.icon + " )");
   }
 
   hasRole(d: Device, role: string): boolean {
@@ -831,22 +817,24 @@ export class AppComponent { // event stuff
 	}); 
   }
 
-  // stuff for displays to show/ inputs to show
+  // stuff for displays to show and inputs to show
   setup() {
  	for (let device of this.api.uiconfig.devices) {
 		console.log("device", device);	
+		for (let i of device.inputs) {
+			console.log("input:", i);
+		}
+
 		for (let d of this.displays) {
-			for (let i of device.inputs) {
-				console.log("input:", i);	
+			if (device.name == d.name) {
+				this.displaysToShow.push(d);	
 			}
-//			if (device.name == d.name) {
-//				this.displaysToShow.push(d);	
-//			}
 		}
 	} 
 
 	for (let feature of this.api.uiconfig.features) {
 		console.log("feature:", feature);	
+		// todo enable features
 	}
   }
 
@@ -859,22 +847,8 @@ export class AppComponent { // event stuff
 	} 
   }
 
-  toggleExtraFeatures(s: String) {
- 	switch (s) {
-	case 'dta':
-		this.displayToAll = !this.displayToAll;	
-		break;
-	} 
-  }
-
   clearToShow() {
 	  this.displaysToShow.length = 0;
 	  this.inputsToShow.length = 0;
-  }
-
-  deleteCookies() {
-	console.log("deleting all cookies");
-	this.cookie.removeAll();
-	this.refresh();
   }
 } 
