@@ -51,10 +51,9 @@ export class AppComponent { // event stuff
   // display information	
   volume: number;
   muted: boolean;
-  inputs: Array<DeviceData>;
-  inputsToShow: Array<DeviceData>;
-  displays: Array<DeviceData>;
-  displaysToShow: Array<DeviceData>;
+  inputs: Array<InputDevice>;
+  displays: Array<DeviceData>; // all displays in room.status
+  displaysToShow: Array<OutputDevice>; // all displays from uiconfig
   powerState: boolean;
   blanked: boolean;
   // "lock" screen
@@ -86,7 +85,6 @@ export class AppComponent { // event stuff
     this.messages = [];
     this.events = [];
     this.inputs = [];
-	this.inputsToShow = [];
 	this.displaysToShow = [];
     this.displays = [];
     this.showing = false;
@@ -191,30 +189,68 @@ export class AppComponent { // event stuff
   }
 
   createInputDevices() {
-  
+ 	for(let input of this.room.config.devices) {
+		if (this.hasRole(input, 'VideoIn') || this.hasRole(input, 'AudioIn')) {
+			for (let i of this.api.uiconfig.inputdevices) {
+				if (i.name == input.name) {
+					let ii = new InputDevice();
+					ii.name = input.name;
+					ii.displayname = input.display_name;
+					ii.selected = false;
+					ii.icon = i.icon;
+					console.log("Created input", ii);
+					this.inputs.push(ii);
+				}
+			}
+		}
+	} 
   }
 
-  //we need to allow for the case that the display is off, in which case it's status will come back with a blank input
   createOutputDevices() {
-	for (let display of this.room.status.displays) {
-		console.log("display", display);		
+	for (let sdisplay of this.room.status.displays) {
+		// create displays?
 		for (let cdisplay of this.room.config.devices) {
-			if (display.name == cdisplay.name) {
-				for (let jdisplay of this.api.uiconfig.devices) {
-					if (jdisplay.name == display.name) {
+			if (sdisplay.name == cdisplay.name) {
+				for (let jdisplay of this.api.uiconfig.outputdevices) {
+					if (jdisplay.name == sdisplay.name) {
 						let d = new OutputDevice();
-						d.name = display.name;
+						d.name = sdisplay.name;
 						d.displayname = cdisplay.display_name;
 						d.icon = jdisplay.icon;
-//						d.input = 
-						d.blanked = display.blanked;
-		//				d.volume = 
-		//				d.muted = 
-		//				d.selected = true;
-		//				d.defaultinput = 
-		//				d.inputs =
+						d.selected = true;
+						d.defaultinput = jdisplay.defaultinput;
+						d.oinputs = [];
+						for (let i of jdisplay.inputs) {
+							d.oinputs.push(this.getInput(i));
+						}
+
+						d.oinput = this.getInput(sdisplay.input); 
+						d.blanked = sdisplay.blanked;
+
+						if (this.hasRole(cdisplay, 'AudioOut')) {
+//							d.volume = 
+//							d.muted = 
+						}
+						console.log("Created a display to show:", d);
+						this.displaysToShow.push(d);
 					}
 				}
+				let d = new OutputDevice();
+				// or, is it worth it to create a different kind of struct?
+				// everything (at least for now) that is needed for the ui is in displaysToShow. displays is really only (again, for now) in order to send commands to other displays that the UI doesnt appear to know about.
+
+//				this.displays.push(d);
+				// create displays array. not displays to show
+				// in order to send commands to all the other displays
+				// NOTES
+				// what do we need out of displays?
+				// 		a name
+				// 		current input?
+				// 		icon?
+				// 		blanked/notblanked?, volume?, muted?			
+				// 		doesn't need selected (always sending commands, at least with the display to all situation)
+				//		probably doesn't need displayname either
+				// what data do we need to future proof it the best we can?
 			}
 		}	
 	}
@@ -259,6 +295,16 @@ export class AppComponent { // event stuff
    */
   }
 
+  getInput(name: string): InputDevice {
+	for (let input of this.inputs) {
+		if (input.name == name) {
+			return input;	
+		}	
+	} 
+	console.log("[error] failed to find an input named:", name);
+   	return null;	
+  } 
+
   syncDisplayArrays() {
 	// update info in this.displaysToShow with info in this.displays
 	console.log("syncing display objects");
@@ -266,8 +312,8 @@ export class AppComponent { // event stuff
 		for (let d of this.displays) {
 			if (ds.name == d.name) {
 				console.log("syncing", ds, "from displaysToShow with", d, "from displays");
-				ds.displayName = (d.displayName) ? d.displayName : "";
-				ds.input = (d.input) ? d.input : this.inputsToShow[0].name;
+//				ds.displayName = (d.displayName) ? d.displayName : "";
+//				ds.input = (d.input) ? d.input : this.inputsToShow[0].name;
 				ds.selected = (d.selected) ? d.selected : true;
 //				ds.icon = (d.icon && (d.icon != icons.blanked)) ? d.icon : this.inputsToShow[0].icon;
 				ds.icon = d.icon;
@@ -294,17 +340,17 @@ export class AppComponent { // event stuff
 	if (this.displaysToShow.length == 0) {
 		console.log("displays to show is empty, filling it...");
 		for (let d of this.displays) {
-			this.displaysToShow.push(d);	
+//			this.displaysToShow.push(d);	
 		}
-		console.log("done.", this.displaysToShow);
+//		console.log("done.", this.displaysToShow);
 	}
-	if (this.inputsToShow.length == 0) {
-		console.log("inputs to show is empty, filling it...");
-		for (let d of this.inputs) {
-			this.inputsToShow.push(d);	
-		}
-		console.log("done.", this.inputsToShow);
-	}
+//	if (this.inputsToShow.length == 0) {
+//		console.log("inputs to show is empty, filling it...");
+//		for (let d of this.inputs) {
+//			this.inputsToShow.push(d);	
+//		}
+//		console.log("done.", this.inputsToShow);
+//	}
   }
 
   // build the input menu
@@ -384,6 +430,7 @@ export class AppComponent { // event stuff
   }
 
   getInputOffset() {
+	  /*
 	 let total = (this.inputsToShow.length * 2) + 24;
 
 	 let Nright = ((this.inputsToShow.length - 1) * total) / (this.inputsToShow.length);
@@ -401,11 +448,13 @@ export class AppComponent { // event stuff
 		Ntop = 21;
 		break;	
    }
+  
 
 	 this.rightoffset = String(Nright) + "%";
 	 console.log("right offset:", this.rightoffset);
 	 this.topoffset = String(Ntop) + "%";
 	 console.log("top offset:", this.topoffset);
+	*/
   }
 
   updateUI(e: Event) {
@@ -416,7 +465,7 @@ export class AppComponent { // event stuff
         let input: DeviceData;
         for (let i of this.inputs) {
           if (i.name == e.eventInfoValue) {
-            input = i;
+//            input = i;
             break;
           }
         }
@@ -448,7 +497,7 @@ export class AppComponent { // event stuff
 
         for (let display of this.displaysToShow) {
           if (display.name == e.device) {
-            d = display;
+//            d = display;
             break;
           }
         }
@@ -553,7 +602,7 @@ export class AppComponent { // event stuff
 			"name": display.name,
       		"power": "on",
       		"blanked": false,
-			"input": this.inputsToShow[0].name,
+//			"input": this.inputsToShow[0].name,
 		});	
 		body.audioDevices.push({
 			"name": display.name,
@@ -571,7 +620,7 @@ export class AppComponent { // event stuff
 
 	for (let display of this.displaysToShow) {
 		display.blanked = false;
-		display.input = this.inputsToShow[0].name;
+//		display.input = this.inputsToShow[0].name;
 		this.muted = false;
 	}
   }
@@ -663,7 +712,7 @@ export class AppComponent { // event stuff
 		body.displays.push({
 			"name": display.name,
 			"power": "on",
-			"input": this.inputsToShow[0].name,
+//			"input": this.inputsToShow[0].name,
 		  	"blanked": false
 		}) // gonna have to find the right input somehow	
 	}	
@@ -776,8 +825,8 @@ export class AppComponent { // event stuff
     	for (let display of this.displaysToShow) {
 			display.selected = true;
 		}
-		this.selectedDisplay = this.displaysToShow[0];
-		this.displaysToShow[0].input = "";
+//		this.selectedDisplay = this.displaysToShow[0];
+//		this.displaysToShow[0].input = "";
 //		this.switchInput(this.inputsToShow[0]);
 	    this.allcontrol = true;
 		this.singlecontrol = false;
@@ -819,7 +868,7 @@ export class AppComponent { // event stuff
 
   // stuff for displays to show and inputs to show
   setup() {
- 	for (let device of this.api.uiconfig.devices) {
+ 	for (let device of this.api.uiconfig.outputdevices) {
 		console.log("device", device);	
 		for (let i of device.inputs) {
 			console.log("input:", i);
@@ -827,7 +876,7 @@ export class AppComponent { // event stuff
 
 		for (let d of this.displays) {
 			if (device.name == d.name) {
-				this.displaysToShow.push(d);	
+//				this.displaysToShow.push(d);	
 			}
 		}
 	} 
@@ -845,10 +894,5 @@ export class AppComponent { // event stuff
 	case 'dta':
 		return this.displayToAll;
 	} 
-  }
-
-  clearToShow() {
-	  this.displaysToShow.length = 0;
-	  this.inputsToShow.length = 0;
   }
 } 
