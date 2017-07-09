@@ -84,6 +84,7 @@ export class OutputDevice {
 	muted: boolean;
 	selected: boolean;
 	defaultinput: string;
+	odefaultinput: InputDevice;
 	inputs: string[];
 	oinputs: InputDevice[];
 }

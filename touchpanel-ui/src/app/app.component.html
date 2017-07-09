@@ -72,10 +72,10 @@
 					<div>
 					</div>
 				</li>
-                <li *ngFor="let i of inputsToShow"  class="slice input-slice" [class.selectedInput]="selectedDisplay.input == i.name" (click)="buttonpress('change input'); switchInput(i)">
+                <li *ngFor="let i of selectedDisplay.oinputs"  class="slice input-slice" [class.selectedInput]="i.selected" (click)="buttonpress('change input'); switchInput(i)">
 					<div [style.right]="rightoffset" [style.top]="topoffset" class='input'>
 						<i class='material-icons'>{{i.icon}}</i>
-						<span>{{i.displayName | lowercase}}</span>
+						<span>{{i.displayname | lowercase}}</span>
 					</div>
                 </li>
             </ul>
@@ -189,9 +189,11 @@
         </div>
         <div class="modal-body">
             <div class="management-body">
+				<!-- 
                 <div>
 					<button class="btn btn-success" (click)="clearToShow(); readToShowCookies(); displaysmodal.show()">Setup</button>
                 </div>
+				-->
                 <div>
                     <button class="btn btn-warning" (click)="refresh()">Refresh</button>
                 </div>
@@ -201,9 +203,11 @@
                 <div>
                     <button class="btn btn-info" (click)="dockerstatus(); dockerstatusmodal.show()">Docker Status</button>
                 </div>
+				<!-- 
                 <div>
                     <button class="btn btn-warning" (click)="deleteCookies()">Clear Local Data</button>
                 </div>
+				-->
                 <div>
                     <button class="btn btn-danger" (click)="confirmrebootmodal.show()">Reboot</button>
                 </div>
@@ -215,6 +219,7 @@
     </div>
 </app-modal>
 
+<!-- 
 <app-modal #displaysmodal>
     <div class="app-modal-body">
         <div class="modal-title">
@@ -262,6 +267,7 @@
         </div>
     </div>
 </app-modal>
+-->
 
 <app-modal #deviceinfomodal>
     <div class="app-modal-body">
