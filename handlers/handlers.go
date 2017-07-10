@@ -233,11 +233,13 @@ func CancelHelp(context echo.Context) error {
 }
 
 func GetJSON(context echo.Context) error {
-	log.Printf("getting json object from raspi-deployment-microservice")
 	address := os.Getenv("UI_CONFIGURATION_ADDRESS")
+
 	if len(address) == 0 {
 		return context.JSON(http.StatusInternalServerError, "UI_CONFIGURATION_ADDRESS is not set.")
 	}
+
+	log.Printf("getting json object from %s", address)
 	resp, err := http.Get(address)
 	if err != nil {
 		return context.JSON(http.StatusGatewayTimeout, err.Error())

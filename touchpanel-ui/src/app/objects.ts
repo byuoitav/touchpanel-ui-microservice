@@ -74,25 +74,49 @@ export class UIConfiguration {
 }
 
 export class OutputDevice {
+	// names is an array of display names to send the commands to. 
+	// so, in a one display situation, it should just have its own display name.
+	// in a multi display situation, it should have names of all the displays to send commands to.
+	names: string[];
+
 	name: string;
 	displayname: string;
 	icon: string;
-	input: string;
-	oinput: InputDevice;
 	blanked: boolean;
-	volume: number;
-	muted: boolean;
-	selected: boolean;
-	defaultinput: string;
-	odefaultinput: InputDevice;
-	inputs: string[];
+
 	oinputs: InputDevice[];
+	odefaultinput: InputDevice;
+	oinput: InputDevice;
+
+	oaudiodevices: AudioOutDevice[];
+	odefaultaudio: AudioOutDevice; 
+	oaudio: AudioOutDevice; // the currently selected audio out device
+
+	// don't use these:) these just come from the uiconfig object and get
+	// converted into the above objects
+	input: string;
+	defaultinput: string;
+	inputs: string[];
+	audiodevices: string[];
+	defaultaudio: string;
 }
 
 export class InputDevice {
 	name: string;
 	displayname: string;
 	icon: string;
+}
+
+export class AudioOutDevice {
+	// names is an array of audioDevice names to send the commands to. 
+	// so, in a one display situation, it should just have its own name.
+	// in a multi audio control situation, it should have names of all the audioDevices to send commands to.
+	names: string[];
+
+	power: string;
+	input: string;
+	volume: number;
+	muted: boolean;
 }
 
 export class icons {

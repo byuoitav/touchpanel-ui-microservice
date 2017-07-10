@@ -33,12 +33,12 @@
 					<span>Volume</span>
 				</div>
 				<div class='mic-volume'>
-	            	<md-slider id="colored-slider" vertical [value]="volume" (change)="buttonpress('volume slider'); updateVolume($event.value)"></md-slider>
+	            	<md-slider id="colored-slider" vertical [value]="selectedDisplay.oaudio.volume" (change)="buttonpress('volume slider'); updateVolume($event.value)"></md-slider>
 				</div>
 				<div class='mic-mute'>
 					<!-- muted should be device.muted? -->
-       	    		<i *ngIf="muted" class="material-icons" [class.red]="muted">volume_off</i>
-       	    		<i *ngIf="!muted" class="material-icons">volume_up</i>
+       	    		<i *ngIf="selectedDisplay.oaudio.muted" class="material-icons" [class.red]="muted">volume_off</i>
+       	    		<i *ngIf="!selectedDisplay.oaudio.muted" class="material-icons">volume_up</i>
 				</div>
 			</div>
 		</div>
