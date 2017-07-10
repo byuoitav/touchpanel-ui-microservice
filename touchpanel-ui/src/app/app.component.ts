@@ -98,7 +98,6 @@ export class AppComponent { // event stuff
   }
 
   public ngOnInit() {
-//	this.currentInput = new DeviceData(); 
 	this.selectedDisplay = new OutputDevice();
     this.api.setup();
     this.getData();
@@ -197,7 +196,6 @@ export class AppComponent { // event stuff
 					let ii = new InputDevice();
 					ii.name = input.name;
 					ii.displayname = input.display_name;
-					ii.selected = false;
 					ii.icon = i.icon;
 					console.log("Created input", ii);
 					this.inputs.push(ii);
@@ -665,7 +663,7 @@ export class AppComponent { // event stuff
     this.put(body);
   }
 
-  switchInput(i: InputDevice) {
+  changeInput(i: InputDevice) {
     var body = { displays: [] }
     for (let display of this.displaysToShow) {
       if (display.selected) {
@@ -678,7 +676,7 @@ export class AppComponent { // event stuff
     }
     this.put(body);
 
-	i.selected = true;
+	this.selectedDisplay.oinput = i;
   }
 
   sendingDTA: boolean;

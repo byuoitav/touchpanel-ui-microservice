@@ -93,7 +93,6 @@ export class InputDevice {
 	name: string;
 	displayname: string;
 	icon: string;
-	selected: boolean;
 }
 
 export class icons {
