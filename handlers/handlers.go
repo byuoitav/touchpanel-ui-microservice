@@ -244,7 +244,7 @@ func GetJSON(context echo.Context) error {
 
 	if len(address) == 0 {
 		if configcache != nil {
-			console.log("[error] UI_CONFIGURATION_ADDRESS is not set. Returning cached configuration...")
+			log.Printf("[error] UI_CONFIGURATION_ADDRESS is not set. Returning cached configuration...")
 			return context.JSON(http.StatusOK, configcache[hn])
 		}
 		return context.JSON(http.StatusInternalServerError, "UI_CONFIGURATION_ADDRESS is not set.")
@@ -254,7 +254,7 @@ func GetJSON(context echo.Context) error {
 	resp, err := http.Get(address)
 	if err != nil {
 		if configcache != nil {
-			console.log("[error] %s. Returning cached configuration...", err.Error())
+			log.Printf("[error] %s. Returning cached configuration...", err.Error())
 			return context.JSON(http.StatusOK, configcache[hn])
 		}
 		return context.JSON(http.StatusGatewayTimeout, err.Error())
@@ -264,7 +264,7 @@ func GetJSON(context echo.Context) error {
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		if configcache != nil {
-			console.log("[error] %s. Returning cached configuration...", err.Error())
+			log.Printf("[error] %s. Returning cached configuration...", err.Error())
 			return context.JSON(http.StatusOK, configcache[hn])
 		}
 		return context.JSON(http.StatusInternalServerError, err.Error())
@@ -274,7 +274,7 @@ func GetJSON(context echo.Context) error {
 	err = json.Unmarshal(body, &data)
 	if err != nil {
 		if configcache != nil {
-			console.log("[error] %s. Returning cached configuration...", err.Error())
+			log.Printf("[error] %s. Returning cached configuration...", err.Error())
 			return context.JSON(http.StatusOK, configcache[hn])
 		}
 		return context.JSON(http.StatusInternalServerError, err.Error())
