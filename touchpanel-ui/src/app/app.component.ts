@@ -851,8 +851,4 @@ export class AppComponent { // event stuff
 		return this.displayToAll;
 	} 
   }
-
-  event(e) {
- 	console.log("event", e); 
-  }
 } 
