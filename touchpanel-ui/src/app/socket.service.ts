@@ -5,7 +5,7 @@ import { $WebSocket, WebSocketConfig } from 'angular2-websocket/angular2-websock
 @Injectable()
 export class SocketService {
   private socket: $WebSocket;
-  private listener: EventEmitter<any> = new EventEmitter();
+  private listener: EventEmitter<any>;
   private http: Http;
   private webSocketConfig: WebSocketConfig = {
  	initialTimeout: 100,
@@ -15,11 +15,15 @@ export class SocketService {
 
   public constructor() {
 	this.socket = new $WebSocket("ws://" + location.hostname +":8888/websocket", null, this.webSocketConfig);
+	this.listener = new EventEmitter();
 
 	this.socket.onMessage((msg) => {
 	  if (msg.data.includes("keepalive")) {
 	 	// send a keep alive back?
 		console.log("keep alive message recieved.");
+	  } else if (msg.data.includes("refresh")) {
+	 	console.log("refreshing!"); 
+		location.reload();
 	  } else {
 	  	this.listener.emit({ "type": MESSAGE, "data": msg });
 	  }

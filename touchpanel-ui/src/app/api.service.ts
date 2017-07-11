@@ -50,7 +50,7 @@ export class APIService {
 
   getJSON(): Observable<Object> {
  	return this.http.get(this.baseurl + ":8888/json")
-   		.map(response => response.json());	
+  		.map(response => response.json());	
   }
 
   getHostname(): Observable<Object> {

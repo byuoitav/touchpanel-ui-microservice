@@ -132,3 +132,17 @@ input:checked + .slider {
 .slider:before {
 	background-color: $alabasterwhite;
 }
+
+// color of titles in display selection mode
+.multi-circle-title {
+	color: $alabasterwhite;
+}
+
+// circles in display selection mode
+.multi-circle {
+	background-color: $lazuliblue;
+	// icons in display selection mode
+	i {
+		color: $alabasterwhite;	
+	}
+}

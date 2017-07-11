@@ -70,8 +70,6 @@ export class AppComponent { // event stuff
   multipledisplays: boolean;
   selectedDisplay: OutputDevice; 
   selectedAudio: AudioOutDevice;
-  allcontrol: boolean;
-  singlecontrol: boolean;
   // help
   helprequested: boolean;
   // audio data
@@ -99,9 +97,10 @@ export class AppComponent { // event stuff
     this.api.setup();
     this.getData();
 	this.helprequested = false;
+	this.displayselection = false;
 	
 	// uncomment for local testing
-   this.showing = true;
+//   this.showing = true;
 //	this.microphone = true;
 
     // setup socket to recieve events
@@ -247,10 +246,12 @@ export class AppComponent { // event stuff
 	console.log("All audio devices:", this.audiodevices);
 
 	if (this.displays.length == 1) {
+		this.multipledisplays = false;
 		let arr = [];
 		arr.push(this.displays[0].name);
 		this.changeControl(arr);
 	} else {
+		this.multipledisplays = true;
 		console.log("Defaulting to controlling all displays and their associated audio devices");
 		let all = [];
 		for (let d of this.displays) {
@@ -264,9 +265,21 @@ export class AppComponent { // event stuff
   changeControl(names: string[]) {
 	  	if (names.length == 0) {
 			console.error("names is empty. need at least one display's name.", names);	
+			this.multipledisplays = false;	
 			return;
 		} else if (names.length == 1) {
 			this.selectedDisplay = this.getOutputDevice(names[0]);	
+			// select/deselect the correct displays
+			for (let d of this.displays) {
+				for (let n of names) {
+					if (d.name == n) {
+						d.selected = true;
+						break;
+					} else {
+						d.selected = false;	
+					}
+				}
+			}
 		} else {
 		  	console.log("Starting control of displays:", names);
 			// select/deselect the correct displays
@@ -274,7 +287,7 @@ export class AppComponent { // event stuff
 				for (let n of names) {
 					if (d.name == n) {
 						d.selected = true;
-						break;;
+						break;
 					} else {
 						d.selected = false;	
 					}
@@ -318,7 +331,7 @@ export class AppComponent { // event stuff
 			console.log("md:", md);	
 	
 			this.selectedDisplay = md;
-		
+			this.multipledisplays = true;	
 		}
 	    setTimeout(() => { this.buildInputMenu(); }, 0)
 
@@ -331,24 +344,6 @@ export class AppComponent { // event stuff
 			this.changeInput(this.selectedDisplay.oinputs[0]);
 		}
   }
-
-  getOutputDevice(name: string): OutputDevice {
- 	for (let d of this.displays) {
-		if (d.name == name)
-			return d;
-	} 
-	console.error("failed to find a display named:", name);
-	return null;
-  }
-  
-  getInputDevice(name: string): InputDevice {
-	for (let input of this.inputs) {
-		if (input.name == name)
-			return input;
-	} 
-	console.error("failed to find an input named:", name);
-   	return null;
-  } 
 
   getAudioDevices(names: string[]): AudioOutDevice[] {
 	  // find 'most correct' audio configuation
@@ -385,6 +380,35 @@ export class AppComponent { // event stuff
 	  return devices;
   }
 
+
+  getOutputDevice(name: string): OutputDevice {
+ 	for (let d of this.displays) {
+		if (d.name == name)
+			return d;
+	} 
+	console.error("failed to find a display named:", name);
+	return null;
+  }
+  
+  getInputDevice(name: string): InputDevice {
+	for (let input of this.inputs) {
+		if (input.name == name)
+			return input;
+	} 
+	console.error("failed to find an input named:", name);
+   	return null;
+  } 
+
+  getAudioDevice(name: string): AudioOutDevice {
+ 	for (let a of this.audiodevices) {
+		if (a.name == name) {
+			return a;	
+		}	
+	} 
+	console.error("failed to find an audio device named:", name);
+   	return null;
+  }
+
   setupFeatures() {
 	for (let feature of this.api.uiconfig.features) {
 		// todo enable features
@@ -399,7 +423,7 @@ export class AppComponent { // event stuff
 				console.log("Enabling feature:", feature);
 				break;
 			default: 
-				console.log("unknown feature:", feature);
+				console.error("unknown feature:", feature);
 				break;	
 		}
 	}
@@ -494,54 +518,32 @@ export class AppComponent { // event stuff
 
     switch (e.eventInfoKey) {
       case "input":
-        let input: DeviceData;
-        for (let i of this.inputs) {
-          if (i.name == e.eventInfoValue) {
-//            input = i;
-            break;
-          }
-        }
-
-        for (let display of this.displays) {
-          if (display.name == e.device) {
-            display.input = input.name;
-            break;
-          }
-        }
+	  	  this.selectedDisplay.oinput = this.getInputDevice(e.eventInfoValue); 
         break;
       case "power":
-        if (e.eventInfoValue == "on") {
-          this.showing = true;
-          this.startSpinning = false;
-        } else {
-          this.showing = false;
-        }
+		if (this.getOutputDevice(e.device) != null) {
+ 	       if (e.eventInfoValue == "on") {
+ 	         this.showing = true;
+ 	         this.startSpinning = false;
+ 	       } else {
+ 	         this.showing = false;
+ 	       }
+	  	}
         break;
       case "volume":
-//        this.muted = false;
-//       this.volume = Number(e.eventInfoValue);
+		let ad = this.getAudioDevice(e.device) 
+		ad.volume = Number(e.eventInfoValue);
+		ad.muted = false;
         break;
       case "muted":
-//        this.muted = (e.eventInfoValue == 'true');
+		this.getAudioDevice(e.device).muted = (e.eventInfoValue == 'true');
         break;
       case "blanked":
-        var d: DeviceData;
-
-        for (let display of this.displays) {
-          if (display.name == e.device) {
-//            d = display;
-            break;
-          }
-        }
-
-        d.blanked = (e.eventInfoValue == 'true');
+		this.getOutputDevice(e.device).blanked = (e.eventInfoValue == 'true');
+	  	this.updateBlanked();
         break;
-	  case "refresh": 
-		  console.log("refresh message recieved");
-	  	  this.refresh();
-		  break;
       default:
-        console.log("unknown eventInfoKey:", e.eventInfoKey);
+        console.error("unknown eventInfoKey:", e.eventInfoKey);
         break;
     }
   }
@@ -560,9 +562,10 @@ export class AppComponent { // event stuff
   enterScreen() {
     if (this.sendingOn)
       return;
-
+  	
     this.sendingOn = true;
     this.startSpinning = true;
+	this.displayselection = false;
 	let body = { displays: [], audioDevices: [] }
 	for (let display of this.displays) {
 		body.displays.push({
@@ -594,7 +597,6 @@ export class AppComponent { // event stuff
 	}
   }
 
-  muted: boolean;
   toggleMute() {
     var body = { audioDevices: [] }
     for (let a of this.selectedDisplay.oaudiodevices) {
@@ -607,11 +609,17 @@ export class AppComponent { // event stuff
       }
     }
     this.put(body);
+  }
+
+  isMuted(): boolean {
+	// null case
+	if (!this.selectedDisplay.oaudiodevices)
+		return
 
  	for (let a of this.selectedDisplay.oaudiodevices) {
-		this.muted = a.muted ? true : false;	
-		if (this.muted) break; // return true if only one is muted
+		if (a.muted) return true;
 	} 
+	return false;
   }
 
 
@@ -634,7 +642,7 @@ export class AppComponent { // event stuff
 		a.volume = volume;
         body.audioDevices.push({
           "name": a.name,
-          "volume": a.volume
+          "volume": volume
         });
       }
     }
@@ -653,7 +661,10 @@ export class AppComponent { // event stuff
      }
     }
     this.put(body);
+	this.updateBlanked();
+  }
 
+  updateBlanked() {
 	for (let display of this.displays) {
 		if (display.selected) {
 			this.selectedDisplay.blanked = display.blanked ? true : false;			
@@ -799,38 +810,22 @@ export class AppComponent { // event stuff
     this.api.reboot().subscribe();
   }
 
-  goToSingleControl(d) {
-	if (d == 'all') {
-		console.log("going to all control");	
-    	for (let display of this.displays) {
-//			display.selected = true;
+  goToDisplayControl(names: string[]) {
+	if (names[0] == 'all') {
+		names = [];
+		for (let dd of this.displays) {
+			names.push(dd.name);	
 		}
-//		this.selectedDisplay = this.displays[0];
-//		this.displays[0].input = "";
-//		this.switchInput(this.inputsToShow[0]);
-	    this.allcontrol = true;
-		this.singlecontrol = false;
-	} else {
-		for (let display of this.displays) {
-			if (d === display) {
-//				display.selected = true;
-			} else {
-//				display.selected = false;	
-			}
-		}
-		this.selectedDisplay = d;
-		this.singlecontrol = true;
-		this.allcontrol = false;
 	}
+	this.changeControl(names);
 	this.displayselection = false;
   }
 
   goToDisplaySelection() {
  	console.log("going to display selection") 
-	this.allcontrol = false;
-	this.singlecontrol = false;
+
 	this.ringopen = false;
-	this.displayselection = !this.displayselection;
+	this.displayselection = true;
   }
 
   help(s: String) {

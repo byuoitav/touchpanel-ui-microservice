@@ -14,12 +14,12 @@
 	<!-- display-selection -->
 	<div *ngIf="multipledisplays" class='main-control-h'>
 		<div class='display-selection'>
-			<div *ngFor="let device of displaysToShow" [class.fadeout]="!(device === selectedDisplay) && !displayselection" (click)="goToSingleControl(device)">
+			<div *ngFor="let d of displays" [class.fadeout]="!displayselection" (click)="goToDisplayControl([d.name])">
 				<div class='multi-circle-title'>
-					<span>{{device.displayName}}</span>
+					<span>{{d.displayname}}</span>
 				</div>
 				<div class='multi-circle'>
-					<i class='material-icons'>{{device.icon}}</i>
+					<i class='material-icons'>{{d.icon}}</i>
 				</div>
 			</div>
 		</div>
@@ -47,8 +47,7 @@
     <div [class.hidden]='displayselection || microphonecontrol' class='main-control-h'>
         <div class='main-control-v' >
 			<div class='roomname' [class.roomname-transition]="!selectedDisplay.blanked || true" (click)="buttonpress('blank'); toggleBlank();">
-				<span *ngIf="!allcontrol">{{selectedDisplay.displayname | lowercase}}</span>
-				<span *ngIf="allcontrol">all displays</span>
+				<span>{{selectedDisplay.displayname | lowercase}}</span>
 			</div>
             <div class='circle' [class.circle-shrink]="!selectedDisplay.blanked || true" [class.circle-blanked]="selectedDisplay.blanked" (click)="buttonpress('blank'); toggleBlank();">
 				<i class='material-icons'>{{selectedDisplay.icon}}</i>
@@ -89,8 +88,8 @@
 		</div>
 		<!-- all control -->
 		<div *ngIf="multipledisplays" class="all-control" [class.alignleft]="!displayToAll">
-			<i *ngIf="allcontrol || singlecontrol" class='material-icons' (click)="goToDisplaySelection()">group_work</i>
-			<i *ngIf="!allcontrol && !singlecontrol" class='material-icons' (click)="goToSingleControl('all')">album</i>
+			<i *ngIf="!displayselection" class='material-icons' (click)="goToDisplaySelection()">group_work</i>
+			<i *ngIf="displayselection" class='material-icons' (click)="goToDisplayControl(['all'])">album</i>
 		</div>
     </div>
 
@@ -100,8 +99,8 @@
 			<i class="material-icons">mic</i>
 		</div>
        	<div (click)="buttonpress('mute'); toggleMute()" [class.alignright]="!microphone">
-       	    <i *ngIf="muted" class="material-icons red">volume_off</i>
-       	    <i *ngIf="!muted" class="material-icons">volume_up</i>
+       	    <i *ngIf="isMuted()" class="material-icons red">volume_off</i>
+       	    <i *ngIf="!isMuted()" class="material-icons">volume_up</i>
        	</div>
     </div>
 

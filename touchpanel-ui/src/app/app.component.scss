@@ -551,7 +551,6 @@ body {
     border-radius: 50%;
     width: 35vh;  // set these dynamically based on number of displays?
     height: 35vh;
-    background-color: #99ffff;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -561,14 +560,12 @@ body {
 	
 	i {
 		font-size: 18vh;	
-		color: #003333;
 	}
 }
 
 .multi-circle-title {
 	text-align: center;
 	padding-bottom: 1vh;
-	color: #001a1a;
 }
 
 .fadeout {
