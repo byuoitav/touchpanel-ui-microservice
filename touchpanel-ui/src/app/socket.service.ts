@@ -23,7 +23,7 @@ export class SocketService {
 		console.log("keep alive message recieved.");
 	  } else if (msg.data.includes("refresh")) {
 	 	console.log("refreshing!"); 
-		location.reload();
+		location.assign("http://" + location.hostname + ":8888/");
 	  } else {
 	  	this.listener.emit({ "type": MESSAGE, "data": msg });
 	  }
