@@ -264,8 +264,8 @@ export class AppComponent { // event stuff
 
   changeControl(names: string[]) {
 	  	if (names.length == 0) {
-			console.error("names is empty. need at least one display's name.", names);	
-			this.multipledisplays = false;	
+			console.error("names is empty. need at least one display's name.", names);
+			this.multipledisplays = false;
 			return;
 		} else if (names.length == 1) {
 			this.selectedDisplay = this.getOutputDevice(names[0]);	
@@ -280,6 +280,7 @@ export class AppComponent { // event stuff
 					}
 				}
 			}
+			this.selectedDisplay.oaudiodevices = this.getAudioDevices(names);
 		} else {
 		  	console.log("Starting control of displays:", names);
 			// select/deselect the correct displays
