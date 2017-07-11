@@ -303,7 +303,7 @@ export class AppComponent { // event stuff
 			md.name = "all control";
 			md.displayname = "all devices";
 			md.icon = "device_hub";	
-			md.blanked = false; // send command for this?
+			md.blanked = true;
 	
 			// build out common features (inputs, defaultinput)
 			let inputs: InputDevice[] = [];
@@ -315,6 +315,7 @@ export class AppComponent { // event stuff
 				}
 	
 				defaultinputs.push(display.odefaultinput);
+				if (!display.blanked) md.blanked = false;
 			}
 			inputs = inputs.filter(input => {
 				let count = 0;

@@ -98,14 +98,14 @@
 		<div *ngIf="microphone" class="microphone" (click)="microphonecontrol = !microphonecontrol">
 			<i class="material-icons">mic</i>
 		</div>
-       	<div (click)="buttonpress('mute'); toggleMute()" [class.alignright]="!microphone">
+       	<div *ngIf="!displayselection" (click)="buttonpress('mute'); toggleMute()" [class.alignright]="!microphone">
        	    <i *ngIf="isMuted()" class="material-icons red">volume_off</i>
        	    <i *ngIf="!isMuted()" class="material-icons">volume_up</i>
        	</div>
     </div>
 
     <!-- sidebar -->
-    <div class='sidebar'>
+    <div *ngIf="!displayselection" class='sidebar'>
         <div class='volume alignright'>
             <md-slider id="colored-slider" vertical [value]="volume" (change)="buttonpress('volume slider'); changeVolume($event.value)"></md-slider>
         </div>
