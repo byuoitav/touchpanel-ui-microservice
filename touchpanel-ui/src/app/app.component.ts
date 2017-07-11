@@ -176,8 +176,6 @@ export class AppComponent { // event stuff
 		this.createInputDevices();
         this.createOutputDevices();
 		this.setupFeatures(); 
-
-        setTimeout(() => { this.buildInputMenu(); }, 0)
       });
     });
   }
@@ -220,13 +218,6 @@ export class AppComponent { // event stuff
 						d.oinput = this.getInputDevice(sdisplay.input); 
 						d.blanked = sdisplay.blanked;
 
-						/*
-						d.oaudiodevices = [];
-						for (let a of jdisplay.audiodevices) {
-							d.oaudiodevices.push(this.getAudioOutputDevice(a));	
-						}
-					   */
-
 						console.log("Created display:", d);
 						this.displays.push(d);
 					}
@@ -248,18 +239,18 @@ export class AppComponent { // event stuff
 					ad.muted = sa.muted;
 
 					this.audiodevices.push(ad);
-					console.log("Created audio device:", ad);
-				}	
+				}
 			}
 		}
 	}
 	this.audiodevices = Array.from(new Set(this.audiodevices)); // clean up duplicates
+	console.log("All audio devices:", this.audiodevices);
 
 	if (this.displays.length == 1) {
 		let arr = [];
 		arr.push(this.displays[0].name);
 		this.changeControl(arr);
-	} else { 
+	} else {
 		console.log("Defaulting to controlling all displays and their associated audio devices");
 		let all = [];
 		for (let d of this.displays) {
@@ -275,79 +266,76 @@ export class AppComponent { // event stuff
 			console.error("names is empty. need at least one display's name.", names);	
 			return;
 		} else if (names.length == 1) {
-			console.log("Starting control of:", names);
-			// change control for one device
-			console.error("not implemented");
-		}
-
-	  	console.log("Starting control of displays:", names);
-		// select/deselect the correct displays
-		for (let d of this.displays) {
-			for (let n of names) {
-				if (d.name == n) {
-					d.selected = true;
-					continue;
-				} else {
-					d.selected = false;	
+			this.selectedDisplay = this.getOutputDevice(names[0]);	
+		} else {
+		  	console.log("Starting control of displays:", names);
+			// select/deselect the correct displays
+			for (let d of this.displays) {
+				for (let n of names) {
+					if (d.name == n) {
+						d.selected = true;
+						break;;
+					} else {
+						d.selected = false;	
+					}
 				}
 			}
-		}
-
-		let displays: OutputDevice[];
-		displays = [];
-		for (let n of names)
-			displays.push(this.getOutputDevice(n));
-
-		let md = new OutputDevice();
-		md.name = "all control";
-		md.displayname = "all devices";
-		md.icon = "device_hub";	
-		md.blanked = false; // send command for this?
-
-		//
-		// build arrays of common features 
-		// each input that the devices share 
-		// if all devices share a default input
-		//
-		// each audio out device the devices share
-		// 
-		let inputs: InputDevice[] = [];
-		let defaultinputs: InputDevice[] = [];
-
-		for (let display of displays) {
-			for (let i of display.oinputs) {
-				inputs.push(i); 
+	
+			let displays: OutputDevice[];
+			displays = [];
+			for (let n of names)
+				displays.push(this.getOutputDevice(n));
+	
+			let md = new OutputDevice();
+			md.name = "all control";
+			md.displayname = "all devices";
+			md.icon = "device_hub";	
+			md.blanked = false; // send command for this?
+	
+			// build out common features (inputs, defaultinput)
+			let inputs: InputDevice[] = [];
+			let defaultinputs: InputDevice[] = [];
+	
+			for (let display of displays) {
+				for (let i of display.oinputs) {
+					inputs.push(i); 
+				}
+	
+				defaultinputs.push(display.odefaultinput);
 			}
-
-			defaultinputs.push(display.odefaultinput);
+			inputs = inputs.filter(input => {
+				let count = 0;
+				for (let i of inputs) {
+					if (i == input)
+						count++;
+				}
+				return count == displays.length;
+			});	
+			md.oinputs = Array.from(new Set(inputs)); // only include one of each input
+			md.odefaultinput = Array.from(new Set(defaultinputs)).length == 1 ? Array.from(new Set(defaultinputs))[0] : null; 
+			md.oaudiodevices = this.getAudioDevices(names);
+	
+			console.log("md:", md);	
+	
+			this.selectedDisplay = md;
+		
 		}
-		inputs = inputs.filter(input => {
-			let count = 0;
-			for (let i of inputs) {
-				if (i == input)
-					count++;	
-			}
-			return count == displays.length;
-		});	
-		md.oinputs = Array.from(new Set(inputs)); // only include one of each input
-		md.odefaultinput = Array.from(new Set(defaultinputs)).length == 1 ? Array.from(new Set(defaultinputs))[0] : null; 
-		md.oaudiodevices = this.getAudioDevices(names);
+	    setTimeout(() => { this.buildInputMenu(); }, 0)
 
 		// select the default input
-		if (md.odefaultinput != null) {
-			// change input			
-		}	
-
-		console.log("md:", md);	
-
-		this.selectedDisplay = md;
-//        setTimeout(() => { this.buildInputMenu(); }, 0)
+		if (this.selectedDisplay.odefaultinput != null) {
+			console.log("switching to default input:", this.selectedDisplay.odefaultinput.name);
+			this.changeInput(this.selectedDisplay.odefaultinput);
+		} else {
+			console.log("no default input found. switching to", this.selectedDisplay.oinputs[0].name);
+			this.changeInput(this.selectedDisplay.oinputs[0]);
+		}
   }
 
   getOutputDevice(name: string): OutputDevice {
  	for (let d of this.displays) {
 		if (d.name == name)
-			return d;	
+			return d;
 	} 
 	console.error("failed to find a display named:", name);
 	return null;
@@ -356,7 +344,7 @@ export class AppComponent { // event stuff
   getInputDevice(name: string): InputDevice {
 	for (let input of this.inputs) {
 		if (input.name == name)
-			return input;	
+			return input;
 	} 
 	console.error("failed to find an input named:", name);
    	return null;
@@ -390,7 +378,7 @@ export class AppComponent { // event stuff
 				break;
 			} else {
 				a.selected = false;	
-			}	
+			}
 		} 
 	  }
 
@@ -602,24 +590,30 @@ export class AppComponent { // event stuff
 
 	for (let display of this.displays) {
 		display.blanked = false;
-		display.input = display.odefaultinput.name; 
+		display.input = display.odefaultinput.name;
 	}
   }
 
+  muted: boolean;
   toggleMute() {
-//	this.selectedDisplay.oaudio.muted = this.selectedDisplay.oaudio.muted ? false : true;
-
     var body = { audioDevices: [] }
     for (let a of this.selectedDisplay.oaudiodevices) {
       if (a.selected) {
+	  	a.muted = !a.muted;
         body.audioDevices.push({
           "name": a.name,
-//          "muted": this.selectedDisplay.oaudio.muted 
+          "muted": a.muted 
         });
       }
     }
     this.put(body);
+
+ 	for (let a of this.selectedDisplay.oaudiodevices) {
+		this.muted = a.muted ? true : false;	
+		if (this.muted) break; // return true if only one is muted
+	} 
   }
+
 
   powerOff() {
 	let body = { displays: [] }
@@ -633,23 +627,21 @@ export class AppComponent { // event stuff
     this.showing = !this.showing;
   }
 
-  updateVolume(volume: number) {
-//    this.volume = volume;
-//    this.muted = false;
-
+  changeVolume(volume: number) {
     var body = { audioDevices: [] }
-    for (let speaker of this.displays) {
-//      if (speaker.selected) {
-//        body.audioDevices.push({
-//          "name": speaker.name,
-//          "volume": this.volume
-//        });
-//      }
+    for (let a of this.selectedDisplay.oaudiodevices) {
+      if (a.selected) {
+		a.volume = volume;
+        body.audioDevices.push({
+          "name": a.name,
+          "volume": a.volume
+        });
+      }
     }
     this.put(body);
   }
 
-  blank() {
+  toggleBlank() {
     var body = { displays: [] }
     for (let display of this.displays) {
       if (display.selected) {
@@ -661,24 +653,31 @@ export class AppComponent { // event stuff
      }
     }
     this.put(body);
+
+	for (let display of this.displays) {
+		if (display.selected) {
+			this.selectedDisplay.blanked = display.blanked ? true : false;			
+			if (this.selectedDisplay.blanked) break;
+		}	
+	}
   }
 
   changeInput(i: InputDevice) {
     var body = { displays: [] }
     for (let display of this.displays) {
-//      if (display.selected) {
-//		display.input = i.name;	// for appearances? faster (click)?
-//        body.displays.push({
-//          "name": display.name,
-//          "input": i.name,
-//        });
-//      }
+      if (display.selected) {
+        body.displays.push({
+          "name": display.name,
+          "input": i.name,
+        });
+      }
     }
     this.put(body);
 
 	this.selectedDisplay.oinput = i;
   }
 
+  /*
   sendingDTA: boolean;
   sendDisplayToAll() {
 	if (this.sendingDTA)
@@ -698,6 +697,7 @@ export class AppComponent { // event stuff
 	}	
     this.put(body);
   }
+ */
 
   buttonpress(name: string) {
     let event = {
