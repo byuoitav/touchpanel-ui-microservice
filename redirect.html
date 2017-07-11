@@ -6,6 +6,7 @@
 			getJSON('http://localhost:8888/json', function(err, xhr) {
 				if (err != null) {
 					alert("Something went wrong: " + err.response);	
+					location.reload();
 				} else {
 					console.log("data", xhr);	
 					window.location = "http://localhost:8888/" + xhr.response.ui;
