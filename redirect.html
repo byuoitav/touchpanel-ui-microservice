@@ -7,6 +7,9 @@
 				if (err != null) {
 					alert("Something went wrong: " + err.response);	
 					location.reload();
+				} else if (xhr.response == null) {
+					alert("Connected to database, but no configuration is availble for me :(");
+					location.reload();
 				} else {
 					console.log("data", xhr);	
 					window.location = "http://localhost:8888/" + xhr.response.ui;
@@ -28,12 +31,19 @@
     		};
     		xhr.send();	
 		}
+
+		function refresh() {
+			location.reload();	
+		}
 	</script>
 </head>
 
-<body onload="redirect();">
+<body onload="redirect()" style="min-width: 100%; min-height: 100%; overflow: hidden;">
 	<div>
-		<h1>Redirecting...</h1>
+		<h1>redirecting...</h1>
+	</div>
+	<div style="margin-top: 60vh; margin-left: 40%;">
+		<button onClick="refresh()" style="min-height: 10vh; min-width: 30%;">refresh page</button>
 	</div>
 </body>
 </html>
