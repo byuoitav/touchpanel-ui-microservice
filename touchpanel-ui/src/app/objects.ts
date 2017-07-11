@@ -68,16 +68,19 @@ export class DeviceData {
 
 export class UIConfiguration {
 	inputdevices: InputDevice[];
-	outputdevices: OutputDevice[];
+	displays: OutputDevice[];
 	features: string[];
+	audio: AudioConfig[]; 
 	ui: string;
 }
 
+export class AudioConfig {
+	displays: string;
+	audiodevices: string;
+}
+
 export class OutputDevice {
-	// names is an array of display names to send the commands to. 
-	// so, in a one display situation, it should just have its own display name.
-	// in a multi display situation, it should have names of all the displays to send commands to.
-	names: string[];
+	selected: boolean;
 
 	name: string;
 	displayname: string;
@@ -89,8 +92,6 @@ export class OutputDevice {
 	oinput: InputDevice;
 
 	oaudiodevices: AudioOutDevice[];
-	odefaultaudio: AudioOutDevice; 
-	oaudio: AudioOutDevice; // the currently selected audio out device
 
 	// don't use these:) these just come from the uiconfig object and get
 	// converted into the above objects
@@ -108,11 +109,9 @@ export class InputDevice {
 }
 
 export class AudioOutDevice {
-	// names is an array of audioDevice names to send the commands to. 
-	// so, in a one display situation, it should just have its own name.
-	// in a multi audio control situation, it should have names of all the audioDevices to send commands to.
-	names: string[];
+	selected: boolean;	
 
+	name: string;
 	power: string;
 	input: string;
 	volume: number;
