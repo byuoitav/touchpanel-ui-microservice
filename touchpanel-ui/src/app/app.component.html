@@ -56,8 +56,8 @@
 				<span *ngIf="selectedDisplay.blanked" class='blank'>picture off</span>
 				<div class='switch-wrapper'>
 					<label class="switch">
-						<input [checked]="!selectedDisplay.blanked" type="checkbox">
-						<div class="slider round" (click)="buttonpress('blank'); toggleBlank();"></div>
+						<input disabled="disabled" [checked]="!selectedDisplay.blanked" type="checkbox">
+						<div class="slider round"></div>
 					</label>
 				</div>
             </div>
