@@ -267,6 +267,7 @@ export class AppComponent { // event stuff
   }
 
   changeControl(names: string[]) {
+	  	console.log("Changing control to:", names);
 	  	if (names.length == 0) {
 			console.error("names is empty. need at least one display's name.", names);
 			this.multipledisplays = false;
@@ -438,18 +439,18 @@ export class AppComponent { // event stuff
 
   // build the input menu
   buildInputMenu() {
-    console.log("ring:", this.ring);
+//    console.log("ring:", this.ring);
     let numOfChildren = this.ring.nativeElement.childElementCount;
-    console.log("num of children:", numOfChildren);
+//   console.log("num of children:", numOfChildren);
     let children = this.ring.nativeElement.children;
     let angle = 360 / numOfChildren;
-    console.log("angle", angle);
+//    console.log("angle", angle);
     // svg arc length 
     this.arcpath = this.getArc(.5, .5, .5, 0, angle);
 
 	// apply styles to first two (title area)
 	for (let i = 0; i < 2; i++) {
-	  console.log("room name slice", i + ":", children[i]);	
+//	  console.log("room name slice", i + ":", children[i]);	
 
       let rotate = "rotate(" + String(angle * -i) + "deg)";
       children[i].style.transform = rotate;
@@ -457,7 +458,7 @@ export class AppComponent { // event stuff
 
     // apply styles to children
     for (let i = 2; i < numOfChildren; i++) {
-      console.log("children[" + i + "]", children[i]);
+//      console.log("children[" + i + "]", children[i]);
 
       // rotate the slice
       let rotate = "rotate(" + String(angle * -i) + "deg)";
@@ -515,9 +516,9 @@ export class AppComponent { // event stuff
    }
   
 	 this.rightoffset = String(Nright) + "%";
-	 console.log("right offset:", this.rightoffset);
+//	 console.log("right offset:", this.rightoffset);
 	 this.topoffset = String(Ntop) + "%";
-	 console.log("top offset:", this.topoffset);
+//	 console.log("top offset:", this.topoffset);
   }
 
   updateUI(e: Event) {
@@ -527,6 +528,8 @@ export class AppComponent { // event stuff
 		switch(e.eventInfoKey) {
 			case "input":
 				if (e.device == "dta") {
+					let i = this.getInputDevice(e.eventInfoValue);
+					i.name = e.eventInfoValue;
 			    	var body = { displays: [] }
 			    	for (let display of this.displays) {
 			      		body.displays.push({
@@ -534,21 +537,51 @@ export class AppComponent { // event stuff
 			        		"input": e.eventInfoValue,
 			      		});
 			    	}
+					console.log("[DTA] Changing input", body);
 			    	this.put(body);
-			
-//					this.selectedDisplay.oinput = i;
-				
 					// keep same 'input' selected on circle, maybe update icon?
+				} 
+
+				let i = this.getInputDevice(this.dtaMasterHost);
+				if (i != null) this.selectedDisplay.oinput = i;
+				break;
+			case "blanked": 
+				if (e.device == "dta") {
+					var body = { displays: [] }	
+					for (let display of this.displays) {
+						body.displays.push({
+							"name": display.name,
+							"blanked": (e.eventInfoValue == 'true')	
+						})
+					}
+					this.put(body);
 				} else {
-					// make dta option available?	
+					let d = this.getOutputDevice(e.device);
+					if (d != null) d.blanked = (e.eventInfoValue == 'true');
 				}
 				break;
 			case "dta":
 				this.dtaMinion = (e.eventInfoValue == 'true');  
 				if (!this.dtaMinion) {
-		  			this.dtaMasterHost = "";
 					// TODO delete the new 'input', redraw circle
+					for (let i of this.inputs) {
+						if (i.displayname == this.dtaMasterHost) {
+							this.inputs.splice(this.inputs.indexOf(i));	
+							console.log("this.inputs", this.inputs);
+						}
+					}
+		  			this.dtaMasterHost = null;
+					let names: string[] = [];
+					for (let d of this.displays) {
+						if (d.selected) {
+							names.push(d.name);
+							d.oinputs.splice(this.inputs.indexOf(i));
+							console.log("d.oinputs", d);
+						}
+					}
+					this.changeControl(names);
 				}
+				break;
 			default: 
 	       	 	console.error("unknown eventInfoKey:", e.eventInfoKey);
 	        	break;
@@ -556,7 +589,9 @@ export class AppComponent { // event stuff
 	} else {
 	    switch (e.eventInfoKey) {
 	      case "input":
-		  	  this.selectedDisplay.oinput = this.getInputDevice(e.eventInfoValue); 
+			  	let od = this.getOutputDevice(e.device);
+				let i  = this.getInputDevice(e.eventInfoValue);
+				if (i != null && od != null) od.oinput = i;
 	        break;
 	      case "power":
 			if (this.getOutputDevice(e.device) != null) {
@@ -597,10 +632,14 @@ export class AppComponent { // event stuff
 						"name": display.name,
 						"blanked": false,	
 					});
-					body.audioDevices.push({
-						"muted": true,
-					});
+					for (let ad of display.oaudiodevices) {
+						body.audioDevices.push({
+							"name": ad.name,
+							"muted": true	
+						})	
+					}
 				}
+				console.log("[DTA] Entering dta mode:", body);
 				this.put(body);
 
 				let i = new InputDevice();
@@ -617,8 +656,10 @@ export class AppComponent { // event stuff
 					}
 				}
 				this.changeControl(names);
+
 				// 	mute and disable audio controls
 			}
+			break;
 	      default:
 	        console.error("unknown eventInfoKey:", e.eventInfoKey);
 	        break;
@@ -728,6 +769,15 @@ export class AppComponent { // event stuff
   }
 
   toggleBlank() {
+	if (this.dtaMaster) {
+		let event = {
+			"device": "dta",
+			"eventinfokey": "blanked",
+			"eventinfovalue": this.selectedDisplay.blanked
+		}
+ 		this.api.publishFeature(event)
+	}
+
     var body = { displays: [] }
     for (let display of this.displays) {
       if (display.selected) {
@@ -752,6 +802,15 @@ export class AppComponent { // event stuff
   }
 
   changeInput(i: InputDevice) {
+	if (this.dtaMaster) {
+		let event = {
+			"device": "dta",
+			"eventinfokey": "input",
+			"eventinfovalue": i.name	
+		}
+ 		this.api.publishFeature(event)
+	}
+
     var body = { displays: [] }
     for (let display of this.displays) {
       if (display.selected) {
