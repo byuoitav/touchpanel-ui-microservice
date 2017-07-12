@@ -21,19 +21,20 @@ func main() {
 	router.GET("/health", echo.WrapHandler(http.HandlerFunc(health.Check)))
 
 	router.GET("/websocket", handlers.OpenWebSocket)
-	router.POST("/subscribe", handlers.Subscribe)
 	router.GET("/hostname", handlers.GetHostname)
-	router.PUT("/publish", handlers.PublishEvent)
 	router.GET("/deviceinfo", handlers.GetDeviceInfo)
 	router.GET("/refresh", handlers.Refresh)
 	router.GET("/reboot", handlers.Reboot)
 	router.GET("/dockerstatus", handlers.GetDockerStatus)
+	router.GET("/json", handlers.GetJSON)
 
+	router.POST("/subscribe", handlers.Subscribe)
 	router.POST("/help", handlers.Help)
 	router.POST("/confirmhelp", handlers.ConfirmHelp)
 	router.POST("/cancelhelp", handlers.CancelHelp)
+	router.POST("/publish", handlers.PublishEvent)
+	router.POST("/publishfeature", handlers.PublishEvent)
 
-	router.GET("/json", handlers.GetJSON)
 	router.Static("/", "redirect.html")
 	router.Static("/circle-default", "circle-default")
 
