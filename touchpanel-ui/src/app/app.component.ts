@@ -569,12 +569,15 @@ export class AppComponent { // event stuff
 		  	}
 	        break;
 	      case "volume":
-			let ad = this.getAudioDevice(e.device) 
-			ad.volume = Number(e.eventInfoValue);
-			ad.muted = false;
+			let vd = this.getAudioDevice(e.device) 
+		  	if (vd != null) {
+				vd.volume = Number(e.eventInfoValue);
+				vd.muted = false;
+			}
 	        break;
 	      case "muted":
-			this.getAudioDevice(e.device).muted = (e.eventInfoValue == 'true');
+			let md = this.getAudioDevice(e.device);
+		  	if (md != null) md.muted = (e.eventInfoValue == 'true');
 	        break;
 	      case "blanked":
 			let d = this.getOutputDevice(e.device)

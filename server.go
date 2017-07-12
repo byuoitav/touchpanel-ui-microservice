@@ -33,7 +33,7 @@ func main() {
 	router.POST("/confirmhelp", handlers.ConfirmHelp)
 	router.POST("/cancelhelp", handlers.CancelHelp)
 	router.POST("/publish", handlers.PublishEvent)
-	router.POST("/publishfeature", handlers.PublishEvent)
+	router.POST("/publishfeature", handlers.PublishFeature)
 
 	router.Static("/", "redirect.html")
 	router.Static("/circle-default", "circle-default")
