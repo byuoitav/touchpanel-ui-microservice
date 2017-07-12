@@ -523,21 +523,25 @@ export class AppComponent { // event stuff
   updateUI(e: Event) {
     console.log("update ui based on event:", e);
 
-	if (this.dtaMinion && e.device == "dta") {
+	if (this.dtaMinion) {
 		switch(e.eventInfoKey) {
 			case "input":
-			    var body = { displays: [] }
-			    for (let display of this.displays) {
-			      body.displays.push({
-			        "name": display.name,
-			        "input": e.eventInfoValue,
-			      });
-			    }
-			    this.put(body);
+				if (e.device == "dta") {
+			    	var body = { displays: [] }
+			    	for (let display of this.displays) {
+			      		body.displays.push({
+			       	 		"name": display.name,
+			        		"input": e.eventInfoValue,
+			      		});
+			    	}
+			    	this.put(body);
 			
-//				this.selectedDisplay.oinput = i;
+//					this.selectedDisplay.oinput = i;
 				
-				// keep same 'input' selected on circle, maybe update icon?
+					// keep same 'input' selected on circle, maybe update icon?
+				} else {
+					// make dta option available?	
+				}
 				break;
 			case "dta":
 				this.dtaMinion = (e.eventInfoValue == 'true');  
@@ -596,9 +600,21 @@ export class AppComponent { // event stuff
 				}
 				this.put(body);
 
+				let i = new InputDevice();
+				i.name = this.dtaMasterHost;
+				i.displayname =  this.dtaMasterHost;
+				i.icon = "people";
+				this.inputs.push(i);
+
+				let names: string[] = [];
+				for (d of this.displays) {
+					if (d.selected) {
+						d.oinputs.push(this.getInputDevice(this.dtaMasterHost));
+						names.push(d.name);
+					}
+				}
+				this.changeControl(names);
 				// 	mute and disable audio controls
-				// 	disable display all start option
-				// TODO build the new 'input', redraw circle
 			}
 	      default:
 	        console.error("unknown eventInfoKey:", e.eventInfoKey);
