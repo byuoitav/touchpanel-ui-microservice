@@ -76,6 +76,9 @@ export class AppComponent { // event stuff
   microphone: boolean;
   microphonecontrol: boolean;
 
+  // features
+  displaytoall: boolean;
+
   public constructor(private socket: SocketService, private api: APIService, private cookie: CookieService) {
     this.messages = [];
     this.events = [];
@@ -86,6 +89,7 @@ export class AppComponent { // event stuff
     this.startSpinning = false;
     this.sendingOn = false;
 	this.ringopen = false;
+	this.displaytoall = false;
 
     // management
     this.deviceInfo = new Object();
@@ -100,7 +104,7 @@ export class AppComponent { // event stuff
 	this.displayselection = false;
 	
 	// uncomment for local testing
-//   this.showing = true;
+   this.showing = true;
 //	this.microphone = true;
 
     // setup socket to recieve events
@@ -417,6 +421,7 @@ export class AppComponent { // event stuff
 		switch(feature) {
 			case 'display-to-all':
 				console.log("Enabling feature:", feature);
+				this.displaytoall = true;
 				break;
 			case 'power-off-all':
 				console.log("Enabling feature:", feature);
@@ -518,36 +523,88 @@ export class AppComponent { // event stuff
   updateUI(e: Event) {
     console.log("update ui based on event:", e);
 
-    switch (e.eventInfoKey) {
-      case "input":
-	  	  this.selectedDisplay.oinput = this.getInputDevice(e.eventInfoValue); 
-        break;
-      case "power":
-		if (this.getOutputDevice(e.device) != null) {
- 	       if (e.eventInfoValue == "on") {
- 	         this.showing = true;
- 	         this.startSpinning = false;
- 	       } else {
- 	         this.showing = false;
- 	       }
-	  	}
-        break;
-      case "volume":
-		let ad = this.getAudioDevice(e.device) 
-		ad.volume = Number(e.eventInfoValue);
-		ad.muted = false;
-        break;
-      case "muted":
-		this.getAudioDevice(e.device).muted = (e.eventInfoValue == 'true');
-        break;
-      case "blanked":
-		this.getOutputDevice(e.device).blanked = (e.eventInfoValue == 'true');
-	  	this.updateBlanked();
-        break;
-      default:
-        console.error("unknown eventInfoKey:", e.eventInfoKey);
-        break;
-    }
+	if (this.dtaMinion && e.device == "dta") {
+		switch(e.eventInfoKey) {
+			case "input":
+			    var body = { displays: [] }
+			    for (let display of this.displays) {
+			      body.displays.push({
+			        "name": display.name,
+			        "input": e.eventInfoValue,
+			      });
+			    }
+			    this.put(body);
+			
+//				this.selectedDisplay.oinput = i;
+				
+				// keep same 'input' selected on circle, maybe update icon?
+				break;
+			case "dta":
+				this.dtaMinion = (e.eventInfoValue == 'true');  
+				if (!this.dtaMinion) {
+		  			this.dtaMasterHost = "";
+					// TODO delete the new 'input', redraw circle
+				}
+			default: 
+	       	 	console.error("unknown eventInfoKey:", e.eventInfoKey);
+	        	break;
+		}	
+	} else {
+	    switch (e.eventInfoKey) {
+	      case "input":
+		  	  this.selectedDisplay.oinput = this.getInputDevice(e.eventInfoValue); 
+	        break;
+	      case "power":
+			if (this.getOutputDevice(e.device) != null) {
+	 	       if (e.eventInfoValue == "on") {
+	 	         this.showing = true;
+	 	         this.startSpinning = false;
+	 	       } else {
+	 	         this.showing = false;
+	 	       }
+		  	}
+	        break;
+	      case "volume":
+			let ad = this.getAudioDevice(e.device) 
+			ad.volume = Number(e.eventInfoValue);
+			ad.muted = false;
+	        break;
+	      case "muted":
+			this.getAudioDevice(e.device).muted = (e.eventInfoValue == 'true');
+	        break;
+	      case "blanked":
+			let d = this.getOutputDevice(e.device)
+			if( d != null) {
+				d.blanked = (e.eventInfoValue == 'true');
+		  		this.updateBlanked();
+			}
+	        break;
+		  case "dta":
+			this.dtaMinion = (e.eventInfoValue == 'true');  
+		  	this.dtaMasterHost = e.device;
+
+			if (this.dtaMinion) {
+				let body = { displays: [], audioDevices: [] };
+				for (let display of this.displays) {
+					body.displays.push({
+						"name": display.name,
+						"blanked": false,	
+					});
+					body.audioDevices.push({
+						"muted": true,
+					});
+				}
+				this.put(body);
+
+				// 	mute and disable audio controls
+				// 	disable display all start option
+				// TODO build the new 'input', redraw circle
+			}
+	      default:
+	        console.error("unknown eventInfoKey:", e.eventInfoKey);
+	        break;
+	    }
+	}
   }
 
   hasRole(d: Device, role: string): boolean {
@@ -690,27 +747,38 @@ export class AppComponent { // event stuff
 	this.selectedDisplay.oinput = i;
   }
 
-  /*
   sendingDTA: boolean;
-  sendDisplayToAll() {
+  dtaMaster: boolean;
+  dtaMasterHost: string;
+  dtaMinion: boolean;
+  toggleDisplayToAll() {
 	if (this.sendingDTA)
 		return;	
 
+	this.dtaMaster = !this.dtaMaster;
+
 	this.sendingDTA = true;
-    setTimeout(() => { this.sendingDTA = false }, 5000); //milliseconds of button timeout
-	console.log("sending display to all");
- 	let body = { displays: [] }
-    for (let display of this.displays) {
-		body.displays.push({
-			"name": display.name,
-			"power": "on",
-//			"input": this.inputsToShow[0].name,
-		  	"blanked": false
-		}) // gonna have to find the right input somehow	
-	}	
-    this.put(body);
+    setTimeout(() => { this.sendingDTA = false }, 1500); //milliseconds of button timeout
+	
+	let event = {
+		"device": this.api.hostname,
+		"eventinfokey": "dta",
+		"eventinfovalue": String(this.dtaMaster) 
+	}
+ 	this.api.publishFeature(event)
+
+	if (this.dtaMaster) {
+		event = {
+			"device": "dta",
+			"eventinfokey": "input",
+			"eventinfovalue": this.selectedDisplay.oinput.name	
+		}
+	 	this.api.publishFeature(event)
+	}
+
+	// switch to room audio
+	// need to add something into the audio config
   }
- */
 
   buttonpress(name: string) {
     let event = {
@@ -841,14 +909,5 @@ export class AppComponent { // event stuff
  	this.api.postHelp(body, s).subscribe(data => {
 		console.log("data:", data);	
 	}); 
-  }
-
-  // extra features
-  displayToAll: boolean;
-  isExtraFeatureOn(s: String): boolean {
- 	switch (s) {
-	case 'dta':
-		return this.displayToAll;
-	} 
   }
 } 

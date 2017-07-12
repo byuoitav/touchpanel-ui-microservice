@@ -47,7 +47,8 @@
     <div [class.hidden]='displayselection || microphonecontrol' class='main-control-h'>
         <div class='main-control-v' >
 			<div class='roomname' [class.roomname-transition]="!selectedDisplay.blanked || true" (click)="buttonpress('blank'); toggleBlank();">
-				<span>{{selectedDisplay.displayname | lowercase}}</span>
+				<span *ngIf="!dtaMaster">{{selectedDisplay.displayname | lowercase}}</span>
+				<span *ngIf="dtaMaster">all displays</span>
 			</div>
             <div class='circle' [class.circle-shrink]="!selectedDisplay.blanked || true" [class.circle-blanked]="selectedDisplay.blanked" (click)="buttonpress('blank'); toggleBlank();">
 				<i class='material-icons'>{{selectedDisplay.icon}}</i>
@@ -83,8 +84,8 @@
 	<!-- bottom left control -->
     <div class='blank-row'>
 		<!-- display to all -->
-		<div *ngIf="displayToAll" class="displaytoall" [class.excite]="sendingDTA" [class.alignleft]="!multipledisplays">
-			<i *ngIf="true" class='material-icons' [class.excite]="sendingDTA" (click)="sendDisplayToAll();">people</i>
+		<div *ngIf="displaytoall && !dtaMinion" class="displaytoall" [class.excite]="sendingDTA" [class.alignleft]="!multipledisplays">
+			<i class='material-icons' [class.red]="dtaMaster" [class.excite]="sendingDTA" (click)="toggleDisplayToAll();">call_split</i>
 		</div>
 		<!-- all control -->
 		<div *ngIf="multipledisplays" class="all-control" [class.alignleft]="!displayToAll">
