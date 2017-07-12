@@ -33,7 +33,9 @@ func main() {
 	router.POST("/confirmhelp", handlers.ConfirmHelp)
 	router.POST("/cancelhelp", handlers.CancelHelp)
 
-	router.Static("/", "dist")
+	router.GET("/json", handlers.GetJSON)
+	router.Static("/", "redirect.html")
+	router.Static("/circle-default", "circle-default")
 
 	router.Start(port)
 }

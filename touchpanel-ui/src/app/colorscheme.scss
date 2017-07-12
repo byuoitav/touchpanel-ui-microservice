@@ -34,12 +34,12 @@ $persimmion: #ff8300;
 
 // icons when selected (where applicable)
 .red {
-	color: $dragonfruit !important;
+	color: $materialred !important;
 }
 
 // divs that get a red background (title bar)
 .redbackground {
-	background-color: $dragonfruit !important;
+	background-color: $materialred !important;
 }
 
 // title bar
@@ -64,17 +64,17 @@ $persimmion: #ff8300;
 
 // center circle
 .circle-shrink {
-	background-color: $powerblue;
+	background-color: $lazuliblue;
 }
 
 // ring/bar around center
 .circle-blanked,
 .circle-blanked:after {
-	border: .8vh solid $dragonfruit;
+	border: .8vh solid $materialred;
 }
 
 .ring {
-	// input text  
+	// input text 
 	li {
 		color: $alabasterwhite;	
 	}
@@ -90,7 +90,7 @@ $persimmion: #ff8300;
 
 // selected input slice color
 .selectedInput {
-	background-color: $powerblue !important;
+	background-color: $lazuliblue !important;
 }
 
 // unselected input slice color
@@ -100,7 +100,7 @@ $persimmion: #ff8300;
 
 // power icon
 .power i {
-	color: $pomelo;
+	color: $alabasterwhite;
 }
 
 // (most) icons in corners
@@ -120,7 +120,7 @@ $persimmion: #ff8300;
 
 // slider in 'disabled' state 
 .slider {
-	background-color: $dragonfruit;
+	background-color: $materialred;
 }
 
 // slider in 'enabled' state 
@@ -131,4 +131,18 @@ input:checked + .slider {
 // slider knob color
 .slider:before {
 	background-color: $alabasterwhite;
+}
+
+// color of titles in display selection mode
+.multi-circle-title {
+	color: $alabasterwhite;
+}
+
+// circles in display selection mode
+.multi-circle {
+	background-color: $lazuliblue;
+	// icons in display selection mode
+	i {
+		color: $alabasterwhite;	
+	}
 }

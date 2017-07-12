@@ -231,3 +231,56 @@ func CancelHelp(context echo.Context) error {
 	return context.JSON(http.StatusOK, string(body))
 
 }
+
+var configcache map[string]interface{}
+
+func GetJSON(context echo.Context) error {
+	address := os.Getenv("UI_CONFIGURATION_ADDRESS")
+	hn := os.Getenv("PI_HOSTNAME")
+
+	if len(hn) == 0 {
+		return context.JSON(http.StatusInternalServerError, "PI_HOSTNAME is not set.")
+	}
+
+	if len(address) == 0 {
+		if configcache != nil {
+			log.Printf("[error] UI_CONFIGURATION_ADDRESS is not set. Returning cached configuration...")
+			return context.JSON(http.StatusOK, configcache[hn])
+		}
+		return context.JSON(http.StatusInternalServerError, "UI_CONFIGURATION_ADDRESS is not set.")
+	}
+
+	log.Printf("getting json object from %s", address)
+	resp, err := http.Get(address)
+	if err != nil {
+		if configcache != nil {
+			log.Printf("[error] %s. Returning cached configuration...", err.Error())
+			return context.JSON(http.StatusOK, configcache[hn])
+		}
+		return context.JSON(http.StatusGatewayTimeout, err.Error())
+	}
+	defer resp.Body.Close()
+
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		if configcache != nil {
+			log.Printf("[error] %s. Returning cached configuration...", err.Error())
+			return context.JSON(http.StatusOK, configcache[hn])
+		}
+		return context.JSON(http.StatusInternalServerError, err.Error())
+	}
+
+	var data map[string]interface{}
+	err = json.Unmarshal(body, &data)
+	if err != nil {
+		if configcache != nil {
+			log.Printf("[error] %s. Returning cached configuration...", err.Error())
+			return context.JSON(http.StatusOK, configcache[hn])
+		}
+		return context.JSON(http.StatusInternalServerError, err.Error())
+	} else {
+		configcache = data
+	}
+
+	return context.JSON(http.StatusOK, data[hn])
+}
