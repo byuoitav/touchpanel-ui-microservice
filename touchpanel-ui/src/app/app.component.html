@@ -1,3 +1,8 @@
+<!-- developer mode -->
+<div *ngIf="dev" id='dev-console'>
+	<span *ngFor="let e of events">{{e | json}}<br></span>
+</div>
+
 <!-- main body -->
 <div class='basediv'>
     <!-- power, help -->
@@ -195,6 +200,9 @@
 				-->
                 <div>
                     <button class="btn btn-warning" (click)="refresh()">Refresh</button>
+                </div>
+                <div>
+                    <button class="btn" [class.btn-success]="dev" [class.btn-danger]="!dev" (click)="dev = !dev">Toggle Dev Mode</button>
                 </div>
                 <div>
                     <button class="btn btn-info" (click)="deviceinfo(); deviceinfomodal.show()">Device Info</button>

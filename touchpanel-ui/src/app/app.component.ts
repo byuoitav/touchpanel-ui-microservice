@@ -43,8 +43,7 @@ import { ModalComponent } from './modal.component';
 })
 export class AppComponent { // event stuff
   // events
-  messages: Array<any>;
-  events: Array<Event>;
+  events: Array<Object>;
   // room data
   room: Room;
   roomname: string;
@@ -78,11 +77,11 @@ export class AppComponent { // event stuff
 
   // features
   displaytoall: boolean;
+  dev: boolean;
 
   public constructor(private socket: SocketService, private api: APIService, private cookie: CookieService) {
-    this.messages = [];
-    this.events = [];
     this.inputs = [];
+	this.events = [];
     this.displays = [];
 	this.audiodevices = [];
     this.showing = false;
@@ -98,10 +97,13 @@ export class AppComponent { // event stuff
 
   public ngOnInit() {
 	this.selectedDisplay = new OutputDevice();
+	this.selectedDisplay.oaudiodevices = null; 
+
     this.api.setup();
     this.getData();
 	this.helprequested = false;
 	this.displayselection = false;
+   	this.dev = false;
 	
 	// uncomment for local testing
 //   this.showing = true;
@@ -114,14 +116,21 @@ export class AppComponent { // event stuff
 
         let e = new Event();
         Object.assign(e, data);
-        this.events.push(e);
+		if (this.dev) {
+			if (this.events.length > 500) 	
+				this.events.splice(0, 250); 
+			
+			this.events.push(e);	
+			let element = document.getElementById('dev-console');
+	    	setTimeout(() => { element.scrollTop = element.scrollHeight; }, 0)
+		}
 
         // do stuff with event
         this.updateUI(e);
       } else if (event.type == CLOSE) {
-        this.messages.push("The socket connection has been closed");
+		console.log("The socket connection has been closed");
       } else if (event.type == OPEN) {
-        this.messages.push("The socket connection has been opened");
+        console.log("The socket connection has been opened");
       }
     })
   }
@@ -343,12 +352,14 @@ export class AppComponent { // event stuff
 	    setTimeout(() => { this.buildInputMenu(); }, 0)
 
 		// select the default input
-		if (this.selectedDisplay.odefaultinput != null) {
-			console.log("switching to default input:", this.selectedDisplay.odefaultinput.name);
-			this.changeInput(this.selectedDisplay.odefaultinput);
-		} else {
-			console.log("no default input found. switching to", this.selectedDisplay.oinputs[0].name);
-			this.changeInput(this.selectedDisplay.oinputs[0]);
+		if (this.showing) {
+			if (this.selectedDisplay.odefaultinput != null) {
+				console.log("switching to default input:", this.selectedDisplay.odefaultinput.name);
+				this.changeInput(this.selectedDisplay.odefaultinput);
+			} else {
+				console.log("no default input found. switching to", this.selectedDisplay.oinputs[0].name);
+				this.changeInput(this.selectedDisplay.oinputs[0]);
+			}
 		}
   }
 
@@ -679,7 +690,7 @@ export class AppComponent { // event stuff
   // commands
   // 
   enterScreen() {
-    if (this.sendingOn)
+    if (this.sendingOn || this.selectedDisplay.oaudiodevices == null)
       return;
   	
     this.sendingOn = true;
