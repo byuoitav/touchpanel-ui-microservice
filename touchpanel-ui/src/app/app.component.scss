@@ -757,3 +757,11 @@ input:checked + .slider:before {
 .slider.round:before {
   border-radius: 50%;
 }
+
+#dev-console {
+	position: absolute;
+	height: 30vh;
+	min-width: 100%;
+	overflow-y: scroll;
+	z-index: 10;
+}
