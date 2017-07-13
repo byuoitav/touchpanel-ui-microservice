@@ -699,7 +699,7 @@ export class AppComponent { // event stuff
 			"name": ad.name,
 			"muted": false,
 			"volume": 30
-		})		
+		})
 	}
 
     this.put(body, func => { }, func => { }, after => {
@@ -712,7 +712,7 @@ export class AppComponent { // event stuff
 
 	for (let display of this.displays) {
 		display.blanked = false;
-		display.input = display.odefaultinput.name;
+		display.oinput = display.odefaultinput;
 	}
   }
 
@@ -854,8 +854,37 @@ export class AppComponent { // event stuff
 	 	this.api.publishFeature(event)
 	}
 
-	// switch to room audio
-	// need to add something into the audio config
+	if (this.dtaMaster) {
+		// switch to room audio
+		let index = 0;
+		for (let ac of this.api.uiconfig.audio) {
+			if (ac.displays.includes("dta")) index = this.api.uiconfig.audio.indexOf(ac);
+		}	
+	
+		let devices: AudioOutDevice[] = [];
+		for (let n of this.api.uiconfig.audio[index].audiodevices) {
+		 	for (let a of this.audiodevices) {
+				if (n == a.name) {
+					devices.push(a);
+					a.selected = true;
+					break;
+				} else {
+					a.selected = false;	
+				}
+		 	} 
+		}
+		this.selectedDisplay.oaudiodevices = devices;
+		console.log("Switch to room audio. Using audio configuration:", devices);
+	} else {
+		// switch back to normal audio
+		let names: string[] = [];			
+		for (let d of this.displays) {
+			if (d.selected) {
+				names.push(d.name);	
+			}	
+		}
+		this.selectedDisplay.oaudiodevices = this.getAudioDevices(names);
+	}
   }
 
   buttonpress(name: string) {
