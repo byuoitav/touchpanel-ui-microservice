@@ -113,7 +113,7 @@
     <!-- sidebar -->
     <div *ngIf="!displayselection && !dtaMinion" class='sidebar'>
         <div class='volume alignright'>
-            <md-slider id="colored-slider" vertical [value]="volume" (change)="buttonpress('volume slider'); changeVolume($event.value)"></md-slider>
+            <md-slider id="colored-slider" vertical [value]="volumeLevel()" (change)="buttonpress('volume slider'); changeVolume($event.value);" (input)="updateVolume($event.value)"></md-slider>
         </div>
     </div>
 
