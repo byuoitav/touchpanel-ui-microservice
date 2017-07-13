@@ -33,16 +33,17 @@
 	<!-- microphone control -->
 	<div *ngIf="microphonecontrol" class='main-control-h'>
 		<div class='microphone-selection'>
-			<div class='mic'>
+			<div *ngFor="let mic of mics" class='mic'>
 				<div class='mic-title'>
-					<span>Volume</span>
+					<span *ngIf="mic.displayname">{{mic.displayname}}</span>
+					<span *ngIf="!mic.displayname">{{mic.name}}</span>
 				</div>
 				<div class='mic-volume'>
-	            	<md-slider id="colored-slider" vertical [value]="selectedDisplay.oaudio.volume" (change)="buttonpress('volume slider'); changeVolume($event.value)"></md-slider>
+	            	<md-slider id="mic.name" vertical [value]="mic.volume" (change)="buttonpress('mic volume slider'); changeMicVolume($event.value, mic.name)"></md-slider>
 				</div>
-				<div class='mic-mute'>
-       	    		<i *ngIf="allmuted" class="material-icons red">volume_off</i>
-       	    		<i *ngIf="!allmuted" class="material-icons">volume_up</i>
+				<div class='mic-mute' (click)="toggleMicMute(mic.name)">
+       	    		<i *ngIf="mic.muted" class="material-icons red">volume_off</i>
+       	    		<i *ngIf="!mic.muted" class="material-icons">volume_up</i>
 				</div>
 			</div>
 		</div>
@@ -101,10 +102,10 @@
 
 	<!-- bottom right control -->
     <div class="audio-row">
-		<div *ngIf="microphone" class="microphone" (click)="microphonecontrol = !microphonecontrol">
+		<div *ngIf="mics.length > 0" class="microphone" (click)="microphonecontrol = !microphonecontrol">
 			<i class="material-icons">mic</i>
 		</div>
-       	<div *ngIf="!displayselection && !dtaMinion" (click)="buttonpress('mute'); toggleMute()" [class.alignright]="!microphone">
+       	<div *ngIf="!displayselection && !dtaMinion" (click)="buttonpress('mute'); toggleMute()" [class.alignright]="!mics">
        	    <i *ngIf="isMuted()" class="material-icons red">volume_off</i>
        	    <i *ngIf="!isMuted()" class="material-icons">volume_up</i>
        	</div>
