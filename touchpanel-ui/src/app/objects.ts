@@ -118,6 +118,13 @@ export class AudioOutDevice {
 	muted: boolean;
 }
 
+export class Mic {
+	name: string;
+	displayname: string;
+	volume: number;
+	muted: boolean;
+}
+
 export class icons {
   static readonly blanked = "panorama_wide_angle";
   static readonly hdmi = "settings_input_hdmi";

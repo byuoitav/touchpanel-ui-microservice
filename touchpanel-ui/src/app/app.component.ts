@@ -5,7 +5,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { CookieService, CookieOptions } from 'ngx-cookie';
 
 import { APIService } from './api.service';
-import { Room, RoomConfiguration, RoomStatus, Event, Device, DeviceData, OutputDevice, icons, InputDevice, AudioOutDevice, AudioConfig } from './objects';
+import { Room, RoomConfiguration, RoomStatus, Event, Device, DeviceData, OutputDevice, icons, InputDevice, AudioOutDevice, AudioConfig, Mic } from './objects';
 import { ModalComponent } from './modal.component';
 
 @Component({
@@ -51,6 +51,7 @@ export class AppComponent { // event stuff
   inputs: Array<InputDevice>;
   displays: Array<OutputDevice>;
   audiodevices: Array<AudioOutDevice>;
+  mics: Array<Mic>;
   powerState: boolean;
   // "lock" screen
   showing: boolean
@@ -84,6 +85,7 @@ export class AppComponent { // event stuff
 	this.events = [];
     this.displays = [];
 	this.audiodevices = [];
+	this.mics = [];
     this.showing = false;
     this.startSpinning = false;
     this.sendingOn = false;
@@ -107,7 +109,6 @@ export class AppComponent { // event stuff
 	
 	// uncomment for local testing
 //   this.showing = true;
-//	this.microphone = true;
 
     // setup socket to recieve events
     this.socket.getEventListener().subscribe(event => {
@@ -255,6 +256,28 @@ export class AppComponent { // event stuff
 			}
 		}
 	}
+
+	// create microphones
+	for (let m of this.room.config.devices) {
+		if (m.roles.includes("Microphone")) {
+			for (let sm of this.room.status.audioDevices) {
+				if (sm.name == m.name) {
+					console.log("status", sm);	
+					let mic = new Mic();
+					mic.name = m.name;
+					mic.displayname = m.display_name;
+					mic.volume = sm.volume;
+					mic.muted = sm.muted;
+
+					
+					console.log("Created microphone", mic);
+					this.mics.push(mic);
+					break;		
+				}	
+			}
+		}	
+	}
+
 	this.audiodevices = Array.from(new Set(this.audiodevices)); // clean up duplicates
 	console.log("All audio devices:", this.audiodevices);
 
@@ -416,6 +439,15 @@ export class AppComponent { // event stuff
 	console.error("failed to find an input named:", name);
    	return null;
   } 
+
+  getMic(name: string): Mic {
+ 	for (let m of this.mics) {
+		if (m.name == name)
+			return m	
+	} 
+	console.error("failed to find a mic named:", name);
+   	return null;
+  }
 
   getAudioDevice(name: string): AudioOutDevice {
  	for (let a of this.audiodevices) {
@@ -620,11 +652,23 @@ export class AppComponent { // event stuff
 		  	if (vd != null) {
 				vd.volume = Number(e.eventInfoValue);
 				vd.muted = false;
+			} else {
+				let m = this.getMic(e.device)
+				if (m != null) {
+					m.volume = Number(e.eventInfoValue);
+					m.muted = false;	
+				}
 			}
 	        break;
 	      case "muted":
 			let md = this.getAudioDevice(e.device);
 		  	if (md != null) md.muted = (e.eventInfoValue == 'true');
+			else {
+				let m = this.getMic(e.device)
+				if (m != null) {
+					m.muted = (e.eventInfoValue == 'true');	
+				}
+			}
 	        break;
 	      case "blanked":
 			let d = this.getOutputDevice(e.device)
@@ -801,6 +845,30 @@ export class AppComponent { // event stuff
 		total += a.volume;
 	}
 	return total / this.selectedDisplay.oaudiodevices.length;
+  }
+
+  changeMicVolume(volume: number, name: string) {
+ 	let body = { audioDevices: [] };
+	body.audioDevices.push({
+		"name": name,
+		"volume": volume	
+	});
+	
+	this.put(body);
+  }
+
+  toggleMicMute(name: string) {
+ 	let body = { audioDevices: [] };
+	for (let m of this.mics) {
+		if (m.name == name) {
+			m.muted = !m.muted;
+   			body.audioDevices.push({
+				"name": m.name,
+				"muted": m.muted	
+			});
+		}	
+	}
+	this.put(body);
   }
 
   toggleBlank() {
