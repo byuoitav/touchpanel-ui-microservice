@@ -285,7 +285,7 @@ export class AppComponent { // event stuff
 		this.multipledisplays = false;
 		let arr = [];
 		arr.push(this.displays[0].name);
-		this.changeControl(arr);
+		this.changeControl(arr, true);
 	} else {
 		this.multipledisplays = true;
 		console.log("Defaulting to controlling all displays and their associated audio devices");
@@ -294,11 +294,11 @@ export class AppComponent { // event stuff
 			all.push(d.name);
 		}
 
-		this.changeControl(all);
+		this.changeControl(all, true);
 	}
   }
 
-  changeControl(names: string[]) {
+  changeControl(names: string[], changeInput: boolean) {
 	  	console.log("Changing control to:", names);
 	  	if (names.length == 0) {
 			console.error("names is empty. need at least one display's name.", names);
@@ -375,7 +375,7 @@ export class AppComponent { // event stuff
 	    setTimeout(() => { this.buildInputMenu(); }, 0)
 
 		// select the default input
-		if (this.showing) {
+		if (this.showing && changeInput) {
 			if (this.selectedDisplay.odefaultinput != null) {
 				console.log("switching to default input:", this.selectedDisplay.odefaultinput.name);
 				this.changeInput(this.selectedDisplay.odefaultinput);
@@ -623,7 +623,7 @@ export class AppComponent { // event stuff
 							console.log("d.oinputs", d);
 						}
 					}
-					this.changeControl(names);
+					this.changeControl(names, true);
 				}
 				break;
 			default: 
@@ -711,7 +711,7 @@ export class AppComponent { // event stuff
 						names.push(d.name);
 					}
 				}
-				this.changeControl(names);
+				this.changeControl(names, false);
 			}
 			break;
 	      default:
@@ -1156,7 +1156,7 @@ export class AppComponent { // event stuff
 			names.push(dd.name);	
 		}
 	}
-	this.changeControl(names);
+	this.changeControl(names, true);
 	this.displayselection = false;
   }
 

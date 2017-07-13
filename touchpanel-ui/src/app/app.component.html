@@ -105,7 +105,7 @@
 		<div *ngIf="mics.length > 0" class="microphone" (click)="microphonecontrol = !microphonecontrol">
 			<i class="material-icons">mic</i>
 		</div>
-       	<div *ngIf="!displayselection && !dtaMinion" (click)="buttonpress('mute'); toggleMute()" [class.alignright]="!mics">
+		<div *ngIf="!displayselection && !dtaMinion" (click)="buttonpress('mute'); toggleMute()" [class.alignright]="!mics.length > 0">
        	    <i *ngIf="isMuted()" class="material-icons red">volume_off</i>
        	    <i *ngIf="!isMuted()" class="material-icons">volume_up</i>
        	</div>
