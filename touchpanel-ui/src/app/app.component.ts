@@ -106,7 +106,7 @@ export class AppComponent { // event stuff
    	this.dev = false;
 	
 	// uncomment for local testing
-//   this.showing = true;
+   this.showing = true;
 //	this.microphone = true;
 
     // setup socket to recieve events
@@ -551,10 +551,9 @@ export class AppComponent { // event stuff
 					console.log("[DTA] Changing input", body);
 			    	this.put(body);
 					// keep same 'input' selected on circle, maybe update icon?
+					i = this.getInputDevice(this.dtaMasterHost);
+					if (i != null) this.selectedDisplay.oinput = i;
 				} 
-
-				let i = this.getInputDevice(this.dtaMasterHost);
-				if (i != null) this.selectedDisplay.oinput = i;
 				break;
 			case "blanked": 
 				if (e.device == "dta") {
@@ -575,9 +574,11 @@ export class AppComponent { // event stuff
 				this.dtaMinion = (e.eventInfoValue == 'true');  
 				if (!this.dtaMinion) {
 					// TODO delete the new 'input', redraw circle
+					let ii: InputDevice;
 					for (let i of this.inputs) {
 						if (i.displayname == this.dtaMasterHost) {
 							this.inputs.splice(this.inputs.indexOf(i));	
+							ii = i;
 							console.log("this.inputs", this.inputs);
 						}
 					}
@@ -586,7 +587,7 @@ export class AppComponent { // event stuff
 					for (let d of this.displays) {
 						if (d.selected) {
 							names.push(d.name);
-							d.oinputs.splice(this.inputs.indexOf(i));
+							d.oinputs.splice(this.inputs.indexOf(ii));
 							console.log("d.oinputs", d);
 						}
 					}
@@ -667,8 +668,6 @@ export class AppComponent { // event stuff
 					}
 				}
 				this.changeControl(names);
-
-				// 	mute and disable audio controls
 			}
 			break;
 	      default:
@@ -754,6 +753,10 @@ export class AppComponent { // event stuff
 
 
   powerOff() {
+	if (this.dtaMaster) {
+		this.toggleDisplayToAll();	
+	}
+
 	let body = { displays: [] }
 	for (let display of this.displays) {
 		body.displays.push({
@@ -766,17 +769,38 @@ export class AppComponent { // event stuff
   }
 
   changeVolume(volume: number) {
+	this.lastvolume = volume;
     var body = { audioDevices: [] }
     for (let a of this.selectedDisplay.oaudiodevices) {
       if (a.selected) {
 		a.volume = volume;
         body.audioDevices.push({
           "name": a.name,
-          "volume": volume
+          "volume": volume 
         });
       }
     }
     this.put(body);
+  }
+
+  lastvolume: number = 0;
+  updateVolume(volume: number) {
+	let total = volume - this.lastvolume;
+	if (total > 5 || total < -5) {
+		this.changeVolume(volume);
+	}
+  } 
+
+  volumeLevel(): number {
+ 	// null case 
+	if (!this.selectedDisplay.oaudiodevices)
+		return 
+
+	let total = 0;
+	for (let a of this.selectedDisplay.oaudiodevices) {
+		total += a.volume;
+	}
+	return total / this.selectedDisplay.oaudiodevices.length;
   }
 
   toggleBlank() {
@@ -820,9 +844,12 @@ export class AppComponent { // event stuff
 			"eventinfovalue": i.name	
 		}
  		this.api.publishFeature(event)
+	} else if (this.dtaMinion) {
+		// enable dta option
+		this.dtaMinion = false;
 	}
 
-    var body = { displays: [] }
+    var body = { displays: [], audioDevices: [] }
     for (let display of this.displays) {
       if (display.selected) {
         body.displays.push({
@@ -831,6 +858,15 @@ export class AppComponent { // event stuff
         });
       }
     }
+	for (let a of this.selectedDisplay.oaudiodevices) {
+		if (a.selected) {
+			body.audioDevices.push({
+				"name": a.name,
+				"input": i.name	
+			})	
+		}		
+	}
+
     this.put(body);
 
 	this.selectedDisplay.oinput = i;
@@ -844,10 +880,10 @@ export class AppComponent { // event stuff
 	if (this.sendingDTA)
 		return;	
 
-	this.dtaMaster = !this.dtaMaster;
-
 	this.sendingDTA = true;
     setTimeout(() => { this.sendingDTA = false }, 1500); //milliseconds of button timeout
+
+	this.dtaMaster = !this.dtaMaster;
 	
 	let event = {
 		"device": this.api.hostname,
@@ -863,9 +899,19 @@ export class AppComponent { // event stuff
 			"eventinfovalue": this.selectedDisplay.oinput.name	
 		}
 	 	this.api.publishFeature(event)
-	}
 
-	if (this.dtaMaster) {
+		// mute current audio out device
+	    var body = { audioDevices: [] }
+	    for (let a of this.selectedDisplay.oaudiodevices) {
+	      if (a.selected) {
+	        body.audioDevices.push({
+	          "name": a.name,
+	          "muted": true 
+	        });
+	      }
+	    }
+	    this.put(body);
+
 		// switch to room audio
 		let index = 0;
 		for (let ac of this.api.uiconfig.audio) {
@@ -882,19 +928,56 @@ export class AppComponent { // event stuff
 				} else {
 					a.selected = false;	
 				}
-		 	} 
+		 	}
 		}
+		
+		// set room audio level, and input
 		this.selectedDisplay.oaudiodevices = devices;
+	    for (let a of this.selectedDisplay.oaudiodevices) {
+	      if (a.selected) {
+	        body.audioDevices.push({
+	          "name": a.name,
+	          "muted": false,
+			  "volume": 30,
+			  "input": this.selectedDisplay.oinput.name 
+	        });
+	      }
+	    }
+	    this.put(body);
 		console.log("Switch to room audio. Using audio configuration:", devices);
 	} else {
+		// mute room audio
+	    let body = { audioDevices: [] }
+	    for (let a of this.selectedDisplay.oaudiodevices) {
+	      if (a.selected) {
+	        body.audioDevices.push({
+	          "name": a.name,
+	          "muted": false 
+	        });
+	      }
+	    }
+
 		// switch back to normal audio
 		let names: string[] = [];			
 		for (let d of this.displays) {
 			if (d.selected) {
 				names.push(d.name);	
-			}	
+			}
 		}
 		this.selectedDisplay.oaudiodevices = this.getAudioDevices(names);
+
+	    body = { audioDevices: [] }
+	    for (let a of this.selectedDisplay.oaudiodevices) {
+	      if (a.selected) {
+	        body.audioDevices.push({
+	          "name": a.name,
+	          "muted": false,
+			  "volume": 30,
+			  "input": this.selectedDisplay.odefaultinput.name 
+	        });
+	      }
+	    }
+	    this.put(body);
 	}
   }
 
