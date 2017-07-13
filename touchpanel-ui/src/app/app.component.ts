@@ -76,6 +76,9 @@ export class AppComponent { // event stuff
   microphone: boolean;
   microphonecontrol: boolean;
 
+  // features
+  displaytoall: boolean;
+
   public constructor(private socket: SocketService, private api: APIService, private cookie: CookieService) {
     this.messages = [];
     this.events = [];
@@ -86,6 +89,7 @@ export class AppComponent { // event stuff
     this.startSpinning = false;
     this.sendingOn = false;
 	this.ringopen = false;
+	this.displaytoall = false;
 
     // management
     this.deviceInfo = new Object();
@@ -263,6 +267,7 @@ export class AppComponent { // event stuff
   }
 
   changeControl(names: string[]) {
+	  	console.log("Changing control to:", names);
 	  	if (names.length == 0) {
 			console.error("names is empty. need at least one display's name.", names);
 			this.multipledisplays = false;
@@ -417,6 +422,7 @@ export class AppComponent { // event stuff
 		switch(feature) {
 			case 'display-to-all':
 				console.log("Enabling feature:", feature);
+				this.displaytoall = true;
 				break;
 			case 'power-off-all':
 				console.log("Enabling feature:", feature);
@@ -433,18 +439,18 @@ export class AppComponent { // event stuff
 
   // build the input menu
   buildInputMenu() {
-    console.log("ring:", this.ring);
+//    console.log("ring:", this.ring);
     let numOfChildren = this.ring.nativeElement.childElementCount;
-    console.log("num of children:", numOfChildren);
+//   console.log("num of children:", numOfChildren);
     let children = this.ring.nativeElement.children;
     let angle = 360 / numOfChildren;
-    console.log("angle", angle);
+//    console.log("angle", angle);
     // svg arc length 
     this.arcpath = this.getArc(.5, .5, .5, 0, angle);
 
 	// apply styles to first two (title area)
 	for (let i = 0; i < 2; i++) {
-	  console.log("room name slice", i + ":", children[i]);	
+//	  console.log("room name slice", i + ":", children[i]);	
 
       let rotate = "rotate(" + String(angle * -i) + "deg)";
       children[i].style.transform = rotate;
@@ -452,7 +458,7 @@ export class AppComponent { // event stuff
 
     // apply styles to children
     for (let i = 2; i < numOfChildren; i++) {
-      console.log("children[" + i + "]", children[i]);
+//      console.log("children[" + i + "]", children[i]);
 
       // rotate the slice
       let rotate = "rotate(" + String(angle * -i) + "deg)";
@@ -510,44 +516,155 @@ export class AppComponent { // event stuff
    }
   
 	 this.rightoffset = String(Nright) + "%";
-	 console.log("right offset:", this.rightoffset);
+//	 console.log("right offset:", this.rightoffset);
 	 this.topoffset = String(Ntop) + "%";
-	 console.log("top offset:", this.topoffset);
+//	 console.log("top offset:", this.topoffset);
   }
 
   updateUI(e: Event) {
     console.log("update ui based on event:", e);
 
-    switch (e.eventInfoKey) {
-      case "input":
-	  	  this.selectedDisplay.oinput = this.getInputDevice(e.eventInfoValue); 
-        break;
-      case "power":
-		if (this.getOutputDevice(e.device) != null) {
- 	       if (e.eventInfoValue == "on") {
- 	         this.showing = true;
- 	         this.startSpinning = false;
- 	       } else {
- 	         this.showing = false;
- 	       }
-	  	}
-        break;
-      case "volume":
-		let ad = this.getAudioDevice(e.device) 
-		ad.volume = Number(e.eventInfoValue);
-		ad.muted = false;
-        break;
-      case "muted":
-		this.getAudioDevice(e.device).muted = (e.eventInfoValue == 'true');
-        break;
-      case "blanked":
-		this.getOutputDevice(e.device).blanked = (e.eventInfoValue == 'true');
-	  	this.updateBlanked();
-        break;
-      default:
-        console.error("unknown eventInfoKey:", e.eventInfoKey);
-        break;
-    }
+	if (this.dtaMinion) {
+		switch(e.eventInfoKey) {
+			case "input":
+				if (e.device == "dta") {
+					let i = this.getInputDevice(e.eventInfoValue);
+					i.name = e.eventInfoValue;
+			    	var body = { displays: [] }
+			    	for (let display of this.displays) {
+			      		body.displays.push({
+			       	 		"name": display.name,
+			        		"input": e.eventInfoValue,
+			      		});
+			    	}
+					console.log("[DTA] Changing input", body);
+			    	this.put(body);
+					// keep same 'input' selected on circle, maybe update icon?
+				} 
+
+				let i = this.getInputDevice(this.dtaMasterHost);
+				if (i != null) this.selectedDisplay.oinput = i;
+				break;
+			case "blanked": 
+				if (e.device == "dta") {
+					var body = { displays: [] }	
+					for (let display of this.displays) {
+						body.displays.push({
+							"name": display.name,
+							"blanked": (e.eventInfoValue == 'true')	
+						})
+					}
+					this.put(body);
+				} else {
+					let d = this.getOutputDevice(e.device);
+					if (d != null) d.blanked = (e.eventInfoValue == 'true');
+				}
+				break;
+			case "dta":
+				this.dtaMinion = (e.eventInfoValue == 'true');  
+				if (!this.dtaMinion) {
+					// TODO delete the new 'input', redraw circle
+					for (let i of this.inputs) {
+						if (i.displayname == this.dtaMasterHost) {
+							this.inputs.splice(this.inputs.indexOf(i));	
+							console.log("this.inputs", this.inputs);
+						}
+					}
+		  			this.dtaMasterHost = null;
+					let names: string[] = [];
+					for (let d of this.displays) {
+						if (d.selected) {
+							names.push(d.name);
+							d.oinputs.splice(this.inputs.indexOf(i));
+							console.log("d.oinputs", d);
+						}
+					}
+					this.changeControl(names);
+				}
+				break;
+			default: 
+	       	 	console.error("unknown eventInfoKey:", e.eventInfoKey);
+	        	break;
+		}	
+	} else {
+	    switch (e.eventInfoKey) {
+	      case "input":
+			  	let od = this.getOutputDevice(e.device);
+				let i  = this.getInputDevice(e.eventInfoValue);
+				if (i != null && od != null) od.oinput = i;
+	        break;
+	      case "power":
+			if (this.getOutputDevice(e.device) != null) {
+	 	       if (e.eventInfoValue == "on") {
+	 	         this.showing = true;
+	 	         this.startSpinning = false;
+	 	       } else {
+	 	         this.showing = false;
+	 	       }
+		  	}
+	        break;
+	      case "volume":
+			let vd = this.getAudioDevice(e.device) 
+		  	if (vd != null) {
+				vd.volume = Number(e.eventInfoValue);
+				vd.muted = false;
+			}
+	        break;
+	      case "muted":
+			let md = this.getAudioDevice(e.device);
+		  	if (md != null) md.muted = (e.eventInfoValue == 'true');
+	        break;
+	      case "blanked":
+			let d = this.getOutputDevice(e.device)
+			if( d != null) {
+				d.blanked = (e.eventInfoValue == 'true');
+		  		this.updateBlanked();
+			}
+	        break;
+		  case "dta":
+			this.dtaMinion = (e.eventInfoValue == 'true');  
+		  	this.dtaMasterHost = e.device;
+
+			if (this.dtaMinion) {
+				let body = { displays: [], audioDevices: [] };
+				for (let display of this.displays) {
+					body.displays.push({
+						"name": display.name,
+						"blanked": false,	
+					});
+					for (let ad of display.oaudiodevices) {
+						body.audioDevices.push({
+							"name": ad.name,
+							"muted": true	
+						})	
+					}
+				}
+				console.log("[DTA] Entering dta mode:", body);
+				this.put(body);
+
+				let i = new InputDevice();
+				i.name = this.dtaMasterHost;
+				i.displayname =  this.dtaMasterHost;
+				i.icon = "people";
+				this.inputs.push(i);
+
+				let names: string[] = [];
+				for (d of this.displays) {
+					if (d.selected) {
+						d.oinputs.push(this.getInputDevice(this.dtaMasterHost));
+						names.push(d.name);
+					}
+				}
+				this.changeControl(names);
+
+				// 	mute and disable audio controls
+			}
+			break;
+	      default:
+	        console.error("unknown eventInfoKey:", e.eventInfoKey);
+	        break;
+	    }
+	}
   }
 
   hasRole(d: Device, role: string): boolean {
@@ -582,7 +699,7 @@ export class AppComponent { // event stuff
 			"name": ad.name,
 			"muted": false,
 			"volume": 30
-		})		
+		})
 	}
 
     this.put(body, func => { }, func => { }, after => {
@@ -595,7 +712,7 @@ export class AppComponent { // event stuff
 
 	for (let display of this.displays) {
 		display.blanked = false;
-		display.input = display.odefaultinput.name;
+		display.oinput = display.odefaultinput;
 	}
   }
 
@@ -652,6 +769,15 @@ export class AppComponent { // event stuff
   }
 
   toggleBlank() {
+	if (this.dtaMaster) {
+		let event = {
+			"device": "dta",
+			"eventinfokey": "blanked",
+			"eventinfovalue": this.selectedDisplay.blanked
+		}
+ 		this.api.publishFeature(event)
+	}
+
     var body = { displays: [] }
     for (let display of this.displays) {
       if (display.selected) {
@@ -676,6 +802,15 @@ export class AppComponent { // event stuff
   }
 
   changeInput(i: InputDevice) {
+	if (this.dtaMaster) {
+		let event = {
+			"device": "dta",
+			"eventinfokey": "input",
+			"eventinfovalue": i.name	
+		}
+ 		this.api.publishFeature(event)
+	}
+
     var body = { displays: [] }
     for (let display of this.displays) {
       if (display.selected) {
@@ -690,27 +825,67 @@ export class AppComponent { // event stuff
 	this.selectedDisplay.oinput = i;
   }
 
-  /*
   sendingDTA: boolean;
-  sendDisplayToAll() {
+  dtaMaster: boolean;
+  dtaMasterHost: string;
+  dtaMinion: boolean;
+  toggleDisplayToAll() {
 	if (this.sendingDTA)
 		return;	
 
+	this.dtaMaster = !this.dtaMaster;
+
 	this.sendingDTA = true;
-    setTimeout(() => { this.sendingDTA = false }, 5000); //milliseconds of button timeout
-	console.log("sending display to all");
- 	let body = { displays: [] }
-    for (let display of this.displays) {
-		body.displays.push({
-			"name": display.name,
-			"power": "on",
-//			"input": this.inputsToShow[0].name,
-		  	"blanked": false
-		}) // gonna have to find the right input somehow	
-	}	
-    this.put(body);
+    setTimeout(() => { this.sendingDTA = false }, 1500); //milliseconds of button timeout
+	
+	let event = {
+		"device": this.api.hostname,
+		"eventinfokey": "dta",
+		"eventinfovalue": String(this.dtaMaster) 
+	}
+ 	this.api.publishFeature(event)
+
+	if (this.dtaMaster) {
+		event = {
+			"device": "dta",
+			"eventinfokey": "input",
+			"eventinfovalue": this.selectedDisplay.oinput.name	
+		}
+	 	this.api.publishFeature(event)
+	}
+
+	if (this.dtaMaster) {
+		// switch to room audio
+		let index = 0;
+		for (let ac of this.api.uiconfig.audio) {
+			if (ac.displays.includes("dta")) index = this.api.uiconfig.audio.indexOf(ac);
+		}	
+	
+		let devices: AudioOutDevice[] = [];
+		for (let n of this.api.uiconfig.audio[index].audiodevices) {
+		 	for (let a of this.audiodevices) {
+				if (n == a.name) {
+					devices.push(a);
+					a.selected = true;
+					break;
+				} else {
+					a.selected = false;	
+				}
+		 	} 
+		}
+		this.selectedDisplay.oaudiodevices = devices;
+		console.log("Switch to room audio. Using audio configuration:", devices);
+	} else {
+		// switch back to normal audio
+		let names: string[] = [];			
+		for (let d of this.displays) {
+			if (d.selected) {
+				names.push(d.name);	
+			}	
+		}
+		this.selectedDisplay.oaudiodevices = this.getAudioDevices(names);
+	}
   }
- */
 
   buttonpress(name: string) {
     let event = {
@@ -841,14 +1016,5 @@ export class AppComponent { // event stuff
  	this.api.postHelp(body, s).subscribe(data => {
 		console.log("data:", data);	
 	}); 
-  }
-
-  // extra features
-  displayToAll: boolean;
-  isExtraFeatureOn(s: String): boolean {
- 	switch (s) {
-	case 'dta':
-		return this.displayToAll;
-	} 
   }
 } 

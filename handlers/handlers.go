@@ -51,7 +51,22 @@ func PublishEvent(context echo.Context) error {
 		return context.JSON(http.StatusBadRequest, err.Error())
 	}
 
-	err = events.Publish(event)
+	err = events.Publish(event, eventinfrastructure.Metrics)
+	if err != nil {
+		return context.JSON(http.StatusBadRequest, err.Error())
+	}
+
+	return context.JSON(http.StatusOK, event)
+}
+
+func PublishFeature(context echo.Context) error {
+	var event eventinfrastructure.EventInfo
+	err := context.Bind(&event)
+	if err != nil {
+		return context.JSON(http.StatusBadRequest, err.Error())
+	}
+
+	err = events.Publish(event, eventinfrastructure.UIFeature)
 	if err != nil {
 		return context.JSON(http.StatusBadRequest, err.Error())
 	}

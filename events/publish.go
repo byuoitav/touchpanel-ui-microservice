@@ -38,7 +38,7 @@ func Init() {
 	go SubInit()
 }
 
-func Publish(event eventinfrastructure.EventInfo) error {
+func Publish(event eventinfrastructure.EventInfo, eventType string) error {
 	var e eventinfrastructure.Event
 
 	// create the event
@@ -52,7 +52,11 @@ func Publish(event eventinfrastructure.EventInfo) error {
 	e.Room = Room
 	e.Event.Type = eventinfrastructure.USERACTION
 	e.Event.EventCause = eventinfrastructure.USERINPUT
-	e.Event.Device = e.Hostname
+	if eventType == eventinfrastructure.Metrics {
+		e.Event.Device = e.Hostname
+	} else {
+		e.Event.Device = event.Device
+	}
 	e.Event.EventInfoKey = event.EventInfoKey
 	e.Event.EventInfoValue = event.EventInfoValue
 	if len(e.Event.Device) == 0 || len(e.Event.EventInfoKey) == 0 || len(e.Event.EventInfoValue) == 0 {
@@ -65,9 +69,9 @@ func Publish(event eventinfrastructure.EventInfo) error {
 	}
 
 	header := [24]byte{}
-	copy(header[:], []byte(eventinfrastructure.Metrics))
+	copy(header[:], []byte(eventType))
 
-	log.Printf("[Publisher] Publishing event: %s", toSend)
+	log.Printf("[Publisher] Publishing event (eventType = %s): %s", eventType, toSend)
 	err = Pub.Write(common.Message{MessageHeader: header, MessageBody: toSend})
 	if err != nil {
 		log.Printf("error: %s", err.Error())

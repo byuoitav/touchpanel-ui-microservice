@@ -13,7 +13,7 @@ export class APIService {
   public url: string;
   public loaded: Subject<boolean>;
   public uiconfig: UIConfiguration; 
-  private hostname: string;
+  public hostname: string;
   private bool: boolean;
 
   private options: RequestOptions;
@@ -30,7 +30,8 @@ export class APIService {
 	console.log("baseurl:", this.baseurl);
 
     return this.getHostname().subscribe(data => {
-      console.log("room =", data);
+	  this.hostname = String(data);
+      console.log("hostname =", this.hostname);
       let split = JSON.stringify(data).split('-');
       let b = split[0].substring(1);
 
@@ -112,7 +113,14 @@ export class APIService {
   publish(event: any) {
     console.log("publishing:", event, "to", this.baseurl + ":8888/publish");
 
-    this.http.put(this.baseurl + ":8888/publish", event, this.options).map((res: Response) => res.json()).subscribe();
+    this.http.post(this.baseurl + ":8888/publish", event, this.options).map((res: Response) => res.json()).subscribe();
+  }
+
+  publishFeature(event: any) {
+    console.log("publishing feature:", event, "to", this.baseurl + ":8888/publishfeature");
+
+    this.http.post(this.baseurl + ":8888/publishfeature", event, this.options).map((res: Response) => res.json()).subscribe();
+  
   }
 
   handleError(error: Response | any) {
