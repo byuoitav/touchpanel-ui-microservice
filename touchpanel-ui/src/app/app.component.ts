@@ -567,25 +567,28 @@ export class AppComponent { // event stuff
   updateUI(e: Event) {
     console.log("update ui based on event:", e);
 
-	if (this.dtaMinion) {
+	if (this.dtaMinion && e.device == "dta") {
 		switch(e.eventInfoKey) {
 			case "input":
-				if (e.device == "dta") {
+				// if the currect selected input is the 'dta' input
+				if (this.selectedDisplay.oinput.displayname == this.dtaMasterHost) {
 					let i = this.getInputDevice(e.eventInfoValue);
 					i.name = e.eventInfoValue;
-			    	var body = { displays: [] }
-			    	for (let display of this.displays) {
-			      		body.displays.push({
-			       	 		"name": display.name,
-			        		"input": e.eventInfoValue,
-			      		});
-			    	}
+				   	var body = { displays: [] }
+				   	for (let display of this.displays) {
+				    	body.displays.push({
+				      		"name": display.name,
+				      		"input": e.eventInfoValue,
+				     	});
+				   	}
 					console.log("[DTA] Changing input", body);
-			    	this.put(body);
-					// keep same 'input' selected on circle, maybe update icon?
+				   	this.put(body);
+
 					i = this.getInputDevice(this.dtaMasterHost);
 					if (i != null) this.selectedDisplay.oinput = i;
 				} 
+
+				this.selectedDisplay.oinput.name = e.eventInfoValue;
 				break;
 			case "blanked": 
 				if (e.device == "dta") {
@@ -630,6 +633,10 @@ export class AppComponent { // event stuff
 	       	 	console.error("unknown eventInfoKey:", e.eventInfoKey);
 	        	break;
 		}	
+	} else if (this.dtaMinion && e.device != "dta") {
+		// stuff to do while you are a minion and recieve an event, but it isn't from the master panel
+		// mostly general updating of the ui?
+
 	} else {
 	    switch (e.eventInfoKey) {
 	      case "input":
@@ -926,13 +933,16 @@ export class AppComponent { // event stuff
         });
       }
     }
-	for (let a of this.selectedDisplay.oaudiodevices) {
-		if (a.selected) {
-			body.audioDevices.push({
-				"name": a.name,
-				"input": i.name	
-			})	
-		}		
+
+	if (!this.dtaMinion) {
+		for (let a of this.selectedDisplay.oaudiodevices) {
+			if (a.selected) {
+				body.audioDevices.push({
+					"name": a.name,
+					"input": i.name	
+				})	
+			}		
+		}
 	}
 
     this.put(body);
