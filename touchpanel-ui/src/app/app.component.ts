@@ -750,7 +750,6 @@ export class AppComponent { // event stuff
 				if (i != null) this.selectedDisplay.oinput = i;
 				this.dtaMaster = false;
 			} else {
-				this.dtaMaster = true;
 				this.dtaMinion = false;
 				this.removeDTAInput(true);
 			}
