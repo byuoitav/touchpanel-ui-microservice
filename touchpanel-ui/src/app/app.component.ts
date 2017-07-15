@@ -189,6 +189,8 @@ export class AppComponent { // event stuff
 		this.createInputDevices();
         this.createOutputDevices();
 		this.setupFeatures(); 
+
+		this.dtaMasterHost = this.api.hostname;
       });
     });
   }
@@ -625,10 +627,34 @@ export class AppComponent { // event stuff
 					for (let d of this.displays) {
 						if (d.selected) {
 							names.push(d.name);
-							d.oinputs.splice(this.inputs.indexOf(ii));
+							if (ii != null) d.oinputs.splice(this.inputs.indexOf(ii));
 						}
 					}
 					this.changeControl(names, true);
+				} else {
+					// a different has become master.
+					// needs at least 3 panels in the room to ever happen!!!
+					for (let input of this.selectedDisplay.oinputs) {
+						if (input.displayname == this.dtaMasterHost) {
+							input.name = e.eventInfoValue;	
+							console.log("change", input, "to have name", e.eventInfoValue);
+						}
+					}
+
+					if (this.selectedDisplay.oinput.displayname == this.dtaMasterHost) {
+						// change input now if the group input is selected		
+				   		var body = { displays: [] }
+				   		for (let display of this.displays) {
+							if (display.selected) {
+				  	  			body.displays.push({
+				   		   			"name": display.name,
+				      				"input": e.eventInfoValue,
+				     			});
+							}
+				   		}
+						console.log("[DTA] Changing input", body);
+				   		this.put(body);
+					}
 				}
 				break;
 			default: 
@@ -739,6 +765,8 @@ export class AppComponent { // event stuff
 				i = this.getInputDevice(this.dtaMasterHost);
 				if (i != null) this.selectedDisplay.oinput = i;
 			} else {
+				this.dtaMaster = true;
+				this.dtaMinion = false;
 				// remove the extra device
 				let ii: InputDevice;
 				for (let i of this.inputs) {
@@ -752,7 +780,7 @@ export class AppComponent { // event stuff
 				for (let d of this.displays) {
 					if (d.selected) {
 						names.push(d.name);
-						d.oinputs.splice(this.inputs.indexOf(ii));
+						if (ii != null) d.oinputs.splice(this.inputs.indexOf(ii));
 					}
 				}
 				this.changeControl(names, true);
@@ -972,7 +1000,7 @@ export class AppComponent { // event stuff
       }
     }
 
-	// this is the problem on a pulse eight.
+	// this is the problem with the change input video switcher (?) ce
 	// can't change the audioInput in the audioDisplays array
 	if (!this.dtaMinion) {
 		for (let a of this.selectedDisplay.oaudiodevices) {
@@ -1002,6 +1030,25 @@ export class AppComponent { // event stuff
     setTimeout(() => { this.sendingDTA = false }, 1500); //milliseconds of button timeout
 
 	this.dtaMaster = !this.dtaMaster;
+
+	if (this.dtaMaster && this.dtaMasterHost != this.api.hostname) {
+		let ii: InputDevice;
+		for (let i of this.inputs) {
+			if (i.displayname == this.dtaMasterHost) {
+				this.inputs.splice(this.inputs.indexOf(i));	
+				ii = i;
+			}
+		}
+		this.dtaMasterHost = null;
+		let names: string[] = [];
+		for (let d of this.displays) {
+			if (d.selected) {
+				names.push(d.name);
+				if (ii != null) d.oinputs.splice(this.inputs.indexOf(ii));
+			}
+		}
+		this.changeControl(names, true);
+	}
 	
 	let event = {
 		"device": this.api.hostname,
