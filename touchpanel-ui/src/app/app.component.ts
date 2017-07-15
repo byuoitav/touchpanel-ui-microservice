@@ -598,19 +598,17 @@ export class AppComponent { // event stuff
 					}	
 				}
 
-				this.selectedDisplay.oinput.name = e.eventInfoValue;
+//				this.selectedDisplay.oinput.name = e.eventInfoValue;
 				break;
 			case "blanked": 
-				if (e.device == "dta") {
-					var body = { displays: [] }	
-					for (let display of this.displays) {
-						body.displays.push({
-							"name": display.name,
-							"blanked": (e.eventInfoValue == 'true')	
-						})
-					}
-					this.put(body);
+				body = { displays: [] }	
+				for (let display of this.displays) {
+					body.displays.push({
+						"name": display.name,
+						"blanked": (e.eventInfoValue == 'true')	
+					})
 				}
+				this.put(body);
 				break;
 			case "dta":
 				this.dtaMinion = (e.eventInfoValue == 'true');  
@@ -636,7 +634,7 @@ export class AppComponent { // event stuff
 			default: 
 	       	 	console.error("unknown eventInfoKey:", e.eventInfoKey);
 	        	break;
-		}	
+		}
 	} else if (this.dtaMinion && e.device != "dta") {
 		// stuff to do while you are a minion and recieve an event, but it isn't from the master panel
 		// mostly general updating of the ui?
@@ -740,6 +738,24 @@ export class AppComponent { // event stuff
 
 				i = this.getInputDevice(this.dtaMasterHost);
 				if (i != null) this.selectedDisplay.oinput = i;
+			} else {
+				// remove the extra device
+				let ii: InputDevice;
+				for (let i of this.inputs) {
+					if (i.displayname == this.dtaMasterHost) {
+						this.inputs.splice(this.inputs.indexOf(i));	
+						ii = i;
+					}
+				}
+				this.dtaMasterHost = null;
+				let names: string[] = [];
+				for (let d of this.displays) {
+					if (d.selected) {
+						names.push(d.name);
+						d.oinputs.splice(this.inputs.indexOf(ii));
+					}
+				}
+				this.changeControl(names, true);
 			}
 			break;
 	      default:
@@ -917,7 +933,7 @@ export class AppComponent { // event stuff
 		let event = {
 			"device": "dta",
 			"eventinfokey": "blanked",
-			"eventinfovalue": this.selectedDisplay.blanked
+			"eventinfovalue": String(this.selectedDisplay.blanked)
 		}
  		this.api.publishFeature(event)
 	}
@@ -941,13 +957,12 @@ export class AppComponent { // event stuff
 		}
  		this.api.publishFeature(event)
 	} else if (this.dtaMinion) {
-		// enable dta option
 		this.dtaMinion = false;
 	} else if (i.displayname == this.dtaMasterHost) {
 		this.dtaMinion = true;	
 	}
 
-    var body = { displays: [], audioDevices: [] }
+    let body = { displays: [], audioDevices: [] }
     for (let display of this.displays) {
       if (display.selected) {
         body.displays.push({
@@ -957,6 +972,8 @@ export class AppComponent { // event stuff
       }
     }
 
+	// this is the problem on a pulse eight.
+	// can't change the audioInput in the audioDisplays array
 	if (!this.dtaMinion) {
 		for (let a of this.selectedDisplay.oaudiodevices) {
 			if (a.selected) {
