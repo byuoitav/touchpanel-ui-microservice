@@ -74,6 +74,7 @@ body {
     min-height: 100%;
     cursor: none;
     min-width: 100%;
+	transition: 1s ease all;
 }
 
 .icon-transition {
@@ -167,6 +168,7 @@ body {
 	font-size: 4vh;
 	align-self: center;
 	white-space: nowrap;
+	font-family: Roboto-Medium;
 }
 
 .roomname-transition {
@@ -206,6 +208,7 @@ body {
 		margin-bottom: 2%;
 		font-size: 3vh;
 		color: #E0E0E0;
+		font-family: Roboto-Medium;
 	}
 }
 
@@ -269,6 +272,7 @@ body {
 	text-align: center;
 
 	font-size: 2.5vh;
+	font-family: Roboto-Medium;
 	.material-icons {
 		font-size: 11vh;	
 	}
@@ -527,6 +531,7 @@ body {
 
 .mic-title {
 	color: white;	
+	font-family: Roboto-Medium;
 }
 
 .mic {
@@ -576,12 +581,21 @@ body {
 	margin-right: 50%;
 }
 
+.dtaalignleft {
+	margin-right: 20%;
+}
+
+.dtaalignleftshort {
+	margin-right: 35%;
+}
+
 .alignright {
 	margin-left: 50%;
 }
 
 #helpwords {
 	text-align: center;
+	font-family: Roboto-Medium;
 }
 
 .btnspacing {
@@ -737,16 +751,16 @@ body {
 .slider:before {
   position: absolute;
   content: "";
-  height: 4.7vh; 
-  width: 4.7vh;
-  left: 1vh;
-  bottom: .8vh;
+  height: 7.5vh; 
+  width: 7.5vh;
+  left: -1.5vh;
+  bottom: -1vh;
   -webkit-transition: .4s;
   transition: .4s;
 }
 
 input:checked + .slider:before {
-  transform: translateX(8.5vh);
+  transform: translateX(130%);
 }
 
 /* Rounded sliders */
@@ -764,4 +778,17 @@ input:checked + .slider:before {
 	min-width: 100%;
 	overflow-y: scroll;
 	z-index: 10;
+}
+
+.displaytoall {
+	display: flex;
+	flex-direction: row;
+//	flex-wrap: nowrap;
+	font-family: Roboto-Medium;	
+		
+	span {
+		padding-left: 5%;
+		white-space: nowrap;	
+		align-self: center;
+	}
 }
