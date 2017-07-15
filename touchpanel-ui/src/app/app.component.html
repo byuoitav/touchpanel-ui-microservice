@@ -4,7 +4,7 @@
 </div>
 
 <!-- main body -->
-<div class='basediv'>
+<div class='basediv' [class.innerglow]="dtaMaster">
     <!-- power, help -->
     <div class='power-row'>
         <div class='power' (click)="buttonpress('power'); powerOff()">
@@ -90,8 +90,10 @@
 	<!-- bottom left control -->
     <div class='blank-row'>
 		<!-- display to all -->
-		<div *ngIf="displaytoall && !dtaMinion" class="displaytoall" [class.excite]="sendingDTA" [class.alignleft]="!multipledisplays">
-			<i class='material-icons' [class.red]="dtaMaster" [class.excite]="sendingDTA" (click)="toggleDisplayToAll();">call_split</i>
+		<div *ngIf="displaytoall && !dtaMinion" class="displaytoall" [class.excite]="sendingDTA" [class.dtaalignleft]="!multipledisplays && !dtaMaster" [class.dtaalignleftshort]="!multipledisplays && dtaMaster">
+			<i class='material-icons' [class.persimmion]="dtaMaster" [class.excite]="sendingDTA" (click)="toggleDisplayToAll();">call_split</i>
+			<span *ngIf="!sendingDTA && !dtaMaster">Display All</span>
+			<span *ngIf="!sendingDTA && dtaMaster">Stop</span>
 		</div>
 		<!-- all control -->
 		<div *ngIf="multipledisplays" class="all-control" [class.alignleft]="!displayToAll">

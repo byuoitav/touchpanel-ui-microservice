@@ -1015,7 +1015,7 @@ export class AppComponent { // event stuff
 		return;	
 
 	this.sendingDTA = true;
-    setTimeout(() => { this.sendingDTA = false }, 1500); //milliseconds of button timeout
+    setTimeout(() => { this.sendingDTA = false }, 1000); //milliseconds of button timeout
 
 	this.dtaMaster = !this.dtaMaster;
 
