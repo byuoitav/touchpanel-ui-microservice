@@ -384,6 +384,9 @@ export class AppComponent { // event stuff
 				this.changeInput(this.selectedDisplay.oinputs[0]);
 			}
 		}
+
+		if (this.dtaMinion) {
+		}
   }
 
   getAudioDevices(names: string[]): AudioOutDevice[] {
@@ -567,25 +570,35 @@ export class AppComponent { // event stuff
   updateUI(e: Event) {
     console.log("update ui based on event:", e);
 
-	if (this.dtaMinion) {
+	if (this.dtaMinion && (e.device == "dta" || e.device == this.dtaMasterHost)) {
 		switch(e.eventInfoKey) {
 			case "input":
-				if (e.device == "dta") {
+				// if the currect selected input is the 'dta' input
+				if (this.selectedDisplay.oinput.displayname == this.dtaMasterHost) {
 					let i = this.getInputDevice(e.eventInfoValue);
 					i.name = e.eventInfoValue;
-			    	var body = { displays: [] }
-			    	for (let display of this.displays) {
-			      		body.displays.push({
-			       	 		"name": display.name,
-			        		"input": e.eventInfoValue,
-			      		});
-			    	}
+				   	var body = { displays: [] }
+				   	for (let display of this.displays) {
+				    	body.displays.push({
+				      		"name": display.name,
+				      		"input": e.eventInfoValue,
+				     	});
+				   	}
 					console.log("[DTA] Changing input", body);
-			    	this.put(body);
-					// keep same 'input' selected on circle, maybe update icon?
+				   	this.put(body);
+
 					i = this.getInputDevice(this.dtaMasterHost);
 					if (i != null) this.selectedDisplay.oinput = i;
 				} 
+
+				for (let input of this.selectedDisplay.oinputs) {
+					if (input.displayname == this.dtaMasterHost) {
+						input.name = e.eventInfoValue;	
+						console.log("change", input, "to have name", e.eventInfoValue);
+					}	
+				}
+
+				this.selectedDisplay.oinput.name = e.eventInfoValue;
 				break;
 			case "blanked": 
 				if (e.device == "dta") {
@@ -597,21 +610,16 @@ export class AppComponent { // event stuff
 						})
 					}
 					this.put(body);
-				} else {
-					let d = this.getOutputDevice(e.device);
-					if (d != null) d.blanked = (e.eventInfoValue == 'true');
 				}
 				break;
 			case "dta":
 				this.dtaMinion = (e.eventInfoValue == 'true');  
 				if (!this.dtaMinion) {
-					// TODO delete the new 'input', redraw circle
 					let ii: InputDevice;
 					for (let i of this.inputs) {
 						if (i.displayname == this.dtaMasterHost) {
 							this.inputs.splice(this.inputs.indexOf(i));	
 							ii = i;
-							console.log("this.inputs", this.inputs);
 						}
 					}
 		  			this.dtaMasterHost = null;
@@ -620,7 +628,6 @@ export class AppComponent { // event stuff
 						if (d.selected) {
 							names.push(d.name);
 							d.oinputs.splice(this.inputs.indexOf(ii));
-							console.log("d.oinputs", d);
 						}
 					}
 					this.changeControl(names, true);
@@ -630,6 +637,22 @@ export class AppComponent { // event stuff
 	       	 	console.error("unknown eventInfoKey:", e.eventInfoKey);
 	        	break;
 		}	
+	} else if (this.dtaMinion && e.device != "dta") {
+		// stuff to do while you are a minion and recieve an event, but it isn't from the master panel
+		// mostly general updating of the ui?
+		switch (e.eventInfoKey) {
+			case "blanked":
+				let d = this.getOutputDevice(e.device)
+				if( d != null) {
+					d.blanked = (e.eventInfoValue == 'true');
+		  			this.updateBlanked();
+				}
+				break;
+			default: 
+//				console.error("nothing to do i guess");
+				break;
+		}
+
 	} else {
 	    switch (e.eventInfoKey) {
 	      case "input":
@@ -680,6 +703,8 @@ export class AppComponent { // event stuff
 		  case "dta":
 			this.dtaMinion = (e.eventInfoValue == 'true');  
 		  	this.dtaMasterHost = e.device;
+			// case for if one slice already exists
+			// so you wouldn't recreate one in that case, just change it's display name
 
 			if (this.dtaMinion) {
 				let body = { displays: [], audioDevices: [] };
@@ -712,6 +737,9 @@ export class AppComponent { // event stuff
 					}
 				}
 				this.changeControl(names, false);
+
+				i = this.getInputDevice(this.dtaMasterHost);
+				if (i != null) this.selectedDisplay.oinput = i;
 			}
 			break;
 	      default:
@@ -872,15 +900,6 @@ export class AppComponent { // event stuff
   }
 
   toggleBlank() {
-	if (this.dtaMaster) {
-		let event = {
-			"device": "dta",
-			"eventinfokey": "blanked",
-			"eventinfovalue": this.selectedDisplay.blanked
-		}
- 		this.api.publishFeature(event)
-	}
-
     var body = { displays: [] }
     for (let display of this.displays) {
       if (display.selected) {
@@ -893,6 +912,15 @@ export class AppComponent { // event stuff
     }
     this.put(body);
 	this.updateBlanked();
+
+	if (this.dtaMaster) {
+		let event = {
+			"device": "dta",
+			"eventinfokey": "blanked",
+			"eventinfovalue": this.selectedDisplay.blanked
+		}
+ 		this.api.publishFeature(event)
+	}
   }
 
   updateBlanked() {
@@ -915,6 +943,8 @@ export class AppComponent { // event stuff
 	} else if (this.dtaMinion) {
 		// enable dta option
 		this.dtaMinion = false;
+	} else if (i.displayname == this.dtaMasterHost) {
+		this.dtaMinion = true;	
 	}
 
     var body = { displays: [], audioDevices: [] }
@@ -926,13 +956,16 @@ export class AppComponent { // event stuff
         });
       }
     }
-	for (let a of this.selectedDisplay.oaudiodevices) {
-		if (a.selected) {
-			body.audioDevices.push({
-				"name": a.name,
-				"input": i.name	
-			})	
-		}		
+
+	if (!this.dtaMinion) {
+		for (let a of this.selectedDisplay.oaudiodevices) {
+			if (a.selected) {
+				body.audioDevices.push({
+					"name": a.name,
+					"input": i.name	
+				})	
+			}		
+		}
 	}
 
     this.put(body);
