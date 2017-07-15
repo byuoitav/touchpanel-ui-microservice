@@ -599,8 +599,6 @@ export class AppComponent { // event stuff
 						console.log("change", input, "to have name", e.eventInfoValue);
 					}	
 				}
-
-//				this.selectedDisplay.oinput.name = e.eventInfoValue;
 				break;
 			case "blanked": 
 				body = { displays: [] }	
@@ -615,22 +613,7 @@ export class AppComponent { // event stuff
 			case "dta":
 				this.dtaMinion = (e.eventInfoValue == 'true');  
 				if (!this.dtaMinion) {
-					let ii: InputDevice;
-					for (let i of this.inputs) {
-						if (i.displayname == this.dtaMasterHost) {
-							this.inputs.splice(this.inputs.indexOf(i));	
-							ii = i;
-						}
-					}
-		  			this.dtaMasterHost = null;
-					let names: string[] = [];
-					for (let d of this.displays) {
-						if (d.selected) {
-							names.push(d.name);
-							if (ii != null) d.oinputs.splice(this.inputs.indexOf(ii));
-						}
-					}
-					this.changeControl(names, true);
+					this.removeDTAInput(true);
 				} else {
 					// a different has become master.
 					// needs at least 3 panels in the room to ever happen!!!
@@ -731,6 +714,7 @@ export class AppComponent { // event stuff
 			// so you wouldn't recreate one in that case, just change it's display name
 
 			if (this.dtaMinion) {
+				// becoming a minion
 				let body = { displays: [], audioDevices: [] };
 				for (let display of this.displays) {
 					body.displays.push({
@@ -764,26 +748,11 @@ export class AppComponent { // event stuff
 
 				i = this.getInputDevice(this.dtaMasterHost);
 				if (i != null) this.selectedDisplay.oinput = i;
+				this.dtaMaster = false;
 			} else {
 				this.dtaMaster = true;
 				this.dtaMinion = false;
-				// remove the extra device
-				let ii: InputDevice;
-				for (let i of this.inputs) {
-					if (i.displayname == this.dtaMasterHost) {
-						this.inputs.splice(this.inputs.indexOf(i));	
-						ii = i;
-					}
-				}
-				this.dtaMasterHost = null;
-				let names: string[] = [];
-				for (let d of this.displays) {
-					if (d.selected) {
-						names.push(d.name);
-						if (ii != null) d.oinputs.splice(this.inputs.indexOf(ii));
-					}
-				}
-				this.changeControl(names, true);
+				this.removeDTAInput(true);
 			}
 			break;
 	      default:
@@ -791,6 +760,26 @@ export class AppComponent { // event stuff
 	        break;
 	    }
 	}
+  }
+
+  removeDTAInput(changeInput: boolean) {
+	// remove the extra device
+	let ii: InputDevice;
+	for (let i of this.inputs) {
+		if (i.displayname == this.dtaMasterHost) {
+			this.inputs.splice(this.inputs.indexOf(i));	
+			ii = i;
+		}
+	}
+	this.dtaMasterHost = null;
+	let names: string[] = [];
+	for (let d of this.displays) {
+		if (d.selected) {
+			names.push(d.name);
+			if (ii != null) d.oinputs.splice(this.inputs.indexOf(ii));
+		}
+	}
+	this.changeControl(names, changeInput);
   }
 
   hasRole(d: Device, role: string): boolean {
@@ -1032,22 +1021,7 @@ export class AppComponent { // event stuff
 	this.dtaMaster = !this.dtaMaster;
 
 	if (this.dtaMaster && this.dtaMasterHost != this.api.hostname) {
-		let ii: InputDevice;
-		for (let i of this.inputs) {
-			if (i.displayname == this.dtaMasterHost) {
-				this.inputs.splice(this.inputs.indexOf(i));	
-				ii = i;
-			}
-		}
-		this.dtaMasterHost = null;
-		let names: string[] = [];
-		for (let d of this.displays) {
-			if (d.selected) {
-				names.push(d.name);
-				if (ii != null) d.oinputs.splice(this.inputs.indexOf(ii));
-			}
-		}
-		this.changeControl(names, true);
+		this.removeDTAInput(true);
 	}
 	
 	let event = {
