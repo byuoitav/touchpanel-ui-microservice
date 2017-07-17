@@ -15,7 +15,7 @@ import { APIService } from './api.service';
 
 export class MyHammerConfig extends HammerGestureConfig {
 	overrides = <any>{
-		'press': {time: 2000}	
+		'press': {time: 1200}	
 	}
 }
 

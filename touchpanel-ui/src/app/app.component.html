@@ -7,7 +7,7 @@
 <div class='basediv' [class.innerglow]="dtaMaster">
     <!-- power, help -->
     <div class='power-row'>
-        <div class='power' (click)="buttonpress('power'); powerOff()" (press)="helpmodal.show()">
+        <div class='power' (click)="buttonpress('power'); powerOff()" (press)="poweroffmodal.show()">
             <i class='material-icons'>power_settings_new</i>
         </div>
         <div class='help' (click)="buttonpress('help'); helpmodal.show()">
@@ -331,6 +331,20 @@
         <div class="modal-bottom">
             <button class="btn btn-danger" (click)="confirmrebootmodal.hide()">Cancel</button>
             <button class="btn btn-success" (click)="reboot()">Reboot</button>
+        </div>
+    </div>
+</app-modal>
+
+<app-modal #poweroffmodal>
+    <div class="app-modal-body">
+        <div class="modal-title">
+			Power off all displays?
+        </div>
+        <div class="modal-body">
+        </div>
+        <div class="modal-bottom">
+            <button class="btn btn-danger" (click)="poweroffmodal.hide()">Cancel</button>
+            <button class="btn btn-success" (click)="powerOffAll(); poweroffmodal.hide();">Confirm</button>
         </div>
     </div>
 </app-modal>
