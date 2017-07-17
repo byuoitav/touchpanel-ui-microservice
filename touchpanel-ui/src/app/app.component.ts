@@ -78,6 +78,7 @@ export class AppComponent { // event stuff
 
   // features
   displaytoall: boolean;
+  poweroffall: boolean;
   dev: boolean;
 
   public constructor(private socket: SocketService, private api: APIService, private cookie: CookieService) {
@@ -91,6 +92,7 @@ export class AppComponent { // event stuff
     this.sendingOn = false;
 	this.ringopen = false;
 	this.displaytoall = false;
+	this.poweroffall = false;
 
     // management
     this.deviceInfo = new Object();
@@ -108,7 +110,7 @@ export class AppComponent { // event stuff
    	this.dev = false;
 	
 	// uncomment for local testing
-//   this.showing = true;
+  // this.showing = true;
 
     // setup socket to recieve events
     this.socket.getEventListener().subscribe(event => {
@@ -473,6 +475,7 @@ export class AppComponent { // event stuff
 				this.displaytoall = true;
 				break;
 			case 'power-off-all':
+				this.poweroffall = true;
 				console.log("Enabling feature:", feature);
 				break;
 			case 'group-input':
@@ -1260,13 +1263,17 @@ export class AppComponent { // event stuff
 		console.log("data:", data);	
 	}); 
   }
-
-  mouseUpDown(e) {
- 	console.log("event", e); 
-	if (e.type == "mousedown") {
-			
-	} else if (e.type == "mouseup") {
-	
+  
+  powerOffAll() {
+	if (this.dtaMaster) {
+		this.toggleDisplayToAll();	
 	}
+
+	let body = { 
+  		"power": "standby" 
+	}
+
+    this.put(body, func => { }, err => { this.showing = !this.showing; });
+    this.showing = !this.showing;
   }
 } 
