@@ -1260,4 +1260,13 @@ export class AppComponent { // event stuff
 		console.log("data:", data);	
 	}); 
   }
+
+  mouseUpDown(e) {
+ 	console.log("event", e); 
+	if (e.type == "mousedown") {
+			
+	} else if (e.type == "mouseup") {
+	
+	}
+  }
 } 

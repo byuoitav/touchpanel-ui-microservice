@@ -7,7 +7,7 @@
 <div class='basediv' [class.innerglow]="dtaMaster">
     <!-- power, help -->
     <div class='power-row'>
-        <div class='power' (click)="buttonpress('power'); powerOff()">
+        <div class='power' (click)="buttonpress('power'); powerOff()" (press)="helpmodal.show()">
             <i class='material-icons'>power_settings_new</i>
         </div>
         <div class='help' (click)="buttonpress('help'); helpmodal.show()">
