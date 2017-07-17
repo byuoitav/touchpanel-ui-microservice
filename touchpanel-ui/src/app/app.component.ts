@@ -809,11 +809,20 @@ export class AppComponent { // event stuff
 		});	
 	}
 	for (let ad of this.selectedDisplay.oaudiodevices) {
-		body.audioDevices.push({
-			"name": ad.name,
-			"muted": false,
-			"volume": 30
-		})
+		if (this.displaytoall) {
+			body.audioDevices.push({
+				"name": ad.name,
+				"muted": true,
+				"volume": 30
+			});
+		
+		} else {
+			body.audioDevices.push({
+				"name": ad.name,
+				"muted": false,
+				"volume": 30
+			});
+		}
 	}
 
     this.put(body, func => { }, func => { }, after => {
@@ -1090,10 +1099,12 @@ export class AppComponent { // event stuff
 	      if (a.selected) {
 	        body.audioDevices.push({
 	          "name": a.name,
-	          "muted": false 
+//              "muted": false 
+	          "muted": true 
 	        });
 	      }
 	    }
+		this.put(body);
 
 		// switch back to normal audio
 		let names: string[] = [];			
@@ -1109,7 +1120,7 @@ export class AppComponent { // event stuff
 	      if (a.selected) {
 	        body.audioDevices.push({
 	          "name": a.name,
-	          "muted": false,
+	          "muted": true,
 			  "volume": 30,
 			  "input": this.selectedDisplay.odefaultinput.name 
 	        });
