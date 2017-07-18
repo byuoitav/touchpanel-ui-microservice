@@ -36,8 +36,8 @@ test:
         - cd $BUILD_PATH && go test -v -race $(go list ./... | grep -v /vendor/)
         - npm install -g @angular/core
         - npm install -g @angular/cli
-        - cd touchpanel-ui && npm install && ng build --prod --bash-href="./"
-        - mv touchpanel-ui/dist/ dist && rm -r touchpanel-ui
+        - cd touchpanel-ui && npm install && ng build --base-href="./circle-default/"
+        - mv touchpanel-ui/dist/ circle-default && rm -r touchpanel-ui
 
 deployment:
     development:

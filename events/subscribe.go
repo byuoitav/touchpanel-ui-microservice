@@ -95,12 +95,7 @@ func (manager *ClientManager) Start(f filter) {
 				continue
 			}
 			for conn := range manager.clients {
-				select {
-				case conn.send <- toSend:
-				default:
-					close(conn.send)
-					delete(manager.clients, conn)
-				}
+				conn.send <- toSend
 			}
 		}
 	}

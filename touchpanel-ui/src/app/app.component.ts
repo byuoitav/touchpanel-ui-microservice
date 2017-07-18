@@ -5,7 +5,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { CookieService, CookieOptions } from 'ngx-cookie';
 
 import { APIService } from './api.service';
-import { Room, RoomConfiguration, RoomStatus, Event, Device, DeviceData, icons, cookies } from './objects';
+import { Room, RoomConfiguration, RoomStatus, Event, Device, DeviceData, OutputDevice, icons, InputDevice, AudioOutDevice, AudioConfig, Mic } from './objects';
 import { ModalComponent } from './modal.component';
 
 @Component({
@@ -42,20 +42,17 @@ import { ModalComponent } from './modal.component';
   ],
 })
 export class AppComponent { // event stuff
-  messages: Array<any>;
-  events: Array<Event>;
+  // events
+  events: Array<Object>;
   // room data
   room: Room;
   roomname: string;
   // display information	
-  volume: number;
-  muted: boolean;
-  inputs: Array<DeviceData>;
-  inputsToShow: Array<DeviceData>;
-  displays: Array<DeviceData>;
-  displaysToShow: Array<DeviceData>;
+  inputs: Array<InputDevice>;
+  displays: Array<OutputDevice>;
+  audiodevices: Array<AudioOutDevice>;
+  mics: Array<Mic>;
   powerState: boolean;
-  blanked: boolean;
   // "lock" screen
   showing: boolean
   currentAudioLevel: number;
@@ -71,27 +68,31 @@ export class AppComponent { // event stuff
   displayselection: boolean; 
   // multi-display data 
   multipledisplays: boolean;
-  currentInput: DeviceData;
-  selectedDisplay: DeviceData; 
-  allcontrol: boolean;
-  singlecontrol: boolean;
+  selectedDisplay: OutputDevice; 
+  selectedAudio: AudioOutDevice;
   // help
   helprequested: boolean;
   // audio data
   microphone: boolean;
   microphonecontrol: boolean;
 
+  // features
+  displaytoall: boolean;
+  poweroffall: boolean;
+  dev: boolean;
+
   public constructor(private socket: SocketService, private api: APIService, private cookie: CookieService) {
-    this.messages = [];
-    this.events = [];
     this.inputs = [];
-	this.inputsToShow = [];
-	this.displaysToShow = [];
+	this.events = [];
     this.displays = [];
+	this.audiodevices = [];
+	this.mics = [];
     this.showing = false;
     this.startSpinning = false;
     this.sendingOn = false;
 	this.ringopen = false;
+	this.displaytoall = false;
+	this.poweroffall = false;
 
     // management
     this.deviceInfo = new Object();
@@ -99,17 +100,17 @@ export class AppComponent { // event stuff
   }
 
   public ngOnInit() {
-	this.readToShowCookies();
-	this.currentInput = new DeviceData(); 
-	this.selectedDisplay = new DeviceData();
+	this.selectedDisplay = new OutputDevice();
+	this.selectedDisplay.oaudiodevices = null; 
+
     this.api.setup();
     this.getData();
-	this.blanked = false;
 	this.helprequested = false;
+	this.displayselection = false;
+   	this.dev = false;
 	
 	// uncomment for local testing
-//   this.showing = true;
-//	this.microphone = true;
+//    this.showing = true;
 
     // setup socket to recieve events
     this.socket.getEventListener().subscribe(event => {
@@ -118,14 +119,21 @@ export class AppComponent { // event stuff
 
         let e = new Event();
         Object.assign(e, data);
-        this.events.push(e);
+		if (this.dev) {
+			if (this.events.length > 500) 	
+				this.events.splice(0, 250); 
+			
+			this.events.push(e);	
+			let element = document.getElementById('dev-console');
+	    	setTimeout(() => { element.scrollTop = element.scrollHeight; }, 0)
+		}
 
         // do stuff with event
         this.updateUI(e);
       } else if (event.type == CLOSE) {
-        this.messages.push("The socket connection has been closed");
+		console.log("The socket connection has been closed");
       } else if (event.type == OPEN) {
-        this.messages.push("The socket connection has been opened");
+        console.log("The socket connection has been opened");
       }
     })
   }
@@ -180,133 +188,328 @@ export class AppComponent { // event stuff
         Object.assign(this.room.status, data);
         console.log("roomstatus:", this.room.status);
 
-        for (let d of this.room.config.devices) {
-          if (this.hasRole(d, 'VideoIn'))
-            this.createInputDeviceData(d);
-        }
+		this.createInputDevices();
+        this.createOutputDevices();
+		this.setupFeatures(); 
 
-        this.getInputs();
-        this.statusUpdateVolume();
-        setTimeout(() => { this.checkEmpty(); }, 0)
-        setTimeout(() => { this.buildInputMenu(); }, 0)
+		this.dtaMasterHost = this.api.hostname;
       });
     });
   }
 
-  //we need to allow for the case that the display is off, in which case it's status will come back with a blank input
-  getInputs() {
-    for (let display of this.room.status.displays) {
-      var hasinput = false;
-      for (let input of this.inputs) {
-        if (display.input == input.name) { // find where the display's input matches an input
-          console.log("display", display.name, "has input", input.name);
-          let dd = new DeviceData();
-          dd.name = display.name;
-//          dd.icon = input.icon;
+  createInputDevices() {
+ 	for(let input of this.room.config.devices) {
+		if (this.hasRole(input, 'VideoIn') || this.hasRole(input, 'AudioIn')) {
+			for (let i of this.api.uiconfig.inputdevices) {
+				if (i.name == input.name) {
+					let ii = new InputDevice();
+					ii.name = input.name;
+					ii.displayname = input.display_name;
+					ii.icon = i.icon;
+					console.log("Created input", ii);
+					this.inputs.push(ii);
+				}
+			}
+		}
+	}
+  }
 
-          //everything is selected by default;
-          dd.selected = true;
-          this.displays.push(dd);
-          hasinput = true;
-        }
-      }
-      if (!hasinput) {
-        let dd = new DeviceData();
-        dd.name = display.name;
-        dd.icon = icons.blanked;
-        //everything is selected by default
-        dd.selected = true;
-        this.displays.push(dd);
-      }
-    }
+  createOutputDevices() {
+	for (let sdisplay of this.room.status.displays) {
+		// create displays?
+		for (let cdisplay of this.room.config.devices) {
+			if (sdisplay.name == cdisplay.name) {
+				for (let jdisplay of this.api.uiconfig.displays) {
+					if (jdisplay.name == sdisplay.name) {
+						let d = new OutputDevice();
+						d.name = sdisplay.name;
+						d.displayname = cdisplay.display_name;
+						d.icon = jdisplay.icon;
+						d.selected = true;
+						d.odefaultinput = this.getInputDevice(jdisplay.defaultinput);
+						d.oinputs = [];
+						for (let i of jdisplay.inputs) {
+							d.oinputs.push(this.getInputDevice(i));
+						}
 
-    // set the display names
-    for (let display of this.displays) { // maybe this.displays?
-      for (let device of this.room.config.devices) {
-        if (display.name == device.name) {
-          display.displayName = device.display_name;
-          console.log("set display", display.name, "to have display name of", display.displayName);
-		  display.icon = this.getDisplayIcon(device);
-        }
-      }
-    }
+						d.oinput = this.getInputDevice(sdisplay.input); 
+						d.blanked = sdisplay.blanked;
+
+						console.log("Created display:", d);
+						this.displays.push(d);
+					}
+				}
+			}
+		}	
+	}
+
+	// create audio out devices
+	for (let ac of this.api.uiconfig.audio) {
+		for (let a of ac.audiodevices) {
+			for (let sa of this.room.status.audioDevices) {
+				if (sa.name == a) {
+					let ad = new AudioOutDevice(); 
+					ad.name = a;
+					ad.power = sa.power;
+					ad.input = sa.input;
+					ad.volume = sa.volume;
+					ad.muted = sa.muted;
+
+					this.audiodevices.push(ad);
+				}
+			}
+		}
+	}
+
+	// create microphones
+	for (let m of this.room.config.devices) {
+		if (m.roles.includes("Microphone")) {
+			for (let sm of this.room.status.audioDevices) {
+				if (sm.name == m.name) {
+					console.log("status", sm);	
+					let mic = new Mic();
+					mic.name = m.name;
+					mic.displayname = m.display_name;
+					mic.volume = sm.volume;
+					mic.muted = sm.muted;
+
+					
+					console.log("Created microphone", mic);
+					this.mics.push(mic);
+					break;		
+				}	
+			}
+		}	
+	}
+
+	this.audiodevices = Array.from(new Set(this.audiodevices)); // clean up duplicates
+	console.log("All audio devices:", this.audiodevices);
+
+	if (this.displays.length == 1) {
+		this.multipledisplays = false;
+		let arr = [];
+		arr.push(this.displays[0].name);
+		this.changeControl(arr, true);
+	} else {
+		this.multipledisplays = true;
+		console.log("Defaulting to controlling all displays and their associated audio devices");
+		let all = [];
+		for (let d of this.displays) {
+			all.push(d.name);
+		}
+
+		this.changeControl(all, true);
+	}
+  }
+
+  changeControl(names: string[], changeInput: boolean) {
+	  	console.log("Changing control to:", names);
+	  	if (names.length == 0) {
+			console.error("names is empty. need at least one display's name.", names);
+			this.multipledisplays = false;
+			return;
+		} else if (names.length == 1) {
+			this.selectedDisplay = this.getOutputDevice(names[0]);	
+			// select/deselect the correct displays
+			for (let d of this.displays) {
+				for (let n of names) {
+					if (d.name == n) {
+						d.selected = true;
+						break;
+					} else {
+						d.selected = false;	
+					}
+				}
+			}
+			this.selectedDisplay.oaudiodevices = this.getAudioDevices(names);
+		} else {
+		  	console.log("Starting control of displays:", names);
+			// select/deselect the correct displays
+			for (let d of this.displays) {
+				for (let n of names) {
+					if (d.name == n) {
+						d.selected = true;
+						break;
+					} else {
+						d.selected = false;	
+					}
+				}
+			}
 	
-	this.syncDisplayArrays();
+			let displays: OutputDevice[];
+			displays = [];
+			for (let n of names)
+				displays.push(this.getOutputDevice(n));
+	
+			let md = new OutputDevice();
+			md.name = "all control";
+			md.displayname = "all devices";
+			md.icon = "device_hub";	
+			md.blanked = true;
+	
+			// build out common features (inputs, defaultinput)
+			let inputs: InputDevice[] = [];
+			let defaultinputs: InputDevice[] = [];
+	
+			for (let display of displays) {
+				for (let i of display.oinputs) {
+					inputs.push(i); 
+				}
+	
+				defaultinputs.push(display.odefaultinput);
+				if (!display.blanked) md.blanked = false;
+			}
+			inputs = inputs.filter(input => {
+				let count = 0;
+				for (let i of inputs) {
+					if (i == input)
+						count++;
+				}
+				return count == displays.length;
+			});	
+			md.oinputs = Array.from(new Set(inputs)); // only include one of each input
+			md.odefaultinput = Array.from(new Set(defaultinputs)).length == 1 ? Array.from(new Set(defaultinputs))[0] : null; 
+			md.oaudiodevices = this.getAudioDevices(names);
+	
+			console.log("md:", md);	
+	
+			this.selectedDisplay = md;
+			this.multipledisplays = true;	
+		}
+	    setTimeout(() => { this.buildInputMenu(); }, 0)
+
+		// select the default input
+		if (this.showing && changeInput) {
+			if (this.selectedDisplay.odefaultinput != null) {
+				console.log("switching to default input:", this.selectedDisplay.odefaultinput.name);
+				this.changeInput(this.selectedDisplay.odefaultinput);
+			} else {
+				console.log("no default input found. switching to", this.selectedDisplay.oinputs[0].name);
+				this.changeInput(this.selectedDisplay.oinputs[0]);
+			}
+		}
+
+		if (this.dtaMinion) {
+		}
   }
 
-  syncDisplayArrays() {
-	// update info in this.displaysToShow with info in this.displays
-	console.log("syncing display objects");
-	for (let ds of this.displaysToShow) {
-		for (let d of this.displays) {
-			if (ds.name == d.name) {
-				console.log("syncing", ds, "from displaysToShow with", d, "from displays");
-				ds.displayName = (d.displayName) ? d.displayName : "";
-				ds.input = (d.input) ? d.input : this.inputsToShow[0].name;
-				ds.selected = (d.selected) ? d.selected : true;
-//				ds.icon = (d.icon && (d.icon != icons.blanked)) ? d.icon : this.inputsToShow[0].icon;
-				ds.icon = d.icon;
-				ds.blanked = false;
-			}		
+  getAudioDevices(names: string[]): AudioOutDevice[] {
+	  // find 'most correct' audio configuation
+	  let max = 0;
+	  let index = 0;
+	  for (let ad of this.api.uiconfig.audio) {
+		let count = 0;
+		for (let d of ad.displays) {
+			for (let n of names) {
+				if (n == d) 
+					count++;
+			}
 		}
-	}
+		if (count > max) {
+			max = count;
+			index = this.api.uiconfig.audio.indexOf(ad);	
+		}
+	  } 
+	  console.log("using audio configuration:", this.api.uiconfig.audio[index]);
+
+	  let devices: AudioOutDevice[] = [];
+	  for (let n of this.api.uiconfig.audio[index].audiodevices) {
+	 	for (let a of this.audiodevices) {
+			if (n == a.name) {
+				devices.push(a);
+				a.selected = true;
+				break;
+			} else {
+				a.selected = false;	
+			}
+		} 
+	  }
+
+	  return devices;
   }
 
-  getDisplayIcon(d): string { 
-	console.log("d", d);
-	switch(d.type) {	
-	case "tv":
-		return icons.tv;
-	case "sony-projector":
-		return icons.projector;
-	default:
-		return icons.blanked;
-	}
+
+  getOutputDevice(name: string): OutputDevice {
+ 	for (let d of this.displays) {
+		if (d.name == name)
+			return d;
+	} 
+	console.error("failed to find a display named:", name);
+	return null;
+  }
+  
+  getInputDevice(name: string): InputDevice {
+	for (let input of this.inputs) {
+		if (input.name == name)
+			return input;
+	} 
+	console.error("failed to find an input named:", name);
+   	return null;
+  } 
+
+  getMic(name: string): Mic {
+ 	for (let m of this.mics) {
+		if (m.name == name)
+			return m	
+	} 
+	console.error("failed to find a mic named:", name);
+   	return null;
   }
 
-  checkEmpty() {
-	// if the toShow arrays are empty, fill them will everything
-	if (this.displaysToShow.length == 0) {
-		console.log("displays to show is empty, filling it...");
-		for (let d of this.displays) {
-			this.displaysToShow.push(d);	
+  getAudioDevice(name: string): AudioOutDevice {
+ 	for (let a of this.audiodevices) {
+		if (a.name == name) {
+			return a;	
+		}	
+	} 
+	console.error("failed to find an audio device named:", name);
+   	return null;
+  }
+
+  setupFeatures() {
+	for (let feature of this.api.uiconfig.features) {
+		// todo enable features
+		switch(feature) {
+			case 'display-to-all':
+				console.log("Enabling feature:", feature);
+				this.displaytoall = true;
+				break;
+			case 'power-off-all':
+				this.poweroffall = true;
+				console.log("Enabling feature:", feature);
+				break;
+			case 'group-input':
+				console.log("Enabling feature:", feature);
+				break;
+			default: 
+				console.error("unknown feature:", feature);
+				break;	
 		}
-		console.log("done.", this.displaysToShow);
-	}
-	if (this.inputsToShow.length == 0) {
-		console.log("inputs to show is empty, filling it...");
-		for (let d of this.inputs) {
-			this.inputsToShow.push(d);	
-		}
-		console.log("done.", this.inputsToShow);
 	}
   }
 
   // build the input menu
   buildInputMenu() {
-    console.log("ring:", this.ring);
+//    console.log("ring:", this.ring);
     let numOfChildren = this.ring.nativeElement.childElementCount;
-    console.log("num of children:", numOfChildren);
+//   console.log("num of children:", numOfChildren);
     let children = this.ring.nativeElement.children;
     let angle = 360 / numOfChildren;
-    console.log("angle", angle);
+//    console.log("angle", angle);
     // svg arc length 
     this.arcpath = this.getArc(.5, .5, .5, 0, angle);
 
 	// apply styles to first two (title area)
 	for (let i = 0; i < 2; i++) {
-	  console.log("room name slice", i + ":", children[i]);	
+//	  console.log("room name slice", i + ":", children[i]);	
 
       let rotate = "rotate(" + String(angle * -i) + "deg)";
       children[i].style.transform = rotate;
-
-     // let darkenstr = "#455A64";
-      //children[i].style.backgroundColor = darkenstr;
 	}
 
     // apply styles to children
     for (let i = 2; i < numOfChildren; i++) {
-      console.log("children[" + i + "]", children[i]);
+//      console.log("children[" + i + "]", children[i]);
 
       // rotate the slice
       let rotate = "rotate(" + String(angle * -i) + "deg)";
@@ -314,23 +517,8 @@ export class AppComponent { // event stuff
 	  // rotate the text
       rotate = "rotate(" + String(angle * i) + "deg)";
 	  children[i].firstElementChild.style.transform = rotate; 
-
-      // color it
-//		different color for each slice
-//      let darkenstr = "hsl(193, 76%, " + String(80 - (i * 5)) + "%)";
-	  // single color for each slice
-	  let darkenstr = "#90A4AE";
-      children[i].style.backgroundColor = darkenstr;
     }
-	// start out all control mode
-	if (this.displaysToShow.length == 1) {
-		console.log("only one display");	
-		this.multipledisplays = false;
-		this.goToSingleControl(this.displaysToShow[0]);
-	} else {
-		this.multipledisplays = true;
-		this.goToSingleControl('all');
-	}
+
 	this.getInputOffset();
   }
 
@@ -359,180 +547,241 @@ export class AppComponent { // event stuff
   }
 
   getInputOffset() {
- 	 let total = (this.inputsToShow.length * 2) + 24;	 
+	 let length = this.ring.nativeElement.childElementCount -2;
+     let total = (length * 2) + 24;
 
-	 let Nright = ((this.inputsToShow.length - 1) * total) / (this.inputsToShow.length);
-	 let Ntop = Nright / (this.inputsToShow.length - 1);
+	 let Nright = ((length - 1) * total) / length;
+	 let Ntop = Nright / (length - 1);
 
-	 if (this.inputsToShow.length == 2 || this.inputsToShow.length == 3) {
+   switch(length) {
+	case 3:
 		Nright++;
-	 } else if (this.inputsToShow.length == 1) {
+	   	break;
+	case 2:
+		Nright++;
+	   	break;
+	case 1:
 		Nright = 10;
 		Ntop = 21;
-	 }
-
+		break;	
+   }
+  
 	 this.rightoffset = String(Nright) + "%";
-	 console.log("right offset:", this.rightoffset);
+//	 console.log("right offset:", this.rightoffset);
 	 this.topoffset = String(Ntop) + "%";
-	 console.log("top offset:", this.topoffset);
+//	 console.log("top offset:", this.topoffset);
   }
 
   updateUI(e: Event) {
     console.log("update ui based on event:", e);
 
-    switch (e.eventInfoKey) {
-      case "input":
-        let input: DeviceData;
-        for (let i of this.inputs) {
-          if (i.name == e.eventInfoValue) {
-            input = i;
-            break;
-          }
-        }
+	if (this.dtaMinion && (e.device == "dta" || e.device == this.dtaMasterHost)) {
+		switch(e.eventInfoKey) {
+			case "input":
+				// if the currect selected input is the 'dta' input
+				if (this.selectedDisplay.oinput.displayname == this.dtaMasterHost) {
+					let i = this.getInputDevice(e.eventInfoValue);
+					i.name = e.eventInfoValue;
+				   	var body = { displays: [] }
+				   	for (let display of this.displays) {
+				    	body.displays.push({
+				      		"name": display.name,
+				      		"input": e.eventInfoValue,
+				     	});
+				   	}
+					console.log("[DTA] Changing input", body);
+				   	this.put(body);
 
-        for (let display of this.displaysToShow) {
-          if (display.name == e.device) {
-//            display.icon = input.icon;
-            display.input = input.name;
-            break;
-          }
-        }
-        break;
-      case "power":
-        if (e.eventInfoValue == "on") {
-          this.showing = true;
-          this.startSpinning = false;
-        } else {
-          this.showing = false;
-        }
-        break;
-      case "volume":
-        this.muted = false;
-        this.volume = Number(e.eventInfoValue);
-        break;
-      case "muted":
-        this.muted = (e.eventInfoValue == 'true');
-        break;
-      case "blanked":
-        var d: DeviceData;
+					i = this.getInputDevice(this.dtaMasterHost);
+					if (i != null) this.selectedDisplay.oinput = i;
+				} 
 
-        for (let display of this.displaysToShow) {
-          if (display.name == e.device) {
-            d = display;
-            break;
-          }
-        }
+				for (let input of this.selectedDisplay.oinputs) {
+					if (input.displayname == this.dtaMasterHost) {
+						input.name = e.eventInfoValue;	
+						console.log("change", input, "to have name", e.eventInfoValue);
+					}	
+				}
+				break;
+			case "blanked": 
+				body = { displays: [] }	
+				for (let display of this.displays) {
+					body.displays.push({
+						"name": display.name,
+						"blanked": (e.eventInfoValue == 'true')	
+					})
+				}
+				this.put(body);
+				break;
+			case "dta":
+				this.dtaMinion = (e.eventInfoValue == 'true');  
+				if (!this.dtaMinion) {
+					this.removeDTAInput(true);
+				} else {
+					// a different has become master.
+					// needs at least 3 panels in the room to ever happen!!!
+					for (let input of this.selectedDisplay.oinputs) {
+						if (input.displayname == this.dtaMasterHost) {
+							input.name = e.eventInfoValue;	
+							console.log("change", input, "to have name", e.eventInfoValue);
+						}
+					}
 
-		console.log("device", d);
+					if (this.selectedDisplay.oinput.displayname == this.dtaMasterHost) {
+						// change input now if the group input is selected		
+				   		var body = { displays: [] }
+				   		for (let display of this.displays) {
+							if (display.selected) {
+				  	  			body.displays.push({
+				   		   			"name": display.name,
+				      				"input": e.eventInfoValue,
+				     			});
+							}
+				   		}
+						console.log("[DTA] Changing input", body);
+				   		this.put(body);
+					}
+				}
+				break;
+			default: 
+	       	 	console.error("unknown eventInfoKey:", e.eventInfoKey);
+	        	break;
+		}
+	} else if (this.dtaMinion && e.device != "dta") {
+		// stuff to do while you are a minion and recieve an event, but it isn't from the master panel
+		// mostly general updating of the ui?
+		switch (e.eventInfoKey) {
+			case "blanked":
+				let d = this.getOutputDevice(e.device)
+				if( d != null) {
+					d.blanked = (e.eventInfoValue == 'true');
+		  			this.updateBlanked();
+				}
+				break;
+			default: 
+//				console.error("nothing to do i guess");
+				break;
+		}
 
-        d.blanked = (e.eventInfoValue == 'true');
-        break;
-	  case "refresh": 
-		  console.log("refresh message recieved");
-	  	  this.refresh();
-		  break;
-      default:
-        console.log("unknown eventInfoKey:", e.eventInfoKey);
-        break;
-    }
+	} else {
+	    switch (e.eventInfoKey) {
+	      case "input":
+			  	let od = this.getOutputDevice(e.device);
+				let i  = this.getInputDevice(e.eventInfoValue);
+				if (i != null && od != null) od.oinput = i;
+	        break;
+	      case "power":
+			if (this.getOutputDevice(e.device) != null) {
+	 	       if (e.eventInfoValue == "on") {
+	 	         this.showing = true;
+	 	         this.startSpinning = false;
+	 	       } else {
+	 	         this.showing = false;
+	 	       }
+		  	}
+	        break;
+	      case "volume":
+			let vd = this.getAudioDevice(e.device) 
+		  	if (vd != null) {
+				vd.volume = Number(e.eventInfoValue);
+				vd.muted = false;
+			} else {
+				let m = this.getMic(e.device)
+				if (m != null) {
+					m.volume = Number(e.eventInfoValue);
+					m.muted = false;	
+				}
+			}
+	        break;
+	      case "muted":
+			let md = this.getAudioDevice(e.device);
+		  	if (md != null) md.muted = (e.eventInfoValue == 'true');
+			else {
+				let m = this.getMic(e.device)
+				if (m != null) {
+					m.muted = (e.eventInfoValue == 'true');	
+				}
+			}
+	        break;
+	      case "blanked":
+			let d = this.getOutputDevice(e.device)
+			if( d != null) {
+				d.blanked = (e.eventInfoValue == 'true');
+		  		this.updateBlanked();
+			}
+	        break;
+		  case "dta":
+			this.dtaMinion = (e.eventInfoValue == 'true');  
+		  	this.dtaMasterHost = e.device;
+			// case for if one slice already exists
+			// so you wouldn't recreate one in that case, just change it's display name
+
+			if (this.dtaMinion) {
+				// becoming a minion
+				let body = { displays: [], audioDevices: [] };
+				for (let display of this.displays) {
+					body.displays.push({
+						"name": display.name,
+						"blanked": false,	
+					});
+					for (let ad of display.oaudiodevices) {
+						body.audioDevices.push({
+							"name": ad.name,
+							"muted": true	
+						})	
+					}
+				}
+				console.log("[DTA] Entering dta mode:", body);
+				this.put(body);
+
+				let i = new InputDevice();
+				i.name = this.dtaMasterHost;
+				i.displayname =  this.dtaMasterHost;
+				i.icon = "people";
+				this.inputs.push(i);
+
+				let names: string[] = [];
+				for (d of this.displays) {
+					if (d.selected) {
+						d.oinputs.push(this.getInputDevice(this.dtaMasterHost));
+						names.push(d.name);
+					}
+				}
+				this.changeControl(names, false);
+
+				i = this.getInputDevice(this.dtaMasterHost);
+				if (i != null) this.selectedDisplay.oinput = i;
+				this.dtaMaster = false;
+			} else {
+				this.dtaMinion = false;
+				this.removeDTAInput(true);
+			}
+			break;
+	      default:
+	        console.error("unknown eventInfoKey:", e.eventInfoKey);
+	        break;
+	    }
+	}
   }
 
-  updateState() {
-    this.api.getRoomStatus().subscribe(
-      data => {
-        this.room.status = new RoomStatus();
-        Object.assign(this.room.status, data);
-        console.log("updated state:", this.room.status);
-        this.updateInputs();
-        this.statusUpdateVolume();
-      }
-    );
-  }
-
-  statusUpdateVolume() {
-    var first = true;
-    var count = 0;
-    // go through and get the volumes, if only one device is selected, set the current room volume to that level.
-    // for muted, if all are muted, set the icon to muted, else show it as open.
-    for (let speaker of this.room.status.audioDevices) {
-      for (let display of this.displaysToShow) {
-        if (speaker.name != display.name || !display.selected) {
-          continue;
-        }
-        if (first) {
-          //set the volume level
-          this.volume = speaker.volume;
-          count++;
-          this.muted = speaker.muted;
-        } else {
-          //average it in
-          this.volume = ((this.volume * count) + speaker.volume) / count + 1
-          count++
-
-          if (this.muted && !speaker.muted) {
-            this.muted = false;
-          }
-        }
-      }
-    }
-  }
-
-  updateInputs() {
-    //go through the list of status and set the current input 
-    for (let display of this.room.status.displays) {
-      for (let d of this.displaysToShow) {
-        if (d.icon == icons.blanked) {
-          break;
-        }
-        //check to make sure we map
-        if (d.name == display.name) {
-          //go through and get the device mapping to the input
-          for (let input of this.inputs) {
-            if (input.name == display.input) {
-              d.input = input.name;
-//              d.icon = input.icon;
-            }
-          }
-        }
-      }
-    }
-
-	this.syncDisplayArrays();
-  }
-
-  createInputDeviceData(d: Device) {
-    let dd = new DeviceData();
-    dd.name = d.name;
-    dd.displayName = d.display_name;
-    switch (d.type) {
-      case "hdmiin":
-        dd.icon = icons.hdmi;
-        break;
-      case "overflow":
-        dd.icon = icons.overflow;
-        break;
-      case "computer":
-        dd.icon = icons.computer;
-        break;
-      case "iptv":
-        dd.icon = icons.iptv;
-        break;
-      case "appletv":
-        dd.icon = icons.appletv;
-        break;
-      case "table":
-        dd.icon = icons.table;
-        break;
-	  case "blu-ray":
-		dd.icon = icons.bluray;
-	  	break;
-      default:
-        dd.icon = icons.generic;
-        break;
-    }
-    this.inputs.push(dd);
-
-    console.log("added", dd.name, "(display name =", dd.displayName + ")", "of type", d.type, "to inputs. (icon = " + dd.icon + " )");
+  removeDTAInput(changeInput: boolean) {
+	// remove the extra device
+	let ii: InputDevice;
+	for (let i of this.inputs) {
+		if (i.displayname == this.dtaMasterHost) {
+			this.inputs.splice(this.inputs.indexOf(i));	
+			ii = i;
+		}
+	}
+	this.dtaMasterHost = null;
+	let names: string[] = [];
+	for (let d of this.displays) {
+		if (d.selected) {
+			names.push(d.name);
+			if (ii != null) d.oinputs.splice(this.inputs.indexOf(ii));
+		}
+	}
+	this.changeControl(names, changeInput);
   }
 
   hasRole(d: Device, role: string): boolean {
@@ -547,55 +796,85 @@ export class AppComponent { // event stuff
   // commands
   // 
   enterScreen() {
-    if (this.sendingOn)
+    if (this.sendingOn || this.selectedDisplay.oaudiodevices == null)
       return;
-
+  	
     this.sendingOn = true;
     this.startSpinning = true;
+	this.displayselection = false;
 	let body = { displays: [], audioDevices: [] }
-	for (let display of this.displaysToShow) {
+	for (let display of this.displays) {
 		body.displays.push({
 			"name": display.name,
       		"power": "on",
       		"blanked": false,
-			"input": this.inputsToShow[0].name,
+			"input": display.odefaultinput.name
 		});	
-		body.audioDevices.push({
-			"name": display.name,
-			"muted": false,
-			"volume": 30	
-		});
+	}
+	for (let ad of this.selectedDisplay.oaudiodevices) {
+		if (this.displaytoall) {
+			body.audioDevices.push({
+				"name": ad.name,
+				"muted": true,
+				"volume": 30
+			});
+		
+		} else {
+			body.audioDevices.push({
+				"name": ad.name,
+				"muted": false,
+				"volume": 30
+			});
+		}
 	}
 
     this.put(body, func => { }, func => { }, after => {
-      this.updateState();
+//      this.updateState();
+	  // need to updateState when turning on display
       this.showing = true;
       this.startSpinning = false;
       this.sendingOn = false;
     });
+
+	for (let display of this.displays) {
+		display.blanked = false;
+		display.oinput = display.odefaultinput;
+	}
   }
 
   toggleMute() {
-    if (this.muted)
-      this.muted = false;
-    else
-      this.muted = true;
-
     var body = { audioDevices: [] }
-    for (let speaker of this.displaysToShow) {
-      if (speaker.selected) {
+    for (let a of this.selectedDisplay.oaudiodevices) {
+      if (a.selected) {
+	  	a.muted = !a.muted;
         body.audioDevices.push({
-          "name": speaker.name,
-          "muted": this.muted
+          "name": a.name,
+          "muted": a.muted 
         });
       }
     }
     this.put(body);
   }
 
+  isMuted(): boolean {
+	// null case
+	if (!this.selectedDisplay.oaudiodevices)
+		return
+
+ 	for (let a of this.selectedDisplay.oaudiodevices) {
+		if (a.muted) return true;
+	} 
+	return false;
+  }
+
+
   powerOff() {
+	if (this.dtaMaster) {
+		this.toggleDisplayToAll();	
+	}
+
 	let body = { displays: [] }
-	for (let display of this.displaysToShow) {
+	for (let display of this.displays) {
 		body.displays.push({
 			"name": display.name,
       		"power": "standby",
@@ -605,77 +884,253 @@ export class AppComponent { // event stuff
     this.showing = !this.showing;
   }
 
-  updateVolume(volume: number) {
-    this.volume = volume;
-    this.muted = false;
-
+  changeVolume(volume: number) {
+	this.lastvolume = volume;
     var body = { audioDevices: [] }
-    for (let speaker of this.displaysToShow) {
-      if (speaker.selected) {
+    for (let a of this.selectedDisplay.oaudiodevices) {
+      if (a.selected) {
+		a.volume = volume;
         body.audioDevices.push({
-          "name": speaker.name,
-          "volume": this.volume
+          "name": a.name,
+          "volume": volume 
         });
       }
     }
     this.put(body);
   }
 
-  blank() {
+  lastvolume: number = 0;
+  updateVolume(volume: number) {
+	let total = volume - this.lastvolume;
+	if (total > 5 || total < -5) {
+		this.changeVolume(volume);
+	}
+  } 
+
+  volumeLevel(): number {
+ 	// null case 
+	if (!this.selectedDisplay.oaudiodevices)
+		return 
+
+	let total = 0;
+	for (let a of this.selectedDisplay.oaudiodevices) {
+		total += a.volume;
+	}
+	return total / this.selectedDisplay.oaudiodevices.length;
+  }
+
+  changeMicVolume(volume: number, name: string) {
+ 	let body = { audioDevices: [] };
+	body.audioDevices.push({
+		"name": name,
+		"volume": volume	
+	});
+	
+	this.put(body);
+  }
+
+  toggleMicMute(name: string) {
+ 	let body = { audioDevices: [] };
+	for (let m of this.mics) {
+		if (m.name == name) {
+			m.muted = !m.muted;
+   			body.audioDevices.push({
+				"name": m.name,
+				"muted": m.muted	
+			});
+		}	
+	}
+	this.put(body);
+  }
+
+  toggleBlank() {
     var body = { displays: [] }
-    for (let display of this.displaysToShow) {
+    for (let display of this.displays) {
       if (display.selected) {
         display.blanked = !display.blanked;
         body.displays.push({
           "name": display.name,
           "blanked": display.blanked 
         });
-      }
+     }
     }
     this.put(body);
+	this.updateBlanked();
+
+	if (this.dtaMaster) {
+		let event = {
+			"device": "dta",
+			"eventinfokey": "blanked",
+			"eventinfovalue": String(this.selectedDisplay.blanked)
+		}
+ 		this.api.publishFeature(event)
+	}
   }
 
-  setOutputDevice(d: DeviceData) {
-	  // hotfix because there is only one display in all our rooms rn
-	  // and i'm pushing it into stage and not testing:)  
-	  //
-	  // and we arent keeping this ui anyways
-//    d.selected = !d.selected;
+  updateBlanked() {
+	for (let display of this.displays) {
+		if (display.selected) {
+			this.selectedDisplay.blanked = display.blanked ? true : false;			
+			if (this.selectedDisplay.blanked) break;
+		}	
+	}
   }
 
-  switchInput(d: DeviceData) {
-    var body = { displays: [] }
-    for (let display of this.displaysToShow) {
+  changeInput(i: InputDevice) {
+	if (this.dtaMaster) {
+		let event = {
+			"device": "dta",
+			"eventinfokey": "input",
+			"eventinfovalue": i.name	
+		}
+ 		this.api.publishFeature(event)
+	} else if (this.dtaMinion) {
+		this.dtaMinion = false;
+	} else if (i.displayname == this.dtaMasterHost) {
+		this.dtaMinion = true;	
+	}
+
+    let body = { displays: [], audioDevices: [] }
+    for (let display of this.displays) {
       if (display.selected) {
-//        display.icon = d.icon;
-		display.input = d.name;	// for appearances? faster (click)?
         body.displays.push({
           "name": display.name,
-          "input": d.name,
+          "input": i.name,
         });
       }
     }
+
+	// this is the problem with the change input video switcher (?) ce
+	// can't change the audioInput in the audioDisplays array
+	if (!this.dtaMinion) {
+		for (let a of this.selectedDisplay.oaudiodevices) {
+			if (a.selected) {
+				body.audioDevices.push({
+					"name": a.name,
+					"input": i.name	
+				})	
+			}		
+		}
+	}
+
     this.put(body);
+
+	this.selectedDisplay.oinput = i;
   }
 
   sendingDTA: boolean;
-  sendDisplayToAll() {
+  dtaMaster: boolean;
+  dtaMasterHost: string;
+  dtaMinion: boolean;
+  toggleDisplayToAll() {
 	if (this.sendingDTA)
 		return;	
 
 	this.sendingDTA = true;
-    setTimeout(() => { this.sendingDTA = false }, 5000); //milliseconds of button timeout
-	console.log("sending display to all");
- 	let body = { displays: [] }
-    for (let display of this.displays) {
-		body.displays.push({
-			"name": display.name,
-			"power": "on",
-			"input": this.inputsToShow[0].name,
-		  	"blanked": false
-		}) // gonna have to find the right input somehow	
-	}	
-    this.put(body);
+    setTimeout(() => { this.sendingDTA = false }, 1000); //milliseconds of button timeout
+
+	this.dtaMaster = !this.dtaMaster;
+
+	if (this.dtaMaster && this.dtaMasterHost != this.api.hostname) {
+		this.removeDTAInput(true);
+	}
+	
+	let event = {
+		"device": this.api.hostname,
+		"eventinfokey": "dta",
+		"eventinfovalue": String(this.dtaMaster) 
+	}
+ 	this.api.publishFeature(event)
+
+	if (this.dtaMaster) {
+		event = {
+			"device": "dta",
+			"eventinfokey": "input",
+			"eventinfovalue": this.selectedDisplay.oinput.name	
+		}
+	 	this.api.publishFeature(event)
+
+		// mute current audio out device
+	    var body = { audioDevices: [] }
+	    for (let a of this.selectedDisplay.oaudiodevices) {
+	      if (a.selected) {
+	        body.audioDevices.push({
+	          "name": a.name,
+	          "muted": true 
+	        });
+	      }
+	    }
+	    this.put(body);
+
+		// switch to room audio
+		let index = 0;
+		for (let ac of this.api.uiconfig.audio) {
+			if (ac.displays.includes("dta")) index = this.api.uiconfig.audio.indexOf(ac);
+		}	
+	
+		let devices: AudioOutDevice[] = [];
+		for (let n of this.api.uiconfig.audio[index].audiodevices) {
+		 	for (let a of this.audiodevices) {
+				if (n == a.name) {
+					devices.push(a);
+					a.selected = true;
+					break;
+				} else {
+					a.selected = false;	
+				}
+		 	}
+		}
+		
+		// set room audio level, and input
+		this.selectedDisplay.oaudiodevices = devices;
+	    for (let a of this.selectedDisplay.oaudiodevices) {
+	      if (a.selected) {
+	        body.audioDevices.push({
+	          "name": a.name,
+	          "muted": false,
+			  "volume": 30,
+			  "input": this.selectedDisplay.oinput.name 
+	        });
+	      }
+	    }
+	    this.put(body);
+		console.log("Switch to room audio. Using audio configuration:", devices);
+	} else {
+		// mute room audio
+	    let body = { audioDevices: [] }
+	    for (let a of this.selectedDisplay.oaudiodevices) {
+	      if (a.selected) {
+	        body.audioDevices.push({
+	          "name": a.name,
+//              "muted": false 
+	          "muted": true 
+	        });
+	      }
+	    }
+		this.put(body);
+
+		// switch back to normal audio
+		let names: string[] = [];			
+		for (let d of this.displays) {
+			if (d.selected) {
+				names.push(d.name);	
+			}
+		}
+		this.selectedDisplay.oaudiodevices = this.getAudioDevices(names);
+
+	    body = { audioDevices: [] }
+	    for (let a of this.selectedDisplay.oaudiodevices) {
+	      if (a.selected) {
+	        body.audioDevices.push({
+	          "name": a.name,
+	          "muted": true,
+			  "volume": 30,
+			  "input": this.selectedDisplay.odefaultinput.name 
+	        });
+	      }
+	    }
+	    this.put(body);
+	}
   }
 
   buttonpress(name: string) {
@@ -778,43 +1233,22 @@ export class AppComponent { // event stuff
     this.api.reboot().subscribe();
   }
 
-  openring() {
-	this.ringopen = !this.ringopen;
-	console.log("ringopen:", this.ringopen);
-  }
-
-  goToSingleControl(d) {
-	if (d == 'all') {
-		console.log("going to all control");	
-    	for (let display of this.displaysToShow) {
-			display.selected = true;
+  goToDisplayControl(names: string[]) {
+	if (names[0] == 'all') {
+		names = [];
+		for (let dd of this.displays) {
+			names.push(dd.name);	
 		}
-		this.selectedDisplay = this.displaysToShow[0];
-		this.displaysToShow[0].input = "";
-//		this.switchInput(this.inputsToShow[0]);
-	    this.allcontrol = true;
-		this.singlecontrol = false;
-	} else {
-		for (let display of this.displaysToShow) {
-			if (d === display) {
-				display.selected = true;
-			} else {
-				display.selected = false;	
-			}
-		}
-		this.selectedDisplay = d;
-		this.singlecontrol = true;
-		this.allcontrol = false;
 	}
+	this.changeControl(names, true);
 	this.displayselection = false;
   }
 
   goToDisplaySelection() {
  	console.log("going to display selection") 
-	this.allcontrol = false;
-	this.singlecontrol = false;
+
 	this.ringopen = false;
-	this.displayselection = !this.displayselection;
+	this.displayselection = true;
   }
 
   help(s: String) {
@@ -829,109 +1263,17 @@ export class AppComponent { // event stuff
 		console.log("data:", data);	
 	}); 
   }
-
-  // stuff for displays to show/ inputs to show
-
-  isInDisplaysToShow(d): boolean {
-	for (let x of this.displaysToShow) {
-		if (d.name == x.name) {
-			return true;
-		}	
-	}
-	return false;
-  }
-
-  toggleDisplayToShow(d: DeviceData) {
-	if (this.isInDisplaysToShow(d)) {
- 		console.log("removing from displaysToShow:", d); 
-		this.displaysToShow.splice(this.displaysToShow.indexOf(d), 1);
-	} else {
- 		console.log("adding to displaysToShow:", d); 
-		this.displaysToShow.push(d);
-	}
-  }
-
-  isInInputsToShow(d): boolean {
-	for (let x of this.inputsToShow) {
-		if (d.name == x.name) {
-			return true;
-		}	
-	}
-	return false;
-  }
-
-  toggleInputToShow(d: DeviceData) {
-	if (this.isInInputsToShow(d)) {
- 		console.log("removing from inputsToShow:", d); 
-		this.inputsToShow.splice(this.inputsToShow.indexOf(d), 1);
-	} else {
- 		console.log("adding to inputsToShow:", d); 
-		this.inputsToShow.push(d);
-	}
-  }
-
-  // extra features
-  displayToAll: boolean;
-  isExtraFeatureOn(s: String): boolean {
- 	switch (s) {
-	case 'dta':
-		return this.displayToAll;
-	} 
-  }
-
-  toggleExtraFeatures(s: String) {
- 	switch (s) {
-	case 'dta':
-		this.displayToAll = !this.displayToAll;	
-		break;
-	} 
-  }
-
-  createToShowCookies() {
-	// get a date 20 years away.
-	// IN 20 YEARS AFTER SETTING, SOMEONE WILL HAVE TO REDO THEM
-	let date = new Date(new Date().setFullYear(new Date().getFullYear() + 20));
-	console.log("date", date);
-	let co: CookieOptions = {expires: date};
-	this.cookie.putObject(cookies.inputs, this.inputsToShow, co);
-	this.cookie.putObject(cookies.displays, this.displaysToShow, co);
-	this.cookie.putObject(cookies.dta, this.displayToAll, co);
-	this.refresh();
-  }
-
-  readToShowCookies() {
-	let i = new Array<Object>();
-	let d = new Array<Object>();
-	Object.assign(i, this.cookie.getObject(cookies.inputs));
-	Object.assign(d, this.cookie.getObject(cookies.displays));
-	let c: DeviceData;
-	for (let x of i) {
-		c = new DeviceData();
-		Object.assign(c, x); 
-		this.inputsToShow.push(c);
-	}
-	
-	for (let x of d) {
-		c = new DeviceData();
-		Object.assign(c, x); 
-		this.displaysToShow.push(c);
+  
+  powerOffAll() {
+	if (this.dtaMaster) {
+		this.toggleDisplayToAll();	
 	}
 
-	this.displayToAll = (this.cookie.get(cookies.dta) == 'true');
+	let body = { 
+  		"power": "standby" 
+	}
 
-	console.log("displaysToShow from cookies:", this.displaysToShow);
-	console.log("inputsToShow from cookies:", this.inputsToShow);
-	console.log("displayToAll from cookies:", this.displayToAll);
-  }
-
-  clearToShow() {
-	  this.displaysToShow.length = 0;
-	  this.inputsToShow.length = 0;
-  }
-
-  deleteCookies() {
-	console.log("deleting all cookies");
-	this.cookie.removeAll();
-	this.refresh();
+    this.put(body, func => { }, err => { this.showing = !this.showing; });
+    this.showing = !this.showing;
   }
 } 

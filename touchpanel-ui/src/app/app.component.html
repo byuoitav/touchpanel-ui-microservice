@@ -1,8 +1,13 @@
+<!-- developer mode -->
+<div *ngIf="dev" id='dev-console'>
+	<span *ngFor="let e of events">{{e | json}}<br></span>
+</div>
+
 <!-- main body -->
-<div class='basediv'>
+<div class='basediv' [class.innerglow]="dtaMaster">
     <!-- power, help -->
     <div class='power-row'>
-        <div class='power' (click)="buttonpress('power'); powerOff()">
+        <div class='power' (click)="buttonpress('power'); powerOff()" (press)="poweroffmodal.show()">
             <i class='material-icons'>power_settings_new</i>
         </div>
         <div class='help' (click)="buttonpress('help'); helpmodal.show()">
@@ -14,12 +19,12 @@
 	<!-- display-selection -->
 	<div *ngIf="multipledisplays" class='main-control-h'>
 		<div class='display-selection'>
-			<div *ngFor="let device of displaysToShow" [class.fadeout]="!(device === selectedDisplay) && !displayselection" (click)="goToSingleControl(device)">
+			<div *ngFor="let d of displays" [class.fadeout]="!displayselection" (click)="goToDisplayControl([d.name])">
 				<div class='multi-circle-title'>
-					<span>{{device.displayName}}</span>
+					<span>{{d.displayname}}</span>
 				</div>
 				<div class='multi-circle'>
-					<i class='material-icons'>{{device.icon}}</i>
+					<i class='material-icons'>{{d.icon}}</i>
 				</div>
 			</div>
 		</div>
@@ -28,17 +33,17 @@
 	<!-- microphone control -->
 	<div *ngIf="microphonecontrol" class='main-control-h'>
 		<div class='microphone-selection'>
-			<div class='mic'>
+			<div *ngFor="let mic of mics" class='mic'>
 				<div class='mic-title'>
-					<span>Volume</span>
+					<span *ngIf="mic.displayname">{{mic.displayname}}</span>
+					<span *ngIf="!mic.displayname">{{mic.name}}</span>
 				</div>
 				<div class='mic-volume'>
-	            	<md-slider id="colored-slider" vertical [value]="volume" (change)="buttonpress('volume slider'); updateVolume($event.value)"></md-slider>
+	            	<md-slider id="mic.name" vertical [value]="mic.volume" (change)="buttonpress('mic volume slider'); changeMicVolume($event.value, mic.name)"></md-slider>
 				</div>
-				<div class='mic-mute'>
-					<!-- muted should be device.muted? -->
-       	    		<i *ngIf="muted" class="material-icons" [class.red]="muted">volume_off</i>
-       	    		<i *ngIf="!muted" class="material-icons">volume_up</i>
+				<div class='mic-mute' (click)="toggleMicMute(mic.name)">
+       	    		<i *ngIf="mic.muted" class="material-icons red">volume_off</i>
+       	    		<i *ngIf="!mic.muted" class="material-icons">volume_up</i>
 				</div>
 			</div>
 		</div>
@@ -47,30 +52,35 @@
     <!-- display control -->
     <div [class.hidden]='displayselection || microphonecontrol' class='main-control-h'>
         <div class='main-control-v' >
-			<div class='roomname' [class.roomname-transition]="!selectedDisplay.blanked || true" (click)="buttonpress('blank'); blank();">
-				<span *ngIf="!selectedDisplay.blanked">Blank Display</span>
-				<span *ngIf="selectedDisplay.blanked">Unblank Display</span>
+			<div class='roomname' [class.roomname-transition]="!selectedDisplay.blanked || true" (click)="buttonpress('blank'); toggleBlank();">
+				<span *ngIf="!dtaMaster">{{selectedDisplay.displayname | lowercase}}</span>
+				<span *ngIf="dtaMaster">all displays</span>
 			</div>
-            <div class='circle' [class.circle-shrink]="!selectedDisplay.blanked || true" [class.circle-blanked]="selectedDisplay.blanked" (click)="buttonpress('blank'); blank();">
-				<div class="displayname">
-					<span *ngIf="!allcontrol">{{selectedDisplay.displayName}}</span>
-					<span *ngIf="allcontrol">All Displays</span>
-				</div>
+            <div class='circle' [class.circle-shrink]="!selectedDisplay.blanked || true" [class.circle-blanked]="selectedDisplay.blanked" (click)="buttonpress('blank'); toggleBlank();">
 				<i class='material-icons'>{{selectedDisplay.icon}}</i>
+				<!-- blanking -->
+				<span *ngIf="!selectedDisplay.blanked" class='blank'>picture on</span>
+				<span *ngIf="selectedDisplay.blanked" class='blank'>picture off</span>
+				<div class='switch-wrapper'>
+					<label class="switch">
+						<input disabled="disabled" [checked]="!selectedDisplay.blanked" type="checkbox">
+						<div class="slider round"></div>
+					</label>
+				</div>
             </div>
             <ul #ring class="ring" [class.ring-grow]="!selectedDisplay.blanked || true">
-				<li class="slice blank-slice" [class.redbackground]="selectedDisplay.blanked" (click)="buttonpress('blank'); blank();">
+				<li class="slice blank-slice" [class.redbackground]="selectedDisplay.blanked" (click)="buttonpress('blank'); toggleBlank();">
 					<div>
 					</div>
 				</li>
-				<li class="slice blank-slice" [class.redbackground]="selectedDisplay.blanked"(click)="buttonpress('blank'); blank();">
+				<li class="slice blank-slice" [class.redbackground]="selectedDisplay.blanked"(click)="buttonpress('blank'); toggleBlank();">
 					<div>
 					</div>
 				</li>
-                <li *ngFor="let i of inputsToShow"  class="slice input-slice" [class.selectedInput]="selectedDisplay.input == i.name" (click)="buttonpress('change input'); switchInput(i)">
+                <li *ngFor="let i of selectedDisplay.oinputs"  class="slice input-slice" [class.selectedInput]="selectedDisplay.oinput === i" (click)="buttonpress('change input'); changeInput(i)">
 					<div [style.right]="rightoffset" [style.top]="topoffset" class='input'>
 						<i class='material-icons'>{{i.icon}}</i>
-						<span>{{i.displayName}}</span>
+						<span>{{i.displayname | lowercase}}</span>
 					</div>
                 </li>
             </ul>
@@ -80,31 +90,33 @@
 	<!-- bottom left control -->
     <div class='blank-row'>
 		<!-- display to all -->
-		<div *ngIf="displayToAll" class="displaytoall" [class.excite]="sendingDTA" [class.alignleft]="!multipledisplays">
-			<i *ngIf="true" class='material-icons' [class.excite]="sendingDTA" (click)="sendDisplayToAll();">people</i>
+		<div *ngIf="displaytoall && !dtaMinion" class="displaytoall" [class.excite]="sendingDTA" [class.dtaalignleft]="!multipledisplays && !dtaMaster" [class.dtaalignleftshort]="!multipledisplays && dtaMaster">
+			<i class='material-icons' [class.persimmion]="dtaMaster" [class.excite]="sendingDTA" (click)="toggleDisplayToAll();">call_split</i>
+			<span *ngIf="!sendingDTA && !dtaMaster">Display All</span>
+			<span *ngIf="!sendingDTA && dtaMaster">Stop</span>
 		</div>
 		<!-- all control -->
 		<div *ngIf="multipledisplays" class="all-control" [class.alignleft]="!displayToAll">
-			<i *ngIf="allcontrol || singlecontrol" class='material-icons' (click)="goToDisplaySelection()">group_work</i>
-			<i *ngIf="!allcontrol && !singlecontrol" class='material-icons' (click)="goToSingleControl('all')">album</i>
+			<i *ngIf="!displayselection" class='material-icons' (click)="goToDisplaySelection()">group_work</i>
+			<i *ngIf="displayselection" class='material-icons' (click)="goToDisplayControl(['all'])">album</i>
 		</div>
     </div>
 
 	<!-- bottom right control -->
     <div class="audio-row">
-		<div *ngIf="microphone" class="microphone" (click)="microphonecontrol = !microphonecontrol">
+		<div *ngIf="mics.length > 0" class="microphone" (click)="microphonecontrol = !microphonecontrol">
 			<i class="material-icons">mic</i>
 		</div>
-       	<div (click)="buttonpress('mute'); toggleMute()" [class.alignright]="!microphone">
-       	    <i *ngIf="muted" class="material-icons" [class.red]="muted">volume_off</i>
-       	    <i *ngIf="!muted" class="material-icons">volume_up</i>
+		<div *ngIf="!displayselection && !dtaMinion" (click)="buttonpress('mute'); toggleMute()" [class.alignright]="!mics.length > 0">
+       	    <i *ngIf="isMuted()" class="material-icons red">volume_off</i>
+       	    <i *ngIf="!isMuted()" class="material-icons">volume_up</i>
        	</div>
     </div>
 
     <!-- sidebar -->
-    <div class='sidebar'>
+    <div *ngIf="!displayselection && !dtaMinion" class='sidebar'>
         <div class='volume alignright'>
-            <md-slider id="colored-slider" vertical [value]="volume" (change)="buttonpress('volume slider'); updateVolume($event.value)"></md-slider>
+            <md-slider id="colored-slider" vertical [value]="volumeLevel()" (change)="buttonpress('volume slider'); changeVolume($event.value);" (input)="updateVolume($event.value)"></md-slider>
         </div>
     </div>
 
@@ -184,11 +196,16 @@
         </div>
         <div class="modal-body">
             <div class="management-body">
+				<!-- 
                 <div>
 					<button class="btn btn-success" (click)="clearToShow(); readToShowCookies(); displaysmodal.show()">Setup</button>
                 </div>
+				-->
                 <div>
                     <button class="btn btn-warning" (click)="refresh()">Refresh</button>
+                </div>
+                <div>
+                    <button class="btn" [class.btn-success]="dev" [class.btn-danger]="!dev" (click)="dev = !dev">Toggle Dev Mode</button>
                 </div>
                 <div>
                     <button class="btn btn-info" (click)="deviceinfo(); deviceinfomodal.show()">Device Info</button>
@@ -196,9 +213,11 @@
                 <div>
                     <button class="btn btn-info" (click)="dockerstatus(); dockerstatusmodal.show()">Docker Status</button>
                 </div>
+				<!-- 
                 <div>
                     <button class="btn btn-warning" (click)="deleteCookies()">Clear Local Data</button>
                 </div>
+				-->
                 <div>
                     <button class="btn btn-danger" (click)="confirmrebootmodal.show()">Reboot</button>
                 </div>
@@ -210,6 +229,7 @@
     </div>
 </app-modal>
 
+<!-- 
 <app-modal #displaysmodal>
     <div class="app-modal-body">
         <div class="modal-title">
@@ -257,6 +277,7 @@
         </div>
     </div>
 </app-modal>
+-->
 
 <app-modal #deviceinfomodal>
     <div class="app-modal-body">
@@ -310,6 +331,20 @@
         <div class="modal-bottom">
             <button class="btn btn-danger" (click)="confirmrebootmodal.hide()">Cancel</button>
             <button class="btn btn-success" (click)="reboot()">Reboot</button>
+        </div>
+    </div>
+</app-modal>
+
+<app-modal #poweroffmodal>
+    <div class="app-modal-body">
+        <div class="modal-title">
+			Power off all displays?
+        </div>
+        <div class="modal-body">
+        </div>
+        <div class="modal-bottom">
+            <button class="btn btn-danger" (click)="poweroffmodal.hide()">Cancel</button>
+            <button class="btn btn-success" (click)="powerOffAll(); poweroffmodal.hide();">Confirm</button>
         </div>
     </div>
 </app-modal>

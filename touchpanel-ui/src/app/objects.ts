@@ -66,6 +66,65 @@ export class DeviceData {
   blanked: boolean;
 }
 
+export class UIConfiguration {
+	inputdevices: InputDevice[];
+	displays: OutputDevice[];
+	features: string[];
+	audio: AudioConfig[]; 
+	ui: string;
+}
+
+export class AudioConfig {
+	displays: string;
+	audiodevices: string;
+}
+
+export class OutputDevice {
+	selected: boolean;
+
+	name: string;
+	displayname: string;
+	icon: string;
+	blanked: boolean;
+
+	oinputs: InputDevice[];
+	odefaultinput: InputDevice;
+	oinput: InputDevice;
+
+	oaudiodevices: AudioOutDevice[];
+
+	// don't use these:) these just come from the uiconfig object and get
+	// converted into the above objects
+	input: string;
+	defaultinput: string;
+	inputs: string[];
+	audiodevices: string[];
+	defaultaudio: string;
+}
+
+export class InputDevice {
+	name: string;
+	displayname: string;
+	icon: string;
+}
+
+export class AudioOutDevice {
+	selected: boolean;	
+
+	name: string;
+	power: string;
+	input: string;
+	volume: number;
+	muted: boolean;
+}
+
+export class Mic {
+	name: string;
+	displayname: string;
+	volume: number;
+	muted: boolean;
+}
+
 export class icons {
   static readonly blanked = "panorama_wide_angle";
   static readonly hdmi = "settings_input_hdmi";

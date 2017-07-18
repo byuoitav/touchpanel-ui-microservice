@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Http, Response, Headers, RequestOptions } from '@angular/http';
 import { Observable, Subject } from 'rxjs/Rx';
+import { UIConfiguration } from './objects'
 
 import 'rxjs/add/operator/map';
 
@@ -11,13 +12,14 @@ export class APIService {
   public baseurl: string;
   public url: string;
   public loaded: Subject<boolean>;
-  private hostname: string;
+  public uiconfig: UIConfiguration; 
+  public hostname: string;
   private bool: boolean;
 
   private options: RequestOptions;
   private headers: Headers;
 
-  constructor(private http: Http) { this.loaded = new Subject<boolean>(); }
+  constructor(private http: Http) { this.loaded = new Subject<boolean>(); this.uiconfig = new UIConfiguration();}
 
   setup() {
     this.headers = new Headers();
@@ -28,7 +30,8 @@ export class APIService {
 	console.log("baseurl:", this.baseurl);
 
     return this.getHostname().subscribe(data => {
-      console.log("room =", data);
+	  this.hostname = String(data);
+      console.log("hostname =", this.hostname);
       let split = JSON.stringify(data).split('-');
       let b = split[0].substring(1);
 
@@ -38,8 +41,17 @@ export class APIService {
       this.url = this.baseurl + ":8000" + "/buildings/" + this.building + "/rooms/" + this.room;
       console.log("url =", this.url);
 
-      this.loaded.next(true);
+	  this.getJSON().subscribe(data => {
+		Object.assign(this.uiconfig, data);
+		console.log("uiconfig", this.uiconfig);
+      	this.loaded.next(true);
+	  })
     });
+  }
+
+  getJSON(): Observable<Object> {
+ 	return this.http.get(this.baseurl + ":8888/json")
+  		.map(response => response.json());	
   }
 
   getHostname(): Observable<Object> {
@@ -101,7 +113,14 @@ export class APIService {
   publish(event: any) {
     console.log("publishing:", event, "to", this.baseurl + ":8888/publish");
 
-    this.http.put(this.baseurl + ":8888/publish", event, this.options).map((res: Response) => res.json()).subscribe();
+    this.http.post(this.baseurl + ":8888/publish", event, this.options).map((res: Response) => res.json()).subscribe();
+  }
+
+  publishFeature(event: any) {
+    console.log("publishing feature:", event, "to", this.baseurl + ":8888/publishfeature");
+
+    this.http.post(this.baseurl + ":8888/publishfeature", event, this.options).map((res: Response) => res.json()).subscribe();
+  
   }
 
   handleError(error: Response | any) {
