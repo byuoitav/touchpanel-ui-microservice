@@ -4,19 +4,19 @@ import (
 	"net/http"
 
 	"github.com/byuoitav/event-router-microservice/eventinfrastructure"
+	"github.com/byuoitav/touchpanel-ui-microservice/events"
 	"github.com/byuoitav/touchpanel-ui-microservice/handlers"
 	"github.com/jessemillar/health"
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
 )
 
-var (
-	Subscriber *eventinfrastructure.Subscriber
-)
-
 func main() {
 	//	events.Init()
 	pub := eventinfrastructure.NewPublisher("7003")
+	sub := eventinfrastructure.NewSubscriber()
+
+	go events.WriteMessagesToSocket(sub)
 
 	port := ":8888"
 	router := echo.New()

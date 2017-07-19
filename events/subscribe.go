@@ -16,7 +16,6 @@ import (
 )
 
 var Sub subscriber.Subscriber
-var refresh chan common.Message
 
 type filter func(common.Message) eventinfrastructure.EventInfo
 
@@ -39,9 +38,19 @@ var Manager = &ClientManager{
 	clients:    make(map[*Client]bool),
 }
 
-func SubInit() {
-	refresh = make(chan common.Message)
+func WriteMessagesToSocket(sub *eventinfrastructure.Subscriber) {
+	for {
+		select {
+		case message, ok := <-sub.MessageChan:
+			if !ok {
+				log.Fatalf("[error] subscriber read channel closed")
+			}
+			Manager.Broadcast <- message
+		}
+	}
+}
 
+func SubInit() {
 	var err error
 	Sub, err = subscriber.NewSubscriber(10)
 	if err != nil {
@@ -65,11 +74,9 @@ func SubInit() {
 	}
 
 	go Manager.Start(UIFilter)
-	go SubListen()
-	go waitForRefresh()
 
-	time.Sleep(12 * time.Second)
-	Refresh()
+	time.Sleep(20 * time.Second)
+	Manager.Broadcast <- GetRefreshMessage()
 }
 
 func (manager *ClientManager) Start(f filter) {
@@ -101,7 +108,7 @@ func (manager *ClientManager) Start(f filter) {
 	}
 }
 
-func Refresh() {
+func GetRefreshMessage() common.Message {
 	var e eventinfrastructure.Event
 	e.Hostname = os.Getenv("PI_HOSTNAME")
 	e.Timestamp = time.Now().Format(time.RFC3339)
@@ -114,7 +121,7 @@ func Refresh() {
 	header := [24]byte{}
 	copy(header[:], []byte(eventinfrastructure.UI))
 
-	refresh <- common.Message{MessageHeader: header, MessageBody: msg}
+	return common.Message{MessageHeader: header, MessageBody: msg}
 }
 
 func (manager *ClientManager) keepalive() {
@@ -185,29 +192,4 @@ func UIFilter(event common.Message) eventinfrastructure.EventInfo {
 	}
 
 	return e.Event
-}
-
-func SubListen() {
-	log.Printf("Subscriber is listening for events")
-
-	for {
-		message := Sub.Read()
-		log.Printf("[Subscriber] Recieved event: %s", message)
-		Manager.Broadcast <- message
-	}
-}
-
-func waitForRefresh() {
-	log.Printf("[Subscriber] Waiting for refresh messages")
-	for {
-		select {
-		case msg, ok := <-refresh:
-			if ok {
-				log.Printf("Writing refresh")
-				Manager.Broadcast <- msg
-			} else {
-				log.Printf("[Subscriber] refresh chan closed")
-			}
-		}
-	}
 }
