@@ -1,10 +1,7 @@
 package main
 
 import (
-	"log"
 	"net/http"
-	"os"
-	"strings"
 
 	"github.com/byuoitav/event-router-microservice/eventinfrastructure"
 	"github.com/byuoitav/touchpanel-ui-microservice/handlers"
@@ -15,10 +12,6 @@ import (
 
 var (
 	Subscriber *eventinfrastructure.Subscriber
-	Building   string
-	Room       string
-	DeviceName string
-	Dev        bool
 )
 
 func main() {
@@ -33,7 +26,7 @@ func main() {
 	router.GET("/health", echo.WrapHandler(http.HandlerFunc(health.Check)))
 
 	// event endpoints
-	router.POST("/subscribe", handlers.NewSubscribe)
+	router.POST("/subscribe", handlers.Subscribe)
 	router.POST("/publish", handlers.PublishEvent, eventinfrastructure.BindPublisher(pub))
 	router.POST("/publishfeature", handlers.PublishFeature, eventinfrastructure.BindPublisher(pub))
 
@@ -53,27 +46,4 @@ func main() {
 	router.Static("/circle-default", "circle-default")
 
 	router.Start(port)
-}
-
-func getBuildingAndRoomAndName() {
-	hostname := os.Getenv("PI_HOSTNAME")
-	if len(hostname) < 1 {
-		log.Fatalf("failed to get pi hostname. Is it set?")
-		return
-	}
-
-	data := strings.Split(hostname, "-")
-
-	Building = data[0]
-	Room = data[1]
-	DeviceName = data[2]
-
-	log.Printf("Building: %s, Room: %s, Device: %s", Building, Room, DeviceName)
-
-	Dev = false
-	if len(os.Getenv("DEVELOPMENT_HOSTNAME")) != 0 {
-		Dev = true
-		log.Printf("Development machine. Using hostname %s", os.Getenv("DEVELOPMENT_HOSTNAME"))
-	}
-	return
 }

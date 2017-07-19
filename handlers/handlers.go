@@ -3,6 +3,7 @@ package handlers
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -39,56 +40,24 @@ func Subscribe(context echo.Context) error {
 	return context.JSON(http.StatusOK, context)
 }
 
-func NewSubscribe(context echo.Context) error {
-	return nil
-}
-
 func GetHostname(context echo.Context) error {
 	hostname := os.Getenv("PI_HOSTNAME")
 	return context.JSON(http.StatusOK, hostname)
 }
 
 func PublishEvent(context echo.Context) error {
-	p := context.Get(eventinfrastructure.ContextPublisher)
-	if typedP, ok := p.(*eventinfrastructure.Publisher); ok {
-		log.Printf("I'm a publihser!")
-		log.Printf("the port?? please work lol: %s", typedP.Port)
-	} else {
-		log.Printf("i'm not one lol")
-		log.Printf("this is p %v", p)
-	}
 	var event eventinfrastructure.EventInfo
 	err := context.Bind(&event)
 	if err != nil {
 		return context.JSON(http.StatusBadRequest, err.Error())
 	}
 
-	//	err = events.Publish(event, eventinfrastructure.Metrics)
-	/*
-		e.Hostname = os.Getenv("PI_HOSTNAME")
-		if dev {
-			e.Hostname = os.Getenv("DEVELOPMENT_HOSTNAME")
-		}
-		e.Timestamp = time.Now().Format(time.RFC3339)
-		e.LocalEnvironment = len(os.Getenv("LOCAL_ENVIRONMENT")) > 0
-		e.Building = Building
-		e.Room = Room
-		e.Event.Type = eventinfrastructure.USERACTION
-		e.Event.EventCause = eventinfrastructure.USERINPUT
-		if eventType == eventinfrastructure.Metrics {
-			e.Event.Device = e.Hostname
-		} else {
-			e.Event.Device = event.Device
-		}
-		e.Event.EventInfoKey = event.EventInfoKey
-		e.Event.EventInfoValue = event.EventInfoValue
-		if len(e.Event.Device) == 0 || len(e.Event.EventInfoKey) == 0 || len(e.Event.EventInfoValue) == 0 {
-			return errors.New("Please fill in all the necessary fields")
-		}
-	*/
-
-	if err != nil {
-		return context.JSON(http.StatusBadRequest, err.Error())
+	p := context.Get(eventinfrastructure.ContextPublisher)
+	if pub, ok := p.(*eventinfrastructure.Publisher); ok {
+		// do stuff with it
+		events.Publish(pub, event, eventinfrastructure.Metrics)
+	} else {
+		return context.JSON(http.StatusInternalServerError, errors.New("Middleware failed to set the publisher"))
 	}
 
 	return context.JSON(http.StatusOK, event)
