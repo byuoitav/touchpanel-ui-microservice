@@ -12,11 +12,13 @@ import (
 )
 
 func main() {
-	//	events.Init()
 	pub := eventinfrastructure.NewPublisher("7003")
 	sub := eventinfrastructure.NewSubscriber()
 
 	go events.WriteMessagesToSocket(sub)
+
+	filters := []string{eventinfrastructure.UI}
+	pubAddr := "http://" + eventinfrastructure.GetIP() + ":7003"
 
 	port := ":8888"
 	router := echo.New()
@@ -26,14 +28,13 @@ func main() {
 	router.GET("/health", echo.WrapHandler(http.HandlerFunc(health.Check)))
 
 	// event endpoints
-	router.POST("/subscribe", handlers.Subscribe)
+	router.POST("/subscribe", eventinfrastructure.Subscribe, eventinfrastructure.BindSubscriber(sub), eventinfrastructure.BindFiltersAndPublisherAddress(filters, pubAddr))
 	router.POST("/publish", handlers.PublishEvent, eventinfrastructure.BindPublisher(pub))
 	router.POST("/publishfeature", handlers.PublishFeature, eventinfrastructure.BindPublisher(pub))
 
 	router.GET("/websocket", handlers.OpenWebSocket)
 	router.GET("/hostname", handlers.GetHostname)
 	router.GET("/deviceinfo", handlers.GetDeviceInfo)
-	router.GET("/refresh", handlers.Refresh)
 	router.GET("/reboot", handlers.Reboot)
 	router.GET("/dockerstatus", handlers.GetDockerStatus)
 	router.GET("/json", handlers.GetJSON)
