@@ -720,14 +720,17 @@ export class AppComponent { // event stuff
 
 			if (this.dtaMinion) {
 				// becoming a minion
+                this.showing = true
 				let body = { displays: [], audioDevices: [] };
 				for (let display of this.displays) {
 					body.displays.push({
+                        "power": "on",
 						"name": display.name,
 						"blanked": false,	
 					});
 					for (let ad of display.oaudiodevices) {
 						body.audioDevices.push({
+                            "power": "on"
 							"name": ad.name,
 							"muted": true	
 						})	
