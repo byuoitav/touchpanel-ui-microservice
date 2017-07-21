@@ -730,7 +730,7 @@ export class AppComponent { // event stuff
 					});
 					for (let ad of display.oaudiodevices) {
 						body.audioDevices.push({
-                            "power": "on"
+                            "power": "on",
 							"name": ad.name,
 							"muted": true	
 						})	
