@@ -632,7 +632,9 @@ export class AppComponent { // event stuff
 				   		var body = { displays: [] }
 				   		for (let display of this.displays) {
 							if (display.selected) {
+                                //we're now being asked to turn on the display when display all happens.
 				  	  			body.displays.push({
+                                    "power": "on",
 				   		   			"name": display.name,
 				      				"input": e.eventInfoValue,
 				     			});
@@ -1018,6 +1020,8 @@ export class AppComponent { // event stuff
 	this.selectedDisplay.oinput = i;
   }
 
+
+//Toggle DTA
   sendingDTA: boolean;
   dtaMaster: boolean;
   dtaMasterHost: string;
