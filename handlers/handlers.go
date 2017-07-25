@@ -272,6 +272,7 @@ func GetJSON(context echo.Context) error {
 			log.Printf("[error] %s. Returning cached configuration...", err.Error())
 			return context.JSON(http.StatusOK, configcache[hn])
 		}
+		log.Printf("[error] %s. No cache to serve. Cannot continue.", err.Error())
 		return context.JSON(http.StatusGatewayTimeout, err.Error())
 	}
 	defer resp.Body.Close()
