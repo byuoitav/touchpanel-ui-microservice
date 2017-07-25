@@ -253,7 +253,10 @@ func GetJSON(context echo.Context) error {
 	address := os.Getenv("UI_CONFIGURATION_ADDRESS")
 	hn := os.Getenv("PI_HOSTNAME")
 
+	log.Printf("Getting the UI configuration")
+
 	if len(hn) == 0 {
+		log.Printf("[error] PI_HOSTNAME is not set.")
 		return context.JSON(http.StatusInternalServerError, "PI_HOSTNAME is not set.")
 	}
 
@@ -283,6 +286,7 @@ func GetJSON(context echo.Context) error {
 			log.Printf("[error] %s. Returning cached configuration...", err.Error())
 			return context.JSON(http.StatusOK, configcache[hn])
 		}
+		log.Printf("[error] %s. Could not read response body and there is no cache.", err.Error())
 		return context.JSON(http.StatusInternalServerError, err.Error())
 	}
 
@@ -293,10 +297,13 @@ func GetJSON(context echo.Context) error {
 			log.Printf("[error] %s. Returning cached configuration...", err.Error())
 			return context.JSON(http.StatusOK, configcache[hn])
 		}
+		log.Printf("[error] %s. Error unmarshalling the body, and there is no cache.", err.Error())
 		return context.JSON(http.StatusInternalServerError, err.Error())
 	} else {
 		configcache = data
 	}
+
+	log.Printf("Done.")
 
 	return context.JSON(http.StatusOK, data[hn])
 }
