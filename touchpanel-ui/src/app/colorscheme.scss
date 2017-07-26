@@ -26,9 +26,9 @@ $persimmion: #ff8300;
 //New colors
 $newbackground: #021024;
 $newtitlebackground: #333E48;
-$newwheelnonselectedbackground: #000000;
+$newwheelnonselectedbackground: rgba(0,0,0,.5);
 $newwheelselectedbackground: #00A2DC;
-$newwheelselectedblankedbackground: #003759;
+$newwheelselectedblankedbackground:  rgba(0,55,89,1);
 
 $newred: #D32121;
 $newgreen: #7ED321;
@@ -84,15 +84,27 @@ $newgreen: #7ED321;
 	background-color: rgba(0,162,220,1);
 }
 
-// ring/bar around center
+.icon-blanked {
+    color: #D32121 !important; 
+}
+
 .circle-blanked,
-.circle-blanked:after {
+.blanked-input.selectedInput {
+    //background: $newwheelselectedblankedbackground !important;
+}
+
+// ring/bar around center
+//.circle-blanked,
+.circle-blanked:after, 
+.icon-blanked:after {
 	border: .8vh solid $newred;
 }
 
 .ring {
 	// input text 
-	li {
+	border: 0vh solid $alabasterwhite;
+	
+    li {
 		color: $alabasterwhite;	
 	}
 
@@ -114,7 +126,7 @@ $newgreen: #7ED321;
 
 // unselected input slice color
 .input-slice {
-	background-color: $byublue;
+	background-color: $newwheelnonselectedbackground;
 }
 
 // power icon

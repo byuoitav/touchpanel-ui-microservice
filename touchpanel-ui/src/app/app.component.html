@@ -52,12 +52,12 @@
     <!-- display control -->
     <div [class.hidden]='displayselection || microphonecontrol' class='main-control-h'>
         <div class='main-control-v' >
-			<div class='roomname' [class.roomname-transition]="!selectedDisplay.blanked || true" (click)="buttonpress('blank'); toggleBlank();">
-				<span *ngIf="!dtaMaster">{{selectedDisplay.displayname | lowercase}}</span>
+			<div class='roomname' [class.roomname-transition]="!selectedDisplay.blanked || true">
+				<span *ngIf="!dtaMaster">{{selectedDisplay.displayname}}</span>
 				<span *ngIf="dtaMaster">all displays</span>
 			</div>
             <div class='circle' [class.circle-shrink]="!selectedDisplay.blanked || true" [class.circle-blanked]="selectedDisplay.blanked" (click)="buttonpress('blank'); toggleBlank();">
-				<i class='material-icons'>{{selectedDisplay.icon}}</i>
+				<i class='material-icons' [class.icon-blanked]="selectedDisplay.blanked">{{selectedDisplay.icon}}</i>
 				<!-- blanking -->
 				<span *ngIf="!selectedDisplay.blanked" class='blank'>picture on</span>
 				<span *ngIf="selectedDisplay.blanked" class='blank'>picture off</span>
@@ -69,18 +69,18 @@
 				</div>
             </div>
             <ul #ring class="ring" [class.ring-grow]="!selectedDisplay.blanked || true">
-				<li class="slice blank-slice" [class.redbackground]="selectedDisplay.blanked" (click)="buttonpress('blank'); toggleBlank();">
+				<li class="slice blank-slice">
 					<div>
 					</div>
 				</li>
-				<li class="slice blank-slice" [class.redbackground]="selectedDisplay.blanked"(click)="buttonpress('blank'); toggleBlank();">
+				<li class="slice blank-slice">
 					<div>
 					</div>
 				</li>
-                <li *ngFor="let i of selectedDisplay.oinputs"  class="slice input-slice" [class.selectedInput]="selectedDisplay.oinput === i" (click)="buttonpress('change input'); changeInput(i)">
+                <li *ngFor="let i of selectedDisplay.oinputs"  class="slice input-slice" [class.blanked-input]="selectedDisplay.blanked && selectedDisplay.oinput === i" [class.selectedInput]="selectedDisplay.oinput === i" (click)="buttonpress('change input'); changeInput(i)">
 					<div [style.right]="rightoffset" [style.top]="topoffset" class='input'>
 						<i class='material-icons'>{{i.icon}}</i>
-						<span>{{i.displayname | lowercase}}</span>
+						<span>{{i.displayname}}</span>
 					</div>
                 </li>
             </ul>
