@@ -110,7 +110,7 @@ export class AppComponent { // event stuff
    	this.dev = false;
 	
 	// uncomment for local testing
-//    this.showing = true;
+    this.showing = true;
 
     // setup socket to recieve events
     this.socket.getEventListener().subscribe(event => {
@@ -802,6 +802,9 @@ export class AppComponent { // event stuff
   // 
   enterScreen() {
     if (this.sendingOn || this.selectedDisplay.oaudiodevices == null) {
+        if (this.sendingOn) {
+          this.debugmessage("Already sending the power-on request");
+        }
         if (this.selectedDisplay.oaudiodevices == null) {
           console.log("Yo, no devices")
           this.debugmessage("Oaudiodevices was null");

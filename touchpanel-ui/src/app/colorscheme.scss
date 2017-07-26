@@ -3,7 +3,7 @@ $materialred: #b71c1c;
 
 // new 'byu' color palatte
 $byublue: #002C5C;
-$midnightblue: #041e41;
+$midnightblue: #021024;
 $alabasterwhite: #fbfbfb;
 $powerblue: #00a2dc;
 $lazuliblue: #0076a9; 
@@ -23,10 +23,21 @@ $dragonfruit: #d50053;
 $pricklypear: #b41782;
 $persimmion: #ff8300;
 
+//New colors
+$newbackground: #021024;
+$newtitlebackground: #333E48;
+$newwheelnonselectedbackground: rgba(0,0,0,.5);
+$newwheelselectedbackground: #00A2DC;
+$newwheelselectedblankedbackground:  rgba(0,55,89,1);
+
+$newred: #D32121;
+$newgreen: #7ED321;
+
+
 // background color
 .basediv, 
 .overlay {
-	background-color: $midnightblue;
+	background-color: $newbackground;
 	// background image
 //	background-image: url(/assets/bg1.jpg);
 //	background-size: cover;
@@ -34,7 +45,7 @@ $persimmion: #ff8300;
 
 // icons when selected (where applicable)
 .red {
-	color: $materialred !important;
+	color: $newred !important;
 }
 
 .persimmion {
@@ -43,12 +54,12 @@ $persimmion: #ff8300;
 
 // divs that get a red background (title bar)
 .redbackground {
-	background-color: $materialred !important;
+	background-color: $newred !important;
 }
 
 // title bar
 .blank-slice {
-	background-color: $ninjagrey;
+	background-color: $newtitlebackground;
 }
 
 // title bar text
@@ -58,7 +69,7 @@ $persimmion: #ff8300;
 
 // color to animate to when removing ring/bar around center 
 .circle {
-	border: 0vh solid $byublue;
+	border: 0vh solid $alabasterwhite;
 
 	// color of icon in center of circle
 	i {
@@ -73,15 +84,27 @@ $persimmion: #ff8300;
 	background-color: rgba(0,162,220,1);
 }
 
-// ring/bar around center
+.icon-blanked {
+    color: #D32121 !important; 
+}
+
 .circle-blanked,
-.circle-blanked:after {
-	border: .8vh solid $materialred;
+.blanked-input.selectedInput {
+    //background: $newwheelselectedblankedbackground !important;
+}
+
+// ring/bar around center
+//.circle-blanked,
+.circle-blanked:after, 
+.icon-blanked:after {
+	border: .8vh solid $newred;
 }
 
 .ring {
 	// input text 
-	li {
+	border: 0vh solid $alabasterwhite;
+	
+    li {
 		color: $alabasterwhite;	
 	}
 
@@ -98,12 +121,12 @@ $persimmion: #ff8300;
 .selectedInput {
 //	background-color: $lazuliblue !important;
 
-	background-color: rgba(0,162,220,1) !important;
+	background-color: $newwheelselectedbackground !important;
 }
 
 // unselected input slice color
 .input-slice {
-	background-color: $byublue;
+	background-color: $newwheelnonselectedbackground;
 }
 
 // power icon
