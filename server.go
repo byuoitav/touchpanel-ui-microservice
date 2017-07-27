@@ -13,18 +13,20 @@ import (
 
 func main() {
 	pub := eventinfrastructure.NewPublisher("7003")
-	sub := eventinfrastructure.NewSubscriber()
 
 	filters := []string{eventinfrastructure.UI}
+	sub := eventinfrastructure.NewSubscriber(filters)
+
 	ip := eventinfrastructure.GetIP()
 	pubAddr := ip + ":7003"
 
 	var req eventinfrastructure.ConnectionRequest
 	req.PublisherAddr = pubAddr
-	req.SubscriberEndpoint = ip + ":8888"
+	//	req.SubscriberEndpoint = "http://" + ip + ":8888"
+	req.SubscriberEndpoint = "http://localhost:8888/subscribe"
 
 	// post to the router with the subscription request
-	eventinfrastructure.SendConnectionRequest("http://localhost:6999/subscribe", req)
+	go eventinfrastructure.SendConnectionRequest("http://localhost:6999/subscribe", req)
 
 	go events.WriteMessagesToSocket(sub)
 
@@ -36,7 +38,7 @@ func main() {
 	router.GET("/health", echo.WrapHandler(http.HandlerFunc(health.Check)))
 
 	// event endpoints
-	router.POST("/subscribe", eventinfrastructure.Subscribe, eventinfrastructure.BindSubscriber(sub), eventinfrastructure.BindFiltersAndPublisherAddress(filters, pubAddr))
+	router.POST("/subscribe", sub.HandleSubscriptionRequest)
 	router.POST("/publish", handlers.PublishEvent, eventinfrastructure.BindPublisher(pub))
 	router.POST("/publishfeature", handlers.PublishFeature, eventinfrastructure.BindPublisher(pub))
 
