@@ -11,7 +11,6 @@ import (
 	"os"
 
 	"github.com/byuoitav/event-router-microservice/eventinfrastructure"
-	"github.com/byuoitav/event-router-microservice/subscription"
 	"github.com/byuoitav/touchpanel-ui-microservice/events"
 	"github.com/byuoitav/touchpanel-ui-microservice/helpers"
 	"github.com/labstack/echo"
@@ -22,6 +21,7 @@ func OpenWebSocket(context echo.Context) error {
 	return nil
 }
 
+/*
 func Subscribe(context echo.Context) error {
 	var sr subscription.SubscribeRequest
 	err := context.Bind(&sr)
@@ -39,6 +39,7 @@ func Subscribe(context echo.Context) error {
 
 	return context.JSON(http.StatusOK, context)
 }
+*/
 
 func GetHostname(context echo.Context) error {
 	hostname := os.Getenv("PI_HOSTNAME")

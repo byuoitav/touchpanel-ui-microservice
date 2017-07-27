@@ -15,10 +15,18 @@ func main() {
 	pub := eventinfrastructure.NewPublisher("7003")
 	sub := eventinfrastructure.NewSubscriber()
 
-	go events.WriteMessagesToSocket(sub)
-
 	filters := []string{eventinfrastructure.UI}
-	pubAddr := "http://" + eventinfrastructure.GetIP() + ":7003"
+	ip := eventinfrastructure.GetIP()
+	pubAddr := ip + ":7003"
+
+	var req eventinfrastructure.ConnectionRequest
+	req.PublisherAddr = pubAddr
+	req.SubscriberEndpoint = ip + ":8888"
+
+	// post to the router with the subscription request
+	eventinfrastructure.SendConnectionRequest("http://localhost:6999/subscribe", req)
+
+	go events.WriteMessagesToSocket(sub)
 
 	port := ":8888"
 	router := echo.New()

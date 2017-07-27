@@ -1,7 +1,6 @@
 package events
 
 import (
-	"bytes"
 	"encoding/json"
 	"log"
 	"net/http"
@@ -9,7 +8,6 @@ import (
 	"time"
 
 	"github.com/byuoitav/event-router-microservice/eventinfrastructure"
-	"github.com/byuoitav/event-router-microservice/subscription"
 	"github.com/gorilla/websocket"
 	"github.com/xuther/go-message-router/common"
 	"github.com/xuther/go-message-router/subscriber"
@@ -50,6 +48,7 @@ func WriteMessagesToSocket(sub *eventinfrastructure.Subscriber) {
 	}
 }
 
+/*
 func SubInit() {
 	var err error
 	Sub, err = subscriber.NewSubscriber(10)
@@ -78,6 +77,7 @@ func SubInit() {
 	time.Sleep(20 * time.Second)
 	Manager.Broadcast <- GetRefreshMessage()
 }
+*/
 
 func (manager *ClientManager) Start(f filter) {
 	go manager.keepalive()
