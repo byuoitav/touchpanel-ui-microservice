@@ -24,7 +24,7 @@ func main() {
 	req.SubscriberEndpoint = "http://localhost:8888/subscribe"
 
 	// post to the router with the subscription request
-	go eventinfrastructure.SendConnectionRequest("http://localhost:6999/subscribe", req)
+	go eventinfrastructure.SendConnectionRequest("http://localhost:6999/subscribe", req, true)
 
 	go events.WriteMessagesToSocket(sub)
 
