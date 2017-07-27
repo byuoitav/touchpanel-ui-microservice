@@ -6,27 +6,18 @@ import { Component } from '@angular/core';
   <div (click)="onContainerClicked($event)" class="modal fade" tabindex="-1" [ngClass]="{'in': visibleAnimate}"
        [ngStyle]="{'display': visible ? 'block' : 'none', 'opacity': visibleAnimate ? 1 : 0}">
     <div class="modal-dialog">
-      <div class="modal-content">
-	  	<!--
-        <div class="modal-header">
-          <ng-content select=".app-modal-header"></ng-content>
-        </div>
-		-->
+      <div class="modal-content" [style.backgroundColor]="color">
         <div class="modal-body">
           <ng-content select=".app-modal-body"></ng-content>
         </div>
-		<!--
-        <div class="modal-footer">
-          <ng-content select=".app-modal-footer"></ng-content>
-        </div>
-		-->
       </div>
     </div>
   </div>
   `,
   styles: [`
     .modal {
-      background: rgba(0,0,0,0.6);
+      background: rgba(50,50,50,.95);
+	  /* blur background? */
     }
 	.modal-dialog {
 	  top: 25vh;	
@@ -36,6 +27,7 @@ import { Component } from '@angular/core';
 export class ModalComponent {
   public visible = false;
   public visibleAnimate = false;
+  private color: string;
 
   constructor() { }
 
