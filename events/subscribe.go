@@ -48,37 +48,6 @@ func WriteMessagesToSocket(sub *eventinfrastructure.Subscriber) {
 	}
 }
 
-/*
-func SubInit() {
-	var err error
-	Sub, err = subscriber.NewSubscriber(10)
-	if err != nil {
-		log.Printf("Could not create a subscriber. Error: %v\n", err.Error())
-	}
-
-	var s subscription.SubscribeRequest
-	s.Address = "localhost:7003" // address of our publisher
-	s.PubAddress = "localhost:8888/subscribe"
-	body, err := json.Marshal(s)
-	if err != nil {
-		log.Printf("[error] %s", err)
-	}
-
-	log.Printf("Creating two-way connection with router")
-	_, err = http.Post("http://localhost:6999/subscribe", "application/json", bytes.NewBuffer(body))
-	for err != nil {
-		log.Printf("[error] failed to connect to the router. Trying again...")
-		time.Sleep(3 * time.Second)
-		_, err = http.Post("http://localhost:6999/subscribe", "application/json", bytes.NewBuffer(body))
-	}
-
-	go Manager.Start(UIFilter)
-
-	time.Sleep(20 * time.Second)
-	Manager.Broadcast <- GetRefreshMessage()
-}
-*/
-
 func (manager *ClientManager) Start(f filter) {
 	go manager.keepalive()
 	for {
