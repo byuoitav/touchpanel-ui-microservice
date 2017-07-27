@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 
 @Component({
   selector: 'app-modal',
@@ -6,7 +6,7 @@ import { Component } from '@angular/core';
   <div (click)="onContainerClicked($event)" class="modal fade" tabindex="-1" [ngClass]="{'in': visibleAnimate}"
        [ngStyle]="{'display': visible ? 'block' : 'none', 'opacity': visibleAnimate ? 1 : 0}">
     <div class="modal-dialog">
-      <div class="modal-content" [style.backgroundColor]="color">
+      <div class="modal-content" [style.backgroundColor]="bgcolor">
         <div class="modal-body">
           <ng-content select=".app-modal-body"></ng-content>
         </div>
@@ -17,17 +17,16 @@ import { Component } from '@angular/core';
   styles: [`
     .modal {
       background: rgba(50,50,50,.95);
-	  /* blur background? */
     }
 	.modal-dialog {
-	  top: 25vh;	
+	  top: 25vh;
 	}
   `]
 })
 export class ModalComponent {
   public visible = false;
   public visibleAnimate = false;
-  private color: string;
+  @Input() bgcolor: string;
 
   constructor() { }
 
