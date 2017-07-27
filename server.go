@@ -17,12 +17,10 @@ func main() {
 	filters := []string{eventinfrastructure.UI}
 	sub := eventinfrastructure.NewSubscriber(filters)
 
-	ip := eventinfrastructure.GetIP()
-	pubAddr := ip + ":7003"
+	//	ip := eventinfrastructure.GetIP()
 
 	var req eventinfrastructure.ConnectionRequest
-	req.PublisherAddr = pubAddr
-	//	req.SubscriberEndpoint = "http://" + ip + ":8888"
+	req.PublisherAddr = "localhost:7003"
 	req.SubscriberEndpoint = "http://localhost:8888/subscribe"
 
 	// post to the router with the subscription request
