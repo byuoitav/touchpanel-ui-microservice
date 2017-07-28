@@ -632,7 +632,9 @@ export class AppComponent { // event stuff
 				   		var body = { displays: [] }
 				   		for (let display of this.displays) {
 							if (display.selected) {
+                                //we're now being asked to turn on the display when display all happens.
 				  	  			body.displays.push({
+                                    "power": "on",
 				   		   			"name": display.name,
 				      				"input": e.eventInfoValue,
 				     			});
@@ -718,14 +720,17 @@ export class AppComponent { // event stuff
 
 			if (this.dtaMinion) {
 				// becoming a minion
+                this.showing = true
 				let body = { displays: [], audioDevices: [] };
 				for (let display of this.displays) {
 					body.displays.push({
+                        "power": "on",
 						"name": display.name,
 						"blanked": false,	
 					});
 					for (let ad of display.oaudiodevices) {
 						body.audioDevices.push({
+                            "power": "on",
 							"name": ad.name,
 							"muted": true	
 						})	
@@ -796,8 +801,21 @@ export class AppComponent { // event stuff
   // commands
   // 
   enterScreen() {
-    if (this.sendingOn || this.selectedDisplay.oaudiodevices == null)
+    if (this.sendingOn || this.selectedDisplay.oaudiodevices == null) {
+        if (this.sendingOn) {
+          this.debugmessage("Already sending the power-on request");
+        }
+        if (this.selectedDisplay.oaudiodevices == null) {
+          console.log("Yo, no devices")
+          this.debugmessage("Oaudiodevices was null");
+          this.api.getJSON().subscribe(data => {
+            Object.assign(this.api.uiconfig, data);
+            console.log("uiconfig", this.api.uiconfig);
+            this.api.loaded.next(true);
+          });
+        }
       return;
+    }
   	
     this.sendingOn = true;
     this.startSpinning = true;
@@ -811,6 +829,7 @@ export class AppComponent { // event stuff
 			"input": display.odefaultinput.name
 		});	
 	}
+
 	for (let ad of this.selectedDisplay.oaudiodevices) {
 		if (this.displaytoall) {
 			body.audioDevices.push({
@@ -829,6 +848,7 @@ export class AppComponent { // event stuff
 	}
 
     this.put(body, func => { }, func => { }, after => {
+        this.debugmessage("Entering.");
 //      this.updateState();
 	  // need to updateState when turning on display
       this.showing = true;
@@ -1018,6 +1038,8 @@ export class AppComponent { // event stuff
 	this.selectedDisplay.oinput = i;
   }
 
+
+//Toggle DTA
   sendingDTA: boolean;
   dtaMaster: boolean;
   dtaMasterHost: string;
@@ -1140,6 +1162,16 @@ export class AppComponent { // event stuff
     }
 
     this.api.publish(event);
+  }
+
+  debugmessage(value: string) {
+    let event = {
+      "eventinfokey": "DEBUG",
+      "eventinfovalue": value
+    }
+
+    this.api.publish(event);
+
   }
 
 
