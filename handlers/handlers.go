@@ -21,26 +21,6 @@ func OpenWebSocket(context echo.Context) error {
 	return nil
 }
 
-/*
-func Subscribe(context echo.Context) error {
-	var sr subscription.SubscribeRequest
-	err := context.Bind(&sr)
-	if err != nil {
-		log.Printf("[error] %s", err.Error())
-		return context.JSON(http.StatusBadRequest, err.Error())
-	}
-
-	log.Printf("[handler] Subscribing to %s", sr.Address)
-	err = events.Sub.Subscribe(sr.Address, []string{eventinfrastructure.UI})
-	if err != nil {
-		log.Printf("[error] %s", err.Error())
-		return context.JSON(http.StatusInternalServerError, err.Error())
-	}
-
-	return context.JSON(http.StatusOK, context)
-}
-*/
-
 func GetHostname(context echo.Context) error {
 	hostname := os.Getenv("PI_HOSTNAME")
 	return context.JSON(http.StatusOK, hostname)

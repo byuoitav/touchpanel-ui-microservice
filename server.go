@@ -36,9 +36,9 @@ func main() {
 	router.GET("/health", echo.WrapHandler(http.HandlerFunc(health.Check)))
 
 	// event endpoints
-	router.POST("/subscribe", sub.HandleSubscriptionRequest)
-	router.POST("/publish", handlers.PublishEvent, eventinfrastructure.BindPublisher(pub))
-	router.POST("/publishfeature", handlers.PublishFeature, eventinfrastructure.BindPublisher(pub))
+	router.POST("/subscribe", Subscribe, BindSubscriber(sub))
+	router.POST("/publish", handlers.PublishEvent, BindPublisher(pub))
+	router.POST("/publishfeature", handlers.PublishFeature, BindPublisher(pub))
 
 	router.GET("/websocket", handlers.OpenWebSocket)
 	router.GET("/hostname", handlers.GetHostname)
@@ -55,4 +55,26 @@ func main() {
 	router.Static("/circle-default", "circle-default")
 
 	router.Start(port)
+}
+
+func Subscribe(context echo.Context) error {
+	return eventinfrastructure.HandleSubscriptionRequest(context)
+}
+
+func BindPublisher(p *eventinfrastructure.Publisher) echo.MiddlewareFunc {
+	return func(next echo.HandlerFunc) echo.HandlerFunc {
+		return func(c echo.Context) error {
+			c.Set(eventinfrastructure.ContextPublisher, p)
+			return next(c)
+		}
+	}
+}
+
+func BindSubscriber(s *eventinfrastructure.Subscriber) echo.MiddlewareFunc {
+	return func(next echo.HandlerFunc) echo.HandlerFunc {
+		return func(c echo.Context) error {
+			c.Set(eventinfrastructure.ContextSubscriber, s)
+			return next(c)
+		}
+	}
 }
