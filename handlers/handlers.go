@@ -3,6 +3,7 @@ package handlers
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -10,7 +11,6 @@ import (
 	"os"
 
 	"github.com/byuoitav/event-router-microservice/eventinfrastructure"
-	"github.com/byuoitav/event-router-microservice/subscription"
 	"github.com/byuoitav/touchpanel-ui-microservice/events"
 	"github.com/byuoitav/touchpanel-ui-microservice/helpers"
 	"github.com/labstack/echo"
@@ -21,6 +21,7 @@ func OpenWebSocket(context echo.Context) error {
 	return nil
 }
 
+/*
 func Subscribe(context echo.Context) error {
 	var sr subscription.SubscribeRequest
 	err := context.Bind(&sr)
@@ -38,6 +39,7 @@ func Subscribe(context echo.Context) error {
 
 	return context.JSON(http.StatusOK, context)
 }
+*/
 
 func GetHostname(context echo.Context) error {
 	hostname := os.Getenv("PI_HOSTNAME")
@@ -51,9 +53,12 @@ func PublishEvent(context echo.Context) error {
 		return context.JSON(http.StatusBadRequest, err.Error())
 	}
 
-	err = events.Publish(event, eventinfrastructure.Metrics)
-	if err != nil {
-		return context.JSON(http.StatusBadRequest, err.Error())
+	p := context.Get(eventinfrastructure.ContextPublisher)
+	if pub, ok := p.(*eventinfrastructure.Publisher); ok {
+		// do stuff with it
+		events.Publish(pub, event, eventinfrastructure.Metrics)
+	} else {
+		return context.JSON(http.StatusInternalServerError, errors.New("Middleware failed to set the publisher"))
 	}
 
 	return context.JSON(http.StatusOK, event)
@@ -66,7 +71,7 @@ func PublishFeature(context echo.Context) error {
 		return context.JSON(http.StatusBadRequest, err.Error())
 	}
 
-	err = events.Publish(event, eventinfrastructure.UIFeature)
+	//	err = events.Publish(event, eventinfrastructure.UIFeature)
 	if err != nil {
 		return context.JSON(http.StatusBadRequest, err.Error())
 	}
@@ -83,13 +88,6 @@ func GetDeviceInfo(context echo.Context) error {
 	return context.JSON(http.StatusOK, di)
 }
 
-func Refresh(context echo.Context) error {
-	log.Printf("[management] Refreshing webpage")
-	events.Refresh()
-
-	return nil
-}
-
 func Reboot(context echo.Context) error {
 	log.Printf("[management] Rebooting pi")
 	http.Get("http://localhost:7010/reboot")
@@ -99,7 +97,7 @@ func Reboot(context echo.Context) error {
 func GetDockerStatus(context echo.Context) error {
 	log.Printf("[management] Getting docker status")
 	resp, err := http.Get("http://localhost:7010/dockerStatus")
-	log.Printf("docker status response: %s", resp)
+	log.Printf("docker status response: %v", resp)
 	if err != nil {
 		return context.JSON(http.StatusBadRequest, err.Error())
 	}
@@ -153,7 +151,7 @@ func Help(context echo.Context) error {
 
 	json, err := json.Marshal(sh)
 	if err != nil {
-		log.Printf("failed to marshal sh: %s", sh)
+		log.Printf("failed to marshal sh: %v", sh)
 		return context.JSON(http.StatusInternalServerError, err.Error())
 	}
 
