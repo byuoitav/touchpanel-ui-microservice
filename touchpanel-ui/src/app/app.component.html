@@ -61,7 +61,7 @@
 				<!-- blanking -->
 				<span *ngIf="!selectedDisplay.blanked" class='blank'>picture on</span>
 				<span *ngIf="selectedDisplay.blanked" class='blank'>picture off</span>
-				<div class='switch-wrapper'>
+				<div class='switch-wrapper' (swipeleft)="buttonpress('blank'); setBlank(true)" (swiperight)="buttonpress('blank'); setBlank(false)">
 					<label class="switch">
 						<input disabled="disabled" [checked]="!selectedDisplay.blanked" type="checkbox">
 						<div class="slider round"></div>
@@ -69,11 +69,7 @@
 				</div>
             </div>
             <ul #ring class="ring" [class.ring-grow]="!selectedDisplay.blanked || true">
-				<li class="slice blank-slice">
-					<div>
-					</div>
-				</li>
-				<li class="slice blank-slice">
+				<li class="title-slice">
 					<div>
 					</div>
 				</li>
@@ -125,6 +121,15 @@
   <defs>
     <clipPath clipPathUnits="objectBoundingBox" id="sector">
 		<path fill="transparent" stroke="#111" stroke-width="1" id="sector" [attr.d]="arcpath"></path>
+    </clipPath>
+  </defs>
+</svg>
+
+<!-- title slice -->
+<svg id='svg-block' width="0" height="0">
+  <defs>
+    <clipPath clipPathUnits="objectBoundingBox" id="title-sector">
+		<path fill="transparent" stroke="#111" stroke-width="1" id="sector" [attr.d]="titlearcpath"></path>
     </clipPath>
   </defs>
 </svg>
