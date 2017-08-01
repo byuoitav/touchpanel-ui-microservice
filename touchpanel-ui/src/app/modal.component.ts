@@ -6,7 +6,7 @@ import { Component, Input } from '@angular/core';
   <div (click)="onContainerClicked($event)" class="modal fade" tabindex="-1" [ngClass]="{'in': visibleAnimate}"
        [ngStyle]="{'display': visible ? 'block' : 'none', 'opacity': visibleAnimate ? 1 : 0}">
     <div class="modal-dialog">
-      <div class="modal-content" [style.backgroundColor]="bgcolor">
+      <div class="modal-content">
         <div class="modal-body">
           <ng-content select=".app-modal-body"></ng-content>
         </div>
@@ -15,11 +15,16 @@ import { Component, Input } from '@angular/core';
   </div>
   `,
   styles: [`
-    .modal {
-      background: rgba(50,50,50,.95);
-    }
 	.modal-dialog {
 	  top: 25vh;
+	}
+	/* inside of modal */
+	.modal-content {
+		background: #021024;
+	}
+	/* area outside of modal */
+	.modal {
+   	 	background: rgba(164,169,173,.95);
 	}
   `]
 })

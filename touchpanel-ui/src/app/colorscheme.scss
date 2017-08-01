@@ -146,7 +146,7 @@ $newgreen: #7ED321;
 
 // help icon
 .helpdialog {
-    color: $byublue;
+    color: $alabasterwhite;
 }
 
 // slider in 'disabled' state 
@@ -201,4 +201,17 @@ input:checked + .slider {
 
 .innerglow {
 	box-shadow: inset 0 0 10vh $persimmion;
+}
+
+// modal icon color
+.modal-title,
+.modal-body,
+.modal-bottom {
+	color: $alabasterwhite;	
+}
+
+.modal-bottom {
+	.btn {
+		color: black !important;
+	}
 }

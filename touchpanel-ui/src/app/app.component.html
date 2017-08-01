@@ -61,7 +61,7 @@
 				<!-- blanking -->
 				<span *ngIf="!selectedDisplay.blanked" class='blank'>picture on</span>
 				<span *ngIf="selectedDisplay.blanked" class='blank'>picture off</span>
-				<div class='switch-wrapper'>
+				<div class='switch-wrapper' (swipeleft)="buttonpress('blank'); setBlank(true)" (swiperight)="buttonpress('blank'); setBlank(false)">
 					<label class="switch">
 						<input disabled="disabled" [checked]="!selectedDisplay.blanked" type="checkbox">
 						<div class="slider round"></div>
@@ -156,7 +156,7 @@
 
 
 <!-- pop-ups -->
-<app-modal #helpmodal bgcolor="grey">
+<app-modal #helpmodal>
     <div class="app-modal-body">
         <div class="modal-icon">
             <i class='material-icons helpdialog'>info_outline</i>

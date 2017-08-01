@@ -990,6 +990,30 @@ export class AppComponent { // event stuff
 	}
   }
 
+  setBlank(status: boolean) {
+    var body = { displays: [] }
+    for (let display of this.displays) {
+      if (display.selected) {
+        display.blanked = status;
+        body.displays.push({
+          "name": display.name,
+          "blanked": status
+        });
+     }
+    }
+    this.put(body);
+	this.updateBlanked();
+
+	if (this.dtaMaster) {
+		let event = {
+			"device": "dta",
+			"eventinfokey": "blanked",
+			"eventinfovalue": String(this.selectedDisplay.blanked)
+		}
+ 		this.api.publishFeature(event)
+	}
+  }
+
   updateBlanked() {
 	for (let display of this.displays) {
 		if (display.selected) {
