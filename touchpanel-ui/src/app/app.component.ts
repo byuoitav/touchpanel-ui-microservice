@@ -114,7 +114,7 @@ export class AppComponent { // event stuff
    	this.dev = false;
 	
 	// uncomment for local testing
-    this.showing = true;
+//    this.showing = true;
 
     // setup socket to recieve events
     this.socket.getEventListener().subscribe(event => {
