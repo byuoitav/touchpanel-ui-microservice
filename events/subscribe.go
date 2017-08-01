@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/byuoitav/event-router-microservice/eventinfrastructure"
+	"github.com/fatih/color"
 	"github.com/gorilla/websocket"
 	"github.com/xuther/go-message-router/common"
 	"github.com/xuther/go-message-router/subscriber"
@@ -37,6 +38,8 @@ var Manager = &ClientManager{
 }
 
 func WriteMessagesToSocket(sub *eventinfrastructure.Subscriber) {
+	go Manager.Start(UIFilter)
+
 	for {
 		select {
 		case message, ok := <-sub.MessageChan:
@@ -48,16 +51,36 @@ func WriteMessagesToSocket(sub *eventinfrastructure.Subscriber) {
 	}
 }
 
+func Refresh(sub *eventinfrastructure.Subscriber) {
+	defer color.Unset()
+	for i := 15; i > 0; i-- {
+		color.Set(color.FgYellow)
+		log.Printf("Refreshing webpage in %v...", i)
+		color.Unset()
+
+		time.Sleep(1 * time.Second)
+	}
+	sub.MessageChan <- GetRefreshMessage()
+
+	color.Set(color.FgGreen, color.Bold)
+	log.Printf("Wrote refresh message.")
+}
+
 func (manager *ClientManager) Start(f filter) {
 	go manager.keepalive()
 	for {
 		select {
 		case conn := <-manager.register:
-			log.Printf("[Socket] Registering connection")
+			color.Set(color.FgHiMagenta, color.Bold)
+			log.Printf("Registering socket connection: %s", conn.socket.RemoteAddr())
+			color.Unset()
+
 			manager.clients[conn] = true
 
 		case conn := <-manager.unregister:
-			log.Printf("[Socket] Unregistering connection")
+			color.Set(color.FgHiMagenta, color.Bold)
+			log.Printf("Unregistering socket connection: %s", conn.socket.RemoteAddr())
+			color.Unset()
 			if _, ok := manager.clients[conn]; ok {
 				close(conn.send)
 				delete(manager.clients, conn)
@@ -67,7 +90,9 @@ func (manager *ClientManager) Start(f filter) {
 			e := f(event)
 			toSend, err := json.Marshal(&e)
 			if err != nil {
+				color.Set(color.FgRed)
 				log.Printf("error: %s", err.Error())
+				color.Unset()
 				continue
 			}
 			for conn := range manager.clients {
@@ -105,7 +130,9 @@ func (manager *ClientManager) keepalive() {
 
 	for {
 		for k, _ := range manager.clients {
-			log.Printf("[client] Sending keep alive message")
+			color.Set(color.FgYellow)
+			log.Printf("Sending keep alive message")
+			color.Unset()
 			k.send <- msg
 		}
 		time.Sleep(45 * time.Second)
@@ -117,11 +144,14 @@ func (c *Client) write() {
 		select {
 		case message, ok := <-c.send:
 			if !ok {
-				log.Printf("[Client] client send channel closed")
+				color.Set(color.FgHiCyan)
+				log.Printf("[%s] client send channel closed", c.socket.RemoteAddr())
+				color.Unset()
 				return
 			}
-
-			log.Printf("[Client] Writing event to client")
+			color.Set(color.FgHiCyan)
+			log.Printf("[%s] Writing event to client.", c.socket.RemoteAddr())
+			color.Unset()
 			c.socket.WriteMessage(websocket.TextMessage, message)
 		}
 	}
@@ -130,7 +160,6 @@ func (c *Client) write() {
 func (c *Client) read() {
 	for {
 		if _, _, err := c.socket.NextReader(); err != nil {
-			log.Printf("[Client] Unregistering connection")
 			Manager.unregister <- c
 			break
 		}
@@ -156,7 +185,9 @@ func UIFilter(event common.Message) eventinfrastructure.EventInfo {
 	var e eventinfrastructure.Event
 	err := json.Unmarshal(event.MessageBody, &e)
 	if err != nil {
+		color.Set(color.FgRed)
 		log.Printf("error: %v", err.Error())
+		color.Unset()
 		return eventinfrastructure.EventInfo{}
 	}
 

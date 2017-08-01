@@ -173,10 +173,11 @@ body {
 	align-self: center;
 	white-space: nowrap;
 	font-family: Roboto-Medium;
+	font-weight: 100;
 }
 
 .roomname-transition {
-	top: 18vh;
+	top: 15vh;
 	font-size: 5vh;
 }
 
@@ -229,8 +230,10 @@ body {
 }
 
 .circle-shrink {
-	width: 43vh;
-	height: 43vh;
+//	width: 43vh;
+//	height: 43vh;
+	width: 48vh;
+	height: 48vh;
 
 	i {
 		font-size: 19vh;	
@@ -251,8 +254,10 @@ body {
 }
 
 .ring-grow {
-	width: 77.8%;	
-	padding-top: 78%;
+//	width: 77.8%;	
+//	padding-top: 78%;
+	width: 90%;
+	padding-top: 90%;
 }
 
 .ring li {
