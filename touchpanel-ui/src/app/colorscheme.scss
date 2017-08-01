@@ -27,7 +27,8 @@ $persimmion: #ff8300;
 $newbackground: #021024;
 $newtitlebackground: #333E48;
 $newwheelnonselectedbackground: rgba(0,0,0,.5);
-$newwheelselectedbackground: #00A2DC;
+//$newwheelselectedbackground: #0075cc;
+$newwheelselectedbackground: #0067b3;
 $newwheelselectedblankedbackground:  rgba(0,55,89,1);
 
 $newred: #D32121;
@@ -79,9 +80,7 @@ $newgreen: #7ED321;
 
 // center circle
 .circle-shrink {
-//	background-color: $lazuliblue;
-
-	background-color: rgba(0,162,220,1);
+	background-color: $newwheelselectedbackground;
 }
 
 .icon-blanked {
