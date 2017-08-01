@@ -264,14 +264,17 @@ body {
     border-radius: 51%;
     border: .7vh solid $alabasterwhite;
 
-        clip-path: url(#sector);
+    text-shadow: 0 0 1.2vh black;
+}
 
-        text-shadow: 0 0 1.2vh black;
-    }
+.title-slice {
+	clip-path: url(#title-sector)
+}
 
-    .input-slice {
-        z-index: 1;
-    }
+.input-slice {
+    z-index: 1;
+    clip-path: url(#sector);
+}
 
     .input {
         position: absolute;

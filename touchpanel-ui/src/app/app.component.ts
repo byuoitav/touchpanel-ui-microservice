@@ -42,6 +42,9 @@ import { ModalComponent } from './modal.component';
   ],
 })
 export class AppComponent { // event stuff
+  TITLE_ANGLE: number = 120; 
+  TITLE_ANGLE_ROTATE: number = 60;
+
   // events
   events: Array<Object>;
   // room data
@@ -61,6 +64,7 @@ export class AppComponent { // event stuff
   // circle stuff
   @ViewChild('ring') ring: ElementRef;
   arcpath: string;
+  titlearcpath: string;
   ringopen: boolean;
   rightoffset: string;
   topoffset: string;
@@ -110,7 +114,7 @@ export class AppComponent { // event stuff
    	this.dev = false;
 	
 	// uncomment for local testing
-//  this.showing = true;
+//    this.showing = true;
 
     // setup socket to recieve events
     this.socket.getEventListener().subscribe(event => {
@@ -492,30 +496,29 @@ export class AppComponent { // event stuff
   buildInputMenu() {
 //    console.log("ring:", this.ring);
     let numOfChildren = this.ring.nativeElement.childElementCount;
-//   console.log("num of children:", numOfChildren);
+//    console.log("num of children:", numOfChildren);
     let children = this.ring.nativeElement.children;
-    let angle = 360 / numOfChildren;
+    let angle = (360 - this.TITLE_ANGLE) / (numOfChildren - 1);
 //    console.log("angle", angle);
     // svg arc length 
     this.arcpath = this.getArc(.5, .5, .5, 0, angle);
+	this.titlearcpath = this.getArc(.5, .5, .5, 0, this.TITLE_ANGLE);
 
 	// apply styles to first two (title area)
-	for (let i = 0; i < 2; i++) {
-//	  console.log("room name slice", i + ":", children[i]);	
+//    console.log("title slice:", children[0]);	
 
-      let rotate = "rotate(" + String(angle * -i) + "deg)";
-      children[i].style.transform = rotate;
-	}
+    let rotate = "rotate(" + String(-(this.TITLE_ANGLE_ROTATE)) + "deg)";
+    children[0].style.transform = rotate;
 
     // apply styles to children
-    for (let i = 2; i < numOfChildren; i++) {
+    for (let i = 1; i < numOfChildren; i++) {
 //      console.log("children[" + i + "]", children[i]);
 
       // rotate the slice
-      let rotate = "rotate(" + String(angle * -i) + "deg)";
+      let rotate = "rotate(" + String((angle * -i) - (this.TITLE_ANGLE_ROTATE)) + "deg)";
       children[i].style.transform = rotate;
 	  // rotate the text
-      rotate = "rotate(" + String(angle * i) + "deg)";
+      rotate = "rotate(" + String((angle * i) + this.TITLE_ANGLE_ROTATE) + "deg)";
 	  children[i].firstElementChild.style.transform = rotate; 
     }
 
@@ -547,7 +550,7 @@ export class AppComponent { // event stuff
   }
 
   getInputOffset() {
-	 let length = this.ring.nativeElement.childElementCount -2;
+	 let length = this.ring.nativeElement.childElementCount - 1;
      let total = (length * 2) + 24;
 
 	 let Nright = ((length - 1) * total) / length;
