@@ -27,6 +27,7 @@ func main() {
 	go eventinfrastructure.SendConnectionRequest("http://localhost:6999/subscribe", req, true)
 
 	go events.WriteMessagesToSocket(sub)
+	go events.Refresh(sub)
 
 	port := ":8888"
 	router := echo.New()

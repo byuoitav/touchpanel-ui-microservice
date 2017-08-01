@@ -42,8 +42,8 @@ import { ModalComponent } from './modal.component';
   ],
 })
 export class AppComponent { // event stuff
-  TITLE_ANGLE: number = 120; 
-  TITLE_ANGLE_ROTATE: number = 60;
+  TITLE_ANGLE: number = 100; 
+  TITLE_ANGLE_ROTATE: number = this.TITLE_ANGLE / 2;
 
   // events
   events: Array<Object>;
@@ -114,7 +114,7 @@ export class AppComponent { // event stuff
    	this.dev = false;
 	
 	// uncomment for local testing
-//    this.showing = true;
+    this.showing = true;
 
     // setup socket to recieve events
     this.socket.getEventListener().subscribe(event => {
