@@ -35,7 +35,6 @@ func PublishEvent(context echo.Context) error {
 
 	p := context.Get(eventinfrastructure.ContextPublisher)
 	if pub, ok := p.(*eventinfrastructure.Publisher); ok {
-		// do stuff with it
 		events.Publish(pub, event, eventinfrastructure.Metrics)
 	} else {
 		return context.JSON(http.StatusInternalServerError, errors.New("Middleware failed to set the publisher"))
@@ -51,9 +50,11 @@ func PublishFeature(context echo.Context) error {
 		return context.JSON(http.StatusBadRequest, err.Error())
 	}
 
-	//	err = events.Publish(event, eventinfrastructure.UIFeature)
-	if err != nil {
-		return context.JSON(http.StatusBadRequest, err.Error())
+	p := context.Get(eventinfrastructure.ContextPublisher)
+	if pub, ok := p.(*eventinfrastructure.Publisher); ok {
+		events.Publish(pub, event, eventinfrastructure.UIFeature)
+	} else {
+		return context.JSON(http.StatusInternalServerError, errors.New("Middleware failed to set the publisher"))
 	}
 
 	return context.JSON(http.StatusOK, event)
