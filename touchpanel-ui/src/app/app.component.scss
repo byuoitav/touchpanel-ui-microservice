@@ -1,7 +1,6 @@
 @import 'colorscheme';
 
-* {
-	user-select: none;	
+* { user-select: none;	
 }
 
 html,
@@ -800,12 +799,24 @@ input:checked + .slider:before {
 .displaytoall {
 	display: flex;
 	flex-direction: row;
-//	flex-wrap: nowrap;
 	font-family: Roboto-Medium;	
 		
 	span {
 		padding-left: 5%;
 		white-space: nowrap;	
 		align-self: center;
+	}
+}
+
+.pulse {
+	animation: pulse .5s infinite alternate;
+}
+
+@keyframes pulse {
+	from {
+		text-shadow: 0 0 3vh #ff8300;	
+	}
+	to {
+		text-shadow: 0 0 1vh #ff6e00;	
 	}
 }
