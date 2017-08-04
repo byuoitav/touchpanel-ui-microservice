@@ -13,6 +13,7 @@ import (
 	"github.com/byuoitav/event-router-microservice/eventinfrastructure"
 	"github.com/byuoitav/touchpanel-ui-microservice/events"
 	"github.com/byuoitav/touchpanel-ui-microservice/helpers"
+	"github.com/fatih/color"
 	"github.com/labstack/echo"
 )
 
@@ -93,7 +94,9 @@ func GetDockerStatus(context echo.Context) error {
 }
 
 func SendScreenOff(context echo.Context) error {
-	log.Printf("[management] Sending screen off down socket")
+	color.Set(color.FgYellow)
+	log.Printf("Sending screen off command")
+	color.Unset()
 
 	s := context.Get(eventinfrastructure.ContextSubscriber)
 	if sub, ok := s.(*eventinfrastructure.Subscriber); ok {
