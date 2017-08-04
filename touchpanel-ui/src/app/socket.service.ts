@@ -13,9 +13,12 @@ export class SocketService {
 	reconnectIfNotNormalClose: true	
   }
 
+  public screenoff: boolean;
+
   public constructor() {
 	this.socket = new $WebSocket("ws://" + location.hostname +":8888/websocket", null, this.webSocketConfig);
 	this.listener = new EventEmitter();
+	this.screenoff = false;
 
 	this.socket.onMessage((msg) => {
 	  if (msg.data.includes("keepalive")) {
@@ -24,6 +27,9 @@ export class SocketService {
 	  } else if (msg.data.includes("refresh")) {
 	 	console.log("refreshing!");
 		location.assign("http://" + location.hostname + ":8888/");
+	  } else if (msg.data.includes("screenoff")) {
+		 console.log("adding screenoff element");
+		 this.screenoff = true;
 	  } else {
 	  	this.listener.emit({ "type": MESSAGE, "data": msg });
 	  }

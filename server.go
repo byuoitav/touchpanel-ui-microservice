@@ -48,6 +48,8 @@ func main() {
 	router.GET("/dockerstatus", handlers.GetDockerStatus)
 	router.GET("/json", handlers.GetJSON)
 
+	router.PUT("/screenoff", handlers.SendScreenOff, BindSubscriber(sub))
+
 	router.POST("/help", handlers.Help)
 	router.POST("/confirmhelp", handlers.ConfirmHelp)
 	router.POST("/cancelhelp", handlers.CancelHelp)

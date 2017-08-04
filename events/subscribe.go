@@ -102,6 +102,22 @@ func (manager *ClientManager) Start(f filter) {
 	}
 }
 
+func GetScreenTimeoutMessage() common.Message {
+	var e eventinfrastructure.Event
+	e.Hostname = os.Getenv("PI_HOSTNAME")
+	e.Timestamp = time.Now().Format(time.RFC3339)
+	e.Event.EventInfoKey = "screenoff"
+	msg, err := json.Marshal(&e)
+	if err != nil {
+		log.Fatalf("[error] %s", err.Error())
+	}
+
+	header := [24]byte{}
+	copy(header[:], []byte(eventinfrastructure.UI))
+
+	return common.Message{MessageHeader: header, MessageBody: msg}
+}
+
 func GetRefreshMessage() common.Message {
 	var e eventinfrastructure.Event
 	e.Hostname = os.Getenv("PI_HOSTNAME")
