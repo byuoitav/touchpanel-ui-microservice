@@ -550,29 +550,35 @@ export class AppComponent { // event stuff
   }
 
   getInputOffset() {
-	 let length = this.ring.nativeElement.childElementCount - 1;
-     let total = (length * 2) + 24;
+	 let numOfInputs = this.ring.nativeElement.childElementCount - 1;
+     let total = (numOfInputs * 1) + 24;
 
-	 let Nright = ((length - 1) * total) / length;
-	 let Ntop = Nright / (length - 1);
+	 let Nright = ((numOfInputs - 1) * total) / numOfInputs;
+	 let Ntop = Nright / (numOfInputs - 1);
 
-   switch(length) {
+   switch(numOfInputs) {
+	case 4:
+		Nright = 22.5;
+		Ntop = 9;
+		break;
 	case 3:
-		Nright++;
+		Nright = 16;
+		Ntop = 13;
 	   	break;
 	case 2:
-		Nright++;
+		Nright = 10;
+		Ntop = 26;
 	   	break;
 	case 1:
-		Nright = 10;
-		Ntop = 21;
+		Nright = 15;
+		Ntop = 64;
 		break;	
    }
   
 	 this.rightoffset = String(Nright) + "%";
-//	 console.log("right offset:", this.rightoffset);
+	 console.log("right offset:", this.rightoffset);
 	 this.topoffset = String(Ntop) + "%";
-//	 console.log("top offset:", this.topoffset);
+	 console.log("top offset:", this.topoffset);
   }
 
   updateUI(e: Event) {
@@ -1334,5 +1340,28 @@ export class AppComponent { // event stuff
 
     this.put(body, func => { }, err => { this.showing = !this.showing; });
     this.showing = !this.showing;
+  }
+
+  @ViewChild("resetviamodal") resetviamodal: ModalComponent;
+  longPressInput(i) {
+	for (let ii of this.room.config.devices) {
+		if (i.name == ii.name) {
+			switch(ii.type){
+			case "via":
+				this.resetviamodal.info = ii.address;
+				this.resetviamodal.show();
+				console.log("via", this.resetviamodal);
+				break;
+			default:
+				break;
+			}
+		}
+	}
+  }
+
+  via(command: string) {
+	  let address = this.api.baseurl + ":8014/via/" + this.resetviamodal.info + "/" + command;
+	  console.log("sending command", command, "to via at", address);
+	  this.api.get(address).subscribe(data => {});
   }
 } 
