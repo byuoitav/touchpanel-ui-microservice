@@ -73,7 +73,7 @@
 					<div>
 					</div>
 				</li>
-                <li *ngFor="let i of selectedDisplay.oinputs"  class="slice input-slice" [class.blanked-input]="selectedDisplay.blanked && selectedDisplay.oinput === i" [class.selectedInput]="selectedDisplay.oinput === i" (click)="buttonpress('change input'); changeInput(i)">
+                <li *ngFor="let i of selectedDisplay.oinputs"  class="slice input-slice" [class.blanked-input]="selectedDisplay.blanked && selectedDisplay.oinput === i" [class.selectedInput]="selectedDisplay.oinput === i" (click)="buttonpress('change input'); changeInput(i)" (press)="buttonpress('long press input'); longPressInput(i)">
 					<div [style.right]="rightoffset" [style.top]="topoffset" class='input'>
 						<i class='material-icons'>{{i.icon}}</i>
 						<span>{{i.displayname}}</span>
@@ -201,11 +201,6 @@
         </div>
         <div class="modal-body">
             <div class="management-body">
-				<!-- 
-                <div>
-					<button class="btn btn-success" (click)="clearToShow(); readToShowCookies(); displaysmodal.show()">Setup</button>
-                </div>
-				-->
                 <div>
                     <button class="btn btn-warning" (click)="refresh()">Refresh</button>
                 </div>
@@ -218,11 +213,6 @@
                 <div>
                     <button class="btn btn-info" (click)="dockerstatus(); dockerstatusmodal.show()">Docker Status</button>
                 </div>
-				<!-- 
-                <div>
-                    <button class="btn btn-warning" (click)="deleteCookies()">Clear Local Data</button>
-                </div>
-				-->
                 <div>
                     <button class="btn btn-danger" (click)="confirmrebootmodal.show()">Reboot</button>
                 </div>
@@ -233,56 +223,6 @@
         </div>
     </div>
 </app-modal>
-
-<!-- 
-<app-modal #displaysmodal>
-    <div class="app-modal-body">
-        <div class="modal-title">
-           	Select default displays for this panel 
-        </div>
-        <div class="modal-body">
-			<ul class='list-group'>
-				<li *ngFor="let d of displays" class='list-group-item' [class.list-group-item-info]="isInDisplaysToShow(d)" (click)="toggleDisplayToShow(d);">{{d.name}} ({{d.displayName}})</li>
-			</ul>
-        </div>
-        <div class="modal-bottom">
-            <button class="btn btn-primary" (click)="displaysmodal.hide(); inputsmodal.show();">Next</button>
-        </div>
-    </div>
-</app-modal>
-
-<app-modal #inputsmodal>
-    <div class="app-modal-body">
-        <div class="modal-title">
-			Select inputs to offer
-        </div>
-        <div class="modal-body">
-			<ul class='list-group'>
-				<li *ngFor="let d of inputs" class='list-group-item' [class.list-group-item-info]="isInInputsToShow(d)" (click)="toggleInputToShow(d)">{{d.name}}</li>
-			</ul>
-        </div>
-        <div class="modal-bottom">
-            <button class="btn btn-primary" (click)="inputsmodal.hide(); extrafeaturesmodal.show()">Next</button>
-        </div>
-    </div>
-</app-modal>
-
-<app-modal #extrafeaturesmodal>
-    <div class="app-modal-body">
-        <div class="modal-title">
-			Select any extra features	
-        </div>
-        <div class="modal-body">
-			<ul class='list-group'>
-				<li class='list-group-item' [class.list-group-item-info]="isExtraFeatureOn('dta')" (click)="toggleExtraFeatures('dta');">Display To All</li>
-			</ul>
-        </div>
-        <div class="modal-bottom">
-            <button class="btn btn-primary" (click)="extrafeaturesmodal.hide(); createToShowCookies();">Done</button>
-        </div>
-    </div>
-</app-modal>
--->
 
 <app-modal #deviceinfomodal>
     <div class="app-modal-body">
@@ -335,7 +275,28 @@
         </div>
         <div class="modal-bottom">
             <button class="btn btn-danger" (click)="confirmrebootmodal.hide()">Cancel</button>
+			<div class="btnspacing"></div>
             <button class="btn btn-success" (click)="reboot()">Reboot</button>
+        </div>
+    </div>
+</app-modal>
+
+<app-modal #resetviamodal>
+    <div class="app-modal-body">
+        <div class="modal-icon">
+            <i class='material-icons rebootdialog'>info_outline</i>
+        </div>
+        <div class="modal-title">
+			VIA Control
+        </div>
+        <div class="modal-body">
+        </div>
+        <div class="modal-bottom">
+            <button class="btn btn-danger" (click)="resetviamodal.hide()">Cancel</button>
+			<div class="btnspacing"></div>
+            <button class="btn btn-warning" (click)="via('reset'); resetviamodal.hide()">Reset</button>
+			<div class="btnspacing"></div>
+            <button class="btn btn-success" (click)="via('reboot'); resetviamodal.hide()">Reboot</button>
         </div>
     </div>
 </app-modal>
@@ -349,6 +310,7 @@
         </div>
         <div class="modal-bottom">
             <button class="btn btn-danger" (click)="poweroffmodal.hide()">Cancel</button>
+			<div class="btnspacing"></div>
             <button class="btn btn-success" (click)="powerOffAll(); poweroffmodal.hide();">Confirm</button>
         </div>
     </div>

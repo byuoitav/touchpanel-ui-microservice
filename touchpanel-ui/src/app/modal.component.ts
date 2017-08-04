@@ -31,7 +31,9 @@ import { Component, Input } from '@angular/core';
 export class ModalComponent {
   public visible = false;
   public visibleAnimate = false;
-  @Input() bgcolor: string;
+  
+  // extra information that you may need to use
+  public info: any = null; 
 
   constructor() { }
 
