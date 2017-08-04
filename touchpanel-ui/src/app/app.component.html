@@ -3,8 +3,7 @@
 	<span *ngFor="let e of events">{{e | json}}<br></span>
 </div>
 
-<!-- main body -->
-<div class='basediv' [class.innerglow]="dtaMaster">
+<!-- main body --> <div class='basediv' [class.innerglow]="dtaMaster">
     <!-- power, help -->
     <div class='power-row'>
         <div class='power' (click)="buttonpress('power'); powerOff()" (press)="poweroffmodal.show()">
@@ -52,16 +51,17 @@
     <!-- display control -->
     <div [class.hidden]='displayselection || microphonecontrol' class='main-control-h'>
         <div class='main-control-v' >
-			<div class='roomname' [class.roomname-transition]="!selectedDisplay.blanked || true" (click)="buttonpress('blank'); toggleBlank();">
-				<span *ngIf="!dtaMaster">{{selectedDisplay.displayname | lowercase}}</span>
+			<div class='roomname' [class.roomname-transition]="!selectedDisplay.blanked || true">
+				<span *ngIf="!dtaMaster">{{selectedDisplay.displayname}}</span>
 				<span *ngIf="dtaMaster">all displays</span>
 			</div>
             <div class='circle' [class.circle-shrink]="!selectedDisplay.blanked || true" [class.circle-blanked]="selectedDisplay.blanked" (click)="buttonpress('blank'); toggleBlank();">
-				<i class='material-icons'>{{selectedDisplay.icon}}</i>
+				<i *ngIf="!dtaMaster" class='material-icons' [class.icon-blanked]="selectedDisplay.blanked">{{selectedDisplay.icon}}</i>
+				<i *ngIf="dtaMaster" class='material-icons' [class.icon-blanked]="selectedDisplay.blanked">subscriptions</i>
 				<!-- blanking -->
 				<span *ngIf="!selectedDisplay.blanked" class='blank'>picture on</span>
 				<span *ngIf="selectedDisplay.blanked" class='blank'>picture off</span>
-				<div class='switch-wrapper'>
+				<div class='switch-wrapper' (swipeleft)="buttonpress('blank'); setBlank(true)" (swiperight)="buttonpress('blank'); setBlank(false)">
 					<label class="switch">
 						<input disabled="disabled" [checked]="!selectedDisplay.blanked" type="checkbox">
 						<div class="slider round"></div>
@@ -69,18 +69,14 @@
 				</div>
             </div>
             <ul #ring class="ring" [class.ring-grow]="!selectedDisplay.blanked || true">
-				<li class="slice blank-slice" [class.redbackground]="selectedDisplay.blanked" (click)="buttonpress('blank'); toggleBlank();">
+				<li class="title-slice">
 					<div>
 					</div>
 				</li>
-				<li class="slice blank-slice" [class.redbackground]="selectedDisplay.blanked"(click)="buttonpress('blank'); toggleBlank();">
-					<div>
-					</div>
-				</li>
-                <li *ngFor="let i of selectedDisplay.oinputs"  class="slice input-slice" [class.selectedInput]="selectedDisplay.oinput === i" (click)="buttonpress('change input'); changeInput(i)">
+                <li *ngFor="let i of selectedDisplay.oinputs"  class="slice input-slice" [class.blanked-input]="selectedDisplay.blanked && selectedDisplay.oinput === i" [class.selectedInput]="selectedDisplay.oinput === i" (click)="buttonpress('change input'); changeInput(i)">
 					<div [style.right]="rightoffset" [style.top]="topoffset" class='input'>
 						<i class='material-icons'>{{i.icon}}</i>
-						<span>{{i.displayname | lowercase}}</span>
+						<span>{{i.displayname}}</span>
 					</div>
                 </li>
             </ul>
@@ -90,13 +86,13 @@
 	<!-- bottom left control -->
     <div class='blank-row'>
 		<!-- display to all -->
-		<div *ngIf="displaytoall && !dtaMinion" class="displaytoall" [class.excite]="sendingDTA" [class.dtaalignleft]="!multipledisplays && !dtaMaster" [class.dtaalignleftshort]="!multipledisplays && dtaMaster">
-			<i class='material-icons' [class.persimmion]="dtaMaster" [class.excite]="sendingDTA" (click)="toggleDisplayToAll();">call_split</i>
-			<span *ngIf="!sendingDTA && !dtaMaster">Display All</span>
-			<span *ngIf="!sendingDTA && dtaMaster">Stop</span>
+		<div *ngIf="displaytoall && !dtaMinion" class="displaytoall" [class.pulse]="dtaMaster" [class.dtaalignleft]="!multipledisplays && !dtaMaster" [class.dtaalignleftshort]="!multipledisplays && dtaMaster">
+			<i class='material-icons' [class.persimmion]="dtaMaster" (click)="toggleDisplayToAll();">call_split</i>
+			<span *ngIf="!dtaMaster" (click)="toggleDisplayToAll();">Display All</span>
+			<span *ngIf="dtaMaster" (click)="toggleDisplayToAll();">Stop</span>
 		</div>
 		<!-- all control -->
-		<div *ngIf="multipledisplays" class="all-control" [class.alignleft]="!displayToAll">
+		<div *ngIf="multipledisplays || false" class="all-control" [class.alignleft]="!displayToAll">
 			<i *ngIf="!displayselection" class='material-icons' (click)="goToDisplaySelection()">group_work</i>
 			<i *ngIf="displayselection" class='material-icons' (click)="goToDisplayControl(['all'])">album</i>
 		</div>
@@ -125,6 +121,15 @@
   <defs>
     <clipPath clipPathUnits="objectBoundingBox" id="sector">
 		<path fill="transparent" stroke="#111" stroke-width="1" id="sector" [attr.d]="arcpath"></path>
+    </clipPath>
+  </defs>
+</svg>
+
+<!-- title slice -->
+<svg id='svg-block' width="0" height="0">
+  <defs>
+    <clipPath clipPathUnits="objectBoundingBox" id="title-sector">
+		<path fill="transparent" stroke="#111" stroke-width="1" id="sector" [attr.d]="titlearcpath"></path>
     </clipPath>
   </defs>
 </svg>

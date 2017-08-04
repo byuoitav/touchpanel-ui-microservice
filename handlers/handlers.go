@@ -3,6 +3,7 @@ package handlers
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -10,7 +11,6 @@ import (
 	"os"
 
 	"github.com/byuoitav/event-router-microservice/eventinfrastructure"
-	"github.com/byuoitav/event-router-microservice/subscription"
 	"github.com/byuoitav/touchpanel-ui-microservice/events"
 	"github.com/byuoitav/touchpanel-ui-microservice/helpers"
 	"github.com/labstack/echo"
@@ -19,24 +19,6 @@ import (
 func OpenWebSocket(context echo.Context) error {
 	events.StartWebClient(context.Response(), context.Request())
 	return nil
-}
-
-func Subscribe(context echo.Context) error {
-	var sr subscription.SubscribeRequest
-	err := context.Bind(&sr)
-	if err != nil {
-		log.Printf("[error] %s", err.Error())
-		return context.JSON(http.StatusBadRequest, err.Error())
-	}
-
-	log.Printf("[handler] Subscribing to %s", sr.Address)
-	err = events.Sub.Subscribe(sr.Address, []string{eventinfrastructure.UI})
-	if err != nil {
-		log.Printf("[error] %s", err.Error())
-		return context.JSON(http.StatusInternalServerError, err.Error())
-	}
-
-	return context.JSON(http.StatusOK, context)
 }
 
 func GetHostname(context echo.Context) error {
@@ -51,9 +33,11 @@ func PublishEvent(context echo.Context) error {
 		return context.JSON(http.StatusBadRequest, err.Error())
 	}
 
-	err = events.Publish(event, eventinfrastructure.Metrics)
-	if err != nil {
-		return context.JSON(http.StatusBadRequest, err.Error())
+	p := context.Get(eventinfrastructure.ContextPublisher)
+	if pub, ok := p.(*eventinfrastructure.Publisher); ok {
+		events.Publish(pub, event, eventinfrastructure.Metrics)
+	} else {
+		return context.JSON(http.StatusInternalServerError, errors.New("Middleware failed to set the publisher"))
 	}
 
 	return context.JSON(http.StatusOK, event)
@@ -66,9 +50,11 @@ func PublishFeature(context echo.Context) error {
 		return context.JSON(http.StatusBadRequest, err.Error())
 	}
 
-	err = events.Publish(event, eventinfrastructure.UIFeature)
-	if err != nil {
-		return context.JSON(http.StatusBadRequest, err.Error())
+	p := context.Get(eventinfrastructure.ContextPublisher)
+	if pub, ok := p.(*eventinfrastructure.Publisher); ok {
+		events.Publish(pub, event, eventinfrastructure.UIFeature)
+	} else {
+		return context.JSON(http.StatusInternalServerError, errors.New("Middleware failed to set the publisher"))
 	}
 
 	return context.JSON(http.StatusOK, event)
@@ -83,13 +69,6 @@ func GetDeviceInfo(context echo.Context) error {
 	return context.JSON(http.StatusOK, di)
 }
 
-func Refresh(context echo.Context) error {
-	log.Printf("[management] Refreshing webpage")
-	events.Refresh()
-
-	return nil
-}
-
 func Reboot(context echo.Context) error {
 	log.Printf("[management] Rebooting pi")
 	http.Get("http://localhost:7010/reboot")
@@ -99,7 +78,7 @@ func Reboot(context echo.Context) error {
 func GetDockerStatus(context echo.Context) error {
 	log.Printf("[management] Getting docker status")
 	resp, err := http.Get("http://localhost:7010/dockerStatus")
-	log.Printf("docker status response: %s", resp)
+	log.Printf("docker status response: %v", resp)
 	if err != nil {
 		return context.JSON(http.StatusBadRequest, err.Error())
 	}
@@ -153,7 +132,7 @@ func Help(context echo.Context) error {
 
 	json, err := json.Marshal(sh)
 	if err != nil {
-		log.Printf("failed to marshal sh: %s", sh)
+		log.Printf("failed to marshal sh: %v", sh)
 		return context.JSON(http.StatusInternalServerError, err.Error())
 	}
 
@@ -253,7 +232,10 @@ func GetJSON(context echo.Context) error {
 	address := os.Getenv("UI_CONFIGURATION_ADDRESS")
 	hn := os.Getenv("PI_HOSTNAME")
 
+	log.Printf("Getting the UI configuration")
+
 	if len(hn) == 0 {
+		log.Printf("[error] PI_HOSTNAME is not set.")
 		return context.JSON(http.StatusInternalServerError, "PI_HOSTNAME is not set.")
 	}
 
@@ -272,6 +254,7 @@ func GetJSON(context echo.Context) error {
 			log.Printf("[error] %s. Returning cached configuration...", err.Error())
 			return context.JSON(http.StatusOK, configcache[hn])
 		}
+		log.Printf("[error] %s. No cache to serve. Cannot continue.", err.Error())
 		return context.JSON(http.StatusGatewayTimeout, err.Error())
 	}
 	defer resp.Body.Close()
@@ -282,6 +265,7 @@ func GetJSON(context echo.Context) error {
 			log.Printf("[error] %s. Returning cached configuration...", err.Error())
 			return context.JSON(http.StatusOK, configcache[hn])
 		}
+		log.Printf("[error] %s. Could not read response body and there is no cache.", err.Error())
 		return context.JSON(http.StatusInternalServerError, err.Error())
 	}
 
@@ -292,10 +276,13 @@ func GetJSON(context echo.Context) error {
 			log.Printf("[error] %s. Returning cached configuration...", err.Error())
 			return context.JSON(http.StatusOK, configcache[hn])
 		}
+		log.Printf("[error] %s. Error unmarshalling the body, and there is no cache.", err.Error())
 		return context.JSON(http.StatusInternalServerError, err.Error())
 	} else {
 		configcache = data
 	}
+
+	log.Printf("Done.")
 
 	return context.JSON(http.StatusOK, data[hn])
 }

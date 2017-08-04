@@ -45,11 +45,12 @@ export class APIService {
 		Object.assign(this.uiconfig, data);
 		console.log("uiconfig", this.uiconfig);
       	this.loaded.next(true);
-	  })
+      })
     });
   }
 
   getJSON(): Observable<Object> {
+    console.log("getting JSON");
  	return this.http.get(this.baseurl + ":8888/json")
   		.map(response => response.json());	
   }

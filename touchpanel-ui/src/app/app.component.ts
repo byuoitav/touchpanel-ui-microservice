@@ -42,6 +42,9 @@ import { ModalComponent } from './modal.component';
   ],
 })
 export class AppComponent { // event stuff
+  TITLE_ANGLE: number = 100; 
+  TITLE_ANGLE_ROTATE: number = this.TITLE_ANGLE / 2;
+
   // events
   events: Array<Object>;
   // room data
@@ -61,6 +64,7 @@ export class AppComponent { // event stuff
   // circle stuff
   @ViewChild('ring') ring: ElementRef;
   arcpath: string;
+  titlearcpath: string;
   ringopen: boolean;
   rightoffset: string;
   topoffset: string;
@@ -492,30 +496,29 @@ export class AppComponent { // event stuff
   buildInputMenu() {
 //    console.log("ring:", this.ring);
     let numOfChildren = this.ring.nativeElement.childElementCount;
-//   console.log("num of children:", numOfChildren);
+//    console.log("num of children:", numOfChildren);
     let children = this.ring.nativeElement.children;
-    let angle = 360 / numOfChildren;
+    let angle = (360 - this.TITLE_ANGLE) / (numOfChildren - 1);
 //    console.log("angle", angle);
     // svg arc length 
     this.arcpath = this.getArc(.5, .5, .5, 0, angle);
+	this.titlearcpath = this.getArc(.5, .5, .5, 0, this.TITLE_ANGLE);
 
 	// apply styles to first two (title area)
-	for (let i = 0; i < 2; i++) {
-//	  console.log("room name slice", i + ":", children[i]);	
+//    console.log("title slice:", children[0]);	
 
-      let rotate = "rotate(" + String(angle * -i) + "deg)";
-      children[i].style.transform = rotate;
-	}
+    let rotate = "rotate(" + String(-(this.TITLE_ANGLE_ROTATE)) + "deg)";
+    children[0].style.transform = rotate;
 
     // apply styles to children
-    for (let i = 2; i < numOfChildren; i++) {
+    for (let i = 1; i < numOfChildren; i++) {
 //      console.log("children[" + i + "]", children[i]);
 
       // rotate the slice
-      let rotate = "rotate(" + String(angle * -i) + "deg)";
+      let rotate = "rotate(" + String((angle * -i) - (this.TITLE_ANGLE_ROTATE)) + "deg)";
       children[i].style.transform = rotate;
 	  // rotate the text
-      rotate = "rotate(" + String(angle * i) + "deg)";
+      rotate = "rotate(" + String((angle * i) + this.TITLE_ANGLE_ROTATE) + "deg)";
 	  children[i].firstElementChild.style.transform = rotate; 
     }
 
@@ -547,7 +550,7 @@ export class AppComponent { // event stuff
   }
 
   getInputOffset() {
-	 let length = this.ring.nativeElement.childElementCount -2;
+	 let length = this.ring.nativeElement.childElementCount - 1;
      let total = (length * 2) + 24;
 
 	 let Nright = ((length - 1) * total) / length;
@@ -632,7 +635,9 @@ export class AppComponent { // event stuff
 				   		var body = { displays: [] }
 				   		for (let display of this.displays) {
 							if (display.selected) {
+                                //we're now being asked to turn on the display when display all happens.
 				  	  			body.displays.push({
+                                    "power": "on",
 				   		   			"name": display.name,
 				      				"input": e.eventInfoValue,
 				     			});
@@ -718,14 +723,17 @@ export class AppComponent { // event stuff
 
 			if (this.dtaMinion) {
 				// becoming a minion
+                this.showing = true
 				let body = { displays: [], audioDevices: [] };
 				for (let display of this.displays) {
 					body.displays.push({
+                        "power": "on",
 						"name": display.name,
 						"blanked": false,	
 					});
 					for (let ad of display.oaudiodevices) {
 						body.audioDevices.push({
+                            "power": "on",
 							"name": ad.name,
 							"muted": true	
 						})	
@@ -796,8 +804,21 @@ export class AppComponent { // event stuff
   // commands
   // 
   enterScreen() {
-    if (this.sendingOn || this.selectedDisplay.oaudiodevices == null)
+    if (this.sendingOn || this.selectedDisplay.oaudiodevices == null) {
+        if (this.sendingOn) {
+          this.debugmessage("Already sending the power-on request");
+        }
+        if (this.selectedDisplay.oaudiodevices == null) {
+          console.log("Yo, no devices")
+          this.debugmessage("Oaudiodevices was null");
+          this.api.getJSON().subscribe(data => {
+            Object.assign(this.api.uiconfig, data);
+            console.log("uiconfig", this.api.uiconfig);
+            this.api.loaded.next(true);
+          });
+        }
       return;
+    }
   	
     this.sendingOn = true;
     this.startSpinning = true;
@@ -811,6 +832,7 @@ export class AppComponent { // event stuff
 			"input": display.odefaultinput.name
 		});	
 	}
+
 	for (let ad of this.selectedDisplay.oaudiodevices) {
 		if (this.displaytoall) {
 			body.audioDevices.push({
@@ -829,6 +851,7 @@ export class AppComponent { // event stuff
 	}
 
     this.put(body, func => { }, func => { }, after => {
+        this.debugmessage("Entering.");
 //      this.updateState();
 	  // need to updateState when turning on display
       this.showing = true;
@@ -967,6 +990,30 @@ export class AppComponent { // event stuff
 	}
   }
 
+  setBlank(status: boolean) {
+    var body = { displays: [] }
+    for (let display of this.displays) {
+      if (display.selected) {
+        display.blanked = status;
+        body.displays.push({
+          "name": display.name,
+          "blanked": status
+        });
+     }
+    }
+    this.put(body);
+	this.updateBlanked();
+
+	if (this.dtaMaster) {
+		let event = {
+			"device": "dta",
+			"eventinfokey": "blanked",
+			"eventinfovalue": String(this.selectedDisplay.blanked)
+		}
+ 		this.api.publishFeature(event)
+	}
+  }
+
   updateBlanked() {
 	for (let display of this.displays) {
 		if (display.selected) {
@@ -1018,6 +1065,8 @@ export class AppComponent { // event stuff
 	this.selectedDisplay.oinput = i;
   }
 
+
+//Toggle DTA
   sendingDTA: boolean;
   dtaMaster: boolean;
   dtaMasterHost: string;
@@ -1140,6 +1189,16 @@ export class AppComponent { // event stuff
     }
 
     this.api.publish(event);
+  }
+
+  debugmessage(value: string) {
+    let event = {
+      "eventinfokey": "DEBUG",
+      "eventinfovalue": value
+    }
+
+    this.api.publish(event);
+
   }
 
 
