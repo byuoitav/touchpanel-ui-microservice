@@ -92,6 +92,18 @@ func GetDockerStatus(context echo.Context) error {
 	return context.String(http.StatusOK, string(body))
 }
 
+func SendScreenOff(context echo.Context) error {
+	log.Printf("[management] Sending screen off down socket")
+
+	s := context.Get(eventinfrastructure.ContextSubscriber)
+	if sub, ok := s.(*eventinfrastructure.Subscriber); ok {
+		sub.MessageChan <- events.GetScreenTimeoutMessage()
+	} else {
+		return context.JSON(http.StatusInternalServerError, errors.New("Middleware failed to set the subscriber"))
+	}
+	return context.JSON(http.StatusOK, "success.")
+}
+
 func Help(context echo.Context) error {
 	var sh helpers.SlackHelp
 	err := context.Bind(&sh)

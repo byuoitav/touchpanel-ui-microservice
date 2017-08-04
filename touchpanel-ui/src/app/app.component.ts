@@ -576,9 +576,9 @@ export class AppComponent { // event stuff
    }
   
 	 this.rightoffset = String(Nright) + "%";
-	 console.log("right offset:", this.rightoffset);
+//	 console.log("right offset:", this.rightoffset);
 	 this.topoffset = String(Ntop) + "%";
-	 console.log("top offset:", this.topoffset);
+//	 console.log("top offset:", this.topoffset);
   }
 
   updateUI(e: Event) {

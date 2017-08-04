@@ -1,3 +1,8 @@
+<!-- screenoff cover -->
+<div *ngIf="socket.screenoff" id="screenoff" (click)="socket.screenoff = false">
+	*gasp* you shouldn't be seeing me...this is weird. just click anywhere:)	
+</div>
+
 <!-- developer mode -->
 <div *ngIf="dev" id='dev-console'>
 	<span *ngFor="let e of events">{{e | json}}<br></span>
