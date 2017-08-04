@@ -12,7 +12,7 @@
 					location.reload();
 				} else {
 					console.log("data", xhr);	
-					window.location = "http://localhost:8888/" + xhr.response.ui;
+					window.location = "http://"+ window.location.hostname +":8888/" + xhr.response.ui;
 				}
 			}); 
 		}	
