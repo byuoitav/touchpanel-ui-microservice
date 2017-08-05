@@ -5,6 +5,9 @@ import { Component, Input } from '@angular/core';
   template: `
   <div (click)="onContainerClicked($event)" class="modal fade" tabindex="-1" [ngClass]="{'in': visibleAnimate}"
        [ngStyle]="{'display': visible ? 'block' : 'none', 'opacity': visibleAnimate ? 1 : 0}">
+	<div class="hide" (click)="hide()">
+		<i class="material-icons icon">arrow_back</i>
+	</div>
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-body">
@@ -25,6 +28,16 @@ import { Component, Input } from '@angular/core';
 	/* area outside of modal */
 	.modal {
    	 	background: rgba(164,169,173,.95);
+	}
+	.hide{
+		position: absolute;
+		top: 11vh;
+		left: 7%;
+		min-width: 10%;	
+		min-height: 20%;
+	}
+	.icon {
+		font-size: 10vh;	
 	}
   `]
 })

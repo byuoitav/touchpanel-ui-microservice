@@ -34,25 +34,6 @@
 		</div>
 	</div>
 
-	<!-- microphone control -->
-	<div *ngIf="microphonecontrol" class='main-control-h'>
-		<div class='microphone-selection'>
-			<div *ngFor="let mic of mics" class='mic'>
-				<div class='mic-title'>
-					<span *ngIf="mic.displayname">{{mic.displayname}}</span>
-					<span *ngIf="!mic.displayname">{{mic.name}}</span>
-				</div>
-				<div class='mic-volume'>
-	            	<md-slider id="mic.name" vertical [value]="mic.volume" (change)="buttonpress('mic volume slider'); changeMicVolume($event.value, mic.name)"></md-slider>
-				</div>
-				<div class='mic-mute' (click)="toggleMicMute(mic.name)">
-       	    		<i *ngIf="mic.muted" class="material-icons red">volume_off</i>
-       	    		<i *ngIf="!mic.muted" class="material-icons">volume_up</i>
-				</div>
-			</div>
-		</div>
-	</div>
-
     <!-- display control -->
     <div [class.hidden]='displayselection || microphonecontrol' class='main-control-h'>
         <div class='main-control-v' >
@@ -105,7 +86,7 @@
 
 	<!-- bottom right control -->
     <div class="audio-row">
-		<div *ngIf="mics.length > 0" class="microphone" (click)="microphonecontrol = !microphonecontrol">
+		<div *ngIf="mics.length > 0" class="microphone" (click)="micmodal.show()">
 			<i class="material-icons">mic</i>
 		</div>
 		<div *ngIf="!displayselection && !dtaMinion" (click)="buttonpress('mute'); toggleMute()" [class.alignright]="!mics.length > 0">
@@ -161,6 +142,33 @@
 
 
 <!-- pop-ups -->
+<app-modal #micmodal>
+    <div class="app-modal-body">
+        <div class="modal-body">
+			<div class='microphone-selection'>
+				<div *ngFor="let mic of mics" class='mic'>
+					<div class='mic-title'>
+						<span *ngIf="mic.displayname">{{mic.displayname}}</span>
+						<span *ngIf="!mic.displayname">{{mic.name}}</span>
+					</div>
+					<div class='mic-volume'>
+		            	<md-slider id="mic.name" vertical [value]="mic.volume" (change)="buttonpress('mic volume slider'); changeMicVolume($event.value, mic.name)"></md-slider>
+					</div>
+					<div class='mic-mute' (click)="toggleMicMute(mic.name)">
+		   	    		<i *ngIf="mic.muted" class="material-icons red">volume_off</i>
+		   	    		<i *ngIf="!mic.muted" class="material-icons">volume_up</i>
+					</div>
+				</div>
+			</div>
+        </div>
+		<!--
+        <div class="modal-bottom">
+            <button class="btn btn-primary" (click)="micmodal.hide()">Done</button>
+        </div>
+		-->
+    </div>
+</app-modal>
+
 <app-modal #helpmodal>
     <div class="app-modal-body">
         <div class="modal-icon">
@@ -174,8 +182,10 @@
         </div>
         <div class="modal-bottom">
 			<button class="btn btn-warning" [disabled]="helprequested" (click)="slackconfirmmodal.show(); help('help')">Request Help</button>
+			<!--
 			<div class="btnspacing"></div>
-            <button class="btn btn-primary" (click)="helpmodal.hide();">Done</button>
+			<button class="btn btn-primary" (click)="helpmodal.hide();">Done</button> 
+			-->
         </div>
     </div>
 </app-modal>
@@ -183,7 +193,7 @@
 <app-modal #slackconfirmmodal>
     <div class="app-modal-body">
         <div class="modal-icon">
-            <i class='material-icons helpdialog'>info_outline</i>
+            <i class='material-icons helpdialog'>add_alert</i>
         </div>
         <div class="modal-title">
             Confirm
@@ -223,9 +233,11 @@
                 </div>
             </div>
         </div>
+		<!-- 
         <div class="modal-bottom">
             <button class="btn btn-primary" (click)="managementmodal.hide()">Done</button>
         </div>
+		-->
     </div>
 </app-modal>
 
@@ -246,9 +258,11 @@
                 </div>
             </div>
         </div>
+		<!--
         <div class="modal-bottom">
             <button class="btn btn-primary" (click)="deviceinfomodal.hide()">Done</button>
         </div>
+		-->
     </div>
 </app-modal>
 
@@ -262,9 +276,11 @@
                 <pre>{{dockerStatus}}</pre>
             </div>
         </div>
+		<!--
         <div class="modal-bottom">
             <button class="btn btn-primary" (click)="dockerstatusmodal.hide()">Done</button>
         </div>
+		-->
     </div>
 </app-modal>
 
