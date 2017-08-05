@@ -81,3 +81,12 @@ func BindSubscriber(s *eventinfrastructure.Subscriber) echo.MiddlewareFunc {
 		}
 	}
 }
+
+func CORS() echo.MiddlewareFunc {
+	return func(h echo.HandlerFunc) echo.HandlerFunc {
+		return func(c echo.Context) error {
+			c.Response().Header().Set("Access-Control-Allow-Origin", "*")
+			return h(c)
+		}
+	}
+}
