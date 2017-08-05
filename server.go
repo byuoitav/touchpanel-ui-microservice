@@ -33,6 +33,7 @@ func main() {
 	router := echo.New()
 	router.Pre(middleware.RemoveTrailingSlash())
 	router.Use(middleware.CORS())
+	router.Use(CORS())
 
 	router.GET("/health", echo.WrapHandler(http.HandlerFunc(health.Check)))
 
@@ -78,6 +79,15 @@ func BindSubscriber(s *eventinfrastructure.Subscriber) echo.MiddlewareFunc {
 		return func(c echo.Context) error {
 			c.Set(eventinfrastructure.ContextSubscriber, s)
 			return next(c)
+		}
+	}
+}
+
+func CORS() echo.MiddlewareFunc {
+	return func(h echo.HandlerFunc) echo.HandlerFunc {
+		return func(c echo.Context) error {
+			c.Response().Header().Set("Access-Control-Allow-Origin", "*")
+			return h(c)
 		}
 	}
 }
