@@ -840,7 +840,7 @@ export class AppComponent { // event stuff
 	}
 
 	for (let ad of this.selectedDisplay.oaudiodevices) {
-		if (this.displaytoall) {
+		if (this.dtaMinion) {
 			body.audioDevices.push({
 				"name": ad.name,
 				"muted": true,
