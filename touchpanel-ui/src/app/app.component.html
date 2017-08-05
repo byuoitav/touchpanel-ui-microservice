@@ -78,7 +78,7 @@
 			<span *ngIf="dtaMaster" (click)="toggleDisplayToAll();">Stop</span>
 		</div>
 		<!-- all control -->
-		<div *ngIf="multipledisplays || false" class="all-control" [class.alignleft]="!displayToAll">
+		<div *ngIf="multipledisplays && false" class="all-control" [class.alignleft]="!displayToAll">
 			<i *ngIf="!displayselection" class='material-icons' (click)="goToDisplaySelection()">group_work</i>
 			<i *ngIf="displayselection" class='material-icons' (click)="goToDisplayControl(['all'])">album</i>
 		</div>

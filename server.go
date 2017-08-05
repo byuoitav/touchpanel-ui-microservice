@@ -33,7 +33,6 @@ func main() {
 	router := echo.New()
 	router.Pre(middleware.RemoveTrailingSlash())
 	router.Use(middleware.CORS())
-	router.Use(CORS())
 
 	router.GET("/health", echo.WrapHandler(http.HandlerFunc(health.Check)))
 
