@@ -3,7 +3,7 @@
 <head>
 	<script>
 		function redirect() {
-			getJSON('http://localhost:8888/json', function(err, xhr) {
+			getJSON('http://'+ window.location.hostname +':8888/json', function(err, xhr) {
 				if (err != null) {
 					alert("Something went wrong: " + err.response);	
 					location.reload();

@@ -61,7 +61,17 @@ func main() {
 }
 
 func Subscribe(context echo.Context) error {
-	return eventinfrastructure.HandleSubscriptionRequest(context)
+	var cr eventinfrastructure.ConnectionRequest
+	context.Bind(&cr)
+
+	s := context.Get(eventinfrastructure.ContextSubscriber)
+	if sub, ok := s.(*eventinfrastructure.Subscriber); ok {
+		err := eventinfrastructure.HandleSubscriptionRequest(cr, sub)
+		if err != nil {
+			return context.JSON(http.StatusBadRequest, err.Error())
+		}
+	}
+	return context.JSON(http.StatusOK, nil)
 }
 
 func BindPublisher(p *eventinfrastructure.Publisher) echo.MiddlewareFunc {
