@@ -3,6 +3,7 @@ import { SocketService, OPEN, CLOSE, MESSAGE } from './socket.service';
 import { Observable } from 'rxjs/Rx';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { CookieService, CookieOptions } from 'ngx-cookie';
+import { NotificationsService } from 'angular2-notifications';
 
 import { APIService } from './api.service';
 import { Room, RoomConfiguration, RoomStatus, Event, Device, DeviceData, OutputDevice, icons, InputDevice, AudioOutDevice, AudioConfig, Mic } from './objects';
@@ -85,7 +86,16 @@ export class AppComponent { // event stuff
   poweroffall: boolean;
   dev: boolean;
 
-  public constructor(private socket: SocketService, private api: APIService, private cookie: CookieService) {
+  // notifications
+  public notificationOptions = {
+ 	position: ["top","right"],
+    timeOut: 5000,
+	maxStack: 3,
+	animate: "fromLeft",
+	preventDuplicates: true,
+  }
+
+  public constructor(private socket: SocketService, private api: APIService, private cookie: CookieService, private notify: NotificationsService) {
     this.inputs = [];
 	this.events = [];
     this.displays = [];
@@ -114,7 +124,7 @@ export class AppComponent { // event stuff
    	this.dev = false;
 	
 	// uncomment for local testing
-//    this.showing = true;
+   // this.showing = true;
 
     // setup socket to recieve events
     this.socket.getEventListener().subscribe(event => {
@@ -136,8 +146,14 @@ export class AppComponent { // event stuff
         this.updateUI(e);
       } else if (event.type == CLOSE) {
 		console.log("The socket connection has been closed");
+		this.notify.error("Socket", "Socket connection closed", {
+			timeOut: 2000,
+			showProgressBar: false,
+			clickToClose: false
+		});
       } else if (event.type == OPEN) {
         console.log("The socket connection has been opened");
+		this.notify.success("Socket", "Socket connection opened");
       }
     })
   }
@@ -185,7 +201,14 @@ export class AppComponent { // event stuff
         this.room.config = new RoomConfiguration();
         Object.assign(this.room.config, data);
         console.log("roomconfig:", this.room.config);
-      });
+      },
+	  err => {
+		this.notify.error("Setup", "Failed to get room config", {
+			timeOut: 0,
+			showProgressBar: false,
+			clickToClose: false
+		});
+	  });
 
       this.api.getRoomStatus().subscribe(data => {
         this.room.status = new RoomStatus();
@@ -197,7 +220,14 @@ export class AppComponent { // event stuff
 		this.setupFeatures(); 
 
 		this.dtaMasterHost = this.api.hostname;
-      });
+      },
+	  err => {
+		this.notify.error("Setup", "Failed to get room status", {
+			timeOut: 0,
+			showProgressBar: false,
+			clickToClose: false
+		});
+	  });
     });
   }
 
@@ -599,7 +629,7 @@ export class AppComponent { // event stuff
 				     	});
 				   	}
 					console.log("[DTA] Changing input", body);
-				   	this.put(body);
+				   	this.put(body, func => {}, err => this.notify.error("DTA Error", "Failed to change minion input"));
 
 					i = this.getInputDevice(this.dtaMasterHost);
 					if (i != null) this.selectedDisplay.oinput = i;
@@ -620,7 +650,7 @@ export class AppComponent { // event stuff
 						"blanked": (e.eventInfoValue == 'true')	
 					})
 				}
-				this.put(body);
+				this.put(body, func => {}, err => this.notify.error("DTA Error", "Failed to set minion blank"));
 				break;
 			case "dta":
 				this.dtaMinion = (e.eventInfoValue == 'true');  
@@ -650,7 +680,7 @@ export class AppComponent { // event stuff
 							}
 				   		}
 						console.log("[DTA] Changing input", body);
-				   		this.put(body);
+				   		this.put(body, func => {}, err => this.notify.error("DTA Error", "Failed to change minion input"));
 					}
 				}
 				break;
@@ -746,7 +776,7 @@ export class AppComponent { // event stuff
 					}
 				}
 				console.log("[DTA] Entering dta mode:", body);
-				this.put(body);
+				this.put(body, func => {}, err => this.notify.error("DTA Error", "Failed to enter DTA mode"));
 
 				let i = new InputDevice();
 				i.name = this.dtaMasterHost;
@@ -856,7 +886,7 @@ export class AppComponent { // event stuff
 		}
 	}
 
-    this.put(body, func => { }, func => { }, after => {
+    this.put(body, func => {}, err => this.notify.error("Error", "Failed turn on room"), after => {
         this.debugmessage("Entering.");
 //      this.updateState();
 	  // need to updateState when turning on display
@@ -882,7 +912,7 @@ export class AppComponent { // event stuff
         });
       }
     }
-    this.put(body);
+    this.put(body, func => {}, err => this.notify.error("Error", "Failed to toggle mute"));
   }
 
   isMuted(): boolean {
@@ -909,7 +939,7 @@ export class AppComponent { // event stuff
       		"power": "standby",
 		});	
 	}
-    this.put(body, func => { }, err => { this.showing = !this.showing; });
+    this.put(body, func => {}, err => { this.notify.error("Error", "Failed to turn off devices"); this.showing = !this.showing; });
     this.showing = !this.showing;
   }
 
@@ -925,7 +955,7 @@ export class AppComponent { // event stuff
         });
       }
     }
-    this.put(body);
+    this.put(body, func => {}, err => { this.notify.error("Error", "Failed to change volume") });
   }
 
   lastvolume: number = 0;
@@ -955,7 +985,7 @@ export class AppComponent { // event stuff
 		"volume": volume	
 	});
 	
-	this.put(body);
+	this.put(body, func => {}, err => this.notify.error("Error", "Failed to change mic volume"));
   }
 
   toggleMicMute(name: string) {
@@ -969,7 +999,7 @@ export class AppComponent { // event stuff
 			});
 		}	
 	}
-	this.put(body);
+	this.put(body, func => {}, err => this.notify.error("Error", "Failed to mute mic"));
   }
 
   toggleBlank() {
@@ -983,7 +1013,7 @@ export class AppComponent { // event stuff
         });
      }
     }
-    this.put(body);
+    this.put(body, func => {}, err => this.notify.error("Error", "Failed to toggle blank"));
 	this.updateBlanked();
 
 	if (this.dtaMaster) {
@@ -1007,7 +1037,7 @@ export class AppComponent { // event stuff
         });
      }
     }
-    this.put(body);
+    this.put(body, func => {}, err => this.notify.error("Error", "Failed to set blank to " + status));
 	this.updateBlanked();
 
 	if (this.dtaMaster) {
@@ -1066,7 +1096,7 @@ export class AppComponent { // event stuff
 		}
 	}
 
-    this.put(body);
+    this.put(body, func => {}, err => {this.notify.error("Error", "Failed to change input")});
 
 	this.selectedDisplay.oinput = i;
   }
@@ -1115,7 +1145,7 @@ export class AppComponent { // event stuff
 	        });
 	      }
 	    }
-	    this.put(body);
+	    this.put(body, func => {}, err => this.notify.error("DTA Error", "Failed to mute current audio out device"));
 
 		// switch to room audio
 		let index = 0;
@@ -1148,7 +1178,7 @@ export class AppComponent { // event stuff
 	        });
 	      }
 	    }
-	    this.put(body);
+	    this.put(body, func => {}, err => this.notify.error("DTA Error", "Failed to set room audio level and input"));
 		console.log("Switch to room audio. Using audio configuration:", devices);
 	} else {
 		// mute room audio
@@ -1162,7 +1192,7 @@ export class AppComponent { // event stuff
 	        });
 	      }
 	    }
-		this.put(body);
+		this.put(body, func => {}, err => this.notify.error("DTA Error", "Failed to mute room audio"));
 
 		// switch back to normal audio
 		let names: string[] = [];			
@@ -1184,7 +1214,7 @@ export class AppComponent { // event stuff
 	        });
 	      }
 	    }
-	    this.put(body);
+	    this.put(body, func => {}, err => this.notify.error("DTA Error", "Failed to switch back to normal audio"));
 	}
   }
 
@@ -1338,7 +1368,7 @@ export class AppComponent { // event stuff
   		"power": "standby" 
 	}
 
-    this.put(body, func => { }, err => { this.showing = !this.showing; });
+    this.put(body, func => {}, err => { this.notify.error("Error", "Failed to turn power off on all displays"); this.showing = !this.showing; });
     this.showing = !this.showing;
   }
 
@@ -1363,5 +1393,10 @@ export class AppComponent { // event stuff
 	  let address = this.api.baseurl + ":8014/via/" + this.resetviamodal.info + "/" + command;
 	  console.log("sending command", command, "to via at", address);
 	  this.api.get(address).subscribe(data => {});
+  }
+
+  notificationDestroy(e) {
+ //	console.log("event", e); 
+	// decide if it was clicked
   }
 } 

@@ -38,10 +38,12 @@ export class SocketService {
 	
 	this.socket.onOpen((msg) => {
 		console.log("websocket opened", msg);	
+		this.listener.emit({"type": OPEN})
 	});
 
 	this.socket.onError((msg) => {
 		console.log("websocket closed.", msg);	
+		this.listener.emit({"type": CLOSE})
 	});
 	
 	this.socket.onClose((msg) => {

@@ -7,6 +7,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
 import { MdSliderModule } from '@angular/material';
 import 'hammerjs';
 import { CookieModule } from 'ngx-cookie';
+import { SimpleNotificationsModule } from 'angular2-notifications';
 
 import { AppComponent } from './app.component';
 import { ModalComponent } from './modal.component';
@@ -31,7 +32,8 @@ export class MyHammerConfig extends HammerGestureConfig {
     NgbModule.forRoot(),
     BrowserAnimationsModule,
     MdSliderModule,
-	CookieModule.forRoot()
+	CookieModule.forRoot(),
+	SimpleNotificationsModule.forRoot()
   ],
   providers: [SocketService, APIService, {
  	provide: HAMMER_GESTURE_CONFIG,
