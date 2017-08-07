@@ -202,9 +202,9 @@
             <span id="helpwords">Request recieved! A technician is on their way.</span>
         </div>
         <div class="modal-bottom">
-			<button class="btn btn-success" (click)="help('confirm'); helpmodal.hide(); slackconfirmmodal.hide();">Ok</button>
-			<div class="btnspacing"></div>
             <button class="btn btn-primary" (click)="help('cancel'); helpmodal.hide(); slackconfirmmodal.hide();">Cancel</button>
+			<div class="btnspacing"></div>
+			<button class="btn btn-success" (click)="help('confirm'); helpmodal.hide(); slackconfirmmodal.hide();">Confirm</button>
         </div>
     </div>
 </app-modal>
