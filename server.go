@@ -3,6 +3,7 @@ package main
 import (
 	"net/http"
 
+	"github.com/byuoitav/device-monitoring-microservice/microservicestatus"
 	"github.com/byuoitav/event-router-microservice/eventinfrastructure"
 	"github.com/byuoitav/touchpanel-ui-microservice/events"
 	"github.com/byuoitav/touchpanel-ui-microservice/handlers"
@@ -35,6 +36,7 @@ func main() {
 	router.Use(middleware.CORS())
 
 	router.GET("/health", echo.WrapHandler(http.HandlerFunc(health.Check)))
+	router.GET("/status", GetStatus, BindPublisher(pub), BindSubscriber(sub))
 
 	// event endpoints
 	router.POST("/subscribe", Subscribe, BindSubscriber(sub))
@@ -92,11 +94,12 @@ func BindSubscriber(s *eventinfrastructure.Subscriber) echo.MiddlewareFunc {
 	}
 }
 
-func CORS() echo.MiddlewareFunc {
-	return func(h echo.HandlerFunc) echo.HandlerFunc {
-		return func(c echo.Context) error {
-			c.Response().Header().Set("Access-Control-Allow-Origin", "*")
-			return h(c)
-		}
-	}
+func GetStatus(context echo.Context) error {
+	var s microservicestatus.Status
+	s.Version = "0.0"
+
+	s.Status = microservicestatus.StatusOK
+	s.StatusInfo = ""
+
+	return context.JSON(http.StatusOK, s)
 }
