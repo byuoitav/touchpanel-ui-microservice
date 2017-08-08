@@ -1400,7 +1400,7 @@ export class AppComponent { // event stuff
 	// decide if it was clicked
   }
 
-  toDashBoard() {
+  toDashboard() {
  	window.location.assign("http://" + location.hostname + ":10000/dash");
   }
 } 
