@@ -1399,4 +1399,8 @@ export class AppComponent { // event stuff
  //	console.log("event", e); 
 	// decide if it was clicked
   }
+
+  toDashBoard() {
+ 	window.location.assign("http://" + location.hostname + ":10000/dash");
+  }
 } 
