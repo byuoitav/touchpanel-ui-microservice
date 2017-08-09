@@ -14,11 +14,6 @@ import { ModalComponent } from './modal.component';
 import { SocketService } from './socket.service';
 import { APIService } from './api.service';
 
-export class MyHammerConfig extends HammerGestureConfig {
-	overrides = <any>{
-		'press': {time: 1200}	
-	}
-}
 @NgModule({
   declarations: [
     AppComponent,
@@ -34,10 +29,7 @@ export class MyHammerConfig extends HammerGestureConfig {
 	SimpleNotificationsModule.forRoot(),
     MdSliderModule
   ],
-  providers: [SocketService, APIService, {
- 	provide: HAMMER_GESTURE_CONFIG,
-    useClass: MyHammerConfig	
-  }],
+  providers: [SocketService, APIService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
