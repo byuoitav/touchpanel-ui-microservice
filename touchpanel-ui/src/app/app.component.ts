@@ -117,16 +117,16 @@ export class AppComponent { // event stuff
 	this.selectedDisplay = new OutputDevice();
 	this.selectedDisplay.oaudiodevices = null; 
 
-    this.api.setup();
-    this.getData();
+	this.socketSetup();
 	this.helprequested = false;
 	this.displayselection = false;
    	this.dev = false;
 	
 	// uncomment for local testing
-   // this.showing = true;
+   	// this.showing = true;
+  }
 
-    // setup socket to recieve events
+  socketSetup() {
     this.socket.getEventListener().subscribe(event => {
       if (event.type == MESSAGE) {
         let data = JSON.parse(event.data.data);
@@ -134,8 +134,8 @@ export class AppComponent { // event stuff
         let e = new Event();
         Object.assign(e, data);
 		if (this.dev) {
-			if (this.events.length > 500) 	
-				this.events.splice(0, 250); 
+			if (this.events.length > 250) 	
+				this.events.splice(0, 125); 
 			
 			this.events.push(e);	
 			let element = document.getElementById('dev-console');
@@ -154,6 +154,12 @@ export class AppComponent { // event stuff
       } else if (event.type == OPEN) {
         console.log("The socket connection has been opened");
 		this.notify.success("Socket", "Socket connection opened");
+
+    	this.api.setup();
+		this.api.loaded.subscribe(data => {
+			this.notify.success("Setup", "got hostname and ui configuration");
+   		 	this.getData();
+		});
       }
     })
   }
@@ -194,26 +200,33 @@ export class AppComponent { // event stuff
 
   getData() {
     this.room = new Room();
+	this.roomname = this.api.building + " " + this.api.room;
 
-    this.api.loaded.subscribe(data => {
-	  this.roomname = this.api.building + " " + this.api.room;
-      this.api.getRoomConfig().subscribe(data => {
+	this.getRoomConfig();
+  }
+
+  getRoomConfig() {
+    this.api.getRoomConfig().subscribe(data => {
         this.room.config = new RoomConfiguration();
         Object.assign(this.room.config, data);
         console.log("roomconfig:", this.room.config);
-      },
-	  err => {
-		this.notify.error("Setup", "Failed to get room config", {
-			timeOut: 0,
-			showProgressBar: false,
-			clickToClose: false
-		});
-	  });
 
+		this.notify.success("Setup", "got room config");
+		this.getRoomStatus();
+    },
+	err => {
+		this.notify.error("Setup", "Failed to get room config");
+		setTimeout(() => this.getRoomConfig(), 5000);
+	});
+  }
+
+  getRoomStatus() {
       this.api.getRoomStatus().subscribe(data => {
         this.room.status = new RoomStatus();
         Object.assign(this.room.status, data);
         console.log("roomstatus:", this.room.status);
+
+		this.notify.success("Setup", "got room status");
 
 		this.createInputDevices();
         this.createOutputDevices();
@@ -222,13 +235,9 @@ export class AppComponent { // event stuff
 		this.dtaMasterHost = this.api.hostname;
       },
 	  err => {
-		this.notify.error("Setup", "Failed to get room status", {
-			timeOut: 0,
-			showProgressBar: false,
-			clickToClose: false
-		});
+		this.notify.error("Setup", "Failed to get room status");
+		setTimeout(() => this.getRoomStatus(), 5000);
 	  });
-    });
   }
 
   createInputDevices() {
@@ -1398,5 +1407,9 @@ export class AppComponent { // event stuff
   notificationDestroy(e) {
  //	console.log("event", e); 
 	// decide if it was clicked
+  }
+
+  toDashboard() {
+ 	window.location.assign("http://" + location.hostname + ":10000/dash");
   }
 } 
