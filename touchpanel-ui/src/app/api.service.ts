@@ -22,6 +22,7 @@ export class APIService {
   constructor(private http: Http) { this.loaded = new Subject<boolean>(); this.uiconfig = new UIConfiguration();}
 
   setup() {
+	console.log("starting api setup")
     this.headers = new Headers();
     this.headers.append('Content-Type', 'application/json');
     this.options = new RequestOptions({ headers: this.headers });
@@ -29,28 +30,41 @@ export class APIService {
 	this.baseurl = base[0] + ":" + base[1];
 	console.log("baseurl:", this.baseurl);
 
-    return this.getHostname().subscribe(data => {
-	  this.hostname = String(data);
-      console.log("hostname =", this.hostname);
-      let split = JSON.stringify(data).split('-');
-      let b = split[0].substring(1);
+	this.setupHostname();
+  }
 
-      this.building = b;
-      this.room = split[1];
+  setupHostname() {
+	  this.getHostname().subscribe(data => {
+	  	  this.hostname = String(data);
+	      console.log("hostname =", this.hostname);
+	      let split = JSON.stringify(data).split('-');
+	      let b = split[0].substring(1);
+	
+	      this.building = b;
+	      this.room = split[1];
+	
+	      this.url = this.baseurl + ":8000" + "/buildings/" + this.building + "/rooms/" + this.room;
+	      console.log("url =", this.url);
 
-      this.url = this.baseurl + ":8000" + "/buildings/" + this.building + "/rooms/" + this.room;
-      console.log("url =", this.url);
+		  this.setupUiConfig();
+	  }, err => {
+		  console.log("error getting hostname");
+		  setTimeout(() => this.setupHostname(), 2500);
+	  });
+  }
 
-	  this.getJSON().subscribe(data => {
+  setupUiConfig() {
+ 	this.getJSON().subscribe(data => {
 		Object.assign(this.uiconfig, data);
-		console.log("uiconfig", this.uiconfig);
-      	this.loaded.next(true);
-      })
-    });
+		console.log("uiconfig", this.uiconfig);	
+		this.loaded.next(true);
+	}, err => {
+		console.log("error getting json");
+		setTimeout(() => this.setupUiConfig(), 2500);
+	}) 
   }
 
   getJSON(): Observable<Object> {
-    console.log("getting JSON");
  	return this.http.get(this.baseurl + ":8888/json")
   		.map(response => response.json());	
   }
