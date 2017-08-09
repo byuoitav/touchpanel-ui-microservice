@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/byuoitav/device-monitoring-microservice/microservicestatus"
@@ -36,7 +37,7 @@ func main() {
 	router.Use(middleware.CORS())
 
 	router.GET("/health", echo.WrapHandler(http.HandlerFunc(health.Check)))
-	router.GET("/status", GetStatus, BindPublisher(pub), BindSubscriber(sub))
+	router.GET("/mstatus", GetStatus)
 
 	// event endpoints
 	router.POST("/subscribe", Subscribe, BindSubscriber(sub))
@@ -96,10 +97,17 @@ func BindSubscriber(s *eventinfrastructure.Subscriber) echo.MiddlewareFunc {
 
 func GetStatus(context echo.Context) error {
 	var s microservicestatus.Status
-	s.Version = "0.0"
+	var err error
 
-	s.Status = microservicestatus.StatusOK
-	s.StatusInfo = ""
+	s.Version, err = microservicestatus.GetVersion("version.txt")
+	if err != nil {
+		s.Version = "missing"
+		s.Status = microservicestatus.StatusSick
+		s.StatusInfo = fmt.Sprintf("Error: %s", err.Error())
+	} else {
+		s.Status = microservicestatus.StatusOK
+		s.StatusInfo = ""
+	}
 
 	return context.JSON(http.StatusOK, s)
 }
