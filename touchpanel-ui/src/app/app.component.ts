@@ -89,7 +89,7 @@ export class AppComponent { // event stuff
   // notifications
   public notificationOptions = {
  	position: ["top","right"],
-    timeOut: 5000,
+    timeOut: 3500,
 	maxStack: 3,
 	animate: "fromLeft",
 	preventDuplicates: true,
@@ -123,7 +123,7 @@ export class AppComponent { // event stuff
    	this.dev = false;
 	
 	// uncomment for local testing
-   	// this.showing = true;
+//   	this.showing = true;
   }
 
   socketSetup() {
@@ -157,7 +157,11 @@ export class AppComponent { // event stuff
 
     	this.api.setup();
 		this.api.loaded.subscribe(data => {
-			this.notify.success("Setup", "got hostname and ui configuration");
+			this.notify.success("Setup", "got hostname and ui config", {
+				timeOut: 2500,
+				showProgressBar: false,
+				clickToClose: false
+			});
    		 	this.getData();
 		});
       }
@@ -211,7 +215,12 @@ export class AppComponent { // event stuff
         Object.assign(this.room.config, data);
         console.log("roomconfig:", this.room.config);
 
-		this.notify.success("Setup", "got room config");
+		this.notify.success("Setup", "got room config", {
+			timeOut: 2500,
+			showProgressBar: false,
+			clickToClose: false
+		});
+
 		this.getRoomStatus();
     },
 	err => {
@@ -226,7 +235,11 @@ export class AppComponent { // event stuff
         Object.assign(this.room.status, data);
         console.log("roomstatus:", this.room.status);
 
-		this.notify.success("Setup", "got room status");
+		this.notify.success("Setup", "got room status", {
+			timeOut: 2500,
+			showProgressBar: false,
+			clickToClose: false
+		});
 
 		this.createInputDevices();
         this.createOutputDevices();
@@ -957,7 +970,6 @@ export class AppComponent { // event stuff
     var body = { audioDevices: [] }
     for (let a of this.selectedDisplay.oaudiodevices) {
       if (a.selected) {
-		a.volume = volume;
         body.audioDevices.push({
           "name": a.name,
           "volume": volume 
@@ -970,7 +982,7 @@ export class AppComponent { // event stuff
   lastvolume: number = 0;
   updateVolume(volume: number) {
 	let total = volume - this.lastvolume;
-	if (total > 5 || total < -5) {
+	if (total > 10 || total < -10) {
 		this.changeVolume(volume);
 	}
   } 

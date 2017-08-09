@@ -1,6 +1,7 @@
 @import 'colorscheme';
 
-* { user-select: none;	
+* { 
+	user-select: none;	
 }
 
 html,
@@ -313,6 +314,10 @@ body {
         min-height: 80vh;
         display: flex;
     }
+
+	.colored-slider {
+		user-select: all;
+	}
 
     .spinner {
         -webkit-animation: spin 8s infinite linear;
