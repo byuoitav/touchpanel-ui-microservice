@@ -351,7 +351,7 @@ export class AppComponent { // event stuff
 		this.multipledisplays = false;
 		let arr = [];
 		arr.push(this.displays[0].name);
-		this.changeControl(arr, true);
+		this.changeControl(arr, false);
 	} else {
 		this.multipledisplays = true;
 		console.log("Defaulting to controlling all displays and their associated audio devices");
