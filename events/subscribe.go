@@ -37,12 +37,12 @@ var Manager = &ClientManager{
 	clients:    make(map[*Client]bool),
 }
 
-func WriteMessagesToSocket(sub *eventinfrastructure.Subscriber) {
+func WriteMessagesToSocket(en *eventinfrastructure.EventNode) {
 	go Manager.Start(UIFilter)
 
 	for {
 		select {
-		case message, ok := <-sub.MessageChan:
+		case message, ok := <-en.Read:
 			if !ok {
 				log.Fatalf("[error] subscriber read channel closed")
 			}
@@ -51,7 +51,7 @@ func WriteMessagesToSocket(sub *eventinfrastructure.Subscriber) {
 	}
 }
 
-func Refresh(sub *eventinfrastructure.Subscriber) {
+func Refresh(en *eventinfrastructure.EventNode) {
 	defer color.Unset()
 	for i := 15; i > 0; i-- {
 		color.Set(color.FgYellow)
@@ -60,7 +60,7 @@ func Refresh(sub *eventinfrastructure.Subscriber) {
 
 		time.Sleep(1 * time.Second)
 	}
-	sub.MessageChan <- GetRefreshMessage()
+	en.Read <- GetRefreshMessage()
 
 	color.Set(color.FgGreen, color.Bold)
 	log.Printf("Wrote refresh message.")

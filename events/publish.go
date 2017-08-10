@@ -8,7 +8,7 @@ import (
 	"github.com/byuoitav/event-router-microservice/eventinfrastructure"
 )
 
-func Publish(pub *eventinfrastructure.Publisher, event eventinfrastructure.EventInfo, eventType string) error {
+func Publish(en *eventinfrastructure.EventNode, event eventinfrastructure.EventInfo, eventType string) error {
 	var e eventinfrastructure.Event
 
 	// create the event
@@ -35,7 +35,7 @@ func Publish(pub *eventinfrastructure.Publisher, event eventinfrastructure.Event
 		return errors.New("Please fill in all the necessary fields")
 	}
 
-	pub.PublishEvent(e, eventType)
+	en.PublishEvent(e, eventType)
 
 	return nil
 }

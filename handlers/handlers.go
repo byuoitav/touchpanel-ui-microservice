@@ -34,9 +34,9 @@ func PublishEvent(context echo.Context) error {
 		return context.JSON(http.StatusBadRequest, err.Error())
 	}
 
-	p := context.Get(eventinfrastructure.ContextPublisher)
-	if pub, ok := p.(*eventinfrastructure.Publisher); ok {
-		events.Publish(pub, event, eventinfrastructure.Metrics)
+	e := context.Get(eventinfrastructure.ContextEventNode)
+	if en, ok := e.(*eventinfrastructure.EventNode); ok {
+		events.Publish(en, event, eventinfrastructure.Metrics)
 	} else {
 		return context.JSON(http.StatusInternalServerError, errors.New("Middleware failed to set the publisher"))
 	}
@@ -51,9 +51,9 @@ func PublishFeature(context echo.Context) error {
 		return context.JSON(http.StatusBadRequest, err.Error())
 	}
 
-	p := context.Get(eventinfrastructure.ContextPublisher)
-	if pub, ok := p.(*eventinfrastructure.Publisher); ok {
-		events.Publish(pub, event, eventinfrastructure.UIFeature)
+	e := context.Get(eventinfrastructure.ContextEventNode)
+	if en, ok := e.(*eventinfrastructure.EventNode); ok {
+		events.Publish(en, event, eventinfrastructure.UIFeature)
 	} else {
 		return context.JSON(http.StatusInternalServerError, errors.New("Middleware failed to set the publisher"))
 	}
@@ -98,9 +98,9 @@ func SendScreenOff(context echo.Context) error {
 	log.Printf("Sending screen off command")
 	color.Unset()
 
-	s := context.Get(eventinfrastructure.ContextSubscriber)
-	if sub, ok := s.(*eventinfrastructure.Subscriber); ok {
-		sub.MessageChan <- events.GetScreenTimeoutMessage()
+	e := context.Get(eventinfrastructure.ContextEventNode)
+	if en, ok := e.(*eventinfrastructure.EventNode); ok {
+		en.Read <- events.GetScreenTimeoutMessage()
 	} else {
 		return context.JSON(http.StatusInternalServerError, errors.New("Middleware failed to set the subscriber"))
 	}
