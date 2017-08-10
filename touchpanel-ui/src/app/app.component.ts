@@ -236,6 +236,12 @@ export class AppComponent { // event stuff
 						d.blanked = sdisplay.blanked;
 
 						console.log("Created display:", d);
+
+                        //if my display(s) are already on, go ahead and show the control screen
+                        if (sdisplay.power == 'on') {
+                            this.showing = true;
+                        }
+
 						this.displays.push(d);
 					}
 				}
