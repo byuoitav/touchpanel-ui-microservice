@@ -27,7 +27,8 @@ $persimmion: #ff8300;
 $newbackground: #021024;
 $newtitlebackground: #333E48;
 $newwheelnonselectedbackground: rgba(0,0,0,.5);
-$newwheelselectedbackground: #00A2DC;
+//$newwheelselectedbackground: #0075cc;
+$newwheelselectedbackground: #0067b3;
 $newwheelselectedblankedbackground:  rgba(0,55,89,1);
 
 $newred: #D32121;
@@ -49,7 +50,7 @@ $newgreen: #7ED321;
 }
 
 .persimmion {
-	color: $persimmion !important;
+	color: $newwheelselectedbackground !important;
 }
 
 // divs that get a red background (title bar)
@@ -58,7 +59,7 @@ $newgreen: #7ED321;
 }
 
 // title bar
-.blank-slice {
+.title-slice {
 	background-color: $newtitlebackground;
 }
 
@@ -79,9 +80,7 @@ $newgreen: #7ED321;
 
 // center circle
 .circle-shrink {
-//	background-color: $lazuliblue;
-
-	background-color: rgba(0,162,220,1);
+	background-color: $newwheelselectedbackground;
 }
 
 .icon-blanked {
@@ -146,7 +145,7 @@ $newgreen: #7ED321;
 
 // help icon
 .helpdialog {
-    color: $byublue;
+    color: $alabasterwhite;
 }
 
 // slider in 'disabled' state 
@@ -199,6 +198,30 @@ input:checked + .slider {
 	}
 }
 
+// display to all border color
 .innerglow {
-	box-shadow: inset 0 0 10vh $persimmion;
+//	box-shadow: inset 0 0 10vh $persimmion;
+	animation: innerpulse .5s infinite alternate;
+}
+
+@keyframes innerpulse {
+	from {
+		box-shadow: inset 0 0 8vh $persimmion;	
+	}
+	to {
+		box-shadow: inset 0 0 10vh $persimmion;	
+	}
+}
+
+// modal icon color
+.modal-title,
+.modal-body,
+.modal-bottom {
+	color: $alabasterwhite;	
+}
+
+.modal-bottom {
+	.btn {
+		color: black !important;
+	}
 }

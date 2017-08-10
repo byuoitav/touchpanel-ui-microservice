@@ -13,6 +13,7 @@ import (
 	"github.com/byuoitav/event-router-microservice/eventinfrastructure"
 	"github.com/byuoitav/touchpanel-ui-microservice/events"
 	"github.com/byuoitav/touchpanel-ui-microservice/helpers"
+	"github.com/fatih/color"
 	"github.com/labstack/echo"
 )
 
@@ -35,7 +36,6 @@ func PublishEvent(context echo.Context) error {
 
 	p := context.Get(eventinfrastructure.ContextPublisher)
 	if pub, ok := p.(*eventinfrastructure.Publisher); ok {
-		// do stuff with it
 		events.Publish(pub, event, eventinfrastructure.Metrics)
 	} else {
 		return context.JSON(http.StatusInternalServerError, errors.New("Middleware failed to set the publisher"))
@@ -51,9 +51,11 @@ func PublishFeature(context echo.Context) error {
 		return context.JSON(http.StatusBadRequest, err.Error())
 	}
 
-	//	err = events.Publish(event, eventinfrastructure.UIFeature)
-	if err != nil {
-		return context.JSON(http.StatusBadRequest, err.Error())
+	p := context.Get(eventinfrastructure.ContextPublisher)
+	if pub, ok := p.(*eventinfrastructure.Publisher); ok {
+		events.Publish(pub, event, eventinfrastructure.UIFeature)
+	} else {
+		return context.JSON(http.StatusInternalServerError, errors.New("Middleware failed to set the publisher"))
 	}
 
 	return context.JSON(http.StatusOK, event)
@@ -89,6 +91,20 @@ func GetDockerStatus(context echo.Context) error {
 	}
 
 	return context.String(http.StatusOK, string(body))
+}
+
+func SendScreenOff(context echo.Context) error {
+	color.Set(color.FgYellow)
+	log.Printf("Sending screen off command")
+	color.Unset()
+
+	s := context.Get(eventinfrastructure.ContextSubscriber)
+	if sub, ok := s.(*eventinfrastructure.Subscriber); ok {
+		sub.MessageChan <- events.GetScreenTimeoutMessage()
+	} else {
+		return context.JSON(http.StatusInternalServerError, errors.New("Middleware failed to set the subscriber"))
+	}
+	return context.JSON(http.StatusOK, "success.")
 }
 
 func Help(context echo.Context) error {

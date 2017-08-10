@@ -5,8 +5,11 @@ import { Component, Input } from '@angular/core';
   template: `
   <div (click)="onContainerClicked($event)" class="modal fade" tabindex="-1" [ngClass]="{'in': visibleAnimate}"
        [ngStyle]="{'display': visible ? 'block' : 'none', 'opacity': visibleAnimate ? 1 : 0}">
+	<div class="hide" (click)="hide()">
+		<i class="material-icons icon">arrow_back</i>
+	</div>
     <div class="modal-dialog">
-      <div class="modal-content" [style.backgroundColor]="bgcolor">
+      <div class="modal-content">
         <div class="modal-body">
           <ng-content select=".app-modal-body"></ng-content>
         </div>
@@ -15,18 +18,35 @@ import { Component, Input } from '@angular/core';
   </div>
   `,
   styles: [`
-    .modal {
-      background: rgba(50,50,50,.95);
-    }
 	.modal-dialog {
 	  top: 25vh;
+	}
+	/* inside of modal */
+	.modal-content {
+		background: #021024;
+	}
+	/* area outside of modal */
+	.modal {
+   	 	background: rgba(164,169,173,.95);
+	}
+	.hide{
+		position: absolute;
+		top: 11vh;
+		left: 7%;
+		min-width: 10%;	
+		min-height: 20%;
+	}
+	.icon {
+		font-size: 10vh;	
 	}
   `]
 })
 export class ModalComponent {
   public visible = false;
   public visibleAnimate = false;
-  @Input() bgcolor: string;
+  
+  // extra information that you may need to use
+  public info: any = null; 
 
   constructor() { }
 

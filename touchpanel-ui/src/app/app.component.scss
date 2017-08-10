@@ -1,6 +1,6 @@
 @import 'colorscheme';
 
-* {
+* { 
 	user-select: none;	
 }
 
@@ -9,7 +9,21 @@ body {
     height: 100%;
     min-height: 100%;
     margin: 0;
-    cursor: none;
+}
+
+#screenoff {
+	position: absolute;
+	min-height: 100%;
+	min-width: 100%;
+
+	background-color: black;
+	z-index: 2000;
+
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+	align-items: center;
+	color: white;
 }
 
 .loading-img {
@@ -24,7 +38,7 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-	z-index: 999;
+	z-index: 998;
 }
 
 .inactive {
@@ -90,20 +104,6 @@ body {
     margin-left: 0;
     margin-right: 0;
 }
-
-/*
-.selected {
-    background-color: white;
-}
-
-.selected:after {
-//    background-color: #78909C;
-}
-
-.selected:before {
- //   background-color: #78909C;
-}
-*/
 
 .sidebar {
     position: fixed;
@@ -173,10 +173,11 @@ body {
 	align-self: center;
 	white-space: nowrap;
 	font-family: Roboto-Medium;
+	font-weight: 100;
 }
 
 .roomname-transition {
-	top: 18vh;
+	top: 15vh;
 	font-size: 5vh;
 }
 
@@ -229,8 +230,10 @@ body {
 }
 
 .circle-shrink {
-	width: 43vh;
-	height: 43vh;
+//	width: 43vh;
+//	height: 43vh;
+	width: 48vh;
+	height: 48vh;
 
 	i {
 		font-size: 19vh;	
@@ -251,8 +254,8 @@ body {
 }
 
 .ring-grow {
-	width: 77.8%;	
-	padding-top: 78%;
+	width: 90%;
+	padding-top: 90%;
 }
 
 .ring li {
@@ -264,14 +267,17 @@ body {
     border-radius: 51%;
     border: .7vh solid $alabasterwhite;
 
-        clip-path: url(#sector);
+    text-shadow: 0 0 1.2vh black;
+}
 
-        text-shadow: 0 0 1.2vh black;
-    }
+.title-slice {
+	clip-path: url(#title-sector)
+}
 
-    .input-slice {
-        z-index: 1;
-    }
+.input-slice {
+    z-index: 1;
+    clip-path: url(#sector);
+}
 
     .input {
         position: absolute;
@@ -308,6 +314,10 @@ body {
         min-height: 80vh;
         display: flex;
     }
+
+	.colored-slider {
+		user-select: all;
+	}
 
     .spinner {
         -webkit-animation: spin 8s infinite linear;
@@ -527,10 +537,8 @@ body {
 }
 
 .microphone-selection {
-	position: absolute;
-	width: 70%;
-	height: 50vh;
-	top: 25vh;
+	width: 150%;
+
 	display: flex;
 	flex-wrap: wrap;
 	justify-content: space-around;
@@ -792,12 +800,24 @@ input:checked + .slider:before {
 .displaytoall {
 	display: flex;
 	flex-direction: row;
-//	flex-wrap: nowrap;
 	font-family: Roboto-Medium;	
 		
 	span {
 		padding-left: 5%;
 		white-space: nowrap;	
 		align-self: center;
+	}
+}
+
+.pulse {
+	animation: pulse .5s infinite alternate;
+}
+
+@keyframes pulse {
+	from {
+		text-shadow: 0 0 3vh #ff8300;	
+	}
+	to {
+		text-shadow: 0 0 1vh #ff6e00;	
 	}
 }

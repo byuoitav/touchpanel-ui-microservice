@@ -13,17 +13,23 @@ export class SocketService {
 	reconnectIfNotNormalClose: true	
   }
 
+  public screenoff: boolean;
+
   public constructor() {
 	this.socket = new $WebSocket("ws://" + location.hostname +":8888/websocket", null, this.webSocketConfig);
 	this.listener = new EventEmitter();
+	this.screenoff = false;
 
 	this.socket.onMessage((msg) => {
 	  if (msg.data.includes("keepalive")) {
 	 	// send a keep alive back?
 		console.log("keep alive message recieved.");
 	  } else if (msg.data.includes("refresh")) {
-	 	console.log("refreshing!"); 
+	 	console.log("refreshing!");
 		location.assign("http://" + location.hostname + ":8888/");
+	  } else if (msg.data.includes("screenoff")) {
+		 console.log("adding screenoff element");
+		 this.screenoff = true;
 	  } else {
 	  	this.listener.emit({ "type": MESSAGE, "data": msg });
 	  }
@@ -32,10 +38,12 @@ export class SocketService {
 	
 	this.socket.onOpen((msg) => {
 		console.log("websocket opened", msg);	
+		this.listener.emit({"type": OPEN})
 	});
 
 	this.socket.onError((msg) => {
 		console.log("websocket closed.", msg);	
+		this.listener.emit({"type": CLOSE})
 	});
 	
 	this.socket.onClose((msg) => {
