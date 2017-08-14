@@ -3,11 +3,12 @@ package main
 import (
 	"fmt"
 	"net/http"
+	"time"
 
 	"github.com/byuoitav/device-monitoring-microservice/statusinfrastructure"
 	"github.com/byuoitav/event-router-microservice/eventinfrastructure"
-	"github.com/byuoitav/touchpanel-ui-microservice/events"
 	"github.com/byuoitav/touchpanel-ui-microservice/handlers"
+	"github.com/byuoitav/touchpanel-ui-microservice/socket"
 	"github.com/jessemillar/health"
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
@@ -17,17 +18,15 @@ func main() {
 	filters := []string{eventinfrastructure.UI}
 	en := eventinfrastructure.NewEventNode("Touchpanel UI", "7003", filters)
 
-	//	ip := eventinfrastructure.GetIP()
-
 	var req eventinfrastructure.ConnectionRequest
 	req.PublisherAddr = "localhost:7003"
 	req.SubscriberEndpoint = "http://localhost:8888/subscribe"
-
-	// post to the router with the subscription request
 	go eventinfrastructure.SendConnectionRequest("http://localhost:6999/subscribe", req, true)
 
-	go events.WriteMessagesToSocket(en)
-	go events.Refresh(en)
+	// websocket hub
+	hub := socket.NewHub()
+
+	//	go events.WriteMessagesToSocket(en)
 
 	port := ":8888"
 	router := echo.New()
@@ -42,7 +41,12 @@ func main() {
 	router.POST("/publish", handlers.PublishEvent, BindEventNode(en))
 	router.POST("/publishfeature", handlers.PublishFeature, BindEventNode(en))
 
-	router.GET("/websocket", handlers.OpenWebSocket)
+	// websocket
+	router.GET("/websocket", func(context echo.Context) error {
+		socket.ServeWebsocket(hub, context.Response().Writer, context.Request())
+		return nil
+	})
+
 	router.GET("/hostname", handlers.GetHostname)
 	router.GET("/deviceinfo", handlers.GetDeviceInfo)
 	router.GET("/reboot", handlers.Reboot)
@@ -58,7 +62,11 @@ func main() {
 	router.Static("/", "redirect.html")
 	router.Static("/circle-default", "circle-default")
 
-	router.Start(port)
+	go router.Start(port)
+
+	time.Sleep(7 * time.Second)
+	hub.WriteMessage([]byte("this is a message!!"))
+	time.Sleep(30 * time.Second)
 }
 
 func Subscribe(context echo.Context) error {

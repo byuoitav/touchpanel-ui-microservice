@@ -17,11 +17,6 @@ import (
 	"github.com/labstack/echo"
 )
 
-func OpenWebSocket(context echo.Context) error {
-	events.StartWebClient(context.Response(), context.Request())
-	return nil
-}
-
 func GetHostname(context echo.Context) error {
 	hostname := os.Getenv("PI_HOSTNAME")
 	return context.JSON(http.StatusOK, hostname)

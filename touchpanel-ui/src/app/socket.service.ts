@@ -31,6 +31,7 @@ export class SocketService {
 		 console.log("adding screenoff element");
 		 this.screenoff = true;
 	  } else {
+		console.log("message recieved", msg)
 	  	this.listener.emit({ "type": MESSAGE, "data": msg });
 	  }
 	}, {autoApply: false}

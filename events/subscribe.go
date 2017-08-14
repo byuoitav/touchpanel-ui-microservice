@@ -7,11 +7,11 @@ import (
 	"time"
 
 	"github.com/byuoitav/event-router-microservice/eventinfrastructure"
-	"github.com/byuoitav/touchpanel-ui-microservice/socket"
 	"github.com/fatih/color"
 	"github.com/xuther/go-message-router/common"
 )
 
+/*
 func WriteMessagesToSocket(en *eventinfrastructure.EventNode) {
 	sm := socket.NewSocketManager("", UIFilter)
 
@@ -20,12 +20,13 @@ func WriteMessagesToSocket(en *eventinfrastructure.EventNode) {
 		case message, ok := <-en.Read:
 			if ok {
 				log.Printf("message %s", message)
-				//				sm.Write <- message
+				sm.Write <- message
 			}
 			log.Fatalf("[error] subscriber read channel closed")
 		}
 	}
 }
+*/
 
 func Refresh(en *eventinfrastructure.EventNode) {
 	defer color.Unset()
