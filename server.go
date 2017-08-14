@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"net/http"
-	"time"
 
 	"github.com/byuoitav/device-monitoring-microservice/statusinfrastructure"
 	"github.com/byuoitav/event-router-microservice/eventinfrastructure"
@@ -62,11 +61,7 @@ func main() {
 	router.Static("/", "redirect.html")
 	router.Static("/circle-default", "circle-default")
 
-	go router.Start(port)
-
-	time.Sleep(7 * time.Second)
-	hub.WriteMessage([]byte("this is a message!!"))
-	time.Sleep(30 * time.Second)
+	router.Start(port)
 }
 
 func Subscribe(context echo.Context) error {

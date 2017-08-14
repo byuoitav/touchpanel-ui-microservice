@@ -82,19 +82,13 @@ func (c *Client) write() {
 	for {
 		select {
 		case msg, ok := <-c.send:
-			log.Printf("Writing %s to %s", msg, c.conn.LocalAddr())
 			c.conn.SetWriteDeadline(time.Now().Add(writeWait))
 			if !ok {
 				c.conn.WriteMessage(websocket.CloseMessage, []byte{})
 				return
 			}
 
-			w, err := c.conn.NextWriter(websocket.TextMessage)
-			if err != nil {
-				return
-			}
-			w.Write(msg)
-			log.Printf("wrote message")
+			c.conn.WriteJSON(msg)
 		case <-ticker.C:
 			c.conn.SetWriteDeadline(time.Now().Add(writeWait))
 			if err := c.conn.WriteMessage(websocket.PingMessage, []byte{}); err != nil {
