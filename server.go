@@ -53,6 +53,10 @@ func main() {
 		events.SendScreenTimeout(hub)
 		return nil
 	})
+	router.PUT("/refresh", func(context echo.Context) error {
+		events.SendRefresh(hub, time.NewTimer(0))
+		return nil
+	})
 
 	router.GET("/hostname", handlers.GetHostname)
 	router.GET("/deviceinfo", handlers.GetDeviceInfo)
@@ -64,6 +68,7 @@ func main() {
 	router.POST("/confirmhelp", handlers.ConfirmHelp)
 	router.POST("/cancelhelp", handlers.CancelHelp)
 
+	// all the different ui's
 	router.Static("/", "redirect.html")
 	router.Static("/circle-default", "circle-default")
 

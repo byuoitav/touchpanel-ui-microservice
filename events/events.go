@@ -45,10 +45,11 @@ func SendScreenTimeout(h *socket.Hub) {
 }
 
 func SendRefresh(h *socket.Hub, delay *time.Timer) {
+	defer color.Unset()
+
 	<-delay.C
 	color.Set(color.FgYellow)
 	log.Printf("Refreshing...")
-	color.Unset()
 
 	h.WriteToSockets(Message{Message: "refresh"})
 }
