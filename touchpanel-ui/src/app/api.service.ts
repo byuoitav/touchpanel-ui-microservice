@@ -1,6 +1,6 @@
-import { Injectable } from '@angular/core';
+import { Injectable, EventEmitter } from '@angular/core';
 import { Http, Response, Headers, RequestOptions } from '@angular/http';
-import { Observable, Subject } from 'rxjs/Rx';
+import { Observable } from 'rxjs/Rx';
 import { UIConfiguration } from './objects'
 
 import 'rxjs/add/operator/map';
@@ -11,7 +11,7 @@ export class APIService {
   public room: string;
   public baseurl: string;
   public url: string;
-  public loaded: Subject<boolean>;
+  public loaded: EventEmitter<any>;
   public uiconfig: UIConfiguration; 
   public hostname: string;
   private bool: boolean;
@@ -19,7 +19,7 @@ export class APIService {
   private options: RequestOptions;
   private headers: Headers;
 
-  constructor(private http: Http) { this.loaded = new Subject<boolean>(); this.uiconfig = new UIConfiguration();}
+  constructor(private http: Http) { this.loaded = new EventEmitter<any>(); this.uiconfig = new UIConfiguration();}
 
   setup() {
 	console.log("starting api setup")
@@ -59,11 +59,11 @@ export class APIService {
 
 		Object.assign(this.uiconfig, data);
 		console.log("uiconfig", this.uiconfig);	
-		this.loaded.next(true);
+		this.loaded.emit(true);
 	}, err => {
 		console.log("error getting json");
 		setTimeout(() => this.setupUiConfig(), 2500);
-	}) 
+	});
   }
 
   getJSON(): Observable<Object> {

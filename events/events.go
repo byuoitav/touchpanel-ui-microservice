@@ -27,7 +27,15 @@ func WriteEventsToSocket(en *eventinfrastructure.EventNode, h *socket.Hub) {
 				color.Unset()
 			}
 
-			h.WriteToSockets(message.MessageBody)
+			var e eventinfrastructure.Event
+			err := json.Unmarshal(message.MessageBody, &e)
+			if err != nil {
+				color.Set(color.FgRed)
+				log.Printf("failed to unmarshal message into Event type: %s", message.MessageBody)
+				color.Unset()
+			} else {
+				h.WriteToSockets(e)
+			}
 		}
 	}
 }

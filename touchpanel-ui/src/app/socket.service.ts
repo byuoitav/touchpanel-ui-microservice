@@ -22,7 +22,6 @@ export class SocketService {
 
 	this.socket.onMessage((msg) => {
 	  if (msg.data.includes("keepalive")) {
-	 	// send a keep alive back?
 		console.log("keep alive message recieved.");
 	  } else if (msg.data.includes("refresh")) {
 	 	console.log("refreshing!");
@@ -31,7 +30,6 @@ export class SocketService {
 		 console.log("adding screenoff element");
 		 this.screenoff = true;
 	  } else {
-		console.log("message recieved", msg)
 	  	this.listener.emit({ "type": MESSAGE, "data": msg });
 	  }
 	}, {autoApply: false}
