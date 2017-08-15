@@ -203,13 +203,6 @@ export class AppComponent { // event stuff
   }
 
   getData() {
-	  /*
-	this.inputs = [];
-    this.displays = [];
-	this.audiodevices = [];
-	this.mics = [];
-   */
-
     this.room = new Room();
 	this.roomname = this.api.building + " " + this.api.room;
 
@@ -281,7 +274,6 @@ export class AppComponent { // event stuff
   createOutputDevices() {
 	this.displays = [];
 	for (let sdisplay of this.room.status.displays) {
-		// create displays?
 		for (let cdisplay of this.room.config.devices) {
 			if (sdisplay.name == cdisplay.name) {
 				for (let jdisplay of this.api.uiconfig.displays) {

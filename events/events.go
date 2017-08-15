@@ -17,12 +17,13 @@ func WriteEventsToSocket(en *eventinfrastructure.EventNode, h *socket.Hub) {
 	for {
 		select {
 		case message, ok := <-en.Read:
-			if ok {
-				h.WriteToSockets(message.MessageBody)
+			if !ok {
+				color.Set(color.FgRed)
+				log.Fatalf("eventnode read channel closed.")
+				color.Unset()
 			}
-			color.Set(color.FgRed)
-			log.Fatalf("eventnode read channel closed.")
-			color.Unset()
+
+			h.WriteToSockets(message.MessageBody)
 		}
 	}
 }

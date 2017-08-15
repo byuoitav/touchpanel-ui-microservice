@@ -55,7 +55,7 @@ export class APIService {
 
   setupUiConfig() {
  	this.getJSON().subscribe(data => {
-		this.uiconfig = new UIConfiguration;
+		this.uiconfig = new UIConfiguration();
 
 		Object.assign(this.uiconfig, data);
 		console.log("uiconfig", this.uiconfig);	

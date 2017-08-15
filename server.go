@@ -25,8 +25,7 @@ func main() {
 
 	// websocket hub
 	hub := socket.NewHub()
-
-	//	go events.WriteMessagesToSocket(en)
+	go events.WriteEventsToSocket(en, hub)
 
 	port := ":8888"
 	router := echo.New()
