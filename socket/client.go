@@ -87,7 +87,6 @@ func (c *Client) write() {
 				c.conn.WriteMessage(websocket.CloseMessage, []byte{})
 				return
 			}
-			log.Printf("msg %s", msg)
 			c.conn.WriteJSON(msg)
 
 		case <-ticker.C:

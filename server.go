@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"net/http"
+	"time"
 
 	"github.com/byuoitav/device-monitoring-microservice/statusinfrastructure"
 	"github.com/byuoitav/event-router-microservice/eventinfrastructure"
@@ -26,6 +27,7 @@ func main() {
 	// websocket hub
 	hub := socket.NewHub()
 	go events.WriteEventsToSocket(en, hub)
+	go events.SendRefresh(hub, time.NewTimer(time.Second*10))
 
 	port := ":8888"
 	router := echo.New()

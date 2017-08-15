@@ -11,7 +11,7 @@ type Hub struct {
 	clients map[*Client]bool
 
 	// inbound messages from clients
-	broadcast chan []byte
+	broadcast chan interface{}
 
 	// 'register' requests from clients
 	register chan *Client
@@ -22,7 +22,7 @@ type Hub struct {
 
 func NewHub() *Hub {
 	hub := &Hub{
-		broadcast:  make(chan []byte),
+		broadcast:  make(chan interface{}),
 		register:   make(chan *Client),
 		unregister: make(chan *Client),
 		clients:    make(map[*Client]bool),
@@ -32,7 +32,7 @@ func NewHub() *Hub {
 	return hub
 }
 
-func (h *Hub) WriteToSockets(message []byte) {
+func (h *Hub) WriteToSockets(message interface{}) {
 	h.broadcast <- message
 }
 

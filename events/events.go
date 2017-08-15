@@ -13,6 +13,10 @@ import (
 	"github.com/xuther/go-message-router/common"
 )
 
+type Message struct {
+	Message string `json:"message"`
+}
+
 func WriteEventsToSocket(en *eventinfrastructure.EventNode, h *socket.Hub) {
 	for {
 		select {
@@ -29,11 +33,16 @@ func WriteEventsToSocket(en *eventinfrastructure.EventNode, h *socket.Hub) {
 }
 
 func SendScreenTimeout(h *socket.Hub) {
-	h.WriteToSockets([]byte("screenoff"))
+	h.WriteToSockets(Message{Message: "screenoff"})
 }
 
-func SendRefresh(h *socket.Hub) {
-	h.WriteToSockets([]byte("refresh"))
+func SendRefresh(h *socket.Hub, delay *time.Timer) {
+	<-delay.C
+	color.Set(color.FgYellow)
+	log.Printf("Refreshing...")
+	color.Unset()
+
+	h.WriteToSockets(Message{Message: "refresh"})
 }
 
 func Publish(en *eventinfrastructure.EventNode, event eventinfrastructure.EventInfo, eventType string) error {
