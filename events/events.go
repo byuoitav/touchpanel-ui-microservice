@@ -1,6 +1,7 @@
 package events
 
 import (
+	"encoding/json"
 	"errors"
 	"log"
 	"os"
@@ -9,6 +10,7 @@ import (
 	"github.com/byuoitav/event-router-microservice/eventinfrastructure"
 	"github.com/byuoitav/touchpanel-ui-microservice/socket"
 	"github.com/fatih/color"
+	"github.com/xuther/go-message-router/common"
 )
 
 func WriteEventsToSocket(en *eventinfrastructure.EventNode, h *socket.Hub) {
@@ -62,4 +64,17 @@ func Publish(en *eventinfrastructure.EventNode, event eventinfrastructure.EventI
 
 	en.PublishEvent(e, eventType)
 	return nil
+}
+
+func UIFilter(event common.Message) eventinfrastructure.EventInfo {
+	var e eventinfrastructure.Event
+	err := json.Unmarshal(event.MessageBody, &e)
+	if err != nil {
+		color.Set(color.FgRed)
+		log.Printf("error: %v", err.Error())
+		color.Unset()
+		return eventinfrastructure.EventInfo{}
+	}
+
+	return e.Event
 }

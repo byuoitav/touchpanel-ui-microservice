@@ -36,7 +36,7 @@ func ServeWebsocket(hub *Hub, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	client := &Client{hub: hub, conn: conn, send: make(chan []byte, 256)}
+	client := &Client{hub: hub, conn: conn, send: make(chan interface{}, 256)}
 	client.hub.register <- client
 
 	go client.read()
@@ -50,7 +50,7 @@ type Client struct {
 	conn *websocket.Conn
 
 	// bufferend channel of outbound messages
-	send chan []byte
+	send chan interface{}
 }
 
 func (c *Client) read() {
@@ -91,8 +91,7 @@ func (c *Client) write() {
 
 		case <-ticker.C:
 			c.conn.SetWriteDeadline(time.Now().Add(writeWait))
-			if err := c.conn.WriteMessage(websocket.PingMessage, []byte("ping message")); err != nil {
-				log.Printf("here")
+			if err := c.conn.WriteMessage(websocket.PingMessage, []byte{}); err != nil {
 				return
 			}
 		}

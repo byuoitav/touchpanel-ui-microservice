@@ -203,6 +203,13 @@ export class AppComponent { // event stuff
   }
 
   getData() {
+	  /*
+	this.inputs = [];
+    this.displays = [];
+	this.audiodevices = [];
+	this.mics = [];
+   */
+
     this.room = new Room();
 	this.roomname = this.api.building + " " + this.api.room;
 
@@ -254,6 +261,7 @@ export class AppComponent { // event stuff
   }
 
   createInputDevices() {
+	this.inputs = [];
  	for(let input of this.room.config.devices) {
 		if (this.hasRole(input, 'VideoIn') || this.hasRole(input, 'AudioIn')) {
 			for (let i of this.api.uiconfig.inputdevices) {
@@ -271,6 +279,7 @@ export class AppComponent { // event stuff
   }
 
   createOutputDevices() {
+	this.displays = [];
 	for (let sdisplay of this.room.status.displays) {
 		// create displays?
 		for (let cdisplay of this.room.config.devices) {
@@ -305,6 +314,7 @@ export class AppComponent { // event stuff
 		}	
 	}
 
+	this.audiodevices = [];
 	// create audio out devices
 	for (let ac of this.api.uiconfig.audio) {
 		for (let a of ac.audiodevices) {
@@ -323,6 +333,7 @@ export class AppComponent { // event stuff
 		}
 	}
 
+	this.mics = [];
 	// create microphones
 	for (let m of this.room.config.devices) {
 		if (m.roles.includes("Microphone")) {
