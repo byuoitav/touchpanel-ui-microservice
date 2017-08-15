@@ -13,7 +13,6 @@ import (
 	"github.com/byuoitav/event-router-microservice/eventinfrastructure"
 	"github.com/byuoitav/touchpanel-ui-microservice/events"
 	"github.com/byuoitav/touchpanel-ui-microservice/helpers"
-	"github.com/fatih/color"
 	"github.com/labstack/echo"
 )
 
@@ -88,19 +87,21 @@ func GetDockerStatus(context echo.Context) error {
 	return context.String(http.StatusOK, string(body))
 }
 
+/*
 func SendScreenOff(context echo.Context) error {
 	color.Set(color.FgYellow)
 	log.Printf("Sending screen off command")
 	color.Unset()
 
 	e := context.Get(eventinfrastructure.ContextEventNode)
-	if en, ok := e.(*eventinfrastructure.EventNode); ok {
-		en.Read <- events.GetScreenTimeoutMessage()
+//	if en, ok := e.(*eventinfrastructure.EventNode); ok {
+		//		en.Read <- events.GetScreenTimeoutMessage()
 	} else {
 		return context.JSON(http.StatusInternalServerError, errors.New("Middleware failed to set the subscriber"))
 	}
 	return context.JSON(http.StatusOK, "success.")
 }
+*/
 
 func Help(context echo.Context) error {
 	var sh helpers.SlackHelp

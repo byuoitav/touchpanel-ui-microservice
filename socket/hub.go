@@ -32,7 +32,7 @@ func NewHub() *Hub {
 	return hub
 }
 
-func (h *Hub) WriteMessage(message []byte) {
+func (h *Hub) WriteToSockets(message []byte) {
 	h.broadcast <- message
 }
 

@@ -6,6 +6,7 @@ import (
 
 	"github.com/byuoitav/device-monitoring-microservice/statusinfrastructure"
 	"github.com/byuoitav/event-router-microservice/eventinfrastructure"
+	"github.com/byuoitav/touchpanel-ui-microservice/events"
 	"github.com/byuoitav/touchpanel-ui-microservice/handlers"
 	"github.com/byuoitav/touchpanel-ui-microservice/socket"
 	"github.com/jessemillar/health"
@@ -46,13 +47,17 @@ func main() {
 		return nil
 	})
 
+	// socket endpoints
+	router.PUT("/screenoff", func(context echo.Context) error {
+		events.SendScreenTimeout(hub)
+		return nil
+	})
+
 	router.GET("/hostname", handlers.GetHostname)
 	router.GET("/deviceinfo", handlers.GetDeviceInfo)
 	router.GET("/reboot", handlers.Reboot)
 	router.GET("/dockerstatus", handlers.GetDockerStatus)
 	router.GET("/json", handlers.GetJSON)
-
-	router.PUT("/screenoff", handlers.SendScreenOff, BindEventNode(en))
 
 	router.POST("/help", handlers.Help)
 	router.POST("/confirmhelp", handlers.ConfirmHelp)
