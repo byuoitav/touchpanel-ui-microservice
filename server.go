@@ -57,6 +57,10 @@ func main() {
 		events.SendRefresh(hub, time.NewTimer(0))
 		return nil
 	})
+	router.GET("/wsinfo", func(context echo.Context) error {
+		si, _ := socket.GetSocketInfo(hub)
+		return context.JSON(http.StatusOK, si)
+	})
 
 	router.GET("/hostname", handlers.GetHostname)
 	router.GET("/deviceinfo", handlers.GetDeviceInfo)
