@@ -19,7 +19,6 @@ import (
 func main() {
 	filters := []string{eventinfrastructure.UI}
 	en := eventinfrastructure.NewEventNode("Touchpanel UI", "7003", filters, os.Getenv("EVENT_ROUTER_ADDRESS"))
-	en.ConnectToRouter()
 
 	// websocket hub
 	hub := socket.NewHub()
