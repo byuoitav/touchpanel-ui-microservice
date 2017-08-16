@@ -3,33 +3,31 @@ package main
 import (
 	"fmt"
 	"net/http"
+	"time"
 
-	"github.com/byuoitav/device-monitoring-microservice/microservicestatus"
+	"github.com/byuoitav/device-monitoring-microservice/statusinfrastructure"
 	"github.com/byuoitav/event-router-microservice/eventinfrastructure"
 	"github.com/byuoitav/touchpanel-ui-microservice/events"
 	"github.com/byuoitav/touchpanel-ui-microservice/handlers"
+	"github.com/byuoitav/touchpanel-ui-microservice/socket"
 	"github.com/jessemillar/health"
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
 )
 
 func main() {
-	pub := eventinfrastructure.NewPublisher("7003")
-
 	filters := []string{eventinfrastructure.UI}
-	sub := eventinfrastructure.NewSubscriber(filters)
-
-	//	ip := eventinfrastructure.GetIP()
+	en := eventinfrastructure.NewEventNode("Touchpanel UI", "7003", filters)
 
 	var req eventinfrastructure.ConnectionRequest
 	req.PublisherAddr = "localhost:7003"
 	req.SubscriberEndpoint = "http://localhost:8888/subscribe"
-
-	// post to the router with the subscription request
 	go eventinfrastructure.SendConnectionRequest("http://localhost:6999/subscribe", req, true)
 
-	go events.WriteMessagesToSocket(sub)
-	go events.Refresh(sub)
+	// websocket hub
+	hub := socket.NewHub()
+	go events.WriteEventsToSocket(en, hub)
+	go events.SendRefresh(hub, time.NewTimer(time.Second*10))
 
 	port := ":8888"
 	router := echo.New()
@@ -40,23 +38,41 @@ func main() {
 	router.GET("/mstatus", GetStatus)
 
 	// event endpoints
-	router.POST("/subscribe", Subscribe, BindSubscriber(sub))
-	router.POST("/publish", handlers.PublishEvent, BindPublisher(pub))
-	router.POST("/publishfeature", handlers.PublishFeature, BindPublisher(pub))
+	router.POST("/subscribe", Subscribe, BindEventNode(en))
+	router.POST("/publish", handlers.PublishEvent, BindEventNode(en))
+	router.POST("/publishfeature", handlers.PublishFeature, BindEventNode(en))
 
-	router.GET("/websocket", handlers.OpenWebSocket)
+	// websocket
+	router.GET("/websocket", func(context echo.Context) error {
+		socket.ServeWebsocket(hub, context.Response().Writer, context.Request())
+		return nil
+	})
+
+	// socket endpoints
+	router.PUT("/screenoff", func(context echo.Context) error {
+		events.SendScreenTimeout(hub)
+		return nil
+	})
+	router.PUT("/refresh", func(context echo.Context) error {
+		events.SendRefresh(hub, time.NewTimer(0))
+		return nil
+	})
+	router.GET("/wsinfo", func(context echo.Context) error {
+		si, _ := socket.GetSocketInfo(hub)
+		return context.JSON(http.StatusOK, si)
+	})
+
 	router.GET("/hostname", handlers.GetHostname)
 	router.GET("/deviceinfo", handlers.GetDeviceInfo)
 	router.GET("/reboot", handlers.Reboot)
 	router.GET("/dockerstatus", handlers.GetDockerStatus)
 	router.GET("/json", handlers.GetJSON)
 
-	router.PUT("/screenoff", handlers.SendScreenOff, BindSubscriber(sub))
-
 	router.POST("/help", handlers.Help)
 	router.POST("/confirmhelp", handlers.ConfirmHelp)
 	router.POST("/cancelhelp", handlers.CancelHelp)
 
+	// all the different ui's
 	router.Static("/", "redirect.html")
 	router.Static("/circle-default", "circle-default")
 
@@ -67,9 +83,9 @@ func Subscribe(context echo.Context) error {
 	var cr eventinfrastructure.ConnectionRequest
 	context.Bind(&cr)
 
-	s := context.Get(eventinfrastructure.ContextSubscriber)
-	if sub, ok := s.(*eventinfrastructure.Subscriber); ok {
-		err := eventinfrastructure.HandleSubscriptionRequest(cr, sub)
+	e := context.Get(eventinfrastructure.ContextEventNode)
+	if en, ok := e.(*eventinfrastructure.EventNode); ok {
+		err := eventinfrastructure.HandleSubscriptionRequest(cr, en)
 		if err != nil {
 			return context.JSON(http.StatusBadRequest, err.Error())
 		}
@@ -77,35 +93,26 @@ func Subscribe(context echo.Context) error {
 	return context.JSON(http.StatusOK, nil)
 }
 
-func BindPublisher(p *eventinfrastructure.Publisher) echo.MiddlewareFunc {
+func BindEventNode(en *eventinfrastructure.EventNode) echo.MiddlewareFunc {
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
-			c.Set(eventinfrastructure.ContextPublisher, p)
-			return next(c)
-		}
-	}
-}
-
-func BindSubscriber(s *eventinfrastructure.Subscriber) echo.MiddlewareFunc {
-	return func(next echo.HandlerFunc) echo.HandlerFunc {
-		return func(c echo.Context) error {
-			c.Set(eventinfrastructure.ContextSubscriber, s)
+			c.Set(eventinfrastructure.ContextEventNode, en)
 			return next(c)
 		}
 	}
 }
 
 func GetStatus(context echo.Context) error {
-	var s microservicestatus.Status
+	var s statusinfrastructure.Status
 	var err error
 
-	s.Version, err = microservicestatus.GetVersion("version.txt")
+	s.Version, err = statusinfrastructure.GetVersion("version.txt")
 	if err != nil {
 		s.Version = "missing"
-		s.Status = microservicestatus.StatusSick
+		s.Status = statusinfrastructure.StatusSick
 		s.StatusInfo = fmt.Sprintf("Error: %s", err.Error())
 	} else {
-		s.Status = microservicestatus.StatusOK
+		s.Status = statusinfrastructure.StatusOK
 		s.StatusInfo = ""
 	}
 

@@ -132,7 +132,7 @@ export class AppComponent { // event stuff
         let data = JSON.parse(event.data.data);
 
         let e = new Event();
-        Object.assign(e, data);
+        Object.assign(e, data.event);
 		if (this.dev) {
 			if (this.events.length > 250) 	
 				this.events.splice(0, 125); 
@@ -156,16 +156,17 @@ export class AppComponent { // event stuff
 		this.notify.success("Socket", "Socket connection opened");
 
     	this.api.setup();
-		this.api.loaded.subscribe(data => {
-			this.notify.success("Setup", "got hostname and ui config", {
-				timeOut: 2500,
-				showProgressBar: false,
-				clickToClose: false
-			});
-   		 	this.getData();
-		});
       }
-    })
+    });
+	
+	this.api.loaded.subscribe(v => {
+		this.notify.success("Setup", "got hostname and ui config", {
+			timeOut: 2500,
+			showProgressBar: false,
+			clickToClose: false
+		});
+   	 	this.getData();
+	});
   }
 
   public ngOnDestroy() {
@@ -254,6 +255,7 @@ export class AppComponent { // event stuff
   }
 
   createInputDevices() {
+	this.inputs = [];
  	for(let input of this.room.config.devices) {
 		if (this.hasRole(input, 'VideoIn') || this.hasRole(input, 'AudioIn')) {
 			for (let i of this.api.uiconfig.inputdevices) {
@@ -271,8 +273,8 @@ export class AppComponent { // event stuff
   }
 
   createOutputDevices() {
+	this.displays = [];
 	for (let sdisplay of this.room.status.displays) {
-		// create displays?
 		for (let cdisplay of this.room.config.devices) {
 			if (sdisplay.name == cdisplay.name) {
 				for (let jdisplay of this.api.uiconfig.displays) {
@@ -288,10 +290,22 @@ export class AppComponent { // event stuff
 							d.oinputs.push(this.getInputDevice(i));
 						}
 
-						d.oinput = this.getInputDevice(sdisplay.input); 
+						// sometimes input comes back blank?
+						if (sdisplay.input == "") {
+							this.notify.warn("Error", "Failed to get current input for " + d.name)
+						} else {
+							d.oinput = this.getInputDevice(sdisplay.input); 
+						}
+
 						d.blanked = sdisplay.blanked;
 
 						console.log("Created display:", d);
+
+                        //if my display(s) are already on, go ahead and show the control screen
+                        if (sdisplay.power == 'on') {
+                            this.showing = true;
+                        }
+
 						this.displays.push(d);
 					}
 				}
@@ -299,6 +313,7 @@ export class AppComponent { // event stuff
 		}	
 	}
 
+	this.audiodevices = [];
 	// create audio out devices
 	for (let ac of this.api.uiconfig.audio) {
 		for (let a of ac.audiodevices) {
@@ -317,12 +332,12 @@ export class AppComponent { // event stuff
 		}
 	}
 
+	this.mics = [];
 	// create microphones
 	for (let m of this.room.config.devices) {
 		if (m.roles.includes("Microphone")) {
 			for (let sm of this.room.status.audioDevices) {
 				if (sm.name == m.name) {
-					console.log("status", sm);	
 					let mic = new Mic();
 					mic.name = m.name;
 					mic.displayname = m.display_name;
@@ -345,7 +360,7 @@ export class AppComponent { // event stuff
 		this.multipledisplays = false;
 		let arr = [];
 		arr.push(this.displays[0].name);
-		this.changeControl(arr, true);
+		this.changeControl(arr, false);
 	} else {
 		this.multipledisplays = true;
 		console.log("Defaulting to controlling all displays and their associated audio devices");
@@ -635,6 +650,11 @@ export class AppComponent { // event stuff
 
   updateUI(e: Event) {
     console.log("update ui based on event:", e);
+
+	// display error
+	if (e.eventInfoKey.includes("Error") || e.eventInfoKey.includes("error")) {
+		this.notify.warn("Error", e.eventInfoValue)
+	}
 
 	if (this.dtaMinion && (e.device == "dta" || e.device == this.dtaMasterHost)) {
 		switch(e.eventInfoKey) {

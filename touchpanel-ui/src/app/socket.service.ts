@@ -22,7 +22,6 @@ export class SocketService {
 
 	this.socket.onMessage((msg) => {
 	  if (msg.data.includes("keepalive")) {
-	 	// send a keep alive back?
 		console.log("keep alive message recieved.");
 	  } else if (msg.data.includes("refresh")) {
 	 	console.log("refreshing!");
