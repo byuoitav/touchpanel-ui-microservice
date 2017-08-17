@@ -9,6 +9,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strings"
 
 	"github.com/byuoitav/event-router-microservice/eventinfrastructure"
 	"github.com/byuoitav/touchpanel-ui-microservice/events"
@@ -226,8 +227,11 @@ var configcache map[string]interface{}
 func GetJSON(context echo.Context) error {
 	address := os.Getenv("UI_CONFIGURATION_ADDRESS")
 	hn := os.Getenv("PI_HOSTNAME")
+	split := strings.Split(hn, "-")
+	building := split[0]
+	room := split[1]
 
-	log.Printf("Getting the UI configuration")
+	log.Printf("Getting the config file for %s-%s", building, room)
 
 	if len(hn) == 0 {
 		log.Printf("[error] PI_HOSTNAME is not set.")
@@ -242,12 +246,15 @@ func GetJSON(context echo.Context) error {
 		return context.JSON(http.StatusInternalServerError, "UI_CONFIGURATION_ADDRESS is not set.")
 	}
 
+	address = strings.Replace(address, "BUILDING", building, 1)
+	address = strings.Replace(address, "ROOM", room, 1)
 	log.Printf("getting json object from %s", address)
+
 	resp, err := http.Get(address)
 	if err != nil {
 		if configcache != nil {
 			log.Printf("[error] %s. Returning cached configuration...", err.Error())
-			return context.JSON(http.StatusOK, configcache[hn])
+			return context.JSON(http.StatusOK, configcache)
 		}
 		log.Printf("[error] %s. No cache to serve. Cannot continue.", err.Error())
 		return context.JSON(http.StatusGatewayTimeout, err.Error())
@@ -258,26 +265,38 @@ func GetJSON(context echo.Context) error {
 	if err != nil {
 		if configcache != nil {
 			log.Printf("[error] %s. Returning cached configuration...", err.Error())
-			return context.JSON(http.StatusOK, configcache[hn])
+			return context.JSON(http.StatusOK, configcache)
 		}
 		log.Printf("[error] %s. Could not read response body and there is no cache.", err.Error())
 		return context.JSON(http.StatusInternalServerError, err.Error())
 	}
 
 	var data map[string]interface{}
+	ret := make(map[string]interface{})
 	err = json.Unmarshal(body, &data)
 	if err != nil {
 		if configcache != nil {
 			log.Printf("[error] %s. Returning cached configuration...", err.Error())
-			return context.JSON(http.StatusOK, configcache[hn])
+			return context.JSON(http.StatusOK, configcache)
 		}
 		log.Printf("[error] %s. Error unmarshalling the body, and there is no cache.", err.Error())
 		return context.JSON(http.StatusInternalServerError, err.Error())
 	} else {
-		configcache = data
+		var tmp map[string]interface{}
+		bytes, _ := json.Marshal(data[hn])
+		json.Unmarshal(bytes, &tmp)
+
+		ret["ui"] = tmp["ui"]
+		ret["audio"] = tmp["audio"]
+		ret["displays"] = tmp["displays"]
+		ret["features"] = tmp["features"]
+		ret["inputdevices"] = tmp["inputdevices"]
+		ret["apiconfig"] = data["apiconfig"]
+
+		configcache = ret
 	}
 
 	log.Printf("Done.")
 
-	return context.JSON(http.StatusOK, data[hn])
+	return context.JSON(http.StatusOK, ret)
 }
