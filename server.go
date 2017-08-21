@@ -63,6 +63,9 @@ func main() {
 	router.GET("/dockerstatus", handlers.GetDockerStatus)
 	router.GET("/json", handlers.GetJSON)
 
+	router.GET("/api", handlers.GetAPI)
+	router.GET("/nextapi", handlers.NextAPI)
+
 	router.POST("/help", handlers.Help)
 	router.POST("/confirmhelp", handlers.ConfirmHelp)
 	router.POST("/cancelhelp", handlers.CancelHelp)
