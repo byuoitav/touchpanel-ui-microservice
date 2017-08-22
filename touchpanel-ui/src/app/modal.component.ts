@@ -1,41 +1,52 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 
 @Component({
   selector: 'app-modal',
   template: `
   <div (click)="onContainerClicked($event)" class="modal fade" tabindex="-1" [ngClass]="{'in': visibleAnimate}"
        [ngStyle]="{'display': visible ? 'block' : 'none', 'opacity': visibleAnimate ? 1 : 0}">
+	<div class="hide" (click)="hide()">
+		<i class="material-icons icon">arrow_back</i>
+	</div>
     <div class="modal-dialog">
       <div class="modal-content">
-	  	<!--
-        <div class="modal-header">
-          <ng-content select=".app-modal-header"></ng-content>
-        </div>
-		-->
         <div class="modal-body">
           <ng-content select=".app-modal-body"></ng-content>
         </div>
-		<!--
-        <div class="modal-footer">
-          <ng-content select=".app-modal-footer"></ng-content>
-        </div>
-		-->
       </div>
     </div>
   </div>
   `,
   styles: [`
-    .modal {
-      background: rgba(0,0,0,0.6);
-    }
 	.modal-dialog {
-	  top: 25vh;	
+	  top: 25vh;
+	}
+	/* inside of modal */
+	.modal-content {
+		background: #021024;
+	}
+	/* area outside of modal */
+	.modal {
+   	 	background: rgba(164,169,173,.95);
+	}
+	.hide{
+		position: absolute;
+		top: 11vh;
+		left: 7%;
+		min-width: 10%;	
+		min-height: 20%;
+	}
+	.icon {
+		font-size: 10vh;	
 	}
   `]
 })
 export class ModalComponent {
   public visible = false;
   public visibleAnimate = false;
+  
+  // extra information that you may need to use
+  public info: any = null; 
 
   constructor() { }
 
