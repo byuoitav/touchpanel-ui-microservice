@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"log"
 	"net/http"
 	"os"
 
@@ -24,20 +25,22 @@ type config struct {
 
 type apihost struct {
 	APIHost string `json:"apihost"`
+	Number  int    `json:"apinumber"`
 }
 
 var apiNum = 1
 
 func GetAPI(context echo.Context) error {
 	var ret apihost
-	//	GetJSON(context)
+	if configcache == nil {
+		GetJSON(context)
+	}
 
 	var c config
 	tmp, _ := json.Marshal(configcache["apiconfig"])
 	json.Unmarshal(tmp, &c)
 
 	if c.Enabled {
-		//		api := strconv.Itoa(apiNum)
 		switch apiNum {
 		case 1:
 			ret.APIHost = c.One
@@ -65,10 +68,81 @@ func GetAPI(context echo.Context) error {
 		ret.APIHost = hn
 	}
 
+	ret.Number = apiNum
 	return context.JSON(http.StatusOK, ret)
 }
 
 func NextAPI(context echo.Context) error {
+	if configcache == nil {
+		GetJSON(context)
+	}
+
 	apiNum++
+	if apiNum > 10 {
+		apiNum = 1
+	}
+
+	var c config
+	tmp, _ := json.Marshal(configcache["apiconfig"])
+	json.Unmarshal(tmp, &c)
+	log.Printf("c: %v", c)
+
+	valid := false
+	for !valid {
+		switch apiNum {
+		case 1:
+			if len(c.One) > 0 {
+				valid = true
+			}
+		case 2:
+			log.Printf("c.Two: %s", c.Two)
+			if len(c.Two) > 0 {
+				valid = true
+			}
+		case 3:
+			log.Printf("c.Three: %s", c.Three)
+			if len(c.Three) > 0 {
+				valid = true
+			}
+		case 4:
+			log.Printf("c.Four: %s", c.Four)
+			if len(c.Four) > 0 {
+				valid = true
+			}
+		case 5:
+			if len(c.Five) > 0 {
+				valid = true
+			}
+		case 6:
+			if len(c.Six) > 0 {
+				valid = true
+			}
+		case 7:
+			if len(c.Seven) > 0 {
+				valid = true
+			}
+		case 8:
+			if len(c.Eight) > 0 {
+				valid = true
+			}
+		case 9:
+			if len(c.Nine) > 0 {
+				valid = true
+			}
+		case 10:
+			if len(c.Ten) > 0 {
+				valid = true
+			}
+		}
+
+		if !valid {
+			log.Printf("No api config #%v, continuing to next", apiNum)
+			apiNum++
+			if apiNum > 10 {
+				apiNum = 1
+			}
+		}
+	}
+
 	return GetAPI(context)
 }
