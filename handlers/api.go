@@ -23,7 +23,7 @@ type config struct {
 	Ten     string `json:"10"`
 }
 
-type apihost struct {
+type Apihost struct {
 	Enabled bool   `json:"enabled"`
 	APIHost string `json:"apihost"`
 	Number  int    `json:"apinumber"`
@@ -32,7 +32,7 @@ type apihost struct {
 var apiNum = 1
 
 func GetAPI(context echo.Context) error {
-	var ret apihost
+	var ret Apihost
 	j, err := Getjson()
 	if err != nil {
 		return context.JSON(http.StatusInternalServerError, err.Error())
