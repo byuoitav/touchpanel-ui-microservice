@@ -222,9 +222,18 @@ func CancelHelp(context echo.Context) error {
 
 }
 
+func GetJSON(context echo.Context) error {
+	j, err := Getjson()
+	if err != nil {
+		return context.JSON(http.StatusInternalServerError, err.Error())
+	}
+
+	return context.JSON(http.StatusOK, j)
+}
+
 var configcache map[string]interface{}
 
-func GetJSON(context echo.Context) error {
+func Getjson() (j map[string]interface{}, e error) {
 	address := os.Getenv("UI_CONFIGURATION_ADDRESS")
 	hn := os.Getenv("PI_HOSTNAME")
 	split := strings.Split(hn, "-")
@@ -235,15 +244,18 @@ func GetJSON(context echo.Context) error {
 
 	if len(hn) == 0 {
 		log.Printf("[error] PI_HOSTNAME is not set.")
-		return context.JSON(http.StatusInternalServerError, "PI_HOSTNAME is not set.")
+		e = errors.New("PI_HOSTNAME is not set")
+		return
 	}
 
 	if len(address) == 0 {
 		if configcache != nil {
 			log.Printf("[error] UI_CONFIGURATION_ADDRESS is not set. Returning cached configuration...")
-			return context.JSON(http.StatusOK, configcache[hn])
+			j = configcache
+			return
 		}
-		return context.JSON(http.StatusInternalServerError, "UI_CONFIGURATION_ADDRESS is not set.")
+		e = errors.New("UI_CONFIGURATION_ADDRESS is not set")
+		return
 	}
 
 	address = strings.Replace(address, "BUILDING", building, 1)
@@ -254,10 +266,11 @@ func GetJSON(context echo.Context) error {
 	if err != nil {
 		if configcache != nil {
 			log.Printf("[error] %s. Returning cached configuration...", err.Error())
-			return context.JSON(http.StatusOK, configcache)
+			j = configcache
 		}
 		log.Printf("[error] %s. No cache to serve. Cannot continue.", err.Error())
-		return context.JSON(http.StatusGatewayTimeout, err.Error())
+		e = err
+		return
 	}
 	defer resp.Body.Close()
 
@@ -265,10 +278,12 @@ func GetJSON(context echo.Context) error {
 	if err != nil {
 		if configcache != nil {
 			log.Printf("[error] %s. Returning cached configuration...", err.Error())
-			return context.JSON(http.StatusOK, configcache)
+			j = configcache
+			return
 		}
 		log.Printf("[error] %s. Could not read response body and there is no cache.", err.Error())
-		return context.JSON(http.StatusInternalServerError, err.Error())
+		e = err
+		return
 	}
 
 	var data map[string]interface{}
@@ -277,10 +292,12 @@ func GetJSON(context echo.Context) error {
 	if err != nil {
 		if configcache != nil {
 			log.Printf("[error] %s. Returning cached configuration...", err.Error())
-			return context.JSON(http.StatusOK, configcache)
+			j = configcache
+			return
 		}
 		log.Printf("[error] %s. Error unmarshalling the body, and there is no cache.", err.Error())
-		return context.JSON(http.StatusInternalServerError, err.Error())
+		e = err
+		return
 	} else {
 		var tmp map[string]interface{}
 		bytes, _ := json.Marshal(data[hn])
@@ -298,5 +315,6 @@ func GetJSON(context echo.Context) error {
 
 	log.Printf("Done.")
 
-	return context.JSON(http.StatusOK, ret)
+	j = ret
+	return
 }
