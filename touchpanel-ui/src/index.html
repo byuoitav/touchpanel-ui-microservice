@@ -47,17 +47,26 @@
   </style>
   <script>
 	const refreshTime = 15;
+	const breakTime = 25;
 
 	document.addEventListener("DOMContentLoaded", function(event) {
 		count = refreshTime;
 
-		setInterval(() => {
-			document.getElementById("loading-time").innerHTML = count;
-			if (count == 0) {
-				console.log("refreshing");	
-				location.reload();
+		var loadingTimeInterval = setInterval(() => {
+			var loadingTimeElement = document.getElementById("loading-time") 
+			if (loadingTimeElement != null) {
+				loadingTimeElement.innerHTML = count;
+				if (count == 0) {
+					console.log("refreshing");	
+					location.reload();
+				}
+				count--;
+			}  else {
+				count++;	
+				if (count == breakTime) {
+					clearInterval(loadingTimeInterval);
+				}
 			}
-			count--;
 		}, 1000);
 	});
   </script>
