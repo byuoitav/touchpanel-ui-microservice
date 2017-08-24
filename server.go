@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/byuoitav/device-monitoring-microservice/statusinfrastructure"
@@ -17,12 +18,7 @@ import (
 
 func main() {
 	filters := []string{eventinfrastructure.UI}
-	en := eventinfrastructure.NewEventNode("Touchpanel UI", "7003", filters)
-
-	var req eventinfrastructure.ConnectionRequest
-	req.PublisherAddr = "localhost:7003"
-	req.SubscriberEndpoint = "http://localhost:8888/subscribe"
-	go eventinfrastructure.SendConnectionRequest("http://localhost:6999/subscribe", req, true)
+	en := eventinfrastructure.NewEventNode("Touchpanel UI", "7003", filters, os.Getenv("EVENT_ROUTER_ADDRESS"))
 
 	// websocket hub
 	hub := socket.NewHub()
@@ -38,7 +34,6 @@ func main() {
 	router.GET("/mstatus", GetStatus)
 
 	// event endpoints
-	router.POST("/subscribe", Subscribe, BindEventNode(en))
 	router.POST("/publish", handlers.PublishEvent, BindEventNode(en))
 	router.POST("/publishfeature", handlers.PublishFeature, BindEventNode(en))
 
@@ -68,6 +63,9 @@ func main() {
 	router.GET("/dockerstatus", handlers.GetDockerStatus)
 	router.GET("/json", handlers.GetJSON)
 
+	router.GET("/api", handlers.GetAPI)
+	router.GET("/nextapi", handlers.NextAPI)
+
 	router.POST("/help", handlers.Help)
 	router.POST("/confirmhelp", handlers.ConfirmHelp)
 	router.POST("/cancelhelp", handlers.CancelHelp)
@@ -77,20 +75,6 @@ func main() {
 	router.Static("/circle-default", "circle-default")
 
 	router.Start(port)
-}
-
-func Subscribe(context echo.Context) error {
-	var cr eventinfrastructure.ConnectionRequest
-	context.Bind(&cr)
-
-	e := context.Get(eventinfrastructure.ContextEventNode)
-	if en, ok := e.(*eventinfrastructure.EventNode); ok {
-		err := eventinfrastructure.HandleSubscriptionRequest(cr, en)
-		if err != nil {
-			return context.JSON(http.StatusBadRequest, err.Error())
-		}
-	}
-	return context.JSON(http.StatusOK, nil)
 }
 
 func BindEventNode(en *eventinfrastructure.EventNode) echo.MiddlewareFunc {

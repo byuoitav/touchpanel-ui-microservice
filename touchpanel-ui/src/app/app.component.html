@@ -1,6 +1,6 @@
 <!-- screenoff cover -->
 <div *ngIf="socket.screenoff" id="screenoff" (click)="socket.screenoff = false">
-	*gasp* you shouldn't be seeing me...this is weird. just click anywhere:)	
+	press anywhere to start
 </div>
 
 <!-- notifications -->
@@ -11,7 +11,8 @@
 	<span *ngFor="let e of events">{{e | json}}<br></span>
 </div>
 
-<!-- main body --> <div class='basediv' [class.innerglow]="dtaMaster">
+<!-- main body --> 
+<div class='basediv' [class.innerglow]="dtaMaster">
     <!-- power, help -->
     <div class='power-row'>
         <div class='power' (click)="buttonpress('power'); powerOff()" (press)="poweroffmodal.show()">
