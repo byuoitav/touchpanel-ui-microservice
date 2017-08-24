@@ -44,6 +44,11 @@ $newgreen: #7ED321;
 //	background-size: cover;
 }
 
+#screenoff {
+	background-color: $newbackground;
+	color: $alabasterwhite;
+}
+
 // icons when selected (where applicable)
 .red {
 	color: $newred !important;

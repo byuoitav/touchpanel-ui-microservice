@@ -165,6 +165,11 @@ export class AppComponent { // event stuff
 			showProgressBar: false,
 			clickToClose: false
 		});
+		this.notify.success("API", this.api.urlhost, {
+			timeOut: 2500,
+			showProgressBar: false,
+			clickToClose: false
+		});
    	 	this.getData();
 	});
   }

@@ -41,12 +41,45 @@
 		color: black;
 		font-size: 10vh;
 	}
+	.loading-refresh-info {
+		margin-top: 10vh;
+	}
   </style>
+  <script>
+	const refreshTime = 15;
+	const breakTime = 25;
+
+	document.addEventListener("DOMContentLoaded", function(event) {
+		count = refreshTime;
+
+		var loadingTimeInterval = setInterval(() => {
+			var loadingTimeElement = document.getElementById("loading-time") 
+			if (loadingTimeElement != null) {
+				loadingTimeElement.innerHTML = count;
+				if (count == 0) {
+					console.log("refreshing");	
+					location.reload();
+				}
+				count--;
+			}  else {
+				count++;	
+				if (count == breakTime) {
+					clearInterval(loadingTimeInterval);
+				}
+			}
+		}, 1000);
+	});
+  </script>
 </head>
 <body style="height:100%; overflow: hidden;">
   <app-root>
  	<div class="loading-center">
 		<span class="loading-text">loading, please wait...</span>
+		<div class="loading-refresh-info">
+			<span>refreshing in</span>
+			<span id="loading-time"></span>
+			<span>seconds</span>
+		</div>
 	</div>
   </app-root>
 </body>
