@@ -98,10 +98,10 @@ export class APIService {
 		if (data["statuscode"] != 0) {
 			this.apiError();	
 		}
-		setTimeout(() => this.monitorAPI(), 10000);
+		setTimeout(() => this.monitorAPI(), 45*1000);
 	}, err => {
 		this.apiError();
-		setTimeout(() => this.monitorAPI(), 10000);
+		setTimeout(() => this.monitorAPI(), 45*1000);
 	});	
   }
 
