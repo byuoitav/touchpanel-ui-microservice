@@ -251,7 +251,7 @@ export class AppComponent { // event stuff
       this.createOutputDevices();
       this.setupFeatures();
 
-      this.dtaMasterHost = this.api.hostname;
+      //this.dtaMasterHost = this.api.hostname;
     },
       err => {
         this.notify.error("Setup", "Failed to get room status");
