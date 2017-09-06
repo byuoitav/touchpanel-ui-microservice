@@ -658,7 +658,7 @@ export class AppComponent { // event stuff
       let match = v.match(/[0-9]+$/g)
 
       //match[1] should be my match
-      if (match.length < 2) 
+      if (match == null || match.length < 2) 
           return v
 
       return "Display " + match[1]
@@ -695,7 +695,7 @@ export class AppComponent { // event stuff
 
           for (let input of this.selectedDisplay.oinputs) {
             if (input.displayname == this.dtaMasterHost) {
-              input.displayname = this.switchToDisplayName(e.eventInfoValue);
+              input.displayname = e.eventInfoValue;
               console.log("change", input, "to have name", e.eventInfoValue);
             }
           }
@@ -848,7 +848,7 @@ export class AppComponent { // event stuff
             if (changeDTAName) {
               for (let input of this.selectedDisplay.oinputs) {
                 if (input.displayname == oldMaster) {
-                  input.displayname = this.switchToDisplayName(this.dtaMasterHost);
+                  input.displayname = this.dtaMasterHost;
                   console.log("change", input, "to have name", e.eventInfoValue);
                 }
               }
@@ -856,7 +856,7 @@ export class AppComponent { // event stuff
             else {
               let i = new InputDevice();
               i.name = this.dtaMasterHost;
-              i.displayname = this.switchToDisplayName(this.dtaMasterHost);
+              i.displayname = this.dtaMasterHost;
               i.icon = "people";
               this.inputs.push(i);
 
