@@ -107,6 +107,7 @@ export class AppComponent { // event stuff
     this.ringopen = false;
     this.displaytoall = false;
     this.poweroffall = false;
+	this.dtaMinion = false;
 
     // management
     this.deviceInfo = new Object();
@@ -115,6 +116,7 @@ export class AppComponent { // event stuff
 
   public ngOnInit() {
     this.selectedDisplay = new OutputDevice();
+	this.selectedDisplay.DTADevice = null;
     this.selectedDisplay.oaudiodevices = null;
 
     this.socketSetup();
@@ -432,6 +434,10 @@ export class AppComponent { // event stuff
           inputs.push(i);
         }
 
+		if (display.DTADevice != null) {
+			inputs.push(display.DTADevice);	
+		}
+
         defaultinputs.push(display.odefaultinput);
         if (!display.blanked) md.blanked = false;
       }
@@ -672,6 +678,80 @@ export class AppComponent { // event stuff
       this.notify.warn("Error", e.eventInfoValue)
     }
 
+	switch (e.eventInfoKey) {
+	case "power":
+          if (this.getOutputDevice(e.device) != null) {
+            if (e.eventInfoValue == "on") {
+              this.showing = true;
+              this.startSpinning = false;
+            } else {
+              this.showing = false;
+            }
+          }
+          break;
+
+	case "input":
+          let od = this.getOutputDevice(e.device);
+          let i = this.getInputDevice(e.eventInfoValue);
+          if (i != null && od != null) od.oinput = i;
+          break;
+
+	case "volume":
+          let vd = this.getAudioDevice(e.device)
+          if (vd != null) {
+            vd.volume = Number(e.eventInfoValue);
+            vd.muted = false;
+          } else {
+            let m = this.getMic(e.device)
+            if (m != null) {
+              m.volume = Number(e.eventInfoValue);
+              m.muted = false;
+            }
+          }
+		  break;
+
+	case "muted":
+          let md = this.getAudioDevice(e.device);
+          if (md != null) md.muted = (e.eventInfoValue == 'true');
+          else {
+            let m = this.getMic(e.device)
+            if (m != null) {
+              m.muted = (e.eventInfoValue == 'true');
+            }
+          }
+          break;
+	case "blanked":
+          let d = this.getOutputDevice(e.device)
+          if (d != null) {
+            d.blanked = (e.eventInfoValue == 'true');
+            this.updateBlanked();
+          }
+          break;
+	case "dta":
+		// we use device as the 'key' in dta events
+		switch (e.device) {
+		case "false":
+			// delete dta device from display
+			this.selectedDisplay.DTADevice = null;
+			break;
+		case "input":
+			// create dta device
+			let dtaDevice = new InputDevice();
+			dtaDevice.displayname = e.requestor; 
+			dtaDevice.name = e.eventInfoValue;
+			dtaDevice.icon = "people";
+
+			for (let d of this.displays) {
+				if (d.selected)
+					d.DTADevice = dtaDevice;	
+			}
+
+			break;
+		}
+	default: 
+	}
+
+	/* 
     if (this.dtaMinion && (e.device == "dta" || e.device == this.dtaMasterHost)) {
       switch (e.eventInfoKey) {
         case "input":
@@ -696,6 +776,7 @@ export class AppComponent { // event stuff
           for (let input of this.selectedDisplay.oinputs) {
             if (input.displayname == this.dtaMasterHost) {
               input.displayname = e.eventInfoValue;
+			  console.log("here");
               console.log("change", input, "to have name", e.eventInfoValue);
             }
           }
@@ -720,6 +801,7 @@ export class AppComponent { // event stuff
             for (let input of this.selectedDisplay.oinputs) {
               if (input.displayname == this.dtaMasterHost) {
                 input.displayname = e.eventInfoValue;
+				console.log("here!!");
                 console.log("change", input, "to have name", e.eventInfoValue);
               }
             }
@@ -882,7 +964,8 @@ export class AppComponent { // event stuff
           console.error("unknown eventInfoKey:", e.eventInfoKey);
           break;
       }
-    }
+	}
+   */
   }
 
   removeDTAInput(changeInput: boolean) {
@@ -1194,69 +1277,62 @@ export class AppComponent { // event stuff
 
     if (this.dtaMaster && this.dtaMasterHost != this.api.hostname) {
       this.removeDTAInput(true);
-    }
+    } else if (this.dtaMaster) {
+	    let event = {
+		  "requestor": this.api.hostname,
+	      "device": "input",
+	      "eventinfokey": "dta",
+	      "eventinfovalue": this.selectedDisplay.oinput.name
+	    }
+	    this.api.publishFeature(event)
 
-    let event = {
-      "device": this.api.hostname,
-      "eventinfokey": "dta",
-      "eventinfovalue": String(this.dtaMaster)
-    }
-    this.api.publishFeature(event)
+	    // mute current audio out device
+	    var body = { audioDevices: [] }
+	    for (let a of this.selectedDisplay.oaudiodevices) {
+	      if (a.selected) {
+	        body.audioDevices.push({
+	          "name": a.name,
+	          "muted": true
+	        });
+	      }
+	    }
+	    this.put(body, func => { }, err => this.notify.error("DTA Error", "Failed to mute current audio out device"));
 
-    if (this.dtaMaster) {
-      event = {
-        "device": "dta",
-        "eventinfokey": "input",
-        "eventinfovalue": this.selectedDisplay.oinput.name
-      }
-      this.api.publishFeature(event)
-
-      // mute current audio out device
-      var body = { audioDevices: [] }
-      for (let a of this.selectedDisplay.oaudiodevices) {
-        if (a.selected) {
-          body.audioDevices.push({
-            "name": a.name,
-            "muted": true
-          });
+        // switch to room audio
+        let index = 0;
+        for (let ac of this.api.uiconfig.audio) {
+          if (ac.displays.includes("dta")) 
+			  index = this.api.uiconfig.audio.indexOf(ac);
         }
-      }
-      this.put(body, func => { }, err => this.notify.error("DTA Error", "Failed to mute current audio out device"));
 
-      // switch to room audio
-      let index = 0;
-      for (let ac of this.api.uiconfig.audio) {
-        if (ac.displays.includes("dta")) index = this.api.uiconfig.audio.indexOf(ac);
-      }
-
-      let devices: AudioOutDevice[] = [];
-      for (let n of this.api.uiconfig.audio[index].audiodevices) {
-        for (let a of this.audiodevices) {
-          if (n == a.name) {
-            devices.push(a);
-            a.selected = true;
-            break;
-          } else {
-            a.selected = false;
+        let devices: AudioOutDevice[] = [];
+        for (let n of this.api.uiconfig.audio[index].audiodevices) {
+          for (let a of this.audiodevices) {
+            if (n == a.name) {
+              devices.push(a);
+              a.selected = true;
+              break;
+            } else {
+              a.selected = false;
+            }
           }
         }
-      }
 
-      // set room audio level, and input
-      this.selectedDisplay.oaudiodevices = devices;
-      for (let a of this.selectedDisplay.oaudiodevices) {
-        if (a.selected) {
-          body.audioDevices.push({
-            "name": a.name,
-            "muted": false,
-            "volume": 30,
-            "input": this.selectedDisplay.oinput.name
-          });
-        }
+        // set room audio level, and input
+        this.selectedDisplay.oaudiodevices = devices;
+        for (let a of this.selectedDisplay.oaudiodevices) {
+          if (a.selected) {
+            body.audioDevices.push({
+              "name": a.name,
+              "muted": false,
+              "volume": 30,
+              "input": this.selectedDisplay.oinput.name
+            });
+          }
       }
       this.put(body, func => { }, err => this.notify.error("DTA Error", "Failed to set room audio level and input"));
       console.log("Switch to room audio. Using audio configuration:", devices);
-    } else {
+	} else {
       // mute room audio
       let body = { audioDevices: [] }
       for (let a of this.selectedDisplay.oaudiodevices) {
@@ -1474,7 +1550,7 @@ export class AppComponent { // event stuff
   notificationDestroy(e) {
     //	console.log("event", e); 
     // decide if it was clicked
-  }
+ }
 
   toDashboard() {
     window.location.assign("http://" + location.hostname + ":10000/dash");
