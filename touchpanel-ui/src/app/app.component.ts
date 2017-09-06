@@ -719,7 +719,7 @@ export class AppComponent { // event stuff
             // needs at least 3 panels in the room to ever happen!!!
             for (let input of this.selectedDisplay.oinputs) {
               if (input.displayname == this.dtaMasterHost) {
-                input.name = e.eventInfoValue;
+                input.displayname = e.eventInfoValue;
                 console.log("change", input, "to have name", e.eventInfoValue);
               }
             }
