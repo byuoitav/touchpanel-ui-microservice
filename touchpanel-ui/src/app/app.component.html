@@ -69,6 +69,12 @@
 						<span>{{i.displayname}}</span>
 					</div>
                 </li>
+                <li *ngIf="selectedDisplay.DTADevice != null" class="slice input-slice" [class.blanked-input]="selectedDisplay.blanked && selectedDisplay.oinput === selectedDisplay.DTADevice" [class.selectedInput]="selectedDisplay.oinput === selectedDisplay.DTADevice" (click)="buttonpress('change input'); changeInput(i)" (press)="buttonpress('long press input'); longPressInput(i)">
+					<div [style.right]="rightoffset" [style.top]="topoffset" class='input'>
+						<i class='material-icons'>{{i.icon}}</i>
+						<span>{{i.displayname}}</span>
+					</div>
+                </li>
             </ul>
         </div>
     </div>

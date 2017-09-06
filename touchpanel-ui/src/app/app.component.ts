@@ -307,6 +307,7 @@ export class AppComponent { // event stuff
               d.blanked = sdisplay.blanked;
 
               console.log("Created display:", d);
+			  d.DTADevice = null;
 
               //if my display(s) are already on, go ahead and show the control screen
               if (sdisplay.power == 'on') {
@@ -434,10 +435,6 @@ export class AppComponent { // event stuff
           inputs.push(i);
         }
 
-		if (display.DTADevice != null) {
-			inputs.push(display.DTADevice);	
-		}
-
         defaultinputs.push(display.odefaultinput);
         if (!display.blanked) md.blanked = false;
       }
@@ -469,9 +466,6 @@ export class AppComponent { // event stuff
         console.log("no default input found. switching to", this.selectedDisplay.oinputs[0].name);
         this.changeInput(this.selectedDisplay.oinputs[0]);
       }
-    }
-
-    if (this.dtaMinion) {
     }
   }
 
@@ -746,6 +740,8 @@ export class AppComponent { // event stuff
 					d.DTADevice = dtaDevice;	
 			}
 
+			break;
+		case "blanked":
 			break;
 		}
 	default: 
