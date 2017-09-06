@@ -653,6 +653,17 @@ export class AppComponent { // event stuff
     //	 console.log("top offset:", this.topoffset);
   }
 
+  switchToDisplayName(v: string): string {
+      //get the number at the end, replace it with 'Display'a
+      let match = v.match(/[0-9]+$/g)
+
+      //match[1] should be my match
+      if (match.length < 2) 
+          return v
+
+      return "Display " + match[1]
+  }
+
   updateUI(e: Event) {
     console.log("update ui based on event:", e);
 
@@ -684,7 +695,7 @@ export class AppComponent { // event stuff
 
           for (let input of this.selectedDisplay.oinputs) {
             if (input.displayname == this.dtaMasterHost) {
-              input.name = e.eventInfoValue;
+              input.displayname = this.switchToDisplayName(e.eventInfoValue);
               console.log("change", input, "to have name", e.eventInfoValue);
             }
           }
@@ -837,7 +848,7 @@ export class AppComponent { // event stuff
             if (changeDTAName) {
               for (let input of this.selectedDisplay.oinputs) {
                 if (input.displayname == oldMaster) {
-                  input.displayname = this.dtaMasterHost;
+                  input.displayname = this.switchToDisplayName(this.dtaMasterHost);
                   console.log("change", input, "to have name", e.eventInfoValue);
                 }
               }
@@ -845,7 +856,7 @@ export class AppComponent { // event stuff
             else {
               let i = new InputDevice();
               i.name = this.dtaMasterHost;
-              i.displayname = this.dtaMasterHost;
+              i.displayname = this.switchToDisplayName(this.dtaMasterHost);
               i.icon = "people";
               this.inputs.push(i);
 
