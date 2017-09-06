@@ -837,7 +837,7 @@ export class AppComponent { // event stuff
             if (changeDTAName) {
               for (let input of this.selectedDisplay.oinputs) {
                 if (input.displayname == oldMaster) {
-                  input.name = this.dtaMasterHost;
+                  input.displayname = this.dtaMasterHost;
                   console.log("change", input, "to have name", e.eventInfoValue);
                 }
               }
