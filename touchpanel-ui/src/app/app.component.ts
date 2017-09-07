@@ -566,29 +566,22 @@ export class AppComponent { // event stuff
 
   // build the input menu
   buildInputMenu() {
-    //    console.log("ring:", this.ring);
     let numOfChildren = this.ring.nativeElement.childElementCount;
-    //    console.log("num of children:", numOfChildren);
     let children = this.ring.nativeElement.children;
     let angle = (360 - this.TITLE_ANGLE) / (numOfChildren - 1);
-    //    console.log("angle", angle);
     // svg arc length 
     this.arcpath = this.getArc(.5, .5, .5, 0, angle);
     this.titlearcpath = this.getArc(.5, .5, .5, 0, this.TITLE_ANGLE);
-
-    // apply styles to first two (title area)
-    //    console.log("title slice:", children[0]);	
 
     let rotate = "rotate(" + String(-(this.TITLE_ANGLE_ROTATE)) + "deg)";
     children[0].style.transform = rotate;
 
     // apply styles to children
     for (let i = 1; i < numOfChildren; i++) {
-      //      console.log("children[" + i + "]", children[i]);
-
       // rotate the slice
       let rotate = "rotate(" + String((angle * -i) - (this.TITLE_ANGLE_ROTATE)) + "deg)";
       children[i].style.transform = rotate;
+
       // rotate the text
       rotate = "rotate(" + String((angle * i) + this.TITLE_ANGLE_ROTATE) + "deg)";
       children[i].firstElementChild.style.transform = rotate;
@@ -645,12 +638,12 @@ export class AppComponent { // event stuff
         Nright = 15;
         Ntop = 64;
         break;
+	  default:
+		  console.log("don't have an input offset configuration for *" + numOfInputs + "* inputs... things might look a little weird");
     }
 
     this.rightoffset = String(Nright) + "%";
-    //	 console.log("right offset:", this.rightoffset);
     this.topoffset = String(Ntop) + "%";
-    //	 console.log("top offset:", this.topoffset);
   }
 
   switchToDisplayName(v: string): string {
@@ -714,6 +707,7 @@ export class AppComponent { // event stuff
             }
           }
           break;
+
 	case "blanked":
           let d = this.getOutputDevice(e.device)
           if (d != null) {
@@ -721,13 +715,16 @@ export class AppComponent { // event stuff
             this.updateBlanked();
           }
           break;
+
 	case "dta":
 		// we use device as the 'key' in dta events
 		switch (e.device) {
 		case "off":
+			// TODO verify that the eventinfovalue is the correct hostname?
 			// delete dta device from display
-			this.selectedDisplay.DTADevice = null;
+			this.removeDTAInput(true);
 			break;
+
 		case "input":
 			// create dta device
 			let dtaDevice = new InputDevice();
@@ -744,10 +741,23 @@ export class AppComponent { // event stuff
     		setTimeout(() => { this.buildInputMenu(); }, 0)
 
 			break;
+
 		case "blanked":
+      		let body = { displays: [] }
+      		for (let display of this.displays) {
+      		  body.displays.push({
+      		    "name": display.name,
+      		    "blanked": (e.eventInfoValue == 'true')
+      		  });
+      		}
+      		this.put(body, func => { }, err => this.notify.error("DTA Error", "Failed to set minion blank"));
+      		break;
+
+		default:
 			break;
 		}
 	default: 
+		break;
 	}
 
 	/* 
@@ -968,23 +978,8 @@ export class AppComponent { // event stuff
   }
 
   removeDTAInput(changeInput: boolean) {
-    // remove the extra device
-    let ii: InputDevice;
-    for (let i of this.inputs) {
-      if (i.displayname == this.dtaMasterHost) {
-        this.inputs.splice(this.inputs.indexOf(i));
-        ii = i;
-      }
-    }
-    this.dtaMasterHost = null;
-    let names: string[] = [];
-    for (let d of this.displays) {
-      if (d.selected) {
-        names.push(d.name);
-        if (ii != null) d.oinputs.splice(this.inputs.indexOf(ii));
-      }
-    }
-    this.changeControl(names, changeInput);
+	  this.selectedDisplay.DTADevice = null;
+   	  setTimeout(() => { this.buildInputMenu(); }, 0)
   }
 
   hasRole(d: Device, role: string): boolean {
@@ -1324,9 +1319,10 @@ export class AppComponent { // event stuff
       console.log("Switch to room audio. Using audio configuration:", devices);
 	} else {
 	  let event = {
-	     "requestor": this.api.hostname,
-	     "device": "off",
-	     "eventinfokey": "dta"
+	    "requestor": this.api.hostname,
+	    "device": "off",
+	    "eventinfokey": "dta",
+	    "eventinfovalue": this.api.hostname
 	  }
 	  this.api.publishFeature(event)
 
