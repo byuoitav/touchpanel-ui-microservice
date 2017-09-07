@@ -653,11 +653,11 @@ export class AppComponent { // event stuff
       //get the number at the end, replace it with 'Display'a
       let match = v.match(/[0-9]+$/g)
 
-      //match[1] should be my match
-      if (match == null || match.length < 2) 
+      //match[0] should be my match
+      if (match == null) 
           return v
 
-      return "Display " + match[1]
+      return "Display " + match[0]
   }
 
   updateUI(e: Event) {
@@ -746,7 +746,6 @@ export class AppComponent { // event stuff
 
 			// create dta device
 			let dtaDevice = new InputDevice();
-//			dtaDevice.displayname = e.requestor; 
 			dtaDevice.displayname = this.switchToDisplayName(e.requestor);
 			dtaDevice.name = e.eventInfoValue;
 			dtaDevice.icon = "people";
