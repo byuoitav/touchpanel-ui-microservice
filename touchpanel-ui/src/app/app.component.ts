@@ -724,6 +724,20 @@ export class AppComponent { // event stuff
 		switch (e.device) {
 		case "off":
 			this.removeDTAInput(true);
+
+			// mute local audio
+    		let body1 = {  audioDevices: [] }
+			for (let ad of this.selectedDisplay.oaudiodevices) {
+				if (ad.selected) {
+					body1.audioDevices.push({
+						"name": ad.name,
+						"muted": true,
+            			"input": this.selectedDisplay.odefaultinput.name
+					});
+				}
+			}
+			this.put(body1, func => {}, err => this.notify.error("DTA Error", "Failed to mute minion"));
+
 			break;
 
 		case "info":
@@ -755,6 +769,19 @@ export class AppComponent { // event stuff
 				if (d.selected)
 					d.DTADevice = dtaDevice;
 			}
+
+			// mute local audio
+    		let body2 = {  audioDevices: [] }
+			for (let ad of this.selectedDisplay.oaudiodevices) {
+				if (ad.selected) {
+					body2.audioDevices.push({
+						"name": ad.name,
+						"muted": true,
+					});
+				}	
+			}
+			this.put(body2, func => {}, err => this.notify.error("DTA Error", "Failed to mute minion"));
+				
 
 			this.changeInput(dtaDevice);
     		setTimeout(() => { this.buildInputMenu(); }, 0)
@@ -1164,7 +1191,6 @@ export class AppComponent { // event stuff
           body.audioDevices.push({
             "name": a.name,
             "muted": true,
-            "volume": 30,
             "input": this.selectedDisplay.odefaultinput.name
           });
         }
