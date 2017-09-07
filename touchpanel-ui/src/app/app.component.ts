@@ -664,7 +664,7 @@ export class AppComponent { // event stuff
     console.log("update ui based on event:", e);
 
     // display error
-    if (e.eventInfoKey.includes("Error") || e.eventInfoKey.includes("error")) {
+    if (e.eventInfoKey.includes("Error") || e.eventInfoKey.includes("error") || e.type == 0) {
       this.notify.warn("Error", e.eventInfoValue)
     }
 
@@ -726,12 +726,28 @@ export class AppComponent { // event stuff
 			this.removeDTAInput(true);
 			break;
 
+		case "info":
+			break;
+
+		case "echo":
+			// TODO
+			// event info value should be the name of the current dta master
+	    	let event = {
+			  	"requestor": this.api.hostname,
+		    	"device": "info",
+		    	"eventinfokey": "dta",
+		    	"eventinfovalue": this.selectedDisplay.oinput.name
+		    }
+		    this.api.publishFeature(event)
+			break;
+
 		case "input":
 			this.dtaMaster = false;	
 
 			// create dta device
 			let dtaDevice = new InputDevice();
-			dtaDevice.displayname = e.requestor; 
+//			dtaDevice.displayname = e.requestor; 
+			dtaDevice.displayname = this.switchToDisplayName(e.requestor);
 			dtaDevice.name = e.eventInfoValue;
 			dtaDevice.icon = "people";
 			console.log("dta device", dtaDevice);
