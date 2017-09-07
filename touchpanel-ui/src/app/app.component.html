@@ -69,7 +69,7 @@
 						<span>{{i.displayname}}</span>
 					</div>
                 </li>
-                <li *ngIf="selectedDisplay.DTADevice != null" class="slice input-slice" [class.blanked-input]="selectedDisplay.blanked && selectedDisplay.oinput === selectedDisplay.DTADevice" [class.selectedInput]="selectedDisplay.oinput === selectedDisplay.DTADevice" (click)="buttonpress('change to DTA input'); changeInput(selectedDisplay.DTADevice)" (press)="buttonpress('long press DTA input'); longPressInput(selectedDisplay.DTADevice)">
+                <li *ngIf="dtaMinion()" class="slice input-slice" [class.blanked-input]="selectedDisplay.blanked && selectedDisplay.oinput === selectedDisplay.DTADevice" [class.selectedInput]="selectedDisplay.oinput === selectedDisplay.DTADevice" (click)="buttonpress('change to DTA input'); changeInput(selectedDisplay.DTADevice)" (press)="buttonpress('long press DTA input'); longPressInput(selectedDisplay.DTADevice)">
 					<div [style.right]="rightoffset" [style.top]="topoffset" class='input'>
 						<i class='material-icons'>{{selectedDisplay.DTADevice.icon}}</i>
 						<span>{{selectedDisplay.DTADevice.displayname}}</span>

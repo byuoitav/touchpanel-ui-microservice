@@ -251,8 +251,6 @@ export class AppComponent { // event stuff
       this.createInputDevices();
       this.createOutputDevices();
       this.setupFeatures();
-
-//      this.dtaMasterHost = this.api.hostname;
     },
       err => {
         this.notify.error("Setup", "Failed to get room status");
@@ -514,7 +512,7 @@ export class AppComponent { // event stuff
   }
 
   getInputDevice(name: string): InputDevice {
-	if (this.selectedDisplay.DTADevice != null) {
+	if (this.dtaMinion()) {
 		if (this.selectedDisplay.DTADevice.name == name) 
 			return this.selectedDisplay.DTADevice;	
 	}
@@ -725,12 +723,12 @@ export class AppComponent { // event stuff
 		// we use device as the 'key' in dta events
 		switch (e.device) {
 		case "off":
-			// TODO verify that the eventinfovalue is the correct hostname?
-			// delete dta device from display
 			this.removeDTAInput(true);
 			break;
 
 		case "input":
+			this.dtaMaster = false;	
+
 			// create dta device
 			let dtaDevice = new InputDevice();
 			dtaDevice.displayname = e.requestor; 
@@ -768,9 +766,9 @@ export class AppComponent { // event stuff
   }
 
   removeDTAInput(changeInput: boolean) {
-	  if (this.selectedDisplay.odefaultinput != null) {
+	  if (this.selectedDisplay.odefaultinput != null && changeInput) {
 	  	  this.changeInput(this.selectedDisplay.odefaultinput); 
-	  } else {
+	  } else if (changeInput) {
 	 	  this.changeInput(this.selectedDisplay.oinputs[0]);
 	  }
 
@@ -814,7 +812,7 @@ export class AppComponent { // event stuff
     }
 
 	for (let ad of this.selectedDisplay.oaudiodevices) {
-		if (this.selectedDisplay.DTADevice != null) {
+		if (this.dtaMinion()) {
 			body.audioDevices.push({
 				"name": ad.name,
 				"muted": true	
@@ -1040,6 +1038,9 @@ export class AppComponent { // event stuff
     this.selectedDisplay.oinput = i;
   }
 
+  dtaMinion(): boolean {
+ 	return this.selectedDisplay.DTADevice != null; 
+  }
 
   //Toggle DTA
   sendingDTA: boolean;
@@ -1053,8 +1054,8 @@ export class AppComponent { // event stuff
 
     this.dtaMaster = !this.dtaMaster;
 
-    if (this.dtaMaster && (this.selectedDisplay.DTADevice != null)) {
-      this.removeDTAInput(true);
+    if (this.dtaMaster && this.dtaMinion()) {
+      this.removeDTAInput(false);
     } 
 
 	if (this.dtaMaster) {
