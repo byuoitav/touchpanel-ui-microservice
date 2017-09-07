@@ -724,7 +724,7 @@ export class AppComponent { // event stuff
 	case "dta":
 		// we use device as the 'key' in dta events
 		switch (e.device) {
-		case "false":
+		case "off":
 			// delete dta device from display
 			this.selectedDisplay.DTADevice = null;
 			break;
@@ -734,11 +734,14 @@ export class AppComponent { // event stuff
 			dtaDevice.displayname = e.requestor; 
 			dtaDevice.name = e.eventInfoValue;
 			dtaDevice.icon = "people";
+			console.log("dta device", dtaDevice);
 
 			for (let d of this.displays) {
 				if (d.selected)
-					d.DTADevice = dtaDevice;	
+					d.DTADevice = dtaDevice;
 			}
+
+    		setTimeout(() => { this.buildInputMenu(); }, 0)
 
 			break;
 		case "blanked":
@@ -999,22 +1002,16 @@ export class AppComponent { // event stuff
     if (this.sendingOn || this.selectedDisplay.oaudiodevices == null) {
       if (this.sendingOn) {
         this.debugmessage("Already sending the power-on request");
-      }
-      if (this.selectedDisplay.oaudiodevices == null) {
-        console.log("Yo, no devices")
-        this.debugmessage("Oaudiodevices was null");
-        this.api.getJSON().subscribe(data => {
-          Object.assign(this.api.uiconfig, data);
-          console.log("uiconfig", this.api.uiconfig);
-          this.api.loaded.next(true);
-        });
-      }
+      } else {
+	 	this.debugmessage("oaudiodevices is null");
+	  }
       return;
     }
 
     this.sendingOn = true;
     this.startSpinning = true;
     this.displayselection = false;
+
     let body = { displays: [], audioDevices: [] }
     for (let display of this.displays) {
       body.displays.push({
@@ -1025,25 +1022,22 @@ export class AppComponent { // event stuff
       });
     }
 
-    for (let ad of this.selectedDisplay.oaudiodevices) {
-      if (this.dtaMinion) {
-        body.audioDevices.push({
-          "name": ad.name,
-          "muted": true,
-          "volume": 30
-        });
-
-      } else {
-        body.audioDevices.push({
-          "name": ad.name,
-          "muted": false,
-          "volume": 30
-        });
-      }
-    }
+	for (let ad of this.selectedDisplay.oaudiodevices) {
+		if (this.selectedDisplay.DTADevice != null) {
+			body.audioDevices.push({
+				"name": ad.name,
+				"muted": true	
+			});	
+		} else {
+			body.audioDevices.push({
+				"name": ad.name,
+				"muted": false,
+				"volume": 30	
+			});
+		}
+	}
 
     this.put(body, func => { }, err => this.notify.error("Error", "Failed turn on room"), after => {
-      this.debugmessage("Entering.");
       //      this.updateState();
       // need to updateState when turning on display
       this.showing = true;
@@ -1329,13 +1323,19 @@ export class AppComponent { // event stuff
       this.put(body, func => { }, err => this.notify.error("DTA Error", "Failed to set room audio level and input"));
       console.log("Switch to room audio. Using audio configuration:", devices);
 	} else {
+	  let event = {
+	     "requestor": this.api.hostname,
+	     "device": "off",
+	     "eventinfokey": "dta"
+	  }
+	  this.api.publishFeature(event)
+
       // mute room audio
       let body = { audioDevices: [] }
       for (let a of this.selectedDisplay.oaudiodevices) {
         if (a.selected) {
           body.audioDevices.push({
             "name": a.name,
-            //              "muted": false 
             "muted": true
           });
         }
