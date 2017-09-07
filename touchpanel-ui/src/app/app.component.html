@@ -82,7 +82,7 @@
 	<!-- bottom left control -->
     <div class='blank-row'>
 		<!-- display to all -->
-		<div *ngIf="displaytoall && !dtaMinion" class="displaytoall" [class.pulse]="dtaMaster" [class.dtaalignleft]="!multipledisplays && !dtaMaster" [class.dtaalignleftshort]="!multipledisplays && dtaMaster">
+		<div *ngIf="displaytoall && (selectedDisplay.DTADevice != selectedDisplay.oinput)" class="displaytoall" [class.pulse]="dtaMaster" [class.dtaalignleft]="!multipledisplays && !dtaMaster" [class.dtaalignleftshort]="!multipledisplays && dtaMaster">
 			<i class='material-icons' [class.persimmion]="dtaMaster" (click)="toggleDisplayToAll();">call_split</i>
 			<span *ngIf="!dtaMaster" (click)="toggleDisplayToAll();">Display All</span>
 			<span *ngIf="dtaMaster" (click)="toggleDisplayToAll();">Stop</span>
@@ -99,14 +99,14 @@
 		<div *ngIf="mics.length > 0" class="microphone" (click)="micmodal.show()">
 			<i class="material-icons">mic</i>
 		</div>
-		<div *ngIf="!displayselection && !dtaMinion" (click)="buttonpress('mute'); toggleMute()" [class.alignright]="!mics.length > 0">
+		<div *ngIf="!displayselection && (selectedDisplay.DTADevice != selectedDisplay.oinput)" (click)="buttonpress('mute'); toggleMute()" [class.alignright]="!mics.length > 0">
        	    <i *ngIf="isMuted()" class="material-icons red">volume_off</i>
        	    <i *ngIf="!isMuted()" class="material-icons">volume_up</i>
        	</div>
     </div>
 
     <!-- sidebar -->
-    <div *ngIf="!displayselection && !dtaMinion" class='sidebar'>
+    <div *ngIf="!displayselection && (selectedDisplay.DTADevice != selectedDisplay.oinput)" class='sidebar'>
         <div class='volume alignright'>
             <md-slider id="colored-slider" vertical [value]="volumeLevel()" (change)="buttonpress('volume slider'); changeVolume($event.value);" (input)="updateVolume($event.value)"></md-slider>
         </div>

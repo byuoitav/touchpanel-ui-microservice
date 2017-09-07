@@ -253,7 +253,7 @@ export class AppComponent { // event stuff
       this.createOutputDevices();
       this.setupFeatures();
 
-      this.dtaMasterHost = this.api.hostname;
+//      this.dtaMasterHost = this.api.hostname;
     },
       err => {
         this.notify.error("Setup", "Failed to get room status");
@@ -515,10 +515,16 @@ export class AppComponent { // event stuff
   }
 
   getInputDevice(name: string): InputDevice {
+	if (this.selectedDisplay.DTADevice != null) {
+		if (this.selectedDisplay.DTADevice.name == name) 
+			return this.selectedDisplay.DTADevice;	
+	}
+
     for (let input of this.inputs) {
       if (input.name == name)
         return input;
     }
+
     console.error("failed to find an input named:", name);
     return null;
   }
@@ -738,6 +744,7 @@ export class AppComponent { // event stuff
 					d.DTADevice = dtaDevice;
 			}
 
+			this.changeInput(dtaDevice);
     		setTimeout(() => { this.buildInputMenu(); }, 0)
 
 			break;
@@ -759,225 +766,15 @@ export class AppComponent { // event stuff
 	default: 
 		break;
 	}
-
-	/* 
-    if (this.dtaMinion && (e.device == "dta" || e.device == this.dtaMasterHost)) {
-      switch (e.eventInfoKey) {
-        case "input":
-          // if the currect selected input is the 'dta' input
-          if (this.selectedDisplay.oinput.displayname == this.dtaMasterHost) {
-            let i = this.getInputDevice(e.eventInfoValue);
-            i.name = e.eventInfoValue;
-            var body = { displays: [] }
-            for (let display of this.displays) {
-              body.displays.push({
-                "name": display.name,
-                "input": e.eventInfoValue,
-              });
-            }
-            console.log("[DTA] Changing input", body);
-            this.put(body, func => { }, err => this.notify.error("DTA Error", "Failed to change minion input"));
-
-            i = this.getInputDevice(this.dtaMasterHost);
-            if (i != null) this.selectedDisplay.oinput = i;
-          }
-
-          for (let input of this.selectedDisplay.oinputs) {
-            if (input.displayname == this.dtaMasterHost) {
-              input.displayname = e.eventInfoValue;
-			  console.log("here");
-              console.log("change", input, "to have name", e.eventInfoValue);
-            }
-          }
-          break;
-        case "blanked":
-          body = { displays: [] }
-          for (let display of this.displays) {
-            body.displays.push({
-              "name": display.name,
-              "blanked": (e.eventInfoValue == 'true')
-            })
-          }
-          this.put(body, func => { }, err => this.notify.error("DTA Error", "Failed to set minion blank"));
-          break;
-        case "dta":
-          this.dtaMinion = (e.eventInfoValue == 'true');
-          if (!this.dtaMinion) {
-            this.removeDTAInput(true);
-          } else {
-            // a different has become master.
-            // needs at least 3 panels in the room to ever happen!!!
-            for (let input of this.selectedDisplay.oinputs) {
-              if (input.displayname == this.dtaMasterHost) {
-                input.displayname = e.eventInfoValue;
-				console.log("here!!");
-                console.log("change", input, "to have name", e.eventInfoValue);
-              }
-            }
-
-            if (this.selectedDisplay.oinput.displayname == this.dtaMasterHost) {
-              // change input now if the group input is selected		
-              var body = { displays: [] }
-              for (let display of this.displays) {
-                if (display.selected) {
-                  //we're now being asked to turn on the display when display all happens.
-                  body.displays.push({
-                    "power": "on",
-                    "name": display.name,
-                    "input": e.eventInfoValue,
-                  });
-                }
-              }
-              console.log("[DTA] Changing input", body);
-              this.put(body, func => { }, err => this.notify.error("DTA Error", "Failed to change minion input"));
-            }
-          }
-          break;
-        default:
-          console.error("unknown eventInfoKey:", e.eventInfoKey);
-          break;
-      }
-    } else if (this.dtaMinion && e.device != "dta") {
-      // stuff to do while you are a minion and recieve an event, but it isn't from the master panel
-      // mostly general updating of the ui?
-      switch (e.eventInfoKey) {
-        case "blanked":
-          let d = this.getOutputDevice(e.device)
-          if (d != null) {
-            d.blanked = (e.eventInfoValue == 'true');
-            this.updateBlanked();
-          }
-          break;
-        default:
-          //				console.error("nothing to do i guess");
-          break;
-      }
-
-    } else {
-      switch (e.eventInfoKey) {
-        case "input":
-          let od = this.getOutputDevice(e.device);
-          let i = this.getInputDevice(e.eventInfoValue);
-          if (i != null && od != null) od.oinput = i;
-          break;
-        case "power":
-          if (this.getOutputDevice(e.device) != null) {
-            if (e.eventInfoValue == "on") {
-              this.showing = true;
-              this.startSpinning = false;
-            } else {
-              this.showing = false;
-            }
-          }
-          break;
-        case "volume":
-          let vd = this.getAudioDevice(e.device)
-          if (vd != null) {
-            vd.volume = Number(e.eventInfoValue);
-            vd.muted = false;
-          } else {
-            let m = this.getMic(e.device)
-            if (m != null) {
-              m.volume = Number(e.eventInfoValue);
-              m.muted = false;
-            }
-          }
-          break;
-        case "muted":
-          let md = this.getAudioDevice(e.device);
-          if (md != null) md.muted = (e.eventInfoValue == 'true');
-          else {
-            let m = this.getMic(e.device)
-            if (m != null) {
-              m.muted = (e.eventInfoValue == 'true');
-            }
-          }
-          break;
-        case "blanked":
-          let d = this.getOutputDevice(e.device)
-          if (d != null) {
-            d.blanked = (e.eventInfoValue == 'true');
-            this.updateBlanked();
-          }
-          break;
-        case "dta":
-          this.dtaMinion = (e.eventInfoValue == 'true');
-
-          let changeDTAName = false;
-          let oldMaster = "";
-          //if the dtaMasterHost isn't null at this point, we need to change the name of it
-          if (this.dtaMasterHost != null) {
-            changeDTAName = true;
-            oldMaster = this.dtaMasterHost;
-          }
-          this.dtaMasterHost = e.device;
-
-          // case for if one slice already exists
-          // so you wouldn't recreate one in that case, just change it's display name
-
-          if (this.dtaMinion) {
-            // becoming a minion
-            this.showing = true
-            let body = { displays: [], audioDevices: [] };
-            for (let display of this.displays) {
-              body.displays.push({
-                "power": "on",
-                "name": display.name,
-                "blanked": false,
-              });
-              for (let ad of display.oaudiodevices) {
-                body.audioDevices.push({
-                  "power": "on",
-                  "name": ad.name,
-                  "muted": true
-                })
-              }
-            }
-            console.log("[DTA] Entering dta mode:", body);
-            this.put(body, func => { }, err => this.notify.error("DTA Error", "Failed to enter DTA mode"));
-
-            if (changeDTAName) {
-              for (let input of this.selectedDisplay.oinputs) {
-                if (input.displayname == oldMaster) {
-                  input.displayname = this.dtaMasterHost;
-                  console.log("change", input, "to have name", e.eventInfoValue);
-                }
-              }
-            }
-            else {
-              let i = new InputDevice();
-              i.name = this.dtaMasterHost;
-              i.displayname = this.dtaMasterHost;
-              i.icon = "people";
-              this.inputs.push(i);
-
-              let names: string[] = [];
-              for (d of this.displays) {
-                if (d.selected) {
-                  d.oinputs.push(this.getInputDevice(this.dtaMasterHost));
-                  names.push(d.name);
-                }
-              }
-              this.changeControl(names, false);
-            }
-
-            i = this.getInputDevice(this.dtaMasterHost);
-            if (i != null) this.selectedDisplay.oinput = i;
-            this.dtaMaster = false;
-          } else {
-            this.dtaMinion = false;
-            this.removeDTAInput(true);
-          }
-          break;
-        default:
-          console.error("unknown eventInfoKey:", e.eventInfoKey);
-          break;
-      }
-	}
-   */
   }
 
   removeDTAInput(changeInput: boolean) {
+	  if (this.selectedDisplay.odefaultinput != null) {
+	  	  this.changeInput(this.selectedDisplay.odefaultinput); 
+	  } else {
+	 	  this.changeInput(this.selectedDisplay.oinputs[0]);
+	  }
+
 	  this.selectedDisplay.DTADevice = null;
    	  setTimeout(() => { this.buildInputMenu(); }, 0)
   }
@@ -1162,8 +959,9 @@ export class AppComponent { // event stuff
 
     if (this.dtaMaster) {
       let event = {
-        "device": "dta",
-        "eventinfokey": "blanked",
+		"requestor": this.api.hostname,
+        "device": "blanked",
+        "eventinfokey": "dta",
         "eventinfovalue": String(this.selectedDisplay.blanked)
       }
       this.api.publishFeature(event)
@@ -1186,8 +984,9 @@ export class AppComponent { // event stuff
 
     if (this.dtaMaster) {
       let event = {
-        "device": "dta",
-        "eventinfokey": "blanked",
+		"requestor": this.api.hostname,
+        "device": "blanked",
+        "eventinfokey": "dta",
         "eventinfovalue": String(this.selectedDisplay.blanked)
       }
       this.api.publishFeature(event)
@@ -1204,18 +1003,15 @@ export class AppComponent { // event stuff
   }
 
   changeInput(i: InputDevice) {
-    if (this.dtaMaster) {
-      let event = {
-        "device": "dta",
-        "eventinfokey": "input",
-        "eventinfovalue": i.name
-      }
-      this.api.publishFeature(event)
-    } else if (this.dtaMinion) {
-      this.dtaMinion = false;
-    } else if (i.displayname == this.dtaMasterHost) {
-      this.dtaMinion = true;
-    }
+  	if (this.dtaMaster) {
+ 		let event = {
+			"requestor": this.api.hostname,
+			"device": "input",
+			"eventinfokey": "dta",
+			"eventinfovalue": i.name 
+		} 
+		this.api.publishFeature(event);
+	} 
 
     let body = { displays: [], audioDevices: [] }
     for (let display of this.displays) {
@@ -1227,8 +1023,6 @@ export class AppComponent { // event stuff
       }
     }
 
-    // this is the problem with the change input video switcher (?) ce
-    // can't change the audioInput in the audioDisplays array
     if (!this.dtaMinion) {
       for (let a of this.selectedDisplay.oaudiodevices) {
         if (a.selected) {
@@ -1249,7 +1043,6 @@ export class AppComponent { // event stuff
   //Toggle DTA
   sendingDTA: boolean;
   dtaMaster: boolean;
-  dtaMasterHost: string;
   dtaMinion: boolean;
   toggleDisplayToAll() {
     if (this.sendingDTA)
@@ -1260,9 +1053,11 @@ export class AppComponent { // event stuff
 
     this.dtaMaster = !this.dtaMaster;
 
-    if (this.dtaMaster && this.dtaMasterHost != this.api.hostname) {
+    if (this.dtaMaster && (this.selectedDisplay.DTADevice != null)) {
       this.removeDTAInput(true);
-    } else if (this.dtaMaster) {
+    } 
+
+	if (this.dtaMaster) {
 	    let event = {
 		  "requestor": this.api.hostname,
 	      "device": "input",
