@@ -107,7 +107,6 @@ export class AppComponent { // event stuff
     this.ringopen = false;
     this.displaytoall = false;
     this.poweroffall = false;
-	this.dtaMinion = false;
 
     // management
     this.deviceInfo = new Object();
@@ -1003,6 +1002,8 @@ export class AppComponent { // event stuff
   }
 
   changeInput(i: InputDevice) {
+	console.log("changing input to", i);
+
   	if (this.dtaMaster) {
  		let event = {
 			"requestor": this.api.hostname,
@@ -1023,7 +1024,7 @@ export class AppComponent { // event stuff
       }
     }
 
-    if (!this.dtaMinion) {
+    if (this.selectedDisplay.DTADevice == null) {
       for (let a of this.selectedDisplay.oaudiodevices) {
         if (a.selected) {
           body.audioDevices.push({
@@ -1043,7 +1044,6 @@ export class AppComponent { // event stuff
   //Toggle DTA
   sendingDTA: boolean;
   dtaMaster: boolean;
-  dtaMinion: boolean;
   toggleDisplayToAll() {
     if (this.sendingDTA)
       return;
