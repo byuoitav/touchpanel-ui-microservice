@@ -767,7 +767,7 @@ export class AppComponent { // event stuff
 	
 			    let inputbody = { displays: [], audioDevices: [] }
 				// only change things if DTA input is currently selected, or everything is off
-				if (this.selectedDisplay.oinput === this.selectedDisplay.DTADevice || !this.showing) {
+				if (this.selectedDisplay.oinput == this.selectedDisplay.DTADevice || this.selectedDisplay.DTADevice == null || !this.showing) {
 
 					// change input & turn on
 				    for (let d of this.displays) {
@@ -776,6 +776,7 @@ export class AppComponent { // event stuff
 				        inputbody.displays.push({
 				          "name": d.name,
 						  "power": "on",
+						  "blanked": false, 
 				          "input": dtaDevice.name
 				        });
 				      }
