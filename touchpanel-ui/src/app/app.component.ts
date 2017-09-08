@@ -756,36 +756,52 @@ export class AppComponent { // event stuff
 			break;
 
 		case "input":
-			this.dtaMaster = false;	
+			if (e.requestor != this.api.hostname) {
+				this.dtaMaster = false;	
+				// create dta device
+				let dtaDevice = new InputDevice();
+				dtaDevice.displayname = this.switchToDisplayName(e.requestor);
+				dtaDevice.name = e.eventInfoValue;
+				dtaDevice.icon = "people";
+				console.log("dta device", dtaDevice);
+	
+			    let inputbody = { displays: [], audioDevices: [] }
+				// only change things if DTA input is currently selected, or everything is off
+				if (this.selectedDisplay.oinput === this.selectedDisplay.DTADevice || !this.showing) {
 
-			// create dta device
-			let dtaDevice = new InputDevice();
-			dtaDevice.displayname = this.switchToDisplayName(e.requestor);
-			dtaDevice.name = e.eventInfoValue;
-			dtaDevice.icon = "people";
-			console.log("dta device", dtaDevice);
+					// change input & turn on
+				    for (let d of this.displays) {
+				      if (d.selected) {
+						d.DTADevice = dtaDevice;
+				        inputbody.displays.push({
+				          "name": d.name,
+						  "power": "on",
+				          "input": dtaDevice.name
+				        });
+				      }
+				    }
+		
+					// mute local audio
+					// TODO Check if unmuted before muting? 
+					// right now, it will re-mute every time the master changes input
+					// i kinda think thats a feature:) Maybe they'll think its a bug lol
+					for (let ad of this.selectedDisplay.oaudiodevices) {
+						if (ad.selected) {
+							inputbody.audioDevices.push({
+								"name": ad.name,
+								"muted": true
+							});
+						}
+					}
 
-			for (let d of this.displays) {
-				if (d.selected)
-					d.DTADevice = dtaDevice;
+				}
+	
+				this.put(inputbody, func => {}, err => this.notify.error("DTA Error", "Failed change input for minion:", err));
+
+	    		setTimeout(() => { this.buildInputMenu(); }, 0)
+			} else {
+				this.dtaMaster = true;		
 			}
-
-			// mute local audio
-    		let body2 = {  audioDevices: [] }
-			for (let ad of this.selectedDisplay.oaudiodevices) {
-				if (ad.selected) {
-					body2.audioDevices.push({
-						"name": ad.name,
-						"muted": true,
-					});
-				}	
-			}
-			this.put(body2, func => {}, err => this.notify.error("DTA Error", "Failed to mute minion"));
-				
-
-			this.changeInput(dtaDevice);
-    		setTimeout(() => { this.buildInputMenu(); }, 0)
-
 			break;
 
 		case "blanked":
