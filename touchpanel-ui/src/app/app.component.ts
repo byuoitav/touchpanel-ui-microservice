@@ -264,7 +264,7 @@ export class AppComponent { // event stuff
   getDTAStatus() {
 	let event = {
 		"requestor": this.api.hostname,
-		"device": "echo",
+		"device": "status",
 		"eventinfokey": "dta",
 		"eventinfovalue": "null"
 	}
@@ -753,34 +753,22 @@ export class AppComponent { // event stuff
 
 			break;
 
-		case "echo":
-			// requestor = current dta master
-			// eventinfovalue = current dta input name
-	    	let event = {
-			  	"requestor": "",
-		    	"device": "input",
-		    	"eventinfokey": "dta",
-				"eventinfovalue": ""
-		    }
-			if (this.dtaMasterHostname.length > 0) {
-				event.requestor = this.dtaMasterHostname;	
-			}
-			if (this.dtaMinion()) {
-				event.eventinfovalue = this.selectedDisplay.DTADevice.name;
+		case "status":
+			if (this.dtaMaster) {
+	    		let event = {
+			  		"requestor": this.api.hostname,
+		    		"device": "input",
+		    		"eventinfokey": "dta",
+					"eventinfovalue": this.selectedDisplay.oinput.name
+		    	}
 			}
 
+			console.log("responding to dta status event");
 		    this.api.publishFeature(event)
 			break;
 
-		case "info": 
-			// update state of dta
-			console.log("HERE");
-			break;
-
 		case "input":
-			this.dtaMasterHostname = e.requestor;
-
-			if (this.dtaMasterHostname != this.api.hostname) {
+			if (e.requestor != this.api.hostname) {
 				this.dtaMaster = false;	
 				// create dta device
 				let dtaDevice = new InputDevice();
@@ -825,7 +813,7 @@ export class AppComponent { // event stuff
 
 	    		setTimeout(() => { this.buildInputMenu(); }, 0)
 			} else {
-				this.dtaMaster = true;		
+				this.dtaMaster = true;
 			}
 			break;
 
@@ -849,7 +837,6 @@ export class AppComponent { // event stuff
   }
 
   removeDTAInput(changeInput: boolean) {
-	  this.dtaMasterHostname = this.api.hostname;
 	  if (this.selectedDisplay.odefaultinput != null && changeInput) {
 	  	  this.changeInput(this.selectedDisplay.odefaultinput); 
 	  } else if (changeInput) {
@@ -1129,7 +1116,6 @@ export class AppComponent { // event stuff
   //Toggle DTA
   sendingDTA: boolean;
   dtaMaster: boolean;
-  dtaMasterHostname: string;
   toggleDisplayToAll() {
     if (this.sendingDTA)
       return;
@@ -1144,7 +1130,6 @@ export class AppComponent { // event stuff
     } 
 
 	if (this.dtaMaster) {
-		this.dtaMasterHostname = this.api.hostname;
 	    let event = {
 		  "requestor": this.api.hostname,
 	      "device": "input",
@@ -1200,7 +1185,6 @@ export class AppComponent { // event stuff
       this.put(body, func => { }, err => this.notify.error("DTA Error", "Failed to set room audio level and input"));
       console.log("Switch to room audio. Using audio configuration:", devices);
 	} else {
-	  this.dtaMasterHostname = ""; 
 	  let event = {
 	    "requestor": this.api.hostname,
 	    "device": "off",
