@@ -70,6 +70,7 @@ func Publish(en *eventinfrastructure.EventNode, event eventinfrastructure.EventI
 	e.Event.EventCause = eventinfrastructure.USERINPUT
 	e.Event.EventInfoKey = event.EventInfoKey
 	e.Event.EventInfoValue = event.EventInfoValue
+	e.Event.Requestor = event.Requestor
 
 	if eventType == eventinfrastructure.Metrics {
 		e.Event.Device = e.Hostname
