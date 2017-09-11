@@ -251,9 +251,6 @@ export class AppComponent { // event stuff
       this.createInputDevices();
       this.createOutputDevices();
       this.setupFeatures();
-
-	  // send dta status event
-	  this.getDTAStatus();
     },
       err => {
         this.notify.error("Setup", "Failed to get room status");
@@ -565,6 +562,7 @@ export class AppComponent { // event stuff
         case 'display-to-all':
           console.log("Enabling feature:", feature);
           this.displaytoall = true;
+		  this.getDTAStatus();
           break;
         case 'power-off-all':
           this.poweroffall = true;
