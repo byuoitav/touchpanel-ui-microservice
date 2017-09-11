@@ -736,7 +736,12 @@ export class AppComponent { // event stuff
 		// we use device as the 'key' in dta events
 		switch (e.device) {
 		case "off":
-			this.removeDTAInput(true);
+			console.log("OFF");
+			if (this.dtaMaster) {
+				this.dtaMaster = false;	
+			} else {
+				this.removeDTAInput(true);
+			}
 
 			// mute local audio
     		let body1 = {  audioDevices: [] }
