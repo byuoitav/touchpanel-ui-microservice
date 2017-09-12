@@ -6,7 +6,7 @@ import { CookieService, CookieOptions } from 'ngx-cookie';
 import { NotificationsService } from 'angular2-notifications';
 
 import { APIService } from './api.service';
-import { Room, RoomConfiguration, RoomStatus, Event, Device, DeviceData, OutputDevice, icons, InputDevice, AudioOutDevice, AudioConfig, Mic } from './objects';
+import { Room, RoomConfiguration, RoomStatus, Event, Device, DeviceData, OutputDevice, icons, InputDevice, AudioOutDevice, AudioConfig, Mic, DTADevice } from './objects';
 import { ModalComponent } from './modal.component';
 
 @Component({
@@ -522,11 +522,6 @@ export class AppComponent { // event stuff
   }
 
   getInputDevice(name: string): InputDevice {
-	if (this.dtaMinion()) {
-		if (this.selectedDisplay.DTADevice.name == name) 
-			return this.selectedDisplay.DTADevice;	
-	}
-
     for (let input of this.inputs) {
       if (input.name == name)
         return input;
@@ -671,6 +666,14 @@ export class AppComponent { // event stuff
       return "Display " + match[0]
   }
 
+  matchesDTAHostname(long: string): boolean {
+	let split = long.split(".");	
+	if (split[0] == this.selectedDisplay.DTADevice.hostname) {
+		return true;
+	}
+ 	return false; 
+  }
+
   updateUI(e: Event) {
     console.log("update ui based on event:", e);
 
@@ -688,12 +691,25 @@ export class AppComponent { // event stuff
             } else {
               this.showing = false;
             }
-          }
+          } 
+
+		  // handles the case where a power off is sent directly through the api
+		  if (this.dtaMinion() && e.eventInfoValue == "standby" && this.matchesDTAHostname(e.requestor)) {
+			this.removeDTAInput(true);
+		  }
           break;
 
 	case "input":
           let od = this.getOutputDevice(e.device);
-          let i = this.getInputDevice(e.eventInfoValue);
+
+		  let i;
+		  if (this.dtaMinion()) {
+		 	if (e.eventInfoValue == this.selectedDisplay.DTADevice.name)
+				i = this.selectedDisplay.DTADevice;
+		  }
+		  if (i == null) {
+          	i = this.getInputDevice(e.eventInfoValue);
+		  }
           if (i != null && od != null) od.oinput = i;
           break;
 
@@ -734,7 +750,6 @@ export class AppComponent { // event stuff
 		// we use device as the 'key' in dta events
 		switch (e.device) {
 		case "off":
-			console.log("OFF");
 			if (this.dtaMaster) {
 				this.dtaMaster = false;	
 			} else {
@@ -774,10 +789,11 @@ export class AppComponent { // event stuff
 			if (e.requestor != this.api.hostname) {
 				this.dtaMaster = false;	
 				// create dta device
-				let dtaDevice = new InputDevice();
+				let dtaDevice = new DTADevice();
 				dtaDevice.displayname = this.switchToDisplayName(e.requestor);
 				dtaDevice.name = e.eventInfoValue;
 				dtaDevice.icon = "people";
+				dtaDevice.hostname = e.requestor;
 				console.log("dta device", dtaDevice);
 	
 			    let inputbody = { displays: [], audioDevices: [] }
