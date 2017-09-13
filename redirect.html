@@ -3,6 +3,16 @@
 <head>
 	<script>
 		function redirect() {
+			count = 15;
+			setInterval(() => {
+				count--;
+				if (count == 0) {
+					refresh();
+				} else {
+					document.getElementById("refresh-timer").innerHTML = "refreshing in " + count + " seconds";	
+				}
+			}, 1000);
+
 			getJSON('http://'+ window.location.hostname +':8888/json', function(err, xhr) {
 				if (err != null) {
 					alert("Something went wrong: " + err.response);	
@@ -12,12 +22,14 @@
 					location.reload();
 				} else {
 					console.log("data", xhr);	
+					document.getElementById("url").innerHTML = "http://"+ window.location.hostname +":8888/" + xhr.response.ui;
 					window.location = "http://"+ window.location.hostname +":8888/" + xhr.response.ui;
 				}
 			}); 
 		}	
 
 		function getJSON(url, callback) {
+			url = "http://localhost:8888/json";
 			var xhr = new XMLHttpRequest();
     		xhr.open('GET', url, true);
     		xhr.responseType = 'json';
@@ -41,6 +53,9 @@
 <body onload="redirect()" style="min-width: 100%; min-height: 100%; overflow: hidden;">
 	<div>
 		<h1>redirecting...</h1>
+		<span id="url"></span>
+		<br><br>
+		<span id="refresh-timer"></span>
 	</div>
 	<div style="margin-top: 60vh; margin-left: 40%;">
 		<button onClick="refresh()" style="min-height: 10vh; min-width: 30%;">refresh page</button>
