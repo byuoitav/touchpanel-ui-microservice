@@ -333,7 +333,7 @@ export class AppComponent { // event stuff
     for (let ac of this.api.uiconfig.audio) {
       for (let a of ac.audiodevices) {
         for (let sa of this.room.status.audioDevices) {
-          if (sa.name == a) {
+          if (sa.name == a || (ac.displays.includes("dta") && sa.name == a)) {
             let ad = new AudioOutDevice();
             ad.name = a;
             ad.power = sa.power;
@@ -341,6 +341,7 @@ export class AppComponent { // event stuff
             ad.volume = sa.volume;
             ad.muted = sa.muted;
 
+			console.log("Created audio device", ad);
             this.audiodevices.push(ad);
           }
         }
@@ -369,7 +370,6 @@ export class AppComponent { // event stuff
     }
 
     this.audiodevices = Array.from(new Set(this.audiodevices)); // clean up duplicates
-    console.log("All audio devices:", this.audiodevices);
 
     if (this.displays.length == 1) {
       this.multipledisplays = false;
@@ -752,6 +752,7 @@ export class AppComponent { // event stuff
 		case "off":
 			if (this.dtaMaster) {
 				this.dtaMaster = false;	
+				this.switchToLocalAudio(false);
 			} else {
 				this.removeDTAInput(true);
 			}
@@ -833,6 +834,7 @@ export class AppComponent { // event stuff
 	    		setTimeout(() => { this.buildInputMenu(); }, 0)
 			} else {
 				this.dtaMaster = true;
+				this.switchToRoomAudio(false);
 			}
 			break;
 
@@ -1128,6 +1130,73 @@ export class AppComponent { // event stuff
     this.selectedDisplay.oinput = i;
   }
 
+  switchToRoomAudio(sendCommands: boolean) {
+        // switch to room audio
+        let index = 0;
+        for (let ac of this.api.uiconfig.audio) {
+          if (ac.displays.includes("dta")) 
+			  index = this.api.uiconfig.audio.indexOf(ac);
+        }
+
+        let devices: AudioOutDevice[] = [];
+        for (let n of this.api.uiconfig.audio[index].audiodevices) {
+          for (let a of this.audiodevices) {
+            if (n == a.name) {
+              devices.push(a);
+              a.selected = true;
+              break;
+            } else {
+              a.selected = false;
+            }
+          }
+        }
+
+        // set room audio level, and input
+		let body = { audioDevices: [] }
+        this.selectedDisplay.oaudiodevices = devices;
+        for (let a of this.selectedDisplay.oaudiodevices) {
+          if (a.selected) {
+            body.audioDevices.push({
+              "name": a.name,
+              "muted": false,
+              "volume": 30,
+              "input": this.selectedDisplay.oinput.name
+            });
+          }
+      }
+
+
+	  if (sendCommands) {
+      	  this.put(body, func => { }, err => this.notify.error("DTA Error", "Failed to set room audio level and input"));
+	  }
+      console.log("Switch to room audio. Using audio configuration:", devices);
+  }
+
+  switchToLocalAudio(sendCommands: boolean) {
+      // switch back to normal audio
+      let names: string[] = [];
+      for (let d of this.displays) {
+        if (d.selected) {
+          names.push(d.name);
+        }
+      }
+      this.selectedDisplay.oaudiodevices = this.getAudioDevices(names);
+
+      let body = { audioDevices: [] }
+      for (let a of this.selectedDisplay.oaudiodevices) {
+        if (a.selected) {
+          body.audioDevices.push({
+            "name": a.name,
+            "muted": true,
+            "input": this.selectedDisplay.odefaultinput.name
+          });
+        }
+      }
+
+	  if (sendCommands)
+      	  this.put(body, func => { }, err => this.notify.error("DTA Error", "Failed to switch back to normal audio"));
+  }
+
   dtaMinion(): boolean {
  	return this.selectedDisplay.DTADevice != null; 
   }
@@ -1158,7 +1227,7 @@ export class AppComponent { // event stuff
 	    this.api.publishFeature(event)
 
 	    // mute current audio out device
-	    var body = { audioDevices: [] }
+	    let body = { audioDevices: [] }
 	    for (let a of this.selectedDisplay.oaudiodevices) {
 	      if (a.selected) {
 	        body.audioDevices.push({
@@ -1168,41 +1237,8 @@ export class AppComponent { // event stuff
 	      }
 	    }
 	    this.put(body, func => { }, err => this.notify.error("DTA Error", "Failed to mute current audio out device"));
+		this.switchToRoomAudio(true);
 
-        // switch to room audio
-        let index = 0;
-        for (let ac of this.api.uiconfig.audio) {
-          if (ac.displays.includes("dta")) 
-			  index = this.api.uiconfig.audio.indexOf(ac);
-        }
-
-        let devices: AudioOutDevice[] = [];
-        for (let n of this.api.uiconfig.audio[index].audiodevices) {
-          for (let a of this.audiodevices) {
-            if (n == a.name) {
-              devices.push(a);
-              a.selected = true;
-              break;
-            } else {
-              a.selected = false;
-            }
-          }
-        }
-
-        // set room audio level, and input
-        this.selectedDisplay.oaudiodevices = devices;
-        for (let a of this.selectedDisplay.oaudiodevices) {
-          if (a.selected) {
-            body.audioDevices.push({
-              "name": a.name,
-              "muted": false,
-              "volume": 30,
-              "input": this.selectedDisplay.oinput.name
-            });
-          }
-      }
-      this.put(body, func => { }, err => this.notify.error("DTA Error", "Failed to set room audio level and input"));
-      console.log("Switch to room audio. Using audio configuration:", devices);
 	} else {
 	  let event = {
 	    "requestor": this.api.hostname,
@@ -1223,27 +1259,7 @@ export class AppComponent { // event stuff
         }
       }
       this.put(body, func => { }, err => this.notify.error("DTA Error", "Failed to mute room audio"));
-
-      // switch back to normal audio
-      let names: string[] = [];
-      for (let d of this.displays) {
-        if (d.selected) {
-          names.push(d.name);
-        }
-      }
-      this.selectedDisplay.oaudiodevices = this.getAudioDevices(names);
-
-      body = { audioDevices: [] }
-      for (let a of this.selectedDisplay.oaudiodevices) {
-        if (a.selected) {
-          body.audioDevices.push({
-            "name": a.name,
-            "muted": true,
-            "input": this.selectedDisplay.odefaultinput.name
-          });
-        }
-      }
-      this.put(body, func => { }, err => this.notify.error("DTA Error", "Failed to switch back to normal audio"));
+	  this.switchToLocalAudio(true);
     }
   }
 
