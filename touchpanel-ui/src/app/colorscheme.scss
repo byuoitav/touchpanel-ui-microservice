@@ -205,16 +205,29 @@ input:checked + .slider {
 
 // display to all border color
 .innerglow {
-//	box-shadow: inset 0 0 10vh $persimmion;
-	animation: innerpulse .5s infinite alternate;
+	animation: innerpulse .7s infinite alternate;
 }
 
 @keyframes innerpulse {
 	from {
-		box-shadow: inset 0 0 8vh $persimmion;	
+		box-shadow: inset 0 0 15vh $persimmion;
 	}
 	to {
-		box-shadow: inset 0 0 10vh $persimmion;	
+		box-shadow: inset 0 0 25vh $persimmion;
+	}
+}
+
+// display to all button outline
+.pulse {
+	animation: pulse .7s infinite alternate;
+}
+
+@keyframes pulse {
+	from {
+		text-shadow: 0 0 3vh $persimmion;
+	}
+	to {
+		text-shadow: 0 0 1vh $persimmion;
 	}
 }
 
