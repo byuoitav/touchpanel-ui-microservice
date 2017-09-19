@@ -780,6 +780,8 @@ export class AppComponent { // event stuff
 		    		"eventinfokey": "dta",
 					"eventinfovalue": this.selectedDisplay.oinput.name
 		    	}
+			} else if (this.dtaMinion()) {
+				// need to send an event here
 			}
 
 			console.log("responding to dta status event");
