@@ -306,7 +306,7 @@ export class AppComponent { // event stuff
 
               // sometimes input comes back blank?
               if (sdisplay.input == "") {
-                this.notify.warn("Error", "Failed to get current input for " + d.name)
+//                this.notify.warn("Error", "Failed to get current input for " + d.name)
               } else {
                 d.oinput = this.getInputDevice(sdisplay.input);
               }
@@ -679,7 +679,7 @@ export class AppComponent { // event stuff
 
     // display error
     if (e.eventInfoKey.includes("Error") || e.eventInfoKey.includes("error") || e.type == 0) {
-      this.notify.warn("Error", e.eventInfoValue)
+//      this.notify.warn("Error", e.eventInfoValue)
     }
 
 	switch (e.eventInfoKey) {
