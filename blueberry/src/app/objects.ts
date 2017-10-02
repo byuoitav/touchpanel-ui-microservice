@@ -18,6 +18,19 @@ export class RoomStatus {
 	audioDevices: DeviceStatus[];
 }
 
+export class UIConfiguration {
+	inputdevices: InputDevice[];
+	displays: OutputDevice[];
+	features: string[];
+	audio: AudioConfig[];
+	ui: string;
+}
+
+export class AudioConfig {
+	displays: string[];
+	audiodevices: string[];
+}
+
 export class DeviceStatus {
 	name: string;
 	power: string;

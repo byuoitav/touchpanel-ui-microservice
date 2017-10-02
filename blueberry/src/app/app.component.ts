@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 
 import { APIService } from './api.service';
+import { SocketService } from './socket.service';
 
 @Component({
   selector: 'app-root',
@@ -10,6 +11,6 @@ import { APIService } from './api.service';
 })
 export class AppComponent {
 
-	constructor (private api: APIService) {
+	constructor (private api: APIService, private socket: SocketService) {
 	}
 }
