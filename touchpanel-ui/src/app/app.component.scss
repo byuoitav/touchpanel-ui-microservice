@@ -806,16 +806,3 @@ input:checked + .slider:before {
 		align-self: center;
 	}
 }
-
-.pulse {
-	animation: pulse .5s infinite alternate;
-}
-
-@keyframes pulse {
-	from {
-		text-shadow: 0 0 3vh #ff8300;	
-	}
-	to {
-		text-shadow: 0 0 1vh #ff6e00;	
-	}
-}
