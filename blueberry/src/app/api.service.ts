@@ -1,7 +1,7 @@
 import { Injectable, EventEmitter } from '@angular/core';
 import { Http, Response, Headers, RequestOptions } from '@angular/http';
 import { Observable } from 'rxjs/Rx';
-import { UIConfiguration } from './objects';
+import { UIConfiguration, Room, RoomConfiguration, RoomStatus } from './objects';
 
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/timeout';
@@ -12,10 +12,11 @@ const MONITOR_TIMEOUT = 30 * 1000;
 @Injectable()
 export class APIService {
 	public building: string;
-	public room: string;
+	public roomName: string;
 	public hostname: string;
 
 	public uiconfig: UIConfiguration;
+	public room: Room;
 
 	private apihost: string;
 	private apiurl: string;
@@ -31,6 +32,7 @@ export class APIService {
 		this.localurl = base[0] + ":" + base[1];
 
 		this.uiconfig = new UIConfiguration();
+		this.room = new Room();	
 
 		this.setupHostname();
 	}
@@ -43,7 +45,7 @@ export class APIService {
 
 				let split = this.hostname.split('-');
 				this.building = split[0];
-				this.room = split[1];
+				this.roomName = split[1];
 				
 				this.setupAPIUrl(false);
 			}, err => {
@@ -53,7 +55,7 @@ export class APIService {
 
 	private setupAPIUrl(next: boolean) {
 		if (next) {
-			console.error("switching to next api")
+			console.warn("switching to next api")
 			this.getNextAPIUrl().subscribe(
 				data => {
 				}, err => {
@@ -69,11 +71,11 @@ export class APIService {
 					this.apihost = "http://" + data["apihost"];
 				}
 
-				this.apiurl = this.apihost + ":8000/buildings/" + this.building + "/rooms/" + this.room; 
-				console.log("API url:", this.apiurl);
+				this.apiurl = this.apihost + ":8000/buildings/" + this.building + "/rooms/" + this.roomName; 
+				console.info("API url:", this.apiurl);
 
 				if (data["enabled"] && !next) {
-					console.log("Monitoring API");
+					console.info("Monitoring API");
 					this.monitorAPI();
 				}
 
@@ -104,9 +106,37 @@ export class APIService {
 			data => {
 				this.uiconfig = new UIConfiguration();
 				Object.assign(this.uiconfig, data);
-				console.log("UI Configuration:", this.uiconfig);
+				console.info("UI Configuration:", this.uiconfig);
+
+				this.setupRoomConfig();
 			}, err => {
 				setTimeout(() => this.setupUIConfig(), RETRY_TIMEOUT);
+			}
+		);
+	}
+
+	private setupRoomConfig() {
+		this.getRoomConfig().subscribe(
+			data => {
+				this.room.config = new RoomConfiguration();
+				Object.assign(this.room.config, data);
+				console.info("Room Configuration:", this.room.config);
+
+				this.setupRoomStatus();
+			}, err => {
+				setTimeout(() => this.setupRoomConfig(), RETRY_TIMEOUT);
+			}
+		);
+	}
+
+	private setupRoomStatus() {
+		this.getRoomStatus().subscribe(
+			data => {
+				this.room.status = new RoomStatus();
+				Object.assign(this.room.status, data);
+				console.info("Room Status:", this.room.status);
+			}, err => {
+				setTimeout(() => this.setupRoomStatus(), RETRY_TIMEOUT);
 			}
 		);
 	}
@@ -155,6 +185,16 @@ export class APIService {
 
 	getUIConfig(): Observable<Object> {
 		return this.http.get(this.localurl + ":8888/json")
+			.map(response => response.json());
+	}
+
+	getRoomConfig(): Observable<Object> {
+		return this.http.get(this.apiurl + "/configuration")
+			.map(response => response.json());
+	}
+
+	getRoomStatus(): Observable<Object> {
+		return this.http.get(this.apiurl)
 			.map(response => response.json());
 	}
 }
