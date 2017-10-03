@@ -1,0 +1,31 @@
+<!-- wheel -->
+<ul>
+	<li class="title-slice">
+		<div></div>
+	</li>
+
+	<li *ngFor="let i of inputs" class="input-slice">
+		<div>
+			<i class='material-icons'>{{i.icon}}</i>
+			<span>{{i.displayname}}</span>
+		</div>
+	</li>
+</ul>
+
+<!-- one 'slice' of wheel -->
+<svg id='svg-block' width="0" height="0">
+  <defs>
+    <clipPath clipPathUnits="objectBoundingBox" id="sector">
+		<path fill="transparent" stroke="#111" stroke-width="1" id="sector" [attr.d]="arcpath"></path>
+    </clipPath>
+  </defs>
+</svg>
+
+<!-- title slice -->
+<svg id='svg-block' width="0" height="0">
+  <defs>
+    <clipPath clipPathUnits="objectBoundingBox" id="title-sector">
+		<path fill="transparent" stroke="#111" stroke-width="1" id="sector" [attr.d]="titlearcpath"></path>
+    </clipPath>
+  </defs>
+</svg>
