@@ -1,10 +1,11 @@
 import { Injectable, EventEmitter } from '@angular/core';
 import { Http, Response, Headers, RequestOptions } from '@angular/http';
 import { Observable } from 'rxjs/Rx';
-import { UIConfiguration, Room, RoomConfiguration, RoomStatus } from './objects';
+import { UIConfiguration, Room, RoomConfiguration, RoomStatus, Device } from './objects';
 
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/timeout';
+import { deserialize } from 'serializer.ts/Serializer';
 
 const RETRY_TIMEOUT = 5 * 1000;
 const MONITOR_TIMEOUT = 30 * 1000;
@@ -191,16 +192,19 @@ export class APIService {
 
 	getUIConfig(): Observable<Object> {
 		return this.http.get(this.localurl + ":8888/json")
-			.map(response => response.json());
+			.map(response => response.json())
+			.map(res => deserialize<UIConfiguration>(UIConfiguration, res));
 	}
 
 	getRoomConfig(): Observable<Object> {
 		return this.http.get(this.apiurl + "/configuration")
-			.map(response => response.json());
+			.map(response => response.json())
+			.map(res => deserialize<RoomConfiguration>(RoomConfiguration, res));
 	}
 
 	getRoomStatus(): Observable<Object> {
 		return this.http.get(this.apiurl)
-			.map(response => response.json());
+			.map(response => response.json())
+			.map(res => deserialize<RoomStatus>(RoomStatus, res));
 	}
 }

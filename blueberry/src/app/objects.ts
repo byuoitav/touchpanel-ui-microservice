@@ -1,3 +1,5 @@
+import { Type } from 'serializer.ts/Decorators';
+
 export class Room {
 	config: RoomConfiguration;
 	status: RoomStatus;
@@ -7,21 +9,32 @@ export class RoomConfiguration {
 	id: number;
 	name: string;
 	description: string;
-	devices: Device[] = [];
+
+	@Type(() => Device)
+	devices: Device[];
+
 //	configurationID: number;
 //	configuration: Configuration;
 //	roomDesignation: string;
 }
 
 export class RoomStatus {
+	@Type(() => DeviceStatus)
 	displays: DeviceStatus[];
+
+	@Type(() => DeviceStatus)
 	audioDevices: DeviceStatus[];
 }
 
 export class UIConfiguration {
+	@Type(() => InputDevice)
 	inputdevices: InputDevice[];
+
+	@Type(() => OutputDevice)
 	displays: OutputDevice[];
 	features: string[];
+
+	@Type(() => AudioConfig)
 	audio: AudioConfig[];
 	ui: string;
 }
