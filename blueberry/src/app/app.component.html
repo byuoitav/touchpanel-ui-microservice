@@ -2,6 +2,9 @@
 	<div>
 	</div>
 
+	<div *ngFor="let display of displays">
+		<wheel [display]="display" class="size"></wheel>
+	</div>
 	<div class="wheel-selection">
 		<div *ngFor="let display of displays">
 			<div (click)="big1 = !big1" [class.priority]="big1" class="circle"></div>

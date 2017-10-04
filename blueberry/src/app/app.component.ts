@@ -52,7 +52,7 @@ export class AppComponent implements OnInit {
 
 			if (udisplay != null) {
 				let d = new OutputDevice();	
-				d.name = sdisplay.name;
+				d.names[0] = sdisplay.name;
 				d.displayname = cdisplay.display_name;
 				d.icon = udisplay.icon;
 

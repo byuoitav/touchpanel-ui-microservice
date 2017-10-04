@@ -8,6 +8,11 @@
 	height: 100vh;
 }
 
+.size {
+	position: absolute;
+	min-width: 50%;
+	min-height: 50vh;
+}
 // what do we need to blur?
 // everything behind the selected wheel
 // but not the power/volume

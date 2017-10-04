@@ -98,7 +98,7 @@ export class Event {
 }
 
 export class OutputDevice {
-	name: string;
+	names: string[] = [];
 	displayname: string;
 	icon: string;
 

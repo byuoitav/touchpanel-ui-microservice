@@ -1,0 +1,36 @@
+.wheel {
+	padding: 0;
+	list-style: none;
+	position: relative;
+	margin: 30px auto;
+	width: 10%;
+	padding-top: 10%;
+	height: 0;
+	border: 10px;
+
+	li {
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		border-radius: 51%;
+		border: .7vh solid white;	
+		
+		text-shadow: 0 0 1.2vh black;
+	}
+}
+
+.input-slice {
+	clip-path: url(#sector);
+	background-color: red;
+}
+
+.title-slice {
+	clip-path: url(#title-sector);
+}
+
+.selectedInput {
+	background-color: black;	
+}
+
