@@ -16,15 +16,33 @@
 .wheel-selection {
 		
 	.circle {
+		transition: .5s ease all;
 		filter: blur(10px);
 		background-color: blue;
 		border-radius: 50%;
 		width: 25vh;
-		height: 25vh;		
+		height: 25vh;
+
+		position: absolute;
+	}
+
+	.right {
+		margin-left: 75%;
+	}
+
+	.random {
+		margin-top: 30%;	
+		margin-left: 45%;
 	}
 
 	.priority {
-		z-index: 10;	
+		z-index: 10;
 		filter: none;
+		width: 50vh;
+		height: 50vh;
+		margin-top: 25vh;
+		margin-left: 35%;
+		margin-bottom: 25vh;
+		margin-right: 35%;
 	}
 }
