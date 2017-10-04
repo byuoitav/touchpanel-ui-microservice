@@ -4,9 +4,15 @@
 
 	<div class="wheel-selection">
 		<div *ngFor="let display of displays">
+			<div *ngIf="false" class="circle"></div>
 			<div class="circle"></div>
-			<div class="circle"></div>
-			<div class="circle"></div>
+			<div class="circle "></div>
 		</div>
+	</div>
+
+	<div *ngFor="let display of displays">
+		<div *ngIf="true" class="circle priority"></div>
+		<div class="circle"></div>
+		<div class="circle"></div>
 	</div>
 </div>
