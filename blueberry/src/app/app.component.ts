@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 
+import { InputDevice } from './objects';
 import { APIService } from './api.service';
 import { SocketService } from './socket.service';
 
@@ -11,10 +12,33 @@ import { SocketService } from './socket.service';
 })
 export class AppComponent implements OnInit {
 
+	inputs: InputDevice[] = [];
+
 	constructor (private api: APIService, private socket: SocketService) {
 	}
 
 	public ngOnInit() {
+		this.api.loaded.subscribe(() => {
+			console.log("api data ready");
+			this.createInputDevices();
+		})
+	}
+
+	private createInputDevices() {
+		for (let input of this.api.room.config.devices) {
+			if (input.hasRole('VideoIn') || input.hasRole('AudioIn')) {
+				for (let i of this.api.uiconfig.inputdevices) {
+					if (i.name == input.name) {
+						let ii = new InputDevice();	
+						ii.name = input.name;
+						ii.displayname = input.displayname;
+						ii.icon = i.icon;
+						console.log("created input", ii);
+						this.inputs.push(ii);
+					}	
+				}	
+			}	
+		}	
 	}
 
 	// app component sets up the devices from the api's information

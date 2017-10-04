@@ -7,7 +7,7 @@ export class RoomConfiguration {
 	id: number;
 	name: string;
 	description: string;
-	devices: Device[];
+	devices: Device[] = [];
 //	configurationID: number;
 //	configuration: Configuration;
 //	roomDesignation: string;
@@ -50,7 +50,7 @@ export class Device {
 	type: string;
 	roles: string;
 
-	hasRole(role: string): boolean {
+	public hasRole(role: string): boolean {
 		for (let r of this.roles) {
 			if (r == role) {
 				return true;

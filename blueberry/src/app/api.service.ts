@@ -11,6 +11,8 @@ const MONITOR_TIMEOUT = 30 * 1000;
 
 @Injectable()
 export class APIService {
+	public loaded: EventEmitter<boolean>;
+
 	public building: string;
 	public roomName: string;
 	public hostname: string;
@@ -22,7 +24,7 @@ export class APIService {
 	private apiurl: string;
 	private localurl: string;
 	private options: RequestOptions;
-	
+
 	constructor(private http: Http) {
 		let headers = new Headers();
 		headers.append('content-type', 'application/json');
@@ -33,6 +35,7 @@ export class APIService {
 
 		this.uiconfig = new UIConfiguration();
 		this.room = new Room();	
+		this.loaded = new EventEmitter<boolean>();
 
 		this.setupHostname();
 	}
@@ -120,6 +123,7 @@ export class APIService {
 			data => {
 				this.room.config = new RoomConfiguration();
 				Object.assign(this.room.config, data);
+
 				console.info("Room Configuration:", this.room.config);
 
 				this.setupRoomStatus();
@@ -135,6 +139,8 @@ export class APIService {
 				this.room.status = new RoomStatus();
 				Object.assign(this.room.status, data);
 				console.info("Room Status:", this.room.status);
+
+				this.loaded.emit(true);
 			}, err => {
 				setTimeout(() => this.setupRoomStatus(), RETRY_TIMEOUT);
 			}
