@@ -3,7 +3,7 @@ import { Component } from '@angular/core';
 @Component({
 	selector: 'wheel',
 	templateUrl: './wheel.component.html',
-	styleUrls: ['./wheelcomponent.scss'],
+	styleUrls: ['./wheel.component.scss'],
 })
 export class WheelComponent {
 

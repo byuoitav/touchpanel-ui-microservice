@@ -13,6 +13,10 @@ export class RoomConfiguration {
 	@Type(() => Device)
 	devices: Device[];
 
+	match(n: string) {
+		return n == this.name;	
+	}
+
 //	configurationID: number;
 //	configuration: Configuration;
 //	roomDesignation: string;
@@ -30,13 +34,20 @@ export class UIConfiguration {
 	@Type(() => InputDevice)
 	inputdevices: InputDevice[];
 
-	@Type(() => OutputDevice)
-	displays: OutputDevice[];
+	@Type(() => DisplayConfig)
+	displays: DisplayConfig[];
 	features: string[];
 
 	@Type(() => AudioConfig)
 	audio: AudioConfig[];
 	ui: string;
+}
+
+export class DisplayConfig {
+	name: string;
+	defaultinput: string;
+	inputs: string[];
+	icon: string;
 }
 
 export class AudioConfig {
@@ -51,12 +62,16 @@ export class DeviceStatus {
 	blanked: boolean;
 	muted: boolean;
 	volume: number;
+
+	match(n: string) {
+		return n == this.name;	
+	}
 }
 
 export class Device {
 	id: number;
 	name: string;
-	displayname: string;
+	display_name: string;
 	address: string;
 	input: boolean;
 	output: boolean;
@@ -90,7 +105,7 @@ export class OutputDevice {
 	blanked: boolean;
 	input: InputDevice;
 
-	inputs: InputDevice[];
+	inputs: InputDevice[] = [];
 	defaultinput: InputDevice;
 }
 

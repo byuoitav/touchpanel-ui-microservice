@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 
-import { InputDevice } from './objects';
+import { InputDevice, OutputDevice } from './objects';
 import { APIService } from './api.service';
 import { SocketService } from './socket.service';
 
@@ -13,32 +13,63 @@ import { SocketService } from './socket.service';
 export class AppComponent implements OnInit {
 
 	inputs: InputDevice[] = [];
+	displays: OutputDevice[] = []; 
 
 	constructor (private api: APIService, private socket: SocketService) {
 	}
 
 	public ngOnInit() {
 		this.api.loaded.subscribe(() => {
-			console.log("api data ready");
 			this.createInputDevices();
-		})
+			this.createOutputDevices();
+		});
 	}
 
 	private createInputDevices() {
-		for (let input of this.api.room.config.devices) {
-			if (input.hasRole('VideoIn') || input.hasRole('AudioIn')) {
-				for (let i of this.api.uiconfig.inputdevices) {
-					if (i.name == input.name) {
-						let ii = new InputDevice();	
-						ii.name = input.name;
-						ii.displayname = input.displayname;
-						ii.icon = i.icon;
-						console.log("created input", ii);
-						this.inputs.push(ii);
-					}	
-				}	
-			}	
-		}	
+		for (let device of this.api.room.config.devices) {
+			if (device.hasRole('VideoIn') || device.hasRole('AudioIn')) {
+				let input = this.api.uiconfig.inputdevices.find((i) => i.name == device.name);
+				// TODO if input == null
+				let i = new InputDevice();	
+				i.name = device.name;
+				i.displayname = device.display_name;
+				i.icon = input.icon;
+
+				this.inputs.push(i);
+			}
+		}
+
+		console.info("Inputs", this.inputs);
+	}
+
+	private createOutputDevices() {
+		for (let sdisplay of this.api.room.status.displays) {
+			// TODO if these == null
+			let cdisplay = this.api.room.config.devices.find((d) => d.name == sdisplay.name);
+			let udisplay = this.api.uiconfig.displays.find((d) => d.name == sdisplay.name);
+
+//			console.log("sdisplay", sdisplay, "cdisplay", cdisplay, "udisplay", udisplay);
+
+			if (udisplay != null) {
+				let d = new OutputDevice();	
+				d.name = sdisplay.name;
+				d.displayname = cdisplay.display_name;
+				d.icon = udisplay.icon;
+
+				d.defaultinput = this.inputs.find((i) => i.name == udisplay.defaultinput);
+				udisplay.inputs.forEach(n => {
+					let input = this.inputs.find((i) => i.name == n);
+					if (input != null) d.inputs.push(input);
+				});
+				d.input = this.inputs.find((i) => i.name == sdisplay.input);
+
+				d.blanked = sdisplay.blanked;
+
+				// TODO d.selected?
+				this.displays.push(d);
+			}
+		}
+		console.info("Displays", this.displays);
 	}
 
 	// app component sets up the devices from the api's information
