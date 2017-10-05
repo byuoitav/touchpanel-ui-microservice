@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, ElementRef } from '@angular/core';
+import { Component, Input, OnInit, ElementRef, ViewChild } from '@angular/core';
 
 import { OutputDevice } from './objects';
 
@@ -19,15 +19,17 @@ export class WheelComponent implements OnInit {
 	rightoffset: string;
 	topoffset: string;
 
-	constructor(private element: ElementRef) {}
+	@ViewChild("wheel") wheel: ElementRef;
+
+	constructor() {}
 
 	ngOnInit() {
-		this.render();
+		setTimeout(() => this.render(), 0);
 	}
 
 	private render() {
-		let numOfChildren = this.element.nativeElement.childElementCount;	
-		let children = this.element.nativeElement.children;
+		let numOfChildren = this.wheel.nativeElement.childElementCount;	
+		let children = this.wheel.nativeElement.children;
 		let angle = (360 - WheelComponent.TITLE_ANGLE) / (numOfChildren - 1);
 
 		this.arcpath = WheelComponent.getArc(.5, .5, .5, 0, angle);
@@ -97,7 +99,7 @@ export class WheelComponent implements OnInit {
 
 		return {
 			x: cx + (r * Math.cos(angleInRad)),
-			y: cy + (r * Math.cos(angleInRad))	
+			y: cy + (r * Math.sin(angleInRad))	
 		}
 	}
 }

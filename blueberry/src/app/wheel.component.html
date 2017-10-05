@@ -1,11 +1,11 @@
 <!-- wheel -->
-<ul class="wheel">
+<ul #wheel class="wheel">
 	<li class="title-slice">
 		<div></div>
 	</li>
 
-	<li *ngFor="let i of display.inputs" class="slice input-slice">
-		<div>
+	<li *ngFor="let i of display.inputs" class="input-slice">
+		<div [style.top]="topoffset" [style.right]="rightoffset">
 			<i class='material-icons'>{{i.icon}}</i>
 			<span>{{i.displayname}}</span>
 		</div>

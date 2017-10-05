@@ -3,8 +3,8 @@
 	list-style: none;
 	position: relative;
 	margin: 30px auto;
-	width: 10%;
-	padding-top: 10%;
+	width: 30%;
+	padding-top: 30%;
 	height: 0;
 	border: 10px;
 
@@ -28,6 +28,7 @@
 
 .title-slice {
 	clip-path: url(#title-sector);
+	background-color: grey;
 }
 
 .selectedInput {
