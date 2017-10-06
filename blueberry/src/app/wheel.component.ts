@@ -18,13 +18,24 @@ export class WheelComponent implements OnInit {
 	titlearcpath: string;
 	rightoffset: string;
 	topoffset: string;
+	circleOpen: boolean;
 
 	@ViewChild("wheel") wheel: ElementRef;
 
-	constructor() {}
+	constructor() {
+		this.circleOpen = false;	
+	}
 
 	ngOnInit() {
 		setTimeout(() => this.render(), 0);
+	}
+
+	public open() {
+		this.circleOpen = true;	
+	}
+	
+	public close() {
+		this.circleOpen = false;	
 	}
 
 	private render() {
