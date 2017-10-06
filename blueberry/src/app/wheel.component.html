@@ -1,16 +1,32 @@
-<!-- wheel -->
-<ul #wheel class="wheel">
-	<li class="title-slice">
-		<div></div>
-	</li>
-
-	<li *ngFor="let i of display.inputs" class="input-slice">
-		<div [style.top]="topoffset" [style.right]="rightoffset">
-			<i class='material-icons'>{{i.icon}}</i>
-			<span>{{i.displayname}}</span>
-		</div>
-	</li>
-</ul>
+<div class="circle">
+	<!-- wheel -->
+	<ul #wheel class="wheel">
+		<li class="title-slice">
+			<div></div>
+		</li>
+	
+		<li *ngFor="let i of display.inputs" class="input-slice">
+			<div class="input" [style.top]="topoffset" [style.right]="rightoffset">
+				<i class='material-icons'>{{i.icon}}</i>
+				<span>{{i.displayname}}</span>
+			</div>
+		</li>
+	
+		<!-- lines -->
+		<li>
+			<div class="line">
+			</div>
+		</li>
+	
+		<li *ngFor="let i of display.inputs">
+			<div class="line">
+			</div>
+		</li>
+	</ul>
+	
+	<div class="center">
+	</div>
+</div>
 
 <!-- one 'slice' of wheel -->
 <svg id='svg-block' width="0" height="0">

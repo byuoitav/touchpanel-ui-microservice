@@ -652,7 +652,9 @@ export class AppComponent { // event stuff
     }
 
     this.rightoffset = String(Nright) + "%";
+	console.log("rightoffset", this.rightoffset);
     this.topoffset = String(Ntop) + "%";
+	console.log("topoffset", this.topoffset);
   }
 
   switchToDisplayName(v: string): string {

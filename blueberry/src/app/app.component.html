@@ -5,11 +5,4 @@
 	<div *ngFor="let display of displays">
 		<wheel [display]="display"></wheel>
 	</div>
-	<div class="wheel-selection">
-		<div *ngFor="let display of displays">
-			<div (click)="big1 = !big1" [class.priority]="big1" class="circle"></div>
-			<div (click)="big2 = !big2" [class.priority]="big2" class="circle right"></div>
-			<div (click)="big3 = !big3" [class.priority]="big3" class="circle random"></div>
-		</div>
-	</div>
 </div>

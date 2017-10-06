@@ -1,10 +1,18 @@
+.circle {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+
+	height: 100%;
+}
+
 .wheel {
 	padding: 0;
 	list-style: none;
 	position: relative;
 	margin: 30px auto;
-	width: 30%;
-	padding-top: 30%;
+	width: 60%;
+	padding-top: 60%;
 	height: 0;
 	border: 10px;
 
@@ -24,14 +32,43 @@
 .input-slice {
 	clip-path: url(#sector);
 	background-color: red;
+
+	.input {
+		position: absolute;
+		display: flex;
+		justify-content: center;
+		flex-direction: column;
+		text-align: center;	
+	
+		font-size: 2.5vh;
+	
+		.material-icons {
+			font-size: 11vh;	
+		}
+	}
 }
 
 .title-slice {
 	clip-path: url(#title-sector);
-	background-color: grey;
+	background-color: blue;
 }
 
 .selectedInput {
 	background-color: black;	
 }
 
+.line {
+	background-color: white;
+	height: .5vh;
+	transform: rotate(90deg);
+}
+
+.center {
+	background-color: purple;
+	position: fixed;
+	border-radius: 50%;
+	width: 48vh;
+	height: 48vh;
+	
+	display: flex;
+}

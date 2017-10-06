@@ -15,7 +15,7 @@ export class WheelComponent implements OnInit {
 	@Input() display: OutputDevice; 
 
 	arcpath: string;
-	titleArcPath: string;
+	titlearcpath: string;
 	rightoffset: string;
 	topoffset: string;
 
@@ -28,19 +28,22 @@ export class WheelComponent implements OnInit {
 	}
 
 	private render() {
-		let numOfChildren = this.wheel.nativeElement.childElementCount;	
+		let numOfChildren = this.display.inputs.length;	
+		console.log("num of children", numOfChildren);
 		let children = this.wheel.nativeElement.children;
-		let angle = (360 - WheelComponent.TITLE_ANGLE) / (numOfChildren - 1);
+		let angle = (360 - WheelComponent.TITLE_ANGLE) / numOfChildren;
 
 		this.arcpath = WheelComponent.getArc(.5, .5, .5, 0, angle);
-		this.titleArcPath = WheelComponent.getArc(.5, .5, .5, 0, WheelComponent.TITLE_ANGLE);
+		this.titlearcpath = WheelComponent.getArc(.5, .5, .5, 0, WheelComponent.TITLE_ANGLE);
 
 		let rotate = "rotate(" + String(-(WheelComponent.TITLE_ANGLE_ROTATE)) + "deg)";
 		children[0].style.transform = rotate;
+		children[0 + numOfChildren + 1].style.transform = rotate; //rotate the line the corrosponds to this slice
 
-		for (let i = 1; i < numOfChildren; ++i) {
+		for (let i = 1; i <= numOfChildren; ++i) {
 			rotate = "rotate(" + String((angle * -i) - WheelComponent.TITLE_ANGLE_ROTATE) + "deg)";
 			children[i].style.transform = rotate;
+			children[i + numOfChildren + 1].style.transform = rotate; // rotate the line that corrosponds to this slice
 
 			rotate = "rotate(" + String((angle * i) + WheelComponent.TITLE_ANGLE_ROTATE) + "deg)";
 			children[i].firstElementChild.style.transform = rotate;
