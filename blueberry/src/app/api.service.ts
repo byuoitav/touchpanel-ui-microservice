@@ -17,12 +17,12 @@ export class APIService {
 	public building: string;
 	public roomName: string;
 	public hostname: string;
+	public apiurl: string;
 
 	public uiconfig: UIConfiguration;
 	public room: Room;
 
 	private apihost: string;
-	private apiurl: string;
 	private localurl: string;
 	private options: RequestOptions;
 
@@ -38,11 +38,11 @@ export class APIService {
 		this.room = new Room();	
 		this.loaded = new EventEmitter<boolean>();
 
-		this.setupHostname();
+//		this.setupHostname();
 	}
 
 	// hostname, building, room
-	private setupHostname() {
+	public setupHostname() {
 		this.getHostname().subscribe(
 			data => {
 				this.hostname = String(data);

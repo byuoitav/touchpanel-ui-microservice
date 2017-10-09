@@ -1,6 +1,7 @@
 import { Component, Input, OnInit, ElementRef, ViewChild } from '@angular/core';
 
 import { OutputDevice } from './objects';
+import { CommandService } from './command.service';
 
 @Component({
 	selector: 'wheel',
@@ -24,8 +25,8 @@ export class WheelComponent implements OnInit {
 
 	@ViewChild("wheel") wheel: ElementRef;
 
-	constructor() {
-		this.circleOpen = false;	
+	constructor(private command: CommandService) {
+		this.circleOpen = false;
 	}
 
 	ngOnInit() {

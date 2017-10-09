@@ -19,6 +19,7 @@ export class AppComponent implements OnInit {
 	}
 
 	public ngOnInit() {
+		this.api.setupHostname();
 		this.api.loaded.subscribe(() => {
 			this.createInputDevices();
 			this.createOutputDevices();

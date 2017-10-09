@@ -5,7 +5,7 @@
 			<div></div>
 		</li>
 	
-		<li *ngFor="let i of display.inputs" class="input-slice" [class.selectedInput]="display.input === i">
+		<li *ngFor="let i of display.inputs" class="input-slice" [class.selectedInput]="display.input === i" (click)="command.changeInput(i)">
 			<div class="input" [style.top]="topoffset" [style.right]="rightoffset">
 				<i class='material-icons'>{{i.icon}}</i>
 				<span>{{i.displayname}}</span>
@@ -13,12 +13,12 @@
 		</li>
 	
 		<!-- lines -->
-		<li>
+		<li class="thin">
 			<div class="line">
 			</div>
 		</li>
 	
-		<li *ngFor="let i of display.inputs">
+		<li *ngFor="let i of display.inputs" class="thin">
 			<div class="line">
 			</div>
 		</li>
