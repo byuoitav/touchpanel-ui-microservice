@@ -1,22 +1,39 @@
+$duration: .5s;
+$ocentersize: 42vh;
+$ccentersize: 30vh;
+$owheelsize: 95vh;
+$cwheelsize: 25vh;
+$linewidth: .5vh;
+
+// reset automatic margins
+ul {
+	-webkit-margin-before: 0em;
+	-webkit-margin-after: 0em;
+}
+
 .circle {
 	display: flex;
 	justify-content: center;
 	align-items: center;
 
-	height: 100%;
-	
-	transition: .5s ease all;
+	position: absolute;
+	transition: $duration ease-in-out all;
+}
+
+.circle-open {
+	margin-top: 50vh !important;
+	margin-left: 50% !important;
 }
 
 .wheel {
 	padding: 0;
 	list-style: none;
-	position: relative;
-	margin: 30px auto;
-	width: 60%;
-	padding-top: 60%;
-	height: 0;
-	border: 10px;
+	position: absolute;
+	min-width: $cwheelsize;
+	min-height: $cwheelsize;	
+//	border: 10px;
+
+	transition: $duration ease-in-out all;
 
 	li {
 		position: absolute;
@@ -29,48 +46,59 @@
 		
 		text-shadow: 0 0 1.2vh black;
 	}
-}
 
-.input-slice {
-	clip-path: url(#sector);
-	background-color: red;
-
-	.input {
-		position: absolute;
-		display: flex;
-		justify-content: center;
-		flex-direction: column;
-		text-align: center;	
+	.input-slice {
+		clip-path: url(#sector);
+		background-color: red;
 	
-		font-size: 2.5vh;
-	
-		.material-icons {
-			font-size: 11vh;	
+		.input {
+			position: absolute;
+			display: flex;
+			justify-content: center;
+			flex-direction: column;
+			text-align: center;	
+		
+			font-size: 2.5vh;
+		
+			.material-icons {
+				font-size: 11vh;	
+			}
 		}
+	}
+
+	.selectedInput {
+		background-color: black;	
+	}
+
+	.title-slice {
+		clip-path: url(#title-sector);
+		background-color: blue;
 	}
 }
 
-.title-slice {
-	clip-path: url(#title-sector);
-	background-color: blue;
-}
-
-.selectedInput {
-	background-color: black;	
+.wheel-open {
+	min-width: $owheelsize !important;
+	min-height: $owheelsize !important;
 }
 
 .line {
 	background-color: white;
-	height: .5vh;
+	height: $linewidth;
 	transform: rotate(90deg);
 }
 
 .center {
 	background-color: purple;
-	position: fixed;
+	position: absolute;
 	border-radius: 50%;
-	width: 48vh;
-	height: 48vh;
+	width: $ccentersize;
+	height: $ccentersize;
 	
 	display: flex;
+	transition: $duration ease-in-out all;
+}
+
+.center-open {
+	width: $ocentersize;
+	height: $ocentersize;
 }

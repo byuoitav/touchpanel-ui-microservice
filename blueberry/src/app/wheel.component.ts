@@ -13,6 +13,8 @@ export class WheelComponent implements OnInit {
 	private static TITLE_ANGLE_ROTATE: number = WheelComponent.TITLE_ANGLE / 2;
 
 	@Input() display: OutputDevice; 
+	@Input() top: string;
+	@Input() right: string;
 
 	arcpath: string;
 	titlearcpath: string;
@@ -40,7 +42,6 @@ export class WheelComponent implements OnInit {
 
 	private render() {
 		let numOfChildren = this.display.inputs.length;	
-		console.log("num of children", numOfChildren);
 		let children = this.wheel.nativeElement.children;
 		let angle = (360 - WheelComponent.TITLE_ANGLE) / numOfChildren;
 

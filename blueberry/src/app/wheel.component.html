@@ -1,11 +1,11 @@
-<div class="circle">
+<div class="circle" [class.circle-open]="circleOpen" [ngStyle]="{'margin-top': top, 'margin-left': right}">
 	<!-- wheel -->
-	<ul #wheel class="wheel" [class.wheel-open]="cicleOpen">
+	<ul #wheel class="wheel" [class.wheel-open]="circleOpen">
 		<li class="title-slice">
 			<div></div>
 		</li>
 	
-		<li *ngFor="let i of display.inputs" class="input-slice">
+		<li *ngFor="let i of display.inputs" class="input-slice" [class.selectedInput]="display.input === i">
 			<div class="input" [style.top]="topoffset" [style.right]="rightoffset">
 				<i class='material-icons'>{{i.icon}}</i>
 				<span>{{i.displayname}}</span>
@@ -24,7 +24,7 @@
 		</li>
 	</ul>
 	
-	<div class="center">
+	<div class="center" [class.center-open]="circleOpen" (click)="circleOpen = !circleOpen">
 	</div>
 </div>
 

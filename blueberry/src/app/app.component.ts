@@ -48,8 +48,6 @@ export class AppComponent implements OnInit {
 			let cdisplay = this.api.room.config.devices.find((d) => d.name == sdisplay.name);
 			let udisplay = this.api.uiconfig.displays.find((d) => d.name == sdisplay.name);
 
-//			console.log("sdisplay", sdisplay, "cdisplay", cdisplay, "udisplay", udisplay);
-
 			if (udisplay != null) {
 				let d = new OutputDevice();	
 				d.names[0] = sdisplay.name;
