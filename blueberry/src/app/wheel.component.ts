@@ -31,6 +31,7 @@ export class WheelComponent implements OnInit {
 
 	ngOnInit() {
 		setTimeout(() => this.render(), 0);
+		this.command.setup(this.display);
 	}
 
 	public open() {

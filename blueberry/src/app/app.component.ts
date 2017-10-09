@@ -19,7 +19,6 @@ export class AppComponent implements OnInit {
 	}
 
 	public ngOnInit() {
-		this.api.setupHostname();
 		this.api.loaded.subscribe(() => {
 			this.createInputDevices();
 			this.createOutputDevices();
@@ -27,9 +26,9 @@ export class AppComponent implements OnInit {
 	}
 
 	private createInputDevices() {
-		for (let device of this.api.room.config.devices) {
+		for (let device of APIService.room.config.devices) {
 			if (device.hasRole('VideoIn') || device.hasRole('AudioIn')) {
-				let input = this.api.uiconfig.inputdevices.find((i) => i.name == device.name);
+				let input = APIService.uiconfig.inputdevices.find((i) => i.name == device.name);
 				// TODO if input == null
 				let i = new InputDevice();	
 				i.name = device.name;
@@ -44,10 +43,10 @@ export class AppComponent implements OnInit {
 	}
 
 	private createOutputDevices() {
-		for (let sdisplay of this.api.room.status.displays) {
+		for (let sdisplay of APIService.room.status.displays) {
 			// TODO if these == null
-			let cdisplay = this.api.room.config.devices.find((d) => d.name == sdisplay.name);
-			let udisplay = this.api.uiconfig.displays.find((d) => d.name == sdisplay.name);
+			let cdisplay = APIService.room.config.devices.find((d) => d.name == sdisplay.name);
+			let udisplay = APIService.uiconfig.displays.find((d) => d.name == sdisplay.name);
 
 			if (udisplay != null) {
 				let d = new OutputDevice();	

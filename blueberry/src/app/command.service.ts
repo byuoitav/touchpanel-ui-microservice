@@ -8,30 +8,37 @@ import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/timeout';
 import { deserialize } from 'serializer.ts/Serializer';
 
+const TIMEOUT = 1.5 * 1000;
+
 @Injectable()
 export class CommandService {
 
+	private device: OutputDevice;
 	private options: RequestOptions;
-	private http: Http;
 
-	constructor(private api: APIService) {
+	constructor(private http: Http) {
 		let headers = new Headers();	
 		headers.append('content-type', 'application/json');
 		this.options = new RequestOptions({ headers: headers})
 	}
 
-	put(data: any): Observable<Object> {
-
-		let val = this.http.put(this.api.apiurl, data, this.options).map(res => res.json());
-
-		return val;
+	public setup(device: OutputDevice) {
+		this.device = device;	
 	}
 
-	changeInput(i: InputDevice, d: OutputDevice): boolean {
-		console.log("changing input to", i);
+	private put(data: any): Observable<Object> {
+		return this.http.put(APIService.apiurl, data, this.options)
+						.timeout(TIMEOUT)
+						.map(res => res.json());
+	}
+
+	public changeInput(i: InputDevice) {
+		console.log("Changing input to", i);
+		let old = this.device.input;
+		this.device.input = i;
 
 		let body = {displays: []}
-		for (let n of d.names) {
+		for (let n of this.device.names) {
 			body.displays.push({
 				"name": n,
 				"input": i.name,
@@ -40,10 +47,10 @@ export class CommandService {
 
 		this.put(body).subscribe(
 			data => {
-				console.log('response', data);	
+				console.log("Success");
+			}, err => {
+				this.device.input = old;		
 			}
 		);
-
-		return true;
 	}
 }
