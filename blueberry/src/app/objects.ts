@@ -107,6 +107,10 @@ export class OutputDevice {
 
 	inputs: InputDevice[] = [];
 	defaultinput: InputDevice;
+
+	// where it's positioned
+	top: string;
+	right: string;	
 }
 
 export class InputDevice {

@@ -14,8 +14,10 @@ export class WheelComponent implements OnInit {
 	private static TITLE_ANGLE_ROTATE: number = WheelComponent.TITLE_ANGLE / 2;
 
 	@Input() display: OutputDevice; 
+	/*
 	@Input() top: string;
 	@Input() right: string;
+   */
 
 	arcpath: string;
 	titlearcpath: string;
@@ -31,7 +33,6 @@ export class WheelComponent implements OnInit {
 
 	ngOnInit() {
 		setTimeout(() => this.render(), 0);
-		this.command.setup(this.display);
 	}
 
 	public open() {

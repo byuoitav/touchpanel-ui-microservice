@@ -22,6 +22,7 @@ export class AppComponent implements OnInit {
 		this.api.loaded.subscribe(() => {
 			this.createInputDevices();
 			this.createOutputDevices();
+			this.organizeDisplays();
 		});
 	}
 
@@ -65,13 +66,60 @@ export class AppComponent implements OnInit {
 
 				// TODO d.selected?
 				this.displays.push(d);
+
+				// TODO REMOVE THIS! JUST FOR TESTING!
+				//
+				let dd = new OutputDevice;
+				dd.names = d.names;
+				dd.displayname = d.displayname;
+				dd.icon = d.icon;
+				dd.defaultinput = d.defaultinput;
+				dd.inputs = d.inputs;
+				dd.input = d.input;
+				dd.blanked = d.blanked;
+				this.displays.push(dd);
+				// 
+				// 
 			}
 		}
 		console.info("Displays", this.displays);
 	}
 
-	// app component sets up the devices from the api's information
-	// wheel component stores that information (the output displays, at least)
-	// another component sends the commands
-	// app component updates the displays with info from the socket?
+	private organizeDisplays() {
+		let distance: number;
+		let rows: number;
+		let columns: number;
+
+		switch(this.displays.length) {
+			case 1:
+				rows = 1;
+				columns = 1;
+				distance = 50;
+				break;
+			case 2:
+				rows = 1;
+				columns = 2;
+				distance = 40;
+				break;
+			case 4:
+				rows = 2;
+				columns = 2;
+				distance = 40;
+				break;
+		}
+
+		for (let r = 0; r < rows; r++) {
+			let index = r * columns;
+
+			for (let c = 0; c < columns; c++) {
+				if (c != 0) {
+					index++;	
+				}
+
+				console.log("index",index + "; row:", r, "x col", c);	
+				this.displays[index].top = "50vh"; // something with r
+				this.displays[index].right = String(distance * c) + "%"; // something with c
+			}	
+		}
+	}
 }

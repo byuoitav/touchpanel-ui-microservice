@@ -1,11 +1,11 @@
-<div class="circle" [class.circle-open]="circleOpen" [ngStyle]="{'margin-top': top, 'margin-left': right}">
+<div class="circle" [class.circle-open]="circleOpen" [ngStyle]="{'margin-top': display.top, 'margin-left': display.right}">
 	<!-- wheel -->
 	<ul #wheel class="wheel" [class.wheel-open]="circleOpen">
 		<li class="title-slice">
 			<div></div>
 		</li>
 	
-		<li *ngFor="let i of display.inputs" class="input-slice" [class.selectedInput]="display.input === i" (click)="command.changeInput(i)">
+		<li *ngFor="let i of display.inputs" class="input-slice" [class.selectedInput]="display.input === i" (click)="command.changeInput(i, display)">
 			<div class="input" [style.top]="topoffset" [style.right]="rightoffset">
 				<i class='material-icons'>{{i.icon}}</i>
 				<span>{{i.displayname}}</span>
@@ -29,7 +29,7 @@
 </div>
 
 <!-- one 'slice' of wheel -->
-<svg id='svg-block' width="0" height="0">
+<svg id='svg-block' width="0" height="0" style="position: absolute;">
   <defs>
     <clipPath clipPathUnits="objectBoundingBox" id="sector">
 		<path fill="transparent" stroke="#111" stroke-width="1" id="sector" [attr.d]="arcpath"></path>
@@ -38,7 +38,7 @@
 </svg>
 
 <!-- title slice -->
-<svg id='svg-block' width="0" height="0">
+<svg id='svg-block' width="0" height="0" style="position: absolute;">
   <defs>
     <clipPath clipPathUnits="objectBoundingBox" id="title-sector">
 		<path fill="transparent" stroke="#111" stroke-width="1" id="sector" [attr.d]="titlearcpath"></path>

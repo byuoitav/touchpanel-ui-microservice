@@ -13,7 +13,6 @@ const TIMEOUT = 1.5 * 1000;
 @Injectable()
 export class CommandService {
 
-	private device: OutputDevice;
 	private options: RequestOptions;
 
 	constructor(private http: Http) {
@@ -22,23 +21,19 @@ export class CommandService {
 		this.options = new RequestOptions({ headers: headers})
 	}
 
-	public setup(device: OutputDevice) {
-		this.device = device;	
-	}
-
 	private put(data: any): Observable<Object> {
 		return this.http.put(APIService.apiurl, data, this.options)
 						.timeout(TIMEOUT)
 						.map(res => res.json());
 	}
 
-	public changeInput(i: InputDevice) {
-		console.log("Changing input to", i);
-		let old = this.device.input;
-		this.device.input = i;
+	public changeInput(i: InputDevice, d: OutputDevice) {
+		console.log("Changing input on", d.names,"to", i.name);
+		let old = d.input;
+		d.input = i;
 
 		let body = {displays: []}
-		for (let n of this.device.names) {
+		for (let n of d.names) {
 			body.displays.push({
 				"name": n,
 				"input": i.name,
@@ -49,7 +44,7 @@ export class CommandService {
 			data => {
 				console.log("Success");
 			}, err => {
-				this.device.input = old;		
+				d.input = old;		
 			}
 		);
 	}

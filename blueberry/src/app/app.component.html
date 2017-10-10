@@ -1,8 +1,15 @@
 <div class="basediv">
-	<div>
+	<!-- multiple displays -->
+	<div *ngIf="displays.length > 1">
+		<div *ngFor="let display of displays">
+			<wheel [display]="display"></wheel>
+		</div>
 	</div>
 
-	<div *ngFor="let display of displays">
-		<wheel top="20vh" right="25%" [display]="display"></wheel>
+	<!-- only one display -->
+	<div *ngIf="displays.length == 1">
+		<div *ngFor="let display of displays">
+			<wheel [display]="display"></wheel>
+		</div>
 	</div>
 </div>
