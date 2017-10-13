@@ -66,45 +66,40 @@ export class AppComponent implements OnInit {
 
 				// TODO d.selected?
 				this.displays.push(d);
-
-				// TODO REMOVE THIS! JUST FOR TESTING!
-				//
-				let dd = new OutputDevice;
-				dd.names = d.names;
-				dd.displayname = d.displayname;
-				dd.icon = d.icon;
-				dd.defaultinput = d.defaultinput;
-				dd.inputs = d.inputs;
-				dd.input = d.input;
-				dd.blanked = d.blanked;
-				this.displays.push(dd);
-				// 
-				// 
 			}
 		}
 		console.info("Displays", this.displays);
 	}
 
 	private organizeDisplays() {
-		let distance: number;
 		let rows: number;
 		let columns: number;
 
+		let baseWidth: number;
+		let widthBetween: number = 0;
+		let baseHeight: number; 
+		let heightBetween: number = 0;
+
+		// TODO mathematically deicde these numbers somehow
 		switch(this.displays.length) {
 			case 1:
 				rows = 1;
 				columns = 1;
-				distance = 50;
+
+				baseWidth = 50;
+				baseHeight = 30;
 				break;
 			case 2:
 				rows = 1;
 				columns = 2;
-				distance = 40;
+
+				baseWidth = 35;
+				widthBetween = 32;
+				baseHeight = 30;
 				break;
 			case 4:
 				rows = 2;
 				columns = 2;
-				distance = 40;
 				break;
 		}
 
@@ -116,9 +111,8 @@ export class AppComponent implements OnInit {
 					index++;	
 				}
 
-				console.log("index",index + "; row:", r, "x col", c);	
-				this.displays[index].top = "50vh"; // something with r
-				this.displays[index].right = String(distance * c) + "%"; // something with c
+				this.displays[index].right = String(baseWidth + (c * widthBetween)) + "%"; // something with c
+				this.displays[index].top = String(baseHeight + (r * heightBetween)) + "%"; // something with r
 			}	
 		}
 	}
