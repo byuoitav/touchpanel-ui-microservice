@@ -763,11 +763,19 @@ export class AppComponent { // event stuff
     		let body1 = {  audioDevices: [] }
 			for (let ad of this.selectedDisplay.oaudiodevices) {
 				if (ad.selected) {
-					body1.audioDevices.push({
-						"name": ad.name,
-						"muted": true,
-            			"input": this.selectedDisplay.odefaultinput.name
-					});
+					if (ad.power == "standby") {
+						body1.audioDevices.push({
+							"name": ad.name,
+							"volume": 0,
+            				"input": this.selectedDisplay.odefaultinput.name
+						});
+					} else {
+						body1.audioDevices.push({
+							"name": ad.name,
+							"muted": true,
+            				"input": this.selectedDisplay.odefaultinput.name
+						});
+					}
 				}
 			}
 			this.put(body1, func => {}, err => this.notify.error("DTA Error", "Failed to mute minion"));
