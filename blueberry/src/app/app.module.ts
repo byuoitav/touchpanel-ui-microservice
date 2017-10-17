@@ -3,12 +3,15 @@ import { NgModule } from '@angular/core';
 import { HttpModule } from '@angular/http';
 
 import { AppComponent } from './app.component';
+import { WheelComponent } from './wheel.component';
 import { APIService } from './api.service';
 import { SocketService } from './socket.service';
+import { CommandService } from './command.service';
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+	WheelComponent
   ],
   imports: [
     BrowserModule,
@@ -16,7 +19,8 @@ import { SocketService } from './socket.service';
   ],
   providers: [
 	  APIService,
-	  SocketService
+	  SocketService,
+	  CommandService
   ],
   bootstrap: [AppComponent]
 })

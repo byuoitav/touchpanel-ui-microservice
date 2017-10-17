@@ -1,0 +1,48 @@
+.basediv {
+	position: absolute;
+	overflow: hidden;
+
+	left: 0;
+	top: 0;
+	width: 100%;
+	height: 100vh;
+}
+
+// what do we need to blur?
+// everything behind the selected wheel
+// but not the power/volume
+// so just the div with all the wheels in it
+// but it can't be in that div anymore, or else it will get blurred too
+.wheel-selection {
+		
+	.circle {
+		transition: .5s ease all;
+		filter: blur(10px);
+		background-color: blue;
+		border-radius: 50%;
+		width: 25vh;
+		height: 25vh;
+
+		position: absolute;
+	}
+
+	.right {
+		margin-left: 75%;
+	}
+
+	.random {
+		margin-top: 30%;	
+		margin-left: 45%;
+	}
+
+	.priority {
+		z-index: 10;
+		filter: none;
+		width: 50vh;
+		height: 50vh;
+		margin-top: 25vh;
+		margin-left: 35%;
+		margin-bottom: 25vh;
+		margin-right: 35%;
+	}
+}
