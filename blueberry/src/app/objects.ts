@@ -1,3 +1,5 @@
+import { Type } from 'serializer.ts/Decorators';
+
 export class Room {
 	config: RoomConfiguration;
 	status: RoomStatus;
@@ -7,23 +9,45 @@ export class RoomConfiguration {
 	id: number;
 	name: string;
 	description: string;
+
+	@Type(() => Device)
 	devices: Device[];
+
+	match(n: string) {
+		return n == this.name;	
+	}
+
 //	configurationID: number;
 //	configuration: Configuration;
 //	roomDesignation: string;
 }
 
 export class RoomStatus {
+	@Type(() => DeviceStatus)
 	displays: DeviceStatus[];
+
+	@Type(() => DeviceStatus)
 	audioDevices: DeviceStatus[];
 }
 
 export class UIConfiguration {
+	@Type(() => InputDevice)
 	inputdevices: InputDevice[];
-	displays: OutputDevice[];
+
+	@Type(() => DisplayConfig)
+	displays: DisplayConfig[];
 	features: string[];
+
+	@Type(() => AudioConfig)
 	audio: AudioConfig[];
 	ui: string;
+}
+
+export class DisplayConfig {
+	name: string;
+	defaultinput: string;
+	inputs: string[];
+	icon: string;
 }
 
 export class AudioConfig {
@@ -38,19 +62,23 @@ export class DeviceStatus {
 	blanked: boolean;
 	muted: boolean;
 	volume: number;
+
+	match(n: string) {
+		return n == this.name;	
+	}
 }
 
 export class Device {
 	id: number;
 	name: string;
-	displayname: string;
+	display_name: string;
 	address: string;
 	input: boolean;
 	output: boolean;
 	type: string;
 	roles: string;
 
-	hasRole(role: string): boolean {
+	public hasRole(role: string): boolean {
 		for (let r of this.roles) {
 			if (r == role) {
 				return true;
@@ -70,15 +98,19 @@ export class Event {
 }
 
 export class OutputDevice {
-	name: string;
+	names: string[] = [];
 	displayname: string;
 	icon: string;
 
 	blanked: boolean;
 	input: InputDevice;
 
-	inputs: InputDevice[];
+	inputs: InputDevice[] = [];
 	defaultinput: InputDevice;
+
+	// where it's positioned
+	top: string;
+	right: string;	
 }
 
 export class InputDevice {

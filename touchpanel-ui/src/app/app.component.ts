@@ -652,7 +652,9 @@ export class AppComponent { // event stuff
     }
 
     this.rightoffset = String(Nright) + "%";
+	console.log("rightoffset", this.rightoffset);
     this.topoffset = String(Ntop) + "%";
+	console.log("topoffset", this.topoffset);
   }
 
   switchToDisplayName(v: string): string {
@@ -822,10 +824,17 @@ export class AppComponent { // event stuff
 					// i kinda think thats a feature:) Maybe they'll think its a bug lol
 					for (let ad of this.selectedDisplay.oaudiodevices) {
 						if (ad.selected) {
-							inputbody.audioDevices.push({
-								"name": ad.name,
-								"muted": true
-							});
+							if (ad.power == "standby") {
+								inputbody.audioDevices.push({
+									"name": ad.name,
+									"volume": 0
+								});
+							} else {
+								inputbody.audioDevices.push({
+									"name": ad.name,
+									"muted": true
+								});
+							}
 						}
 					}
 
