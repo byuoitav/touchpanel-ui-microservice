@@ -824,7 +824,7 @@ export class AppComponent { // event stuff
 					// i kinda think thats a feature:) Maybe they'll think its a bug lol
 					for (let ad of this.selectedDisplay.oaudiodevices) {
 						if (ad.selected) {
-							if (ad.power == "standby") {
+							if (ad.power == "standby" || !this.showing) {
 								inputbody.audioDevices.push({
 									"name": ad.name,
 									"volume": 0
