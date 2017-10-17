@@ -763,19 +763,11 @@ export class AppComponent { // event stuff
     		let body1 = {  audioDevices: [] }
 			for (let ad of this.selectedDisplay.oaudiodevices) {
 				if (ad.selected) {
-					if (ad.power == "standby") {
-						body1.audioDevices.push({
-							"name": ad.name,
-							"volume": 0,
-            				"input": this.selectedDisplay.odefaultinput.name
-						});
-					} else {
-						body1.audioDevices.push({
-							"name": ad.name,
-							"muted": true,
-            				"input": this.selectedDisplay.odefaultinput.name
-						});
-					}
+					body1.audioDevices.push({
+						"name": ad.name,
+						"muted": true,
+            			"input": this.selectedDisplay.odefaultinput.name
+					});
 				}
 			}
 			this.put(body1, func => {}, err => this.notify.error("DTA Error", "Failed to mute minion"));
@@ -832,10 +824,17 @@ export class AppComponent { // event stuff
 					// i kinda think thats a feature:) Maybe they'll think its a bug lol
 					for (let ad of this.selectedDisplay.oaudiodevices) {
 						if (ad.selected) {
-							inputbody.audioDevices.push({
-								"name": ad.name,
-								"muted": true
-							});
+							if (ad.power == "standby") {
+								inputbody.audioDevices.push({
+									"name": ad.name,
+									"volume": 0
+								});
+							} else {
+								inputbody.audioDevices.push({
+									"name": ad.name,
+									"muted": true
+								});
+							}
 						}
 					}
 
