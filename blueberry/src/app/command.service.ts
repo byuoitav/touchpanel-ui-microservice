@@ -2,7 +2,7 @@ import { Injectable, EventEmitter } from '@angular/core';
 import { Http, Response, Headers, RequestOptions } from '@angular/http';
 import { Observable } from 'rxjs/Rx';
 import { APIService } from './api.service';
-import { OutputDevice, InputDevice } from './objects';
+import { Display, InputDevice } from './objects';
 
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/timeout';
@@ -27,7 +27,7 @@ export class CommandService {
 						.map(res => res.json());
 	}
 
-	public changeInput(i: InputDevice, d: OutputDevice) {
+	public changeInput(i: InputDevice, d: Display) {
 		console.log("Changing input on", d.names,"to", i.name);
 		let old = d.input;
 		d.input = i;

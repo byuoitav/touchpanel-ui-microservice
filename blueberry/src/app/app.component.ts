@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 
-import { InputDevice, OutputDevice } from './objects';
+import { InputDevice, Display, AudioOutDevice } from './objects';
 import { APIService } from './api.service';
 import { SocketService } from './socket.service';
 
@@ -13,7 +13,7 @@ import { SocketService } from './socket.service';
 export class AppComponent implements OnInit {
 
 	inputs: InputDevice[] = [];
-	displays: OutputDevice[] = []; 
+	displays: Display[] = []; 
 
 	constructor (private api: APIService, private socket: SocketService) {
 	}
@@ -21,7 +21,7 @@ export class AppComponent implements OnInit {
 	public ngOnInit() {
 		this.api.loaded.subscribe(() => {
 			this.createInputDevices();
-			this.createOutputDevices();
+			this.createDisplays();
 			this.organizeDisplays();
 		});
 	}
@@ -43,14 +43,14 @@ export class AppComponent implements OnInit {
 		console.info("Inputs", this.inputs);
 	}
 
-	private createOutputDevices() {
+	private createDisplays() {
 		for (let sdisplay of APIService.room.status.displays) {
 			// TODO if these == null
 			let cdisplay = APIService.room.config.devices.find((d) => d.name == sdisplay.name);
 			let udisplay = APIService.uiconfig.displays.find((d) => d.name == sdisplay.name);
 
 			if (udisplay != null) {
-				let d = new OutputDevice();	
+				let d = new Display();	
 				d.names[0] = sdisplay.name;
 				d.displayname = cdisplay.display_name;
 				d.icon = udisplay.icon;
@@ -63,12 +63,18 @@ export class AppComponent implements OnInit {
 				d.input = this.inputs.find((i) => i.name == sdisplay.input);
 
 				d.blanked = sdisplay.blanked;
+				d.power = sdisplay.power;
 
-				// TODO d.selected?
+				d.audioDevice = this.createAudioDevice(d.names);
+
 				this.displays.push(d);
 			}
 		}
 		console.info("Displays", this.displays);
+	} 
+
+	private createAudioDevice(displayNames: string[]): AudioOutDevice {
+		return null;
 	}
 
 	private organizeDisplays() {

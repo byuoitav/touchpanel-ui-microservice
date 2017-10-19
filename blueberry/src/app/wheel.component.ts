@@ -1,6 +1,6 @@
 import { Component, Input, OnInit, ElementRef, ViewChild } from '@angular/core';
 
-import { OutputDevice } from './objects';
+import { Display } from './objects';
 import { CommandService } from './command.service';
 
 @Component({
@@ -13,7 +13,7 @@ export class WheelComponent implements OnInit {
 	private static TITLE_ANGLE: number =  100;
 	private static TITLE_ANGLE_ROTATE: number = WheelComponent.TITLE_ANGLE / 2;
 
-	@Input() display: OutputDevice; 
+	@Input() display: Display; 
 	/*
 	@Input() top: string;
 	@Input() right: string;

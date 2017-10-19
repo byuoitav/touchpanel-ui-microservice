@@ -97,16 +97,19 @@ export class Event {
 	eventInfoValue: string;
 }
 
-export class OutputDevice {
+export class Display {
 	names: string[] = [];
 	displayname: string;
 	icon: string;
 
+	power: string;
 	blanked: boolean;
 	input: InputDevice;
 
 	inputs: InputDevice[] = [];
 	defaultinput: InputDevice;
+
+	audioDevice: AudioOutDevice;
 
 	// where it's positioned
 	top: string;
@@ -117,4 +120,14 @@ export class InputDevice {
 	name: string;
 	displayname: string;
 	icon: string;
+}
+
+export class AudioOutDevice {
+	names: string[] = [];	
+	displayname: string;
+	icon: string;
+
+	muted: boolean;
+	input: InputDevice;
+	volume: number;
 }
