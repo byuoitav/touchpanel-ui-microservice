@@ -9,11 +9,11 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"strings"
 
 	"github.com/byuoitav/event-router-microservice/eventinfrastructure"
 	"github.com/byuoitav/touchpanel-ui-microservice/events"
 	"github.com/byuoitav/touchpanel-ui-microservice/helpers"
+	"github.com/byuoitav/touchpanel-ui-microservice/uiconfig"
 	"github.com/labstack/echo"
 )
 
@@ -222,99 +222,11 @@ func CancelHelp(context echo.Context) error {
 
 }
 
-func GetJSON(context echo.Context) error {
-	j, err := Getjson()
+func GetUIConfig(context echo.Context) error {
+	j, err := uiconfig.GetUIConfig()
 	if err != nil {
 		return context.JSON(http.StatusInternalServerError, err.Error())
 	}
 
 	return context.JSON(http.StatusOK, j)
-}
-
-var configcache map[string]interface{}
-
-func Getjson() (j map[string]interface{}, e error) {
-	address := os.Getenv("UI_CONFIGURATION_ADDRESS")
-	hn := os.Getenv("PI_HOSTNAME")
-	split := strings.Split(hn, "-")
-	building := split[0]
-	room := split[1]
-
-	log.Printf("Getting the config file for %s-%s", building, room)
-
-	if len(hn) == 0 {
-		log.Printf("[error] PI_HOSTNAME is not set.")
-		e = errors.New("PI_HOSTNAME is not set")
-		return
-	}
-
-	if len(address) == 0 {
-		if configcache != nil {
-			log.Printf("[error] UI_CONFIGURATION_ADDRESS is not set. Returning cached configuration...")
-			j = configcache
-			return
-		}
-		e = errors.New("UI_CONFIGURATION_ADDRESS is not set")
-		return
-	}
-
-	address = strings.Replace(address, "BUILDING", building, 1)
-	address = strings.Replace(address, "ROOM", room, 1)
-	log.Printf("getting json object from %s", address)
-
-	resp, err := http.Get(address)
-	if err != nil {
-		if configcache != nil {
-			log.Printf("[error] %s. Returning cached configuration...", err.Error())
-			j = configcache
-		}
-		log.Printf("[error] %s. No cache to serve. Cannot continue.", err.Error())
-		e = err
-		return
-	}
-	defer resp.Body.Close()
-
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		if configcache != nil {
-			log.Printf("[error] %s. Returning cached configuration...", err.Error())
-			j = configcache
-			return
-		}
-		log.Printf("[error] %s. Could not read response body and there is no cache.", err.Error())
-		e = err
-		return
-	}
-
-	var data map[string]interface{}
-	ret := make(map[string]interface{})
-	err = json.Unmarshal(body, &data)
-	if err != nil {
-		if configcache != nil {
-			log.Printf("[error] %s. Returning cached configuration...", err.Error())
-			j = configcache
-			return
-		}
-		log.Printf("[error] %s. Error unmarshalling the body, and there is no cache.", err.Error())
-		e = err
-		return
-	} else {
-		var tmp map[string]interface{}
-		bytes, _ := json.Marshal(data[hn])
-		json.Unmarshal(bytes, &tmp)
-
-		ret["ui"] = tmp["ui"]
-		ret["audio"] = tmp["audio"]
-		ret["displays"] = tmp["displays"]
-		ret["features"] = tmp["features"]
-		ret["inputdevices"] = tmp["inputdevices"]
-		ret["apiconfig"] = data["apiconfig"]
-
-		configcache = ret
-	}
-
-	log.Printf("Done.")
-
-	j = ret
-	return
 }

@@ -1,4 +1,4 @@
-package handlers
+package uiconfig
 
 import (
 	"encoding/json"
@@ -33,13 +33,13 @@ var apiNum = 1
 
 func GetAPI(context echo.Context) error {
 	var ret Apihost
-	j, err := Getjson()
+	j, err := GetUIConfig()
 	if err != nil {
 		return context.JSON(http.StatusInternalServerError, err.Error())
 	}
 
 	var c config
-	tmp, _ := json.Marshal(j["apiconfig"])
+	tmp, _ := json.Marshal(j.Panels)
 	json.Unmarshal(tmp, &c)
 
 	if c.Enabled {
@@ -76,7 +76,7 @@ func GetAPI(context echo.Context) error {
 }
 
 func NextAPI(context echo.Context) error {
-	j, err := Getjson()
+	j, err := GetUIConfig()
 	if err != nil {
 		return context.JSON(http.StatusInternalServerError, err.Error())
 	}
@@ -87,7 +87,7 @@ func NextAPI(context echo.Context) error {
 	}
 
 	var c config
-	tmp, _ := json.Marshal(j["apiconfig"])
+	tmp, _ := json.Marshal(j.Panels)
 	json.Unmarshal(tmp, &c)
 	log.Printf("c: %v", c)
 
