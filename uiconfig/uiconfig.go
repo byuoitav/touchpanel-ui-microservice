@@ -84,7 +84,7 @@ func getUIConfig(address string) (UIConfig, error) {
 
 	writeUIConfigToFile(config)
 
-	color.Set(color.FgGreen, color.Bold)
+	color.Set(color.FgHiGreen, color.Bold)
 	log.Printf("Returning config from %s", address)
 	color.Unset()
 
@@ -109,7 +109,7 @@ func getUIConfigFromFile() (UIConfig, error) {
 		return UIConfig{}, err
 	}
 
-	color.Set(color.FgGreen, color.Bold)
+	color.Set(color.FgHiGreen, color.Bold)
 	log.Printf("Returning config from file")
 	color.Unset()
 
