@@ -83,14 +83,44 @@ func getUIConfig(address string) (UIConfig, error) {
 	}
 
 	writeUIConfigToFile(config)
+
+	color.Set(color.FgGreen, color.Bold)
+	log.Printf("Returning config from %s", address)
+	color.Unset()
+
 	return config, nil
 }
 
 func getUIConfigFromFile() (UIConfig, error) {
-	return UIConfig{}, nil
+	color.Set(color.FgCyan)
+	log.Printf("Getting UI Config from file: %s", UI_CONFIG_FILE)
+	color.Unset()
+
+	body, err := ioutil.ReadFile(UI_CONFIG_FILE)
+	if err != nil {
+		logError(fmt.Sprintf("Failed to read body from file %s: %s", UI_CONFIG_FILE, err))
+		return UIConfig{}, err
+	}
+
+	var config UIConfig
+	err = json.Unmarshal(body, &config)
+	if err != nil {
+		logError(fmt.Sprintf("Failed to unmarshal body from file %s: %s", UI_CONFIG_FILE, err))
+		return UIConfig{}, err
+	}
+
+	color.Set(color.FgGreen, color.Bold)
+	log.Printf("Returning config from file")
+	color.Unset()
+
+	return config, nil
 }
 
 func writeUIConfigToFile(config UIConfig) {
+	color.Set(color.FgCyan)
+	log.Printf("Writing UI Config from file: %s", UI_CONFIG_FILE)
+	color.Unset()
+
 	f, err := os.Create(UI_CONFIG_FILE)
 	if err != nil {
 		logError(fmt.Sprintf("Failed create file %s: %s", UI_CONFIG_FILE, err))
