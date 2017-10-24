@@ -119,7 +119,7 @@ func getUIConfigFromFile() (UIConfig, error) {
 
 func writeUIConfigToFile(config UIConfig) {
 	color.Set(color.FgCyan)
-	log.Printf("Writing UI Config from file: %s", UI_CONFIG_FILE)
+	log.Printf("Writing UI Config to file: %s", UI_CONFIG_FILE)
 	color.Unset()
 
 	f, err := os.Create(UI_CONFIG_FILE)
