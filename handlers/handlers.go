@@ -13,7 +13,6 @@ import (
 	"github.com/byuoitav/event-router-microservice/eventinfrastructure"
 	"github.com/byuoitav/touchpanel-ui-microservice/events"
 	"github.com/byuoitav/touchpanel-ui-microservice/helpers"
-	"github.com/byuoitav/touchpanel-ui-microservice/uiconfig"
 	"github.com/labstack/echo"
 )
 
@@ -220,13 +219,4 @@ func CancelHelp(context echo.Context) error {
 
 	return context.JSON(http.StatusOK, string(body))
 
-}
-
-func GetUIConfig(context echo.Context) error {
-	j, err := uiconfig.GetUIConfig()
-	if err != nil {
-		return context.JSON(http.StatusInternalServerError, err.Error())
-	}
-
-	return context.JSON(http.StatusOK, j)
 }

@@ -31,28 +31,27 @@ export class RoomStatus {
 }
 
 export class UIConfiguration {
-	@Type(() => InputDevice)
-	inputdevices: InputDevice[];
+    @Type(() => Panel)
+    panels: Panel[];
 
-	@Type(() => DisplayConfig)
-	displays: DisplayConfig[];
-	features: string[];
-
-	@Type(() => AudioConfig)
-	audio: AudioConfig[];
-	ui: string;
+    @Type(() => Preset)
+    presets: Preset[];
 }
 
-export class DisplayConfig {
-	name: string;
-	defaultinput: string;
-	inputs: string[];
-	icon: string;
+export class Panel {
+    hostname: string;
+    uipath: string;
+    presets: string[];
+    features: string[];
+    independentAudioDevices: string[];
 }
 
-export class AudioConfig {
-	displays: string[];
-	audiodevices: string[];
+export class Preset {
+    name: string;
+    icon: string;
+    displays: string[];
+    audioDevices: string[];
+    inputs: string[];
 }
 
 export class DeviceStatus {

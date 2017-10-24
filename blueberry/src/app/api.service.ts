@@ -76,17 +76,12 @@ export class APIService {
 		this.getAPIUrl().subscribe(
 			data => {
 				APIService.apihost = "http://" + location.hostname;
-				if (!data["apihost"].includes("localhost") && data["enabled"]) {
-					APIService.apihost = "http://" + data["apihost"];
+				if (!data["hostname"].includes("localhost")) {
+					APIService.apihost = "http://" + data["hostname"];
 				}
 
 				APIService.apiurl = APIService.apihost + ":8000/buildings/" + APIService.building + "/rooms/" + APIService.roomName; 
 				console.info("API url:", APIService.apiurl);
-
-				if (data["enabled"] && !next) {
-					console.info("Monitoring API");
-					this.monitorAPI();
-				}
 
 				if (!next) {
 					this.setupUIConfig();
@@ -192,7 +187,7 @@ export class APIService {
 	}
 
 	getUIConfig(): Observable<Object> {
-		return this.http.get(APIService.localurl + ":8888/json")
+		return this.http.get(APIService.localurl + ":8888/uiconfig")
 			.map(response => response.json())
 			.map(res => deserialize<UIConfiguration>(UIConfiguration, res));
 	}

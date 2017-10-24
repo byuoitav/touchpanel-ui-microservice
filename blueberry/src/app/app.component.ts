@@ -27,6 +27,7 @@ export class AppComponent implements OnInit {
 	}
 
 	private createInputDevices() {
+        /*
 		for (let device of APIService.room.config.devices) {
 			if (device.hasRole('VideoIn') || device.hasRole('AudioIn')) {
 				let input = APIService.uiconfig.inputdevices.find((i) => i.name == device.name);
@@ -41,9 +42,11 @@ export class AppComponent implements OnInit {
 		}
 
 		console.info("Inputs", this.inputs);
+       */
 	}
 
 	private createDisplays() {
+        /*
 		for (let sdisplay of APIService.room.status.displays) {
 			// TODO if these == null
 			let cdisplay = APIService.room.config.devices.find((d) => d.name == sdisplay.name);
@@ -71,6 +74,7 @@ export class AppComponent implements OnInit {
 			}
 		}
 		console.info("Displays", this.displays);
+       */
 	} 
 
 	private createAudioDevice(displayNames: string[]): AudioOutDevice {

@@ -13,7 +13,7 @@
 				}
 			}, 1000);
 
-			getJSON('http://'+ window.location.hostname +':8888/json', function(err, xhr) {
+			getJSON('http://'+ window.location.hostname +':8888/uipath', function(err, xhr) {
 				if (err != null) {
 					alert("Something went wrong: " + err.response);	
 					location.reload();
@@ -21,9 +21,10 @@
 					alert("Connected to github, but no UI configuration is availble for me :(");
 					location.reload();
 				} else {
-					console.log("data", xhr);	
-					document.getElementById("url").innerHTML = "http://"+ window.location.hostname +":8888/" + xhr.response.ui;
-					window.location = "http://"+ window.location.hostname +":8888/" + xhr.response.ui;
+					console.log("data", xhr);
+                    var url = "http://" + window.location.hostname + ":8888" + xhr.response.hostname;
+					document.getElementById("url").innerHTML = url;
+					window.location = url;
 				}
 			}); 
 		}	

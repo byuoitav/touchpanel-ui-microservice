@@ -29,14 +29,14 @@ type Preset struct {
 }
 
 type Panel struct {
-	Hostname         string   `json:"hostname"`
-	UIPath           string   `json:"uipath"`
-	Presets          []string `json:"presets"`
-	Features         []string `json:"features"`
-	IndependentAudio []string `json:"inputs"`
+	Hostname                string   `json:"hostname"`
+	UIPath                  string   `json:"uipath"`
+	Presets                 []string `json:"presets"`
+	Features                []string `json:"features"`
+	IndependentAudioDevices []string `json:"indpendentAudioDevices"`
 }
 
-func GetUIConfig() (UIConfig, error) {
+func getUIConfig() (UIConfig, error) {
 	address := os.Getenv("UI_CONFIGURATION_ADDRESS")
 	hn := os.Getenv("PI_HOSTNAME")
 
@@ -59,10 +59,10 @@ func GetUIConfig() (UIConfig, error) {
 	log.Printf("Getting UI Config for %s-%s from %s", building, room, address)
 	color.Unset()
 
-	return getUIConfig(address)
+	return getUIConfigFromWeb(address)
 }
 
-func getUIConfig(address string) (UIConfig, error) {
+func getUIConfigFromWeb(address string) (UIConfig, error) {
 	resp, err := http.Get(address)
 	if err != nil {
 		logError(fmt.Sprintf("Failed to make GET request to %s: %s", address, err))
