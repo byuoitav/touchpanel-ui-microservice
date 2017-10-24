@@ -22,12 +22,15 @@ export class AppComponent implements OnInit {
 
 	public ngOnInit() {
 		this.api.loaded.subscribe(() => {
-			this.createInputDevices();
-            this.createStatusDevices();
+            this.createInputDevices();
+            this.createDisplays();
+            this.createAudioDevices();
+
 			this.createPresets();
 			this.organizePresets();
 		});
 	}
+
 
 	private createInputDevices() {
         APIService.room.config.devices.filter(device => device.hasRole("VideoIn") || device.hasRole("AudioIn")).forEach(input => {
@@ -39,10 +42,10 @@ export class AppComponent implements OnInit {
 		console.info("Inputs", this.inputs);
 	}
 
-    private createStatusDevices() {
-        for (let status of APIService.room.status.displays) {
-        
-        }  
+    private createDisplays() {
+    }
+
+    private createAudioDevices() {
     }
 
 	private createPresets() {
