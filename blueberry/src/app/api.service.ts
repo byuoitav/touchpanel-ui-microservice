@@ -19,7 +19,6 @@ export class APIService {
 	public static hostname: string;
 	public static apiurl: string;
 
-	public static uiconfig: UIConfiguration;
 	public static room: Room;
 
 	private static apihost: string;
@@ -37,7 +36,6 @@ export class APIService {
 			let base = location.origin.split(':');
 			APIService.localurl = base[0] + ":" + base[1];
 	
-			APIService.uiconfig = new UIConfiguration();
 			APIService.room = new Room();	
 			
 			this.setupHostname();
@@ -108,9 +106,9 @@ export class APIService {
 	private setupUIConfig() {
 		this.getUIConfig().subscribe(
 			data => {
-				APIService.uiconfig = new UIConfiguration();
-				Object.assign(APIService.uiconfig, data);
-				console.info("UI Configuration:", APIService.uiconfig);
+				APIService.room.uiconfig = new UIConfiguration();
+				Object.assign(APIService.room.uiconfig, data);
+				console.info("UI Configuration:", APIService.room.uiconfig);
 
 				this.setupRoomConfig();
 			}, err => {
@@ -127,7 +125,8 @@ export class APIService {
 
 				console.info("Room Configuration:", APIService.room.config);
 
-				this.setupRoomStatus();
+//				this.setupRoomStatus();
+				this.loaded.emit(true);
 			}, err => {
 				setTimeout(() => this.setupRoomConfig(), RETRY_TIMEOUT);
 			}
@@ -141,7 +140,7 @@ export class APIService {
 				Object.assign(APIService.room.status, data);
 				console.info("Room Status:", APIService.room.status);
 
-				this.loaded.emit(true);
+//				this.loaded.emit(true);
 			}, err => {
 				setTimeout(() => this.setupRoomStatus(), RETRY_TIMEOUT);
 			}

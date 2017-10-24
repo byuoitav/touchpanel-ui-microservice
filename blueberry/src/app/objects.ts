@@ -3,6 +3,7 @@ import { Type } from 'serializer.ts/Decorators';
 export class Room {
 	config: RoomConfiguration;
 	status: RoomStatus;
+    uiconfig: UIConfiguration;
 }
 
 export class RoomConfiguration {
@@ -34,8 +35,13 @@ export class UIConfiguration {
     @Type(() => Panel)
     panels: Panel[];
 
-    @Type(() => Preset)
-    presets: Preset[];
+    @Type(() => PresetConfiguration)
+    presets: PresetConfiguration[];
+
+    @Type(() => InputConfiguration)
+    inputConfiguration: InputConfiguration[];
+
+    Api: string[];
 }
 
 export class Panel {
@@ -46,12 +52,17 @@ export class Panel {
     independentAudioDevices: string[];
 }
 
-export class Preset {
+export class PresetConfiguration {
     name: string;
     icon: string;
     displays: string[];
     audioDevices: string[];
     inputs: string[];
+}
+
+export class InputConfiguration {
+    name: string;
+    icon: string;
 }
 
 export class DeviceStatus {
@@ -96,37 +107,62 @@ export class Event {
 	eventInfoValue: string;
 }
 
-export class Display {
-	names: string[] = [];
-	displayname: string;
-	icon: string;
+export class Preset {
+    name: string;
+    icon: string;
 
-	power: string;
-	blanked: boolean;
-	input: InputDevice;
+    displays: Display[] = [];
+    audioDevices: AudioDevice[] = [];
+    inputs: Input[] = [];
 
-	inputs: InputDevice[] = [];
-	defaultinput: InputDevice;
-
-	audioDevice: AudioOutDevice;
-
-	// where it's positioned
-	top: string;
-	right: string;	
+    top: string;
+    right: string;
 }
 
-export class InputDevice {
+export class StatusDevice {
 	name: string;
 	displayname: string;
-	icon: string;
+
+    constructor(name: string, displayname: string) {
+        this.name = name;
+        this.displayname = displayname;
+    }
 }
 
-export class AudioOutDevice {
-	names: string[] = [];	
-	displayname: string;
-	icon: string;
+export class Display extends StatusDevice {
+	power: string;
+	input: Input;
+	blanked: boolean;
 
+    constructor(name: string, displayname: string, power: string, input: Input, blanked: boolean) {
+        super(name, displayname);
+        this.power = power;
+        this.input = input;
+        this.blanked = blanked;
+    }
+}
+
+export class AudioDevice extends StatusDevice {
+	power: string;
+	input: Input;
 	muted: boolean;
-	input: InputDevice;
 	volume: number;
+
+    constructor(name: string, displayname: string, power: string, input: Input, muted: boolean, volume: number) {
+        super(name, displayname);
+        this.power = power;
+        this.input = input;
+        this.muted = muted;
+        this.volume = volume;
+    }
 }
+
+export class Input extends StatusDevice {
+	icon: string;
+
+    constructor(name: string, displayname: string, icon: string) {
+        super(name, displayname);
+        this.icon = icon;
+    }
+}
+

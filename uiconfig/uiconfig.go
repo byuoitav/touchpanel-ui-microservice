@@ -15,9 +15,10 @@ import (
 const UI_CONFIG_FILE = "ui-config.json"
 
 type UIConfig struct {
-	Api     []string `json:"api"`
-	Panels  []Panel  `json:"panels"`
-	Presets []Preset `json:"presets"`
+	Api                []string             `json:"api"`
+	Panels             []Panel              `json:"panels"`
+	Presets            []Preset             `json:"presets"`
+	InputConfiguration []InputConfiguration `json:"inputConfiguration"`
 }
 
 type Preset struct {
@@ -34,6 +35,11 @@ type Panel struct {
 	Presets                 []string `json:"presets"`
 	Features                []string `json:"features"`
 	IndependentAudioDevices []string `json:"indpendentAudioDevices"`
+}
+
+type InputConfiguration struct {
+	Name string `json:"name"`
+	Icon string `json:"icon"`
 }
 
 func getUIConfig() (UIConfig, error) {
