@@ -5,7 +5,7 @@
 			<div></div>
 		</li>
 	
-		<li *ngFor="let i of preset.inputs" class="input-slice" [class.selectedInput]="display.input === i" (click)="command.changeInput(i, display)">
+		<li *ngFor="let i of preset.inputs" class="input-slice" [class.selectedInput]="currInput() === i" (click)="command.changeInput(i, preset.displays)">
 			<div class="input" [style.top]="topoffset" [style.right]="rightoffset">
 				<i class='material-icons'>{{i.icon}}</i>
 				<span>{{i.displayname}}</span>

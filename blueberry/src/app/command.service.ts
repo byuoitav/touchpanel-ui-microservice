@@ -2,7 +2,8 @@ import { Injectable, EventEmitter } from '@angular/core';
 import { Http, Response, Headers, RequestOptions } from '@angular/http';
 import { Observable } from 'rxjs/Rx';
 import { APIService } from './api.service';
-//import { Display, InputDevice } from './objects';
+import { Input, Display } from './status.objects';
+import { WheelComponent } from './wheel.component';
 
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/timeout';
@@ -27,16 +28,15 @@ export class CommandService {
 						.map(res => res.json());
 	}
 
-    /*
-	public changeInput(i: InputDevice, d: Display) {
-		console.log("Changing input on", d.names,"to", i.name);
-		let old = d.input;
-		d.input = i;
+	public changeInput(i: Input, displays: Display[]) {
+		console.log("Changing input on", displays,"to", i.name);
+        let old = WheelComponent.currInput(displays);
+        displays.forEach(d => d.input = i); 
 
 		let body = {displays: []}
-		for (let n of d.names) {
+		for (let d of displays) {
 			body.displays.push({
-				"name": n,
+				"name": d.name,
 				"input": i.name,
 			});
 		}
@@ -45,9 +45,8 @@ export class CommandService {
 			data => {
 				console.log("Success");
 			}, err => {
-				d.input = old;		
+                displays.forEach(d => d.input = old);
 			}
 		);
 	}
-   */
 }

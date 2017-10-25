@@ -1,6 +1,7 @@
-import { Component, Input, OnInit, ElementRef, ViewChild } from '@angular/core';
+import { Component, Input as AngularInput, OnInit, ElementRef, ViewChild } from '@angular/core';
 
 import { Preset } from './objects';
+import { Display, Input } from './status.objects';
 import { CommandService } from './command.service';
 
 @Component({
@@ -13,7 +14,7 @@ export class WheelComponent implements OnInit {
 	private static TITLE_ANGLE: number =  100;
 	private static TITLE_ANGLE_ROTATE: number = WheelComponent.TITLE_ANGLE / 2;
 
-	@Input() preset: Preset; 
+	@AngularInput() preset: Preset; 
 
 	arcpath: string;
 	titlearcpath: string;
@@ -40,7 +41,6 @@ export class WheelComponent implements OnInit {
 	}
 
 	private render() {
-        console.log("creating wheel for preset:", this.preset);
 		let numOfChildren = this.preset.inputs.length;	
 		let children = this.wheel.nativeElement.children;
 		let angle = (360 - WheelComponent.TITLE_ANGLE) / numOfChildren;
@@ -117,4 +117,22 @@ export class WheelComponent implements OnInit {
 			y: cy + (r * Math.sin(angleInRad))	
 		}
 	}
+
+    private currInput(): Input {
+        return WheelComponent.currInput(this.preset.displays);
+    }
+
+    public static currInput(displays: Display[]): Input {
+        let input: Input;
+
+        displays.forEach(d => {
+            if (input == null) {
+                input = d.input;
+            } else if (input != input) {
+                return null;
+            }
+        });
+
+        return input;
+    }
 }
