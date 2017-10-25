@@ -65,3 +65,11 @@ export class SocketService {
   }
 }
 
+export class Event {
+	type: number;
+	eventCause: number;
+	requestor: string;
+	device: string;
+	eventInfoKey: string;
+	eventInfoValue: string;
+}

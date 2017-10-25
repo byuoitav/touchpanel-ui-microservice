@@ -1,7 +1,7 @@
 import { Injectable, EventEmitter } from '@angular/core';
 import { Http, Response, Headers, RequestOptions } from '@angular/http';
 import { Observable } from 'rxjs/Rx';
-import { UIConfiguration, Room, RoomConfiguration, RoomStatus, Device } from './objects';
+import { UIConfiguration, Room, RoomConfiguration, RoomStatus} from './objects';
 
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/timeout';
@@ -125,8 +125,7 @@ export class APIService {
 
 				console.info("Room Configuration:", APIService.room.config);
 
-//				this.setupRoomStatus();
-				this.loaded.emit(true);
+				this.setupRoomStatus();
 			}, err => {
 				setTimeout(() => this.setupRoomConfig(), RETRY_TIMEOUT);
 			}
@@ -140,7 +139,7 @@ export class APIService {
 				Object.assign(APIService.room.status, data);
 				console.info("Room Status:", APIService.room.status);
 
-//				this.loaded.emit(true);
+				this.loaded.emit(true);
 			}, err => {
 				setTimeout(() => this.setupRoomStatus(), RETRY_TIMEOUT);
 			}
@@ -198,7 +197,8 @@ export class APIService {
 	}
 
 	getRoomStatus(): Observable<Object> {
-		return this.http.get(APIService.apiurl)
+//		return this.http.get(APIService.apiurl)
+		return this.http.get("http://localhost:8999/fakestatus")
 			.map(response => response.json())
 			.map(res => deserialize<RoomStatus>(RoomStatus, res));
 	}
