@@ -29,7 +29,7 @@
 </div>
 
 <div class="volume" *ngIf="circleOpen">
-    <mat-slider id="slider" vertical [value]="getVolume()" [thumbLabel]="thumbLabel" (change)="command.changeVolume($event.value, preset.audioDevices); closeThumb()"></mat-slider>
+    <mat-slider id="slider" vertical [value]="getVolume()" [step]="5" [thumbLabel]="thumbLabel" (change)="command.changeVolume($event.value, preset.audioDevices); closeThumb()"></mat-slider>
 </div>
 
 <!-- one 'slice' of wheel -->
