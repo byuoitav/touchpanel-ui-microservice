@@ -40,7 +40,7 @@ export class AppComponent implements OnInit {
             this.createPanel();
 			this.organizePresets();
 
-//            this.panel.render = true;
+            this.panel.render = true;
 		});
 	}
 
@@ -142,6 +142,5 @@ export class AppComponent implements OnInit {
 				this.panel.presets[index].top = String(baseHeight + (r * heightBetween)) + "%"; // something with r
 			}	
 		}
-        this.panel.render = true;
 	}
 }

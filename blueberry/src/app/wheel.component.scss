@@ -5,6 +5,8 @@ $owheelsize: 95vh;
 $cwheelsize: 25vh;
 $linewidth: .5vh;
 
+$volumesize: 80%;
+
 // reset automatic margins
 ul {
 	-webkit-margin-before: 0em;
@@ -107,4 +109,17 @@ ul {
 .center-open {
 	width: $ocentersize;
 	height: $ocentersize;
+}
+
+.volume {
+    position: absolute;
+    height: $volumesize;
+    right: 0;
+
+    margin-right: 2%;
+    margin-top: (100% - $volumesize) / 4;
+
+    .mat-slider-vertical {
+        height: 100%;
+    }
 }

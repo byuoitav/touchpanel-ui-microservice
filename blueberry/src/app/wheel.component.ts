@@ -1,7 +1,7 @@
 import { Component, Input as AngularInput, OnInit, ElementRef, ViewChild } from '@angular/core';
 
 import { Preset } from './objects';
-import { Display, Input } from './status.objects';
+import { Display, Input, AudioDevice } from './status.objects';
 import { CommandService } from './command.service';
 
 @Component({
@@ -21,6 +21,7 @@ export class WheelComponent implements OnInit {
 	rightoffset: string;
 	topoffset: string;
 	circleOpen: boolean;
+    thumbLabel: boolean = true;
 
 	@ViewChild("wheel") wheel: ElementRef;
 
@@ -118,21 +119,17 @@ export class WheelComponent implements OnInit {
 		}
 	}
 
-    private currInput(): Input {
-        return WheelComponent.currInput(this.preset.displays);
+    public closeThumb() {
+        setTimeout(() => {
+            document.getElementById('slider').blur();
+        }, 750);
     }
 
-    public static currInput(displays: Display[]): Input {
-        let input: Input;
+    private getInput(): Input {
+        return Display.getInput(this.preset.displays);
+    }
 
-        displays.forEach(d => {
-            if (input == null) {
-                input = d.input;
-            } else if (input != input) {
-                return null;
-            }
-        });
-
-        return input;
+    private getVolume(): number {
+        return AudioDevice.getVolume(this.preset.audioDevices); 
     }
 }

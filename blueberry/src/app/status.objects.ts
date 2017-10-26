@@ -49,6 +49,20 @@ export class Display extends Output {
         super(name, displayname, power, input);
         this.blanked = blanked;
     }
+
+    public static getInput(displays: Display[]): Input {
+        let input: Input = null;
+
+        for (let d of displays) {
+            if (d.input == null) {
+                input = d.input;
+            } else if (d.input != input) {
+                return null;
+            }
+        }
+
+        return input; 
+    }
 }
 
 export class AudioDevice extends Output {
@@ -59,6 +73,15 @@ export class AudioDevice extends Output {
         super(name, displayname, power, input);
         this.muted = muted;
         this.volume = volume;
+    }
+
+    // return average of all volumes
+    public static getVolume(audioDevices: AudioDevice[]): number {
+        let volume: number = 0;
+
+        audioDevices.forEach(a => volume += a.volume);
+
+        return volume / audioDevices.length;
     }
 }
 
