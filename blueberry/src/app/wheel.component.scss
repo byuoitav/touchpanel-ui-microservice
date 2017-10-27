@@ -1,5 +1,5 @@
 $duration: .4s;
-$ocentersize: 42vh;
+$ocentersize: 45vh;
 $ccentersize: 30vh;
 $owheelsize: 95vh;
 $cwheelsize: 25vh;
@@ -103,7 +103,22 @@ ul {
 	height: $ccentersize;
 	
 	display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
 	transition: $duration ease-in-out all;
+
+    .icon {
+        color: white;
+        font-size: 500%;
+    }
+
+    .picture {
+        color: white; 
+    }
+
+    .switch {
+    }
 }
 
 .center-open {

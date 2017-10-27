@@ -52,6 +52,27 @@ export class CommandService {
 		);
 	}
 
+    public setBlanked(b: boolean, displays: Display[]) {
+		console.log("Setting blnaked to", b,"on", displays);
+        let prev = Display.getBlanked(displays);
+        displays.forEach(d => d.blanked = b); 
+
+		let body = { displays: [] }
+		for (let d of displays) {
+			body.displays.push({
+				"name": d.name,
+                "blanked": b
+			});
+		}
+
+		this.put(body).subscribe(
+			data => {
+				console.log("Success");
+			}, err => {
+                displays.forEach(d => d.blanked = prev);
+			}
+		);
+    }
 
     public changeVolume(v: number, audioDevices: AudioDevice[]) {
         console.log("changing volume to", v);

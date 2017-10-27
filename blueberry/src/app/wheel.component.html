@@ -24,7 +24,11 @@
 		</li>
 	</ul>
 	
-	<div class="center" [class.center-open]="circleOpen" (click)="circleOpen = !circleOpen">
+	<div class="center" [class.center-open]="circleOpen" (click)="toggle()">
+        <i class="material-icons icon">{{preset.icon}}</i>
+        <span *ngIf="circleOpen" class="picture">picture on</span>
+        <div *ngIf="circleOpen" class="switch" (click)="$event.stopPropagation()">
+        </div>
 	</div>
 </div>
 

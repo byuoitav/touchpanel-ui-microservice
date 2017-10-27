@@ -54,7 +54,7 @@ export class Display extends Output {
         let input: Input = null;
 
         for (let d of displays) {
-            if (d.input == null) {
+            if (input == null) {
                 input = d.input;
             } else if (d.input != input) {
                 return null;
@@ -62,6 +62,17 @@ export class Display extends Output {
         }
 
         return input; 
+    }
+
+    // returns true iff both are blanked
+    public static getBlanked(displays: Display[]): boolean {
+        for (let d of displays) {
+            if (!d.blanked) {
+                return false;
+            }
+        }
+
+        return true; 
     }
 }
 

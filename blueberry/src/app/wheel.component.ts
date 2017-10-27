@@ -33,14 +33,18 @@ export class WheelComponent implements OnInit {
 		setTimeout(() => this.render(), 0);
 	}
 
-	public open() {
-		this.circleOpen = true;	
-	}
-	
-	public close() {
-		this.circleOpen = false;	
+	public toggle() {
+		this.circleOpen = !this.circleOpen;	
 	}
 
+    public open() {
+        this.circleOpen = true;
+    }
+
+    public close() {
+        this.circleOpen = false;
+    }
+	
 	private render() {
 		let numOfChildren = this.preset.inputs.length;	
 		let children = this.wheel.nativeElement.children;
@@ -131,5 +135,9 @@ export class WheelComponent implements OnInit {
 
     private getVolume(): number {
         return AudioDevice.getVolume(this.preset.audioDevices); 
+    }
+
+    private getBlanked(): boolean {
+        return Display.getBlanked(this.preset.displays); 
     }
 }
