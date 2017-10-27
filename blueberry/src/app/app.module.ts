@@ -11,16 +11,19 @@ import { APIService } from './api.service';
 import { SocketService } from './socket.service';
 import { CommandService } from './command.service';
 
+import { UiSwitchModule } from 'angular2-ui-switch';
+
 @NgModule({
   declarations: [
     AppComponent,
-	WheelComponent
+	WheelComponent,
   ],
   imports: [
     BrowserModule,
 	HttpModule,
     BrowserAnimationsModule,
-    MatSliderModule
+    MatSliderModule,
+    UiSwitchModule
   ],
   providers: [
 	  APIService,

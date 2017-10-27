@@ -28,6 +28,7 @@
         <i class="material-icons icon">{{preset.icon}}</i>
         <span *ngIf="circleOpen" class="picture">picture on</span>
         <div *ngIf="circleOpen" class="switch" (click)="$event.stopPropagation()">
+            <ui-switch></ui-switch>
         </div>
 	</div>
 </div>
