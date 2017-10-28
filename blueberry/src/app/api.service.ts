@@ -198,7 +198,7 @@ export class APIService {
 
 	getRoomStatus(): Observable<Object> {
 //		return this.http.get(APIService.apiurl)
-		return this.http.get("http://localhost:8999/fakestatus")
+		return this.http.get("http://teton.byu.edu:8999/fakestatus")
 			.map(response => response.json())
 			.map(res => deserialize<RoomStatus>(RoomStatus, res));
 	}

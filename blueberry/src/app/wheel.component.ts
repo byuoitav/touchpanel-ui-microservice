@@ -137,7 +137,7 @@ export class WheelComponent implements OnInit {
         return AudioDevice.getVolume(this.preset.audioDevices); 
     }
 
-    private getBlanked(): boolean {
-        return Display.getBlanked(this.preset.displays); 
+    private getBlank(): boolean {
+        return Display.getBlank(this.preset.displays); 
     }
 }

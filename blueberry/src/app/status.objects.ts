@@ -40,6 +40,39 @@ export class Output extends Device {
         this.power = power;
         this.input = input;
     }
+
+    // return on (true) if at least one is on
+    public static getPower(outputs: Output[]): boolean {
+        for (let o of outputs) {
+            if (o.power == "on") {
+                return true;
+            }
+        }
+
+        return false; 
+    }
+
+    public static getInput(outputs: Output[]): Input {
+        let input: Input = null;
+
+        for (let o of outputs) {
+            if (input == null) {
+                input = o.input;
+            } else if (o.input != input) {
+                return null;
+            }
+        }
+
+        return input; 
+    }
+
+    public static setPower(s: string, outputs: Output[]) {
+        outputs.forEach(o => o.power = s); 
+    }
+
+    public static setInput(i: Input, outputs: Output[]) {
+        outputs.forEach(o => o.input = i); 
+    }
 }
 
 export class Display extends Output {
@@ -50,22 +83,8 @@ export class Display extends Output {
         this.blanked = blanked;
     }
 
-    public static getInput(displays: Display[]): Input {
-        let input: Input = null;
-
-        for (let d of displays) {
-            if (input == null) {
-                input = d.input;
-            } else if (d.input != input) {
-                return null;
-            }
-        }
-
-        return input; 
-    }
-
     // returns true iff both are blanked
-    public static getBlanked(displays: Display[]): boolean {
+    public static getBlank(displays: Display[]): boolean {
         for (let d of displays) {
             if (!d.blanked) {
                 return false;
@@ -73,6 +92,10 @@ export class Display extends Output {
         }
 
         return true; 
+    }
+
+    public static setBlank(b: boolean, displays: Display[]) {
+        displays.forEach(d => d.blanked = b); 
     }
 }
 
@@ -94,5 +117,23 @@ export class AudioDevice extends Output {
 
         return volume / audioDevices.length;
     }
-}
 
+    // returns true iff both are muted
+    public static getMute(audioDevices: AudioDevice[]): boolean {
+        for (let a of audioDevices) {
+            if (!a.muted) {
+                return false;
+            }
+        }
+
+        return true; 
+    }
+
+    public static setVolume(v: number, audioDevices: AudioDevice[]) {
+        audioDevices.forEach(a => a.volume = v);
+    }
+
+    public static setMute(m: boolean, audioDevices: AudioDevice[]) {
+        audioDevices.forEach(a => a.muted = m); 
+    }
+}

@@ -5,7 +5,7 @@
 			<div></div>
 		</li>
 	
-		<li *ngFor="let i of preset.inputs" class="input-slice" [class.selectedInput]="getInput() === i" (click)="command.changeInput(i, preset.displays)">
+		<li *ngFor="let i of preset.inputs" class="input-slice" [class.selectedInput]="getInput() === i" (click)="command.setInput(i, preset.displays)">
 			<div class="input" [style.top]="topoffset" [style.right]="rightoffset">
 				<i class='material-icons'>{{i.icon}}</i>
 				<span>{{i.displayname}}</span>
@@ -28,13 +28,13 @@
         <i class="material-icons icon">{{preset.icon}}</i>
         <span *ngIf="circleOpen" class="picture">picture on</span>
         <div *ngIf="circleOpen" class="switch" (click)="$event.stopPropagation()">
-            <ui-switch></ui-switch>
+            <ui-switch size="large"></ui-switch>
         </div>
 	</div>
 </div>
 
 <div class="volume" *ngIf="circleOpen">
-    <mat-slider id="slider" vertical [value]="getVolume()" [step]="5" [thumbLabel]="thumbLabel" (change)="command.changeVolume($event.value, preset.audioDevices); closeThumb()"></mat-slider>
+    <mat-slider id="slider" vertical [value]="getVolume()" [step]="5" [thumbLabel]="thumbLabel" (change)="command.setVolume($event.value, preset.audioDevices); closeThumb()"></mat-slider>
 </div>
 
 <!-- one 'slice' of wheel -->
