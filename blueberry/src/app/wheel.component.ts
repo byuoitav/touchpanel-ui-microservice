@@ -7,7 +7,7 @@ import { CommandService } from './command.service';
 @Component({
 	selector: 'wheel',
 	templateUrl: './wheel.component.html',
-	styleUrls: ['./wheel.component.scss'],
+	styleUrls: ['./wheel.component.scss', './colors.scss'],
 })
 
 export class WheelComponent implements OnInit {

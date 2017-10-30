@@ -1,8 +1,5 @@
 <div class="basediv">
 	<div *ngIf="panel?.render">
-        <!--
-        <wheel [preset]="panel.presets[0]"></wheel>
-        -->
 		<div *ngFor="let preset of panel.presets">
 			<wheel [preset]="preset"></wheel>
 		</div>

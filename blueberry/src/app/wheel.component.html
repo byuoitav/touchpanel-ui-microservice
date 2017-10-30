@@ -1,11 +1,11 @@
-<div class="circle" [class.circle-open]="circleOpen" [ngStyle]="{'margin-top': preset.top, 'margin-left': preset.right}">
+<div class="circle" [class.circle-open]="circleOpen" [ngStyle]="{'margin-top': preset.top, 'margin-left': preset.right, 'z-index': circleOpen ? 10 : 0}">
 	<!-- wheel -->
 	<ul #wheel class="wheel" [class.wheel-open]="circleOpen">
 		<li class="title-slice">
 			<div></div>
 		</li>
 	
-		<li *ngFor="let i of preset.inputs" class="input-slice" [class.selectedInput]="getInput() === i" (click)="command.setInput(i, preset.displays)">
+		<li *ngFor="let i of preset.inputs" class="input-slice" [class.selected-input]="getInput() === i" (click)="command.setInput(i, preset.displays)">
 			<div class="input" [style.top]="topoffset" [style.right]="rightoffset">
 				<i class='material-icons'>{{i.icon}}</i>
 				<span>{{i.displayname}}</span>

@@ -8,7 +8,7 @@ import { SocketService } from './socket.service';
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss'],
+  styleUrls: ['./app.component.scss', './colors.scss'],
   providers: [APIService],
 })
 export class AppComponent implements OnInit {
