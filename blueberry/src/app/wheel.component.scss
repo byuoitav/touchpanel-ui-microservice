@@ -13,6 +13,23 @@ ul {
 	-webkit-margin-after: 0em;
 }
 
+.title {
+    position: absolute; 
+    color: white;
+    font-size: 5vh;
+    width: 100%;
+    text-align: center;
+    z-index: 15;
+	transition: $duration ease-in-out all;
+    opacity: 0;
+    margin-top: 4%;
+
+    &.open {
+        margin-top: 8%; 
+        opacity: 1;
+    }
+}
+
 .circle {
 	display: flex;
 	justify-content: center;
@@ -45,6 +62,10 @@ ul {
 		height: 100%;
 		border-radius: 51%;
 	}
+
+    .title-slice {
+//		clip-path: url(#title-sector);
+    }
 
 	.input-slice {
 		clip-path: url(#sector);

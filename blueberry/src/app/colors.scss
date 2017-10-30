@@ -25,6 +25,7 @@ $icon: white;
 
         .input-slice {
              background-color: $slice; 
+             box-shadow: inset 0 0 30vh 1vh rgba(0,0,0,.3); 
 
              .input {
                 color: white; 
@@ -45,9 +46,10 @@ $icon: white;
         border: .5vh solid white;
         color: white;
 
+        box-shadow: inset 0 0 15vh 3vh rgba(0,0,0,.3);
+
         .icon {
             color: $icon; 
         }
     }
 }
-

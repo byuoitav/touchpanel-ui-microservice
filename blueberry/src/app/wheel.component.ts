@@ -56,6 +56,8 @@ export class WheelComponent implements OnInit {
 		let rotate = "rotate(" + String(-(WheelComponent.TITLE_ANGLE_ROTATE)) + "deg)";
 		children[0].style.transform = rotate;
 		children[0 + numOfChildren + 1].style.transform = rotate; //rotate the line the corrosponds to this slice
+	    rotate = "rotate(" + String(WheelComponent.TITLE_ANGLE_ROTATE) + "deg)";
+        children[0].firstElementChild.style.transform = rotate;
 
 		for (let i = 1; i <= numOfChildren; ++i) {
 			rotate = "rotate(" + String((angle * -i) - WheelComponent.TITLE_ANGLE_ROTATE) + "deg)";

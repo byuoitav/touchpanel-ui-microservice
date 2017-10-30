@@ -75,7 +75,7 @@ export class CommandService {
 	}
 
     public setBlank(b: boolean, displays: Display[]) {
-		console.log("Setting blnaked to", b,"on", displays);
+		console.log("Setting blanked to", b,"on", displays);
         let prev = Display.getBlank(displays);
         Display.setBlank(b, displays);
 
@@ -91,7 +91,7 @@ export class CommandService {
 			data => {
 				console.log("Success");
 			}, err => {
-                displays.forEach(d => d.blanked = prev);
+                Display.setBlank(prev, displays);
 			}
 		);
     }

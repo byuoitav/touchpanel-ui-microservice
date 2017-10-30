@@ -1,8 +1,12 @@
+<div class="title" [class.open]="circleOpen">
+    <span>{{preset.name}}</span>
+</div>
+
 <div class="circle" [class.circle-open]="circleOpen" [ngStyle]="{'margin-top': preset.top, 'margin-left': preset.right, 'z-index': circleOpen ? 10 : 0}">
 	<!-- wheel -->
 	<ul #wheel class="wheel" [class.wheel-open]="circleOpen">
 		<li class="title-slice">
-			<div></div>
+            <div></div>
 		</li>
 	
 		<li *ngFor="let i of preset.inputs" class="input-slice" [class.selected-input]="getInput() === i" (click)="command.setInput(i, preset.displays)">
@@ -26,9 +30,10 @@
 	
 	<div class="center" [class.center-open]="circleOpen" (click)="toggle()">
         <i class="center-item material-icons icon" [class.open]="circleOpen">{{preset.icon}}</i>
-        <span class="center-item picture" [class.open]="circleOpen">picture on</span>
+        <span *ngIf="!getBlank()" class="center-item picture" [class.open]="circleOpen">picture on</span>
+        <span *ngIf="getBlank()" class="center-item picture" [class.open]="circleOpen">picture off</span>
         <div class="center-item switch" [class.open]="circleOpen" (click)="$event.stopPropagation()">
-            <ui-switch size="large"></ui-switch>
+            <ui-switch [checked]="!getBlank()" size="large" (change)="command.setBlank($event, preset.displays)"></ui-switch>
         </div>
 	</div>
 </div>
