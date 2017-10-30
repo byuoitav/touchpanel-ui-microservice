@@ -88,21 +88,43 @@ ul {
 	width: $ccentersize;
 	height: $ccentersize;
 	
-	display: flex;
-    flex-direction: column;
-    justify-content: space-around;
-    align-items: center;
 	transition: $duration ease-in-out all;
 
+    .center-item {
+        position: absolute; 
+        width: 100%;
+        text-align: center;
+	    transition: $duration ease-in-out all;
+    }
+
     .icon {
+        margin-top: 25%;
         font-size: 500%;
+
+        &.open {
+            margin-top: 15%;
+            font-size: 700%; 
+        }
     }
 
     .picture {
-        color: white; 
+        margin-top: 100%;
+        opacity: 0;
+
+        &.open {
+            margin-top: 65%;
+            opacity: 1;
+        }
     }
 
     .switch {
+        margin-top: 100%;
+        opacity: 0;
+
+        &.open {
+            margin-top: 75%;
+            opacity: 1;
+        }
     }
 }
 

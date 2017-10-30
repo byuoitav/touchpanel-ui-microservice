@@ -25,9 +25,9 @@
 	</ul>
 	
 	<div class="center" [class.center-open]="circleOpen" (click)="toggle()">
-        <i class="material-icons icon">{{preset.icon}}</i>
-        <span *ngIf="circleOpen" class="picture">picture on</span>
-        <div *ngIf="circleOpen" class="switch" (click)="$event.stopPropagation()">
+        <i class="center-item material-icons icon" [class.open]="circleOpen">{{preset.icon}}</i>
+        <span class="center-item picture" [class.open]="circleOpen">picture on</span>
+        <div class="center-item switch" [class.open]="circleOpen" (click)="$event.stopPropagation()">
             <ui-switch size="large"></ui-switch>
         </div>
 	</div>
