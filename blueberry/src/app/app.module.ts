@@ -3,6 +3,7 @@ import { NgModule } from '@angular/core';
 import { HttpModule } from '@angular/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatSliderModule } from '@angular/material';
+import { UiSwitchModule } from 'ngx-ui-switch';
 import 'hammerjs';
 
 import { AppComponent } from './app.component';
@@ -10,8 +11,6 @@ import { WheelComponent } from './wheel.component';
 import { APIService } from './api.service';
 import { SocketService } from './socket.service';
 import { CommandService } from './command.service';
-
-import { UiSwitchModule } from 'angular2-ui-switch';
 
 @NgModule({
   declarations: [
