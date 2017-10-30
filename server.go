@@ -11,6 +11,7 @@ import (
 	"github.com/byuoitav/touchpanel-ui-microservice/events"
 	"github.com/byuoitav/touchpanel-ui-microservice/handlers"
 	"github.com/byuoitav/touchpanel-ui-microservice/socket"
+	"github.com/byuoitav/touchpanel-ui-microservice/uiconfig"
 	"github.com/jessemillar/health"
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
@@ -61,10 +62,11 @@ func main() {
 	router.GET("/deviceinfo", handlers.GetDeviceInfo)
 	router.GET("/reboot", handlers.Reboot)
 	router.GET("/dockerstatus", handlers.GetDockerStatus)
-	router.GET("/json", handlers.GetJSON)
 
-	router.GET("/api", handlers.GetAPI)
-	router.GET("/nextapi", handlers.NextAPI)
+	router.GET("/uiconfig", uiconfig.GetUIConfig)
+	router.GET("/uipath", uiconfig.GetUIPath)
+	router.GET("/api", uiconfig.GetAPI)
+	router.GET("/nextapi", uiconfig.NextAPI)
 
 	router.POST("/help", handlers.Help)
 	router.POST("/confirmhelp", handlers.ConfirmHelp)
@@ -72,7 +74,9 @@ func main() {
 
 	// all the different ui's
 	router.Static("/", "redirect.html")
+	router.Any("/404", redirect)
 	router.Static("/circle-default", "circle-default")
+	router.Static("/blueberry", "blueberry")
 
 	router.Start(port)
 }
@@ -101,4 +105,9 @@ func GetStatus(context echo.Context) error {
 	}
 
 	return context.JSON(http.StatusOK, s)
+}
+
+func redirect(context echo.Context) error {
+	http.Redirect(context.Response().Writer, context.Request(), "http://github.com/404", 302)
+	return nil
 }

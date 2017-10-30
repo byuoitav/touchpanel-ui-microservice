@@ -1,29 +1,27 @@
-import { Component, Input, OnInit, ElementRef, ViewChild } from '@angular/core';
+import { Component, Input as AngularInput, OnInit, ElementRef, ViewChild } from '@angular/core';
 
-import { Display } from './objects';
+import { Preset } from './objects';
+import { Display, Input, AudioDevice } from './status.objects';
 import { CommandService } from './command.service';
 
 @Component({
 	selector: 'wheel',
 	templateUrl: './wheel.component.html',
-	styleUrls: ['./wheel.component.scss'],
+	styleUrls: ['./wheel.component.scss', './colors.scss'],
 })
 
 export class WheelComponent implements OnInit {
 	private static TITLE_ANGLE: number =  100;
 	private static TITLE_ANGLE_ROTATE: number = WheelComponent.TITLE_ANGLE / 2;
 
-	@Input() display: Display; 
-	/*
-	@Input() top: string;
-	@Input() right: string;
-   */
+	@AngularInput() preset: Preset; 
 
 	arcpath: string;
 	titlearcpath: string;
 	rightoffset: string;
 	topoffset: string;
 	circleOpen: boolean;
+    thumbLabel: boolean = true;
 
 	@ViewChild("wheel") wheel: ElementRef;
 
@@ -35,16 +33,20 @@ export class WheelComponent implements OnInit {
 		setTimeout(() => this.render(), 0);
 	}
 
-	public open() {
-		this.circleOpen = true;	
-	}
-	
-	public close() {
-		this.circleOpen = false;	
+	public toggle() {
+		this.circleOpen = !this.circleOpen;	
 	}
 
+    public open() {
+        this.circleOpen = true;
+    }
+
+    public close() {
+        this.circleOpen = false;
+    }
+	
 	private render() {
-		let numOfChildren = this.display.inputs.length;	
+		let numOfChildren = this.preset.inputs.length;	
 		let children = this.wheel.nativeElement.children;
 		let angle = (360 - WheelComponent.TITLE_ANGLE) / numOfChildren;
 
@@ -54,6 +56,8 @@ export class WheelComponent implements OnInit {
 		let rotate = "rotate(" + String(-(WheelComponent.TITLE_ANGLE_ROTATE)) + "deg)";
 		children[0].style.transform = rotate;
 		children[0 + numOfChildren + 1].style.transform = rotate; //rotate the line the corrosponds to this slice
+	    rotate = "rotate(" + String(WheelComponent.TITLE_ANGLE_ROTATE) + "deg)";
+        children[0].firstElementChild.style.transform = rotate;
 
 		for (let i = 1; i <= numOfChildren; ++i) {
 			rotate = "rotate(" + String((angle * -i) - WheelComponent.TITLE_ANGLE_ROTATE) + "deg)";
@@ -71,7 +75,7 @@ export class WheelComponent implements OnInit {
 		let top: number;
 		let right: number;
 
-		switch (this.display.inputs.length) {
+		switch (this.preset.inputs.length) {
 			case 4:
 				top = 9;
 				right = 22.5;
@@ -120,4 +124,22 @@ export class WheelComponent implements OnInit {
 			y: cy + (r * Math.sin(angleInRad))	
 		}
 	}
+
+    public closeThumb() {
+        setTimeout(() => {
+            document.getElementById('slider').blur();
+        }, 750);
+    }
+
+    private getInput(): Input {
+        return Display.getInput(this.preset.displays);
+    }
+
+    private getVolume(): number {
+        return AudioDevice.getVolume(this.preset.audioDevices); 
+    }
+
+    private getBlank(): boolean {
+        return Display.getBlank(this.preset.displays); 
+    }
 }

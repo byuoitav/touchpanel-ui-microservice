@@ -1,7 +1,7 @@
 import { Injectable, EventEmitter } from '@angular/core';
 import { Http, Response, Headers, RequestOptions } from '@angular/http';
 import { Observable } from 'rxjs/Rx';
-import { UIConfiguration, Room, RoomConfiguration, RoomStatus, Device } from './objects';
+import { UIConfiguration, Room, RoomConfiguration, RoomStatus} from './objects';
 
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/timeout';
@@ -19,7 +19,6 @@ export class APIService {
 	public static hostname: string;
 	public static apiurl: string;
 
-	public static uiconfig: UIConfiguration;
 	public static room: Room;
 
 	private static apihost: string;
@@ -37,7 +36,6 @@ export class APIService {
 			let base = location.origin.split(':');
 			APIService.localurl = base[0] + ":" + base[1];
 	
-			APIService.uiconfig = new UIConfiguration();
 			APIService.room = new Room();	
 			
 			this.setupHostname();
@@ -76,17 +74,12 @@ export class APIService {
 		this.getAPIUrl().subscribe(
 			data => {
 				APIService.apihost = "http://" + location.hostname;
-				if (!data["apihost"].includes("localhost") && data["enabled"]) {
-					APIService.apihost = "http://" + data["apihost"];
+				if (!data["hostname"].includes("localhost")) {
+					APIService.apihost = "http://" + data["hostname"];
 				}
 
 				APIService.apiurl = APIService.apihost + ":8000/buildings/" + APIService.building + "/rooms/" + APIService.roomName; 
 				console.info("API url:", APIService.apiurl);
-
-				if (data["enabled"] && !next) {
-					console.info("Monitoring API");
-					this.monitorAPI();
-				}
 
 				if (!next) {
 					this.setupUIConfig();
@@ -113,9 +106,9 @@ export class APIService {
 	private setupUIConfig() {
 		this.getUIConfig().subscribe(
 			data => {
-				APIService.uiconfig = new UIConfiguration();
-				Object.assign(APIService.uiconfig, data);
-				console.info("UI Configuration:", APIService.uiconfig);
+				APIService.room.uiconfig = new UIConfiguration();
+				Object.assign(APIService.room.uiconfig, data);
+				console.info("UI Configuration:", APIService.room.uiconfig);
 
 				this.setupRoomConfig();
 			}, err => {
@@ -192,7 +185,7 @@ export class APIService {
 	}
 
 	getUIConfig(): Observable<Object> {
-		return this.http.get(APIService.localurl + ":8888/json")
+		return this.http.get(APIService.localurl + ":8888/uiconfig")
 			.map(response => response.json())
 			.map(res => deserialize<UIConfiguration>(UIConfiguration, res));
 	}
@@ -204,7 +197,8 @@ export class APIService {
 	}
 
 	getRoomStatus(): Observable<Object> {
-		return this.http.get(APIService.apiurl)
+//		return this.http.get(APIService.apiurl)
+		return this.http.get("http://teton.byu.edu:8999/fakestatus")
 			.map(response => response.json())
 			.map(res => deserialize<RoomStatus>(RoomStatus, res));
 	}

@@ -1,7 +1,7 @@
 <div class="basediv">
-	<div>
-		<div *ngFor="let display of displays">
-			<wheel [display]="display"></wheel>
+	<div *ngIf="panel?.render">
+		<div *ngFor="let preset of panel.presets">
+			<wheel [preset]="preset"></wheel>
 		</div>
 	</div>
 </div>
