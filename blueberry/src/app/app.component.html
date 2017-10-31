@@ -1,6 +1,11 @@
 <div class="basediv">
+    <div class="lock" [class.disabled]="!locked" (click)="unlock()">
+        <object type="image/svg+xml" data="./assets/byu_medallion_white.svg" class="logo">
+        </object>
+    </div>
+
 	<div *ngIf="panel?.render">
-		<div *ngFor="let preset of panel.presets">
+		<div #wheels *ngFor="let preset of panel.presets">
 			<wheel [preset]="preset"></wheel>
 		</div>
 	</div>

@@ -1,9 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 
 import { Preset, Panel } from './objects';
 import { Device, Input, Output, Display, AudioDevice } from './status.objects';
 import { APIService } from './api.service';
 import { SocketService } from './socket.service';
+import { WheelComponent } from './wheel.component';
 
 @Component({
   selector: 'app-root',
@@ -27,6 +28,8 @@ export class AppComponent implements OnInit {
 
     // contains all presets for the room
     presets: Preset[] = [];
+
+    locked: boolean = true;
 
 
 	constructor (private api: APIService, private socket: SocketService) {}
@@ -143,4 +146,18 @@ export class AppComponent implements OnInit {
 			}	
 		}
 	}
+
+    @ViewChild(WheelComponent)
+    private defaultPreset: WheelComponent;
+
+    public unlock() {
+        console.log("wheels", this.defaultPreset);
+
+        this.defaultPreset.command.setPower('on', this.defaultPreset.preset.displays);
+
+        this.locked = false;
+        setTimeout(() => {
+            this.defaultPreset.open(0);
+        }, 1000); // duration of transition
+    }
 }

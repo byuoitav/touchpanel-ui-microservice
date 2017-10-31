@@ -15,6 +15,11 @@ $icon: white;
 .basediv {
     background-color: $background;
     box-shadow: $backgroundShadow;
+
+    .lock {
+        background-color: $background; 
+        box-shadow: $backgroundShadow;
+    }
 }
 
 .circle {

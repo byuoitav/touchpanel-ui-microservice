@@ -18,10 +18,6 @@ export class RoomConfiguration {
 	match(n: string) {
 		return n == this.name;	
 	}
-
-//	configurationID: number;
-//	configuration: Configuration;
-//	roomDesignation: string;
 }
 
 export class RoomStatus {

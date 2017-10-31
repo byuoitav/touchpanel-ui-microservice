@@ -25,7 +25,7 @@ ul {
     &.open {
         backdrop-filter: blur(10px);
         opacity: 1;
-        pointer-events: all;
+        pointer-events: auto;
     }
 }
 
@@ -193,9 +193,11 @@ ul {
     opacity: 0;
     pointer-events: none;
 
+    z-index: 50;
+
     &.open {
         opacity: 1;  
-        pointer-events: all;
+        pointer-events: auto;
     }
 
     .power {

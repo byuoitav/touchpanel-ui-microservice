@@ -6,43 +6,33 @@
 	top: 0;
 	width: 100%;
 	height: 100vh;
-}
 
-// what do we need to blur?
-// everything behind the selected wheel
-// but not the power/volume
-// so just the div with all the wheels in it
-// but it can't be in that div anymore, or else it will get blurred too
-.wheel-selection {
-		
-	.circle {
-		transition: .5s ease all;
-		filter: blur(10px);
-		background-color: blue;
-		border-radius: 50%;
-		width: 25vh;
-		height: 25vh;
+    .lock {
+        position: absolute;
+        min-width: 100%;  
+        min-height: 100%;
+        z-index: 500;
+        opacity: 1;
+        pointer-events: auto;
 
-		position: absolute;
-	}
+        display: flex;
+        justify-content: center;
+        align-items: center;
 
-	.right {
-		margin-left: 75%;
-	}
+        transition: 1s ease-in all;
+        
+        &.disabled {
+            opacity: 0; 
+            pointer-events: none;
+        }
 
-	.random {
-		margin-top: 30%;	
-		margin-left: 45%;
-	}
+        .logo {
+            margin-top: 2%;
+            height: 50%; 
+            width: 50%;
+            pointer-events: none;
 
-	.priority {
-		z-index: 10;
-		filter: none;
-		width: 50vh;
-		height: 50vh;
-		margin-top: 25vh;
-		margin-left: 35%;
-		margin-bottom: 25vh;
-		margin-right: 35%;
-	}
+            filter: invert(5%);
+        }
+    }
 }
