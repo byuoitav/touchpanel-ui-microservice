@@ -42,14 +42,18 @@ export class Output extends Device {
     }
 
     // return on (true) if at least one is on
-    public static getPower(outputs: Output[]): boolean {
+    public static getPower(outputs: Output[]): string {
+        let state: string = null;
+
         for (let o of outputs) {
-            if (o.power == "on") {
-                return true;
+            if (state == null) {
+                state = o.power;
+            } else if (o.power != state) {
+                return null;
             }
         }
 
-        return false; 
+        return state; 
     }
 
     public static getInput(outputs: Output[]): Input {

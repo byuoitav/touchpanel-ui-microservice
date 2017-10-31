@@ -34,14 +34,20 @@ export class WheelComponent implements OnInit {
 	}
 
 	public toggle() {
-		this.circleOpen = !this.circleOpen;	
+        if (this.circleOpen) {
+            this.close();
+        } else {
+            this.open();
+        }
 	}
 
     public open() {
+        this.command.setPower('on', this.preset.displays);
         this.circleOpen = true;
     }
 
     public close() {
+//        this.command.setPower('standby', this.preset.displays)
         this.circleOpen = false;
     }
 	
@@ -141,5 +147,9 @@ export class WheelComponent implements OnInit {
 
     private getBlank(): boolean {
         return Display.getBlank(this.preset.displays); 
+    }
+
+    private getPower(): string {
+        return Display.getPower(this.preset.displays); 
     }
 }

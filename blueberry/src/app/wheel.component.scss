@@ -13,6 +13,22 @@ ul {
 	-webkit-margin-after: 0em;
 }
 
+.background {
+    position: absolute;
+    min-width: 100%;
+    min-height: 100%;
+
+	transition: $duration ease-in-out all;
+    opacity: 0;
+    pointer-events: none;
+
+    &.open {
+        backdrop-filter: blur(10px);
+        opacity: 1;
+        pointer-events: all;
+    }
+}
+
 .title {
     position: absolute; 
     color: white;
@@ -37,11 +53,11 @@ ul {
 
 	position: absolute;
 	transition: $duration ease-in-out all;
-}
 
-.circle-open {
-	margin-top: 50vh !important;
-	margin-left: 50% !important;
+    &.open {
+	    margin-top: 50vh !important;
+	    margin-left: 50% !important;
+    }
 }
 
 .wheel {
@@ -53,6 +69,11 @@ ul {
     border-radius: 50%;
 
 	transition: $duration ease-in-out all;
+
+    &.open {
+	    min-width: $owheelsize !important;
+	    min-height: $owheelsize !important;
+    }
 
 	li {
 		position: absolute;
@@ -86,11 +107,6 @@ ul {
 	}
 }
 
-.wheel-open {
-	min-width: $owheelsize !important;
-	min-height: $owheelsize !important;
-}
-
 .thin {
 	width: 100% !important;
 	height: .01% !important;
@@ -110,6 +126,11 @@ ul {
 	height: $ccentersize;
 	
 	transition: $duration ease-in-out all;
+
+    &.open {
+	    width: $ocentersize;
+	    height: $ocentersize;
+    }
 
     .center-item {
         position: absolute; 
@@ -149,11 +170,6 @@ ul {
     }
 }
 
-.center-open {
-	width: $ocentersize;
-	height: $ocentersize;
-}
-
 .volume {
     position: absolute;
     height: $volumesize;
@@ -164,5 +180,26 @@ ul {
 
     .mat-slider-vertical {
         height: 100%;
+    }
+}
+
+.buttons {
+    position: absolute;
+    height: 3vh;
+    margin-left: 3%;
+
+    color: white;
+
+    opacity: 0;
+    pointer-events: none;
+
+    &.open {
+        opacity: 1;  
+        pointer-events: all;
+    }
+
+    .power {
+        font-size: 12vh; 
+        margin-top: 3vh;
     }
 }
