@@ -35,4 +35,16 @@
             filter: invert(5%);
         }
     }
+
+    .buttons {
+        position: absolute;
+        height: 3vh;
+        margin-left: 3%;
+        color: white; 
+
+        .power {
+            font-size: 12vh;  
+            margin-top: 3vh;
+        }
+    }
 }

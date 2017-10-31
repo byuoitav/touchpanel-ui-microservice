@@ -151,13 +151,16 @@ export class AppComponent implements OnInit {
     private defaultPreset: WheelComponent;
 
     public unlock() {
-        console.log("wheels", this.defaultPreset);
-
         this.defaultPreset.command.setPower('on', this.defaultPreset.preset.displays);
 
         this.locked = false;
         setTimeout(() => {
             this.defaultPreset.open(0);
         }, 1000); // duration of transition
+    }
+
+    public lock() {
+        console.log("here");
+        this.locked = true;
     }
 }

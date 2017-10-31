@@ -39,6 +39,7 @@ ul {
 	transition: $duration ease-in-out all;
     opacity: 0;
     margin-top: 4%;
+    pointer-events: none;
 
     &.open {
         margin-top: 8%; 
