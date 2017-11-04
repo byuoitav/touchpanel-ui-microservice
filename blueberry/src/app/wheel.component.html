@@ -40,7 +40,7 @@
         <span *ngIf="!getBlank()" class="center-item picture" [class.open]="circleOpen">picture on</span>
         <span *ngIf="getBlank()" class="center-item picture" [class.open]="circleOpen">picture off</span>
         <div class="center-item switch" [class.open]="circleOpen" (click)="$event.stopPropagation()">
-            <ui-switch size="large" defaultBgColor="#f44336" (change)="command.setBlank($event, preset.displays)"></ui-switch>
+            <ui-switch size="medium" defaultBgColor="#f44336" (change)="command.setBlank($event, preset.displays)"></ui-switch>
         </div>
 	</div>
 </div>

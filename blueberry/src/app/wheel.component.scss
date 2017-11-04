@@ -85,9 +85,9 @@ ul {
 		border-radius: 51%;
 	}
 
-    .title-slice {
+//    .title-slice {
 //		clip-path: url(#title-sector);
-    }
+//    }
 
 	.input-slice {
 		clip-path: url(#sector);
@@ -129,8 +129,7 @@ ul {
 	transition: $duration ease-in-out all;
 
     &.open {
-	    width: $ocentersize;
-	    height: $ocentersize;
+        transform: scale(1.8, 1.8);
     }
 
     .center-item {
@@ -145,27 +144,25 @@ ul {
         font-size: 500%;
 
         &.open {
-            margin-top: 15%;
-            font-size: 700%; 
+            transform: scale(.9, .9) translateY(-40%);
         }
     }
 
     .picture {
-        margin-top: 100%;
+        margin-top: 60%;
         opacity: 0;
+        font-size: 80%;
 
         &.open {
-            margin-top: 65%;
             opacity: 1;
         }
     }
 
     .switch {
-        margin-top: 100%;
+        margin-top: 75%;
         opacity: 0;
 
         &.open {
-            margin-top: 75%;
             opacity: 1;
         }
     }

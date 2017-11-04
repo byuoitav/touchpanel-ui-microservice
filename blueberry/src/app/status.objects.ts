@@ -1,5 +1,11 @@
 import { Type } from 'serializer.ts/Decorators';
 
+export const POWER: string = "power";
+export const INPUT: string = "input";
+export const BLANKED: string = "blanked";
+export const MUTED: string = "muted";
+export const VOLUME: string = "volume";
+
 export class Device {
 	name: string;
 	displayname: string;

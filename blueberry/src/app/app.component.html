@@ -5,7 +5,8 @@
     </div>
 
     <div class="buttons">
-        <i class="material-icons power" (click)="lock()">power_settings_new</i>
+        <i *ngIf="!locked" class="material-icons power" (click)="lock()">lock_open</i>
+        <i *ngIf="locked" class="material-icons power" (click)="lock()">lock_outline</i>
     </div> 
 
 	<div *ngIf="panel?.render">
