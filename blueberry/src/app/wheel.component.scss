@@ -3,7 +3,7 @@ $ocentersize: 50vh;
 $ccentersize: 30vh;
 $owheelsize: 95vh;
 $cwheelsize: 25vh;
-$linewidth: .5vh;
+$linewidth: .12vh;
 
 $volumesize: 80%;
 
@@ -36,13 +36,12 @@ ul {
     width: 100%;
     text-align: center;
     z-index: 15;
-	transition: $duration ease-in-out all;
+	transition: opacity $duration ease-in-out ;
     opacity: 0;
-    margin-top: 4%;
+    margin-top: 8%;
     pointer-events: none;
 
     &.open {
-        margin-top: 8%; 
         opacity: 1;
     }
 }
@@ -69,11 +68,10 @@ ul {
 	min-height: $cwheelsize;	
     border-radius: 50%;
 
-	transition: $duration ease-in-out all;
+	transition: transform $duration ease-in-out;
 
     &.open {
-	    min-width: $owheelsize !important;
-	    min-height: $owheelsize !important;
+        transform: scale(3.75, 3.75);
     }
 
 	li {
@@ -85,25 +83,25 @@ ul {
 		border-radius: 51%;
 	}
 
-//    .title-slice {
-//		clip-path: url(#title-sector);
-//    }
-
 	.input-slice {
 		clip-path: url(#sector);
 	
 		.input {
 			position: absolute;
-			display: flex;
-			justify-content: center;
-			flex-direction: column;
-			text-align: center;	
-		
-			font-size: 2.5vh;
+            height: 25%;
+            width: 25%;
 		
 			.material-icons {
-				font-size: 11vh;	
+                width: 100%;
+                transform: scale(.6, .6);
+                font-size: 6vh;
+                text-align: center;
 			}
+
+            .name {
+                width: 100%;
+                text-align: center;
+            }
 		}
 	}
 }
