@@ -3,7 +3,7 @@ $ocentersize: 50vh;
 $ccentersize: 30vh;
 $owheelsize: 95vh;
 $cwheelsize: 25vh;
-$linewidth: .5vh;
+$linewidth: .12vh;
 
 $volumesize: 80%;
 
@@ -13,6 +13,22 @@ ul {
 	-webkit-margin-after: 0em;
 }
 
+.background {
+    position: absolute;
+    min-width: 100%;
+    min-height: 100%;
+
+	transition: $duration ease-in-out all;
+    opacity: 0;
+    pointer-events: none;
+
+    &.open {
+        backdrop-filter: blur(10px);
+        opacity: 1;
+        pointer-events: auto;
+    }
+}
+
 .title {
     position: absolute; 
     color: white;
@@ -20,12 +36,12 @@ ul {
     width: 100%;
     text-align: center;
     z-index: 15;
-	transition: $duration ease-in-out all;
+	transition: opacity $duration ease-in-out ;
     opacity: 0;
-    margin-top: 4%;
+    margin-top: 8%;
+    pointer-events: none;
 
     &.open {
-        margin-top: 8%; 
         opacity: 1;
     }
 }
@@ -36,12 +52,12 @@ ul {
 	align-items: center;
 
 	position: absolute;
-	transition: $duration ease-in-out all;
-}
+	transition: margin $duration ease-in-out;
 
-.circle-open {
-	margin-top: 50vh !important;
-	margin-left: 50% !important;
+    &.open {
+	    margin-top: 50vh !important;
+	    margin-left: 50% !important;
+    }
 }
 
 .wheel {
@@ -52,7 +68,11 @@ ul {
 	min-height: $cwheelsize;	
     border-radius: 50%;
 
-	transition: $duration ease-in-out all;
+	transition: transform $duration ease-in-out;
+
+    &.open {
+        transform: scale(3.75, 3.75);
+    }
 
 	li {
 		position: absolute;
@@ -63,32 +83,31 @@ ul {
 		border-radius: 51%;
 	}
 
-    .title-slice {
-//		clip-path: url(#title-sector);
-    }
-
 	.input-slice {
 		clip-path: url(#sector);
 	
 		.input {
 			position: absolute;
-			display: flex;
-			justify-content: center;
-			flex-direction: column;
-			text-align: center;	
-		
-			font-size: 2.5vh;
+            height: 25%;
+            width: 25%;
+
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
 		
 			.material-icons {
-				font-size: 11vh;	
+                transform: scale(.95, .95);
+                font-size: 3vh;
 			}
+
+            .name {
+                transform: scale(.65, .65);
+                font-size: 1vh;
+                white-space: nowrap;
+            }
 		}
 	}
-}
-
-.wheel-open {
-	min-width: $owheelsize !important;
-	min-height: $owheelsize !important;
 }
 
 .thin {
@@ -109,13 +128,17 @@ ul {
 	width: $ccentersize;
 	height: $ccentersize;
 	
-	transition: $duration ease-in-out all;
+	transition: transform $duration ease-in-out;
+
+    &.open {
+        transform: scale(1.75, 1.75);
+    }
 
     .center-item {
         position: absolute; 
         width: 100%;
         text-align: center;
-	    transition: $duration ease-in-out all;
+	    transition: transform $duration, opacity $duration, ease-in-out;
     }
 
     .icon {
@@ -123,35 +146,28 @@ ul {
         font-size: 500%;
 
         &.open {
-            margin-top: 15%;
-            font-size: 700%; 
+            transform: scale(.9, .9) translateY(-40%);
         }
     }
 
     .picture {
-        margin-top: 100%;
+        margin-top: 60%;
         opacity: 0;
+        font-size: 80%;
 
         &.open {
-            margin-top: 65%;
             opacity: 1;
         }
     }
 
     .switch {
-        margin-top: 100%;
+        margin-top: 75%;
         opacity: 0;
 
         &.open {
-            margin-top: 75%;
             opacity: 1;
         }
     }
-}
-
-.center-open {
-	width: $ocentersize;
-	height: $ocentersize;
 }
 
 .volume {
@@ -164,5 +180,28 @@ ul {
 
     .mat-slider-vertical {
         height: 100%;
+    }
+}
+
+.buttons {
+    position: absolute;
+    height: 3vh;
+    margin-left: 3%;
+
+    color: white;
+
+    opacity: 0;
+    pointer-events: none;
+
+    z-index: 50;
+
+    &.open {
+        opacity: 1;  
+        pointer-events: auto;
+    }
+
+    .power {
+        font-size: 12vh; 
+        margin-top: 3vh;
     }
 }

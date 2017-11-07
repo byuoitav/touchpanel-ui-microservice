@@ -1,18 +1,25 @@
+<div class="background" [class.open]="circleOpen" (click)="toggle()">
+</div>
+
 <div class="title" [class.open]="circleOpen">
     <span>{{preset.name}}</span>
 </div>
 
-<div class="circle" [class.circle-open]="circleOpen" [ngStyle]="{'margin-top': preset.top, 'margin-left': preset.right, 'z-index': circleOpen ? 10 : 0}">
+<div class="buttons" [class.open]="circleOpen" (click)="$event.stopPropagation()">
+    <i class="material-icons power" (click)="command.setPower('standby', preset.displays); toggle()">power_settings_new</i>
+</div>
+
+<div class="circle" [class.open]="circleOpen" [ngStyle]="{'margin-top': preset.top, 'margin-left': preset.right, 'z-index': circleOpen ? 10 : 0}">
 	<!-- wheel -->
-	<ul #wheel class="wheel" [class.wheel-open]="circleOpen">
+	<ul #wheel class="wheel" [class.open]="circleOpen">
 		<li class="title-slice">
             <div></div>
 		</li>
 	
 		<li *ngFor="let i of preset.inputs" class="input-slice" [class.selected-input]="getInput() === i" (click)="command.setInput(i, preset.displays)">
 			<div class="input" [style.top]="topoffset" [style.right]="rightoffset">
-				<i class='material-icons'>{{i.icon}}</i>
-				<span>{{i.displayname}}</span>
+				<i class="material-icons">{{i.icon}}</i>
+				<span class="name">{{i.displayname}}</span>
 			</div>
 		</li>
 	
@@ -28,12 +35,12 @@
 		</li>
 	</ul>
 	
-	<div class="center" [class.center-open]="circleOpen" (click)="toggle()">
+	<div class="center" [class.open]="circleOpen" [class.on]="getPower() == 'on'" (click)="toggle()">
         <i class="center-item material-icons icon" [class.open]="circleOpen">{{preset.icon}}</i>
         <span *ngIf="!getBlank()" class="center-item picture" [class.open]="circleOpen">picture on</span>
         <span *ngIf="getBlank()" class="center-item picture" [class.open]="circleOpen">picture off</span>
         <div class="center-item switch" [class.open]="circleOpen" (click)="$event.stopPropagation()">
-            <ui-switch [checked]="!getBlank()" size="large" defaultBgColor="#f44336" (change)="command.setBlank($event, preset.displays)"></ui-switch>
+            <ui-switch size="medium" defaultBgColor="#f44336" (change)="command.setBlank($event, preset.displays)"></ui-switch>
         </div>
 	</div>
 </div>

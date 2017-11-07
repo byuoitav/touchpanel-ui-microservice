@@ -25,7 +25,7 @@ export class WheelComponent implements OnInit {
 
 	@ViewChild("wheel") wheel: ElementRef;
 
-	constructor(private command: CommandService) {
+	constructor(public command: CommandService) {
 		this.circleOpen = false;
 	}
 
@@ -34,11 +34,19 @@ export class WheelComponent implements OnInit {
 	}
 
 	public toggle() {
-		this.circleOpen = !this.circleOpen;	
+        if (this.circleOpen) {
+            this.close();
+        } else {
+            this.open(0);
+        }
 	}
 
-    public open() {
-        this.circleOpen = true;
+    public open(animationDelay: number) {
+        this.command.setPower('on', this.preset.displays);
+
+        setTimeout(() => {
+            this.circleOpen = true;
+        }, animationDelay);
     }
 
     public close() {
@@ -77,8 +85,8 @@ export class WheelComponent implements OnInit {
 
 		switch (this.preset.inputs.length) {
 			case 4:
-				top = 9;
-				right = 22.5;
+				top = 4;
+				right = 17.5;
 				break;
 			case 3: 
 				top = 13;
@@ -141,5 +149,9 @@ export class WheelComponent implements OnInit {
 
     private getBlank(): boolean {
         return Display.getBlank(this.preset.displays); 
+    }
+
+    private getPower(): string {
+        return Display.getPower(this.preset.displays); 
     }
 }

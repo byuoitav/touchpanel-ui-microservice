@@ -1,9 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 
 import { Preset, Panel } from './objects';
-import { Device, Input, Output, Display, AudioDevice } from './status.objects';
+import { Device, Input, Output, Display, AudioDevice, POWER, INPUT, BLANKED, MUTED, VOLUME } from './status.objects';
 import { APIService } from './api.service';
-import { SocketService } from './socket.service';
+import { SocketService, MESSAGE } from './socket.service';
+import { WheelComponent } from './wheel.component';
 
 @Component({
   selector: 'app-root',
@@ -28,6 +29,7 @@ export class AppComponent implements OnInit {
     // contains all presets for the room
     presets: Preset[] = [];
 
+    locked: boolean = true;
 
 	constructor (private api: APIService, private socket: SocketService) {}
 
@@ -41,7 +43,10 @@ export class AppComponent implements OnInit {
 			this.organizePresets();
 
             this.panel.render = true;
+            console.info("Panel", this.panel);
 		});
+
+        this.update();
 	}
 
 	private createInputs() {
@@ -95,7 +100,6 @@ export class AppComponent implements OnInit {
         let independentAudioDevices = Device.filterDevices<AudioDevice>(panel.independentAudioDevices, this.audioDevices);
 
         this.panel = new Panel(panel.hostname, panel.uipath, presets, panel.features, independentAudioDevices);
-        console.info("Panel", this.panel);
     }
 
 	private organizePresets() {
@@ -143,4 +147,76 @@ export class AppComponent implements OnInit {
 			}	
 		}
 	}
+
+    private update() {
+        this.socket.getEventListener().subscribe(event => {
+            if (event.type == MESSAGE) {
+                let e = event.data;
+                console.log("event", e);
+                
+                switch (e.eventInfoKey) {
+                    case POWER: {
+                        let output: Output;
+                        output = this.displays.find(d => d.name === e.device);
+                        if (output == null) {
+                            output = this.audioDevices.find(a => a.name === e.device);
+                        }
+
+                        output.power = e.eventInfoValue;
+                        break;
+                    }
+                    case INPUT: {
+                        let output: Output;
+                        output = this.displays.find(d => d.name === e.device);
+                        if (output == null) {
+                            output = this.audioDevices.find(a => a.name === e.device);
+                        }
+
+                        output.input = Input.getInput(e.eventInfoValue, this.inputs);
+                        break;
+                    }
+                    case BLANKED: {
+                        let display: Display;
+                        display = this.displays.find(d => d.name === e.device);
+
+                        display.blanked = (e.eventInfoValue.toLowerCase() == 'true');
+                        break;
+                    }
+                    case MUTED: {
+                        let audioDevice: AudioDevice;
+                        audioDevice = this.audioDevices.find(a => a.name === e.device);
+
+                        audioDevice.muted = (e.eventInfoValue.toLowerCase() == 'true');
+                        break;
+                    }
+                    case VOLUME: {
+                        let audioDevice: AudioDevice;
+                        audioDevice = this.audioDevices.find(a => a.name === e.device);
+
+                        audioDevice.volume = parseInt(e.eventInfoValue);
+                        break;
+                    }
+                    default: 
+                        break; 
+                }
+            }
+        });
+    }
+
+    @ViewChild(WheelComponent)
+    private defaultPreset: WheelComponent;
+
+    public unlock() {
+        this.defaultPreset.command.setPower('on', this.defaultPreset.preset.displays);
+
+        this.locked = false;
+        setTimeout(() => {
+            this.defaultPreset.open(0);
+        }, 1000); // duration of transition
+    }
+
+    public lock() {
+        console.log("here");
+        this.locked = true;
+    }
 }
