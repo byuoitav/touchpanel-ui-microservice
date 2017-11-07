@@ -52,7 +52,7 @@ ul {
 	align-items: center;
 
 	position: absolute;
-	transition: $duration ease-in-out all;
+	transition: margin $duration ease-in-out;
 
     &.open {
 	    margin-top: 50vh !important;
@@ -90,17 +90,21 @@ ul {
 			position: absolute;
             height: 25%;
             width: 25%;
+
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
 		
 			.material-icons {
-                width: 100%;
-                transform: scale(.6, .6);
-                font-size: 6vh;
-                text-align: center;
+                transform: scale(.95, .95);
+                font-size: 3vh;
 			}
 
             .name {
-                width: 100%;
-                text-align: center;
+                transform: scale(.65, .65);
+                font-size: 1vh;
+                white-space: nowrap;
             }
 		}
 	}
@@ -124,7 +128,7 @@ ul {
 	width: $ccentersize;
 	height: $ccentersize;
 	
-	transition: $duration ease-in-out all;
+	transition: transform $duration ease-in-out;
 
     &.open {
         transform: scale(1.75, 1.75);
@@ -134,7 +138,7 @@ ul {
         position: absolute; 
         width: 100%;
         text-align: center;
-	    transition: $duration ease-in-out all;
+	    transition: transform $duration, opacity $duration, ease-in-out;
     }
 
     .icon {

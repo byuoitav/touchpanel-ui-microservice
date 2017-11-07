@@ -85,8 +85,8 @@ export class WheelComponent implements OnInit {
 
 		switch (this.preset.inputs.length) {
 			case 4:
-				top = 9;
-				right = 22.5;
+				top = 4;
+				right = 17.5;
 				break;
 			case 3: 
 				top = 13;
