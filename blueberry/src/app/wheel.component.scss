@@ -1,6 +1,6 @@
 $duration: .4s;
 $ocentersize: 50vh;
-$ccentersize: 30vh;
+$ccentersize: 35vh;
 $owheelsize: 95vh;
 $cwheelsize: 25vh;
 $linewidth: .12vh;
@@ -19,6 +19,7 @@ ul {
     min-height: 100%;
 
 	transition: $duration ease-in-out all;
+    will-change: opacity, backdrop-filter;
     opacity: 0;
     pointer-events: none;
 
@@ -37,6 +38,7 @@ ul {
     text-align: center;
     z-index: 15;
 	transition: opacity $duration ease-in-out ;
+    will-change: opacity;
     opacity: 0;
     margin-top: 8%;
     pointer-events: none;
@@ -53,8 +55,10 @@ ul {
 
 	position: absolute;
 	transition: margin $duration ease-in-out;
+    will-change: margin-top, margin-left;
 
     &.open {
+//        transform: scale(1.1, 1.1);
 	    margin-top: 50vh !important;
 	    margin-left: 50% !important;
     }
@@ -69,6 +73,7 @@ ul {
     border-radius: 50%;
 
 	transition: transform $duration ease-in-out;
+    will-change: transform;
 
     &.open {
         transform: scale(3.75, 3.75);
@@ -129,9 +134,10 @@ ul {
 	height: $ccentersize;
 	
 	transition: transform $duration ease-in-out;
+    will-change: transform;
 
     &.open {
-        transform: scale(1.75, 1.75);
+        transform: scale(1.5, 1.5);
     }
 
     .center-item {
@@ -139,14 +145,23 @@ ul {
         width: 100%;
         text-align: center;
 	    transition: transform $duration, opacity $duration, ease-in-out;
+        will-change: transform, opacity;
+    }
+
+    .name {
+        margin-top: 20%;
+        
+        &.open {
+            transform: translateY(-350%);
+        }
     }
 
     .icon {
-        margin-top: 25%;
+        margin-top: 40%;
         font-size: 500%;
 
         &.open {
-            transform: scale(.9, .9) translateY(-40%);
+            transform: scale(.9, .9) translateY(-80%);
         }
     }
 
@@ -194,6 +209,9 @@ ul {
     pointer-events: none;
 
     z-index: 50;
+
+    will-change: opacity;
+    transition: opacity $duration, ease-in-out;
 
     &.open {
         opacity: 1;  

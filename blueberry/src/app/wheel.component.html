@@ -1,9 +1,11 @@
 <div class="background" [class.open]="circleOpen" (click)="toggle()">
 </div>
 
+<!-->
 <div class="title" [class.open]="circleOpen">
     <span>{{preset.name}}</span>
 </div>
+-->
 
 <div class="buttons" [class.open]="circleOpen" (click)="$event.stopPropagation()">
     <i class="material-icons power" (click)="command.setPower('standby', preset.displays); toggle()">power_settings_new</i>
@@ -36,6 +38,7 @@
 	</ul>
 	
 	<div class="center" [class.open]="circleOpen" [class.on]="getPower() == 'on'" (click)="toggle()">
+        <span class="center-item name" [class.open]="circleOpen">{{preset.name}}</span>
         <i class="center-item material-icons icon" [class.open]="circleOpen">{{preset.icon}}</i>
         <span *ngIf="!getBlank()" class="center-item picture" [class.open]="circleOpen">picture on</span>
         <span *ngIf="getBlank()" class="center-item picture" [class.open]="circleOpen">picture off</span>
