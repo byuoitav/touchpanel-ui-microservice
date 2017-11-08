@@ -30,24 +30,6 @@ ul {
     }
 }
 
-.title {
-    position: absolute; 
-    color: white;
-    font-size: 5vh;
-    width: 100%;
-    text-align: center;
-    z-index: 15;
-	transition: opacity $duration ease-in-out ;
-    will-change: opacity;
-    opacity: 0;
-    margin-top: 8%;
-    pointer-events: none;
-
-    &.open {
-        opacity: 1;
-    }
-}
-
 .circle {
 	display: flex;
 	justify-content: center;
@@ -56,13 +38,6 @@ ul {
 	position: absolute;
 	transition: transform $duration ease-in-out;
     will-change: transform;
-
-    &.open {
-//        transform: translate(25vw, 25vh);
-//        transform: scale(1.1, 1.1);
-//	    margin-top: 50vh !important;
-//	    margin-left: 50% !important;
-    }
 }
 
 .wheel {

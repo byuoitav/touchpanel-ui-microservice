@@ -45,7 +45,6 @@ export class CommandService {
 
 		this.put(body).subscribe(
 			data => {
-//				console.log("Success");
 			}, err => {
                 Display.setPower(p, displays);
 			}
@@ -67,7 +66,6 @@ export class CommandService {
 
 		this.put(body).subscribe(
 			data => {
-//				console.log("Success");
 			}, err => {
                 Display.setInput(prev, displays);
 			}
@@ -89,7 +87,6 @@ export class CommandService {
 
 		this.put(body).subscribe(
 			data => {
-//				console.log("Success");
 			}, err => {
                 Display.setBlank(prev, displays);
 			}
@@ -111,7 +108,6 @@ export class CommandService {
 
 		this.put(body).subscribe(
 			data => {
-//				console.log("Success");
 			}, err => {
                 AudioDevice.setVolume(prev, audioDevices);
 			}
@@ -133,7 +129,6 @@ export class CommandService {
 
 		this.put(body).subscribe(
 			data => {
-//				console.log("Success");
 			}, err => {
                 AudioDevice.setMute(prev, audioDevices);
 			}

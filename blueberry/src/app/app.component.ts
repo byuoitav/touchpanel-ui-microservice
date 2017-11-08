@@ -211,7 +211,7 @@ export class AppComponent implements OnInit {
 
         this.locked = false;
         setTimeout(() => {
-            this.defaultPreset.open(0);
+            this.defaultPreset.open(false);
         }, 1000); // duration of transition
     }
 

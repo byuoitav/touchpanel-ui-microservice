@@ -1,17 +1,11 @@
 <div class="background" [class.open]="circleOpen" (click)="toggle()">
 </div>
 
-<!-->
-<div class="title" [class.open]="circleOpen">
-    <span>{{preset.name}}</span>
-</div>
--->
-
 <div class="buttons" [class.open]="circleOpen" (click)="$event.stopPropagation()">
     <i class="material-icons power" (click)="command.setPower('standby', preset.displays); toggle()">power_settings_new</i>
 </div>
 
-<div #circle class="circle" [class.open]="circleOpen" [ngStyle]="{'margin-top': preset.top, 'margin-left': preset.right, 'z-index': circleOpen ? 10 : 0, 'transform': circleOpen ? translate : 'translate(0,0)'}">
+<div class="circle" [ngStyle]="{'margin-top': preset.top, 'margin-left': preset.right, 'z-index': circleOpen ? 10 : 0, 'transform': circleOpen ? translate : 'translate(0,0)'}">
 	<!-- wheel -->
 	<ul #wheel class="wheel" [class.open]="circleOpen">
 		<li class="title-slice">
@@ -43,7 +37,7 @@
         <span *ngIf="!getBlank()" class="center-item picture" [class.open]="circleOpen">picture on</span>
         <span *ngIf="getBlank()" class="center-item picture" [class.open]="circleOpen">picture off</span>
         <div class="center-item switch" [class.open]="circleOpen" (click)="$event.stopPropagation()">
-            <ui-switch size="medium" defaultBgColor="#f44336" (change)="command.setBlank($event, preset.displays)"></ui-switch>
+            <ui-switch reverse size="medium" [checked]="getBlank()" defaultBgColor="#f44336" (change)="command.setBlank($event, preset.displays)"></ui-switch>
         </div>
 	</div>
 </div>

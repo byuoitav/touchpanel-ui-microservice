@@ -25,7 +25,6 @@ export class WheelComponent implements OnInit {
     thumbLabel: boolean = true;
 
 	@ViewChild("wheel") wheel: ElementRef;
-    @ViewChild("circle") circle: ElementRef;
 
 	constructor(public command: CommandService) {
 		this.circleOpen = false;
@@ -39,16 +38,15 @@ export class WheelComponent implements OnInit {
         if (this.circleOpen) {
             this.close();
         } else {
-            this.open(0);
+            this.open(true);
         }
 	}
 
-    public open(animationDelay: number) {
-        this.command.setPower('on', this.preset.displays);
+    public open(togglePower: boolean) {
+        if (togglePower && this.getPower() != "on")
+            this.command.setPower('on', this.preset.displays);
 
-        setTimeout(() => {
-            this.circleOpen = true;
-        }, animationDelay);
+        this.circleOpen = true;
     }
 
     public close() {
@@ -80,24 +78,20 @@ export class WheelComponent implements OnInit {
 			children[i].firstElementChild.style.transform = rotate;
 		}
 
-		this.getInputOffset();
+		this.setInputOffset();
 	}
 
     private setTranslate() {
         let offsetX: number = parseInt(this.preset.right);
         let offsetY: number = parseInt(this.preset.top);
 
-        // y should translate to 50 vh
-        // x should translate to 50 vw
         let x = 50 - offsetX;
         let y = 50 - offsetY;
-
-        console.log("circle", this.circle);
 
         this.translate = String("translate("+x+"vw,"+y+"vh)");
     }
 
-	private getInputOffset() {
+	private setInputOffset() {
 		let top: number;
 		let right: number;
 
