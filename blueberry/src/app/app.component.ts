@@ -126,7 +126,7 @@ export class AppComponent implements OnInit {
 
 				baseWidth = 35;
 				widthBetween = 32;
-				baseHeight = 30;
+				baseHeight = 50;
 				break;
 			case 4:
 				rows = 2;
@@ -142,8 +142,8 @@ export class AppComponent implements OnInit {
 					index++;	
 				}
 
-				this.panel.presets[index].right = String(baseWidth + (c * widthBetween)) + "%"; // something with c
-				this.panel.presets[index].top = String(baseHeight + (r * heightBetween)) + "%"; // something with r
+				this.panel.presets[index].right = String(baseWidth + (c * widthBetween)) + "vw"; // something with c
+				this.panel.presets[index].top = String(baseHeight + (r * heightBetween)) + "vh"; // something with r
 			}	
 		}
 	}
@@ -152,7 +152,7 @@ export class AppComponent implements OnInit {
         this.socket.getEventListener().subscribe(event => {
             if (event.type == MESSAGE) {
                 let e = event.data;
-                console.log("event", e);
+                console.log("recieved event", e);
                 
                 switch (e.eventInfoKey) {
                     case POWER: {
@@ -211,7 +211,7 @@ export class AppComponent implements OnInit {
 
         this.locked = false;
         setTimeout(() => {
-            this.defaultPreset.open(0);
+            this.defaultPreset.open(false);
         }, 1000); // duration of transition
     }
 

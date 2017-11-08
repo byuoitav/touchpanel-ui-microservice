@@ -20,6 +20,7 @@ export class WheelComponent implements OnInit {
 	titlearcpath: string;
 	rightoffset: string;
 	topoffset: string;
+    translate: string;
 	circleOpen: boolean;
     thumbLabel: boolean = true;
 
@@ -37,16 +38,15 @@ export class WheelComponent implements OnInit {
         if (this.circleOpen) {
             this.close();
         } else {
-            this.open(0);
+            this.open(true);
         }
 	}
 
-    public open(animationDelay: number) {
-        this.command.setPower('on', this.preset.displays);
+    public open(togglePower: boolean) {
+        if (togglePower && this.getPower() != "on")
+            this.command.setPower('on', this.preset.displays);
 
-        setTimeout(() => {
-            this.circleOpen = true;
-        }, animationDelay);
+        this.circleOpen = true;
     }
 
     public close() {
@@ -54,6 +54,8 @@ export class WheelComponent implements OnInit {
     }
 	
 	private render() {
+        this.setTranslate();
+
 		let numOfChildren = this.preset.inputs.length;	
 		let children = this.wheel.nativeElement.children;
 		let angle = (360 - WheelComponent.TITLE_ANGLE) / numOfChildren;
@@ -76,10 +78,20 @@ export class WheelComponent implements OnInit {
 			children[i].firstElementChild.style.transform = rotate;
 		}
 
-		this.getInputOffset();
+		this.setInputOffset();
 	}
 
-	private getInputOffset() {
+    private setTranslate() {
+        let offsetX: number = parseInt(this.preset.right);
+        let offsetY: number = parseInt(this.preset.top);
+
+        let x = 50 - offsetX;
+        let y = 50 - offsetY;
+
+        this.translate = String("translate("+x+"vw,"+y+"vh)");
+    }
+
+	private setInputOffset() {
 		let top: number;
 		let right: number;
 
@@ -153,5 +165,9 @@ export class WheelComponent implements OnInit {
 
     private getPower(): string {
         return Display.getPower(this.preset.displays); 
+    }
+
+    private getMute(): boolean {
+        return AudioDevice.getMute(this.preset.audioDevices); 
     }
 }
