@@ -2,7 +2,9 @@
 </div>
 
 <div class="buttons" [class.open]="circleOpen" (click)="$event.stopPropagation()">
-    <i class="material-icons power" (click)="command.setPower('standby', preset.displays); toggle()">power_settings_new</i>
+    <button mat-fab class="power" (click)="command.setPower('standby', preset.displays); toggle()">
+        <mat-icon>power_settings_new</mat-icon>
+    </button>
 </div>
 
 <div class="circle" [ngStyle]="{'margin-top': preset.top, 'margin-left': preset.right, 'z-index': circleOpen ? 10 : 0, 'transform': circleOpen ? translate : 'translate(0,0)'}">
@@ -42,8 +44,12 @@
 	</div>
 </div>
 
-<div class="volume" *ngIf="circleOpen">
-    <mat-slider id="slider" vertical [value]="getVolume()" [step]="5" [thumbLabel]="thumbLabel" (change)="command.setVolume($event.value, preset.audioDevices); closeThumb()"></mat-slider>
+<div class="volume" [class.muted]="getMute()" *ngIf="circleOpen">
+    <mat-slider id="slider" vertical [disabled]="getMute()" [value]="getVolume()" [step]="5" [thumbLabel]="thumbLabel" (change)="command.setVolume($event.value, preset.audioDevices); closeThumb()"></mat-slider>
+    <button mat-mini-fab class="mute" [class.muted]="getMute()" (click)="command.setMute(!getMute(), preset.displays);">
+        <mat-icon *ngIf="getMute()">volume_off</mat-icon>
+        <mat-icon *ngIf="!getMute()">volume_up</mat-icon>
+    </button>
 </div>
 
 <!-- one 'slice' of wheel -->

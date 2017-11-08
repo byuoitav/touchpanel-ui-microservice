@@ -166,4 +166,8 @@ export class WheelComponent implements OnInit {
     private getPower(): string {
         return Display.getPower(this.preset.displays); 
     }
+
+    private getMute(): boolean {
+        return AudioDevice.getMute(this.preset.audioDevices); 
+    }
 }

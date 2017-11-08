@@ -152,7 +152,7 @@ export class AppComponent implements OnInit {
         this.socket.getEventListener().subscribe(event => {
             if (event.type == MESSAGE) {
                 let e = event.data;
-                console.log("event", e);
+                console.log("recieved event", e);
                 
                 switch (e.eventInfoKey) {
                     case POWER: {
