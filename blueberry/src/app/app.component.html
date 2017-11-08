@@ -1,4 +1,6 @@
 <div class="basediv">
+    <management [enabled]="locked"></management>
+
     <div class="lock" [class.disabled]="!locked" (click)="unlock()">
         <object type="image/svg+xml" data="./assets/byu_medallion_white.svg" class="logo">
         </object>

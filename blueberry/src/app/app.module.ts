@@ -3,11 +3,13 @@ import { NgModule } from '@angular/core';
 import { HttpModule } from '@angular/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatSliderModule } from '@angular/material';
+import { MatButtonModule } from '@angular/material/button';
 import { UiSwitchModule } from 'ngx-ui-switch';
 import 'hammerjs';
 
 import { AppComponent } from './app.component';
 import { WheelComponent } from './wheel.component';
+import { ManagementComponent } from './management.component';
 import { APIService } from './api.service';
 import { SocketService } from './socket.service';
 import { CommandService } from './command.service';
@@ -16,12 +18,14 @@ import { CommandService } from './command.service';
   declarations: [
     AppComponent,
 	WheelComponent,
+    ManagementComponent
   ],
   imports: [
     BrowserModule,
 	HttpModule,
     BrowserAnimationsModule,
     MatSliderModule,
+    MatButtonModule,
     UiSwitchModule
   ],
   providers: [
