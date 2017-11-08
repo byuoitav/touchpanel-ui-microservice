@@ -11,7 +11,7 @@
     <i class="material-icons power" (click)="command.setPower('standby', preset.displays); toggle()">power_settings_new</i>
 </div>
 
-<div class="circle" [class.open]="circleOpen" [ngStyle]="{'margin-top': preset.top, 'margin-left': preset.right, 'z-index': circleOpen ? 10 : 0}">
+<div #circle class="circle" [class.open]="circleOpen" [ngStyle]="{'margin-top': preset.top, 'margin-left': preset.right, 'z-index': circleOpen ? 10 : 0, 'transform': circleOpen ? translate : 'translate(0,0)'}">
 	<!-- wheel -->
 	<ul #wheel class="wheel" [class.open]="circleOpen">
 		<li class="title-slice">

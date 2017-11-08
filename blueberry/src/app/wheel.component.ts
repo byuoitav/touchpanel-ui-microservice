@@ -20,10 +20,12 @@ export class WheelComponent implements OnInit {
 	titlearcpath: string;
 	rightoffset: string;
 	topoffset: string;
+    translate: string;
 	circleOpen: boolean;
     thumbLabel: boolean = true;
 
 	@ViewChild("wheel") wheel: ElementRef;
+    @ViewChild("circle") circle: ElementRef;
 
 	constructor(public command: CommandService) {
 		this.circleOpen = false;
@@ -54,6 +56,8 @@ export class WheelComponent implements OnInit {
     }
 	
 	private render() {
+        this.setTranslate();
+
 		let numOfChildren = this.preset.inputs.length;	
 		let children = this.wheel.nativeElement.children;
 		let angle = (360 - WheelComponent.TITLE_ANGLE) / numOfChildren;
@@ -78,6 +82,20 @@ export class WheelComponent implements OnInit {
 
 		this.getInputOffset();
 	}
+
+    private setTranslate() {
+        let offsetX: number = parseInt(this.preset.right);
+        let offsetY: number = parseInt(this.preset.top);
+
+        // y should translate to 50 vh
+        // x should translate to 50 vw
+        let x = 50 - offsetX;
+        let y = 50 - offsetY;
+
+        console.log("circle", this.circle);
+
+        this.translate = String("translate("+x+"vw,"+y+"vh)");
+    }
 
 	private getInputOffset() {
 		let top: number;

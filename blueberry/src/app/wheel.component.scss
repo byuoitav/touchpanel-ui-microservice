@@ -54,13 +54,14 @@ ul {
 	align-items: center;
 
 	position: absolute;
-	transition: margin $duration ease-in-out;
-    will-change: margin-top, margin-left;
+	transition: transform $duration ease-in-out;
+    will-change: transform;
 
     &.open {
+//        transform: translate(25vw, 25vh);
 //        transform: scale(1.1, 1.1);
-	    margin-top: 50vh !important;
-	    margin-left: 50% !important;
+//	    margin-top: 50vh !important;
+//	    margin-left: 50% !important;
     }
 }
 
@@ -146,6 +147,11 @@ ul {
         text-align: center;
 	    transition: transform $duration, opacity $duration, ease-in-out;
         will-change: transform, opacity;
+        pointer-events: none;
+
+        &.open {
+            pointer-events: auto;
+        }
     }
 
     .name {
