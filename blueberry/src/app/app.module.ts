@@ -1,4 +1,5 @@
 import { BrowserModule } from '@angular/platform-browser';
+import { RouterModule, Routes } from '@angular/router';
 import { NgModule } from '@angular/core';
 import { HttpModule } from '@angular/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -7,12 +8,30 @@ import { UiSwitchModule } from 'ngx-ui-switch';
 import 'hammerjs';
 
 import { AppComponent } from './components/app.component';
+import { HomeComponent } from './components/home.component';
 import { WheelComponent } from './components/wheel.component';
 import { ManagementComponent } from './components/management.component';
 import { ShareScreenDialog } from './dialogs/sharescreen.dialog';
 import { APIService } from './services/api.service';
 import { SocketService } from './services/socket.service';
 import { CommandService } from './services/command.service';
+import { DataService } from './services/data.service';
+
+const routes: Routes = [
+    {
+        path: 'home',
+        component: HomeComponent
+    },
+    {
+        path: 'advanced',
+        component: ManagementComponent
+    },
+    {
+        path: '', 
+        redirectTo: '/home',
+        pathMatch: 'full'
+    }
+]
 
 @NgModule({
   declarations: [
@@ -20,6 +39,7 @@ import { CommandService } from './services/command.service';
     AppComponent,
 	WheelComponent,
     ManagementComponent,
+    HomeComponent,
   ],
   imports: [
     BrowserModule,
@@ -32,12 +52,14 @@ import { CommandService } from './services/command.service';
     MatDialogModule,
     MatGridListModule,
     MatChipsModule,
-    UiSwitchModule
+    UiSwitchModule,
+    RouterModule.forRoot(routes)
   ],
   providers: [
 	  APIService,
 	  SocketService,
-	  CommandService
+	  CommandService,
+      DataService
   ],
   bootstrap: [
       AppComponent, 

@@ -13,10 +13,6 @@
         </button>
     </div> 
 
-    <div *ngIf="panel?.render">
-        <wheel [blur]="false" [preset]="panel.presets[0]"></wheel>
-    </div>
-
     <div class="menu">
         <button mat-fab [matMenuTriggerFor]="menu">
             <mat-icon>menu</mat-icon>
@@ -27,10 +23,12 @@
                 <mat-icon>share</mat-icon>
                 <span>share</span>
             </button>
-            <button mat-menu-item>
+            <a mat-menu-item routerLink="/advanced">
                 <mat-icon>blur_on</mat-icon>
                 <span>advanced</span>
-            </button>
+            </a>
         </mat-menu>
     </div>
+
+    <router-outlet (activate)="onActivate($event)"></router-outlet>
 </div>

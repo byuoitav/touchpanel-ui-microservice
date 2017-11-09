@@ -1,4 +1,4 @@
-import { Component, Input as AngularInput, OnInit, ElementRef, ViewChild } from '@angular/core';
+import { Component, Input as AngularInput, Output as AngularOutput, AfterContentInit, ElementRef, ViewChild, EventEmitter } from '@angular/core';
 
 import { Preset } from '../objects/objects';
 import { Display, Input, AudioDevice } from '../objects/status.objects';
@@ -10,12 +10,13 @@ import { CommandService } from '../services/command.service';
 	styleUrls: ['./wheel.component.scss', '../colorscheme.scss'],
 })
 
-export class WheelComponent implements OnInit {
+export class WheelComponent implements AfterContentInit {
 	private static TITLE_ANGLE: number =  100;
 	private static TITLE_ANGLE_ROTATE: number = WheelComponent.TITLE_ANGLE / 2;
 
 	@AngularInput() preset: Preset; 
     @AngularInput() blur: boolean;
+    @AngularOutput() init: EventEmitter<any> = new EventEmitter();
 
 	arcpath: string;
 	titlearcpath: string;
@@ -31,8 +32,11 @@ export class WheelComponent implements OnInit {
 		this.circleOpen = false;
 	}
 
-	ngOnInit() {
-		setTimeout(() => this.render(), 0);
+	ngAfterContentInit() {
+		setTimeout(() => {
+            this.render(); 
+            this.init.emit(true)
+        }, 0);
 	}
 
 	public toggle() {
