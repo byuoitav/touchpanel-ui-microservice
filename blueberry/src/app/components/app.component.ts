@@ -50,8 +50,9 @@ export class AppComponent {
         });
 
         dialogRef.afterClosed().subscribe(result => {
-            console.log("data", result); 
-            this.home.wheel.command.setInput(Output.getInput(this.home.wheel.preset.displays), result);
+            if (result != null && result.length > 0) {
+                this.home.wheel.command.setInput(Output.getInput(this.home.wheel.preset.displays), result);
+            }
         });
     }
 }
