@@ -39,7 +39,7 @@ const routes: Routes = [
     AppComponent,
 	WheelComponent,
     ManagementComponent,
-    HomeComponent,
+    HomeComponent
   ],
   imports: [
     BrowserModule,
@@ -61,9 +61,11 @@ const routes: Routes = [
 	  CommandService,
       DataService
   ],
+  entryComponents: [
+      ShareScreenDialog,
+  ],
   bootstrap: [
-      AppComponent, 
-      ShareScreenDialog
+      AppComponent,
   ]
 })
 export class AppModule { }
