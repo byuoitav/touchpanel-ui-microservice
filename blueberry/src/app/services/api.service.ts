@@ -1,7 +1,7 @@
 import { Injectable, EventEmitter } from '@angular/core';
 import { Http, Response, Headers, RequestOptions } from '@angular/http';
 import { Observable } from 'rxjs/Rx';
-import { UIConfiguration, Room, RoomConfiguration, RoomStatus} from './objects';
+import { UIConfiguration, Room, RoomConfiguration, RoomStatus} from '../objects/objects';
 
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/timeout';

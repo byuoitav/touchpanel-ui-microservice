@@ -1,4 +1,4 @@
-<div class="background" [class.open]="circleOpen" (click)="toggle()">
+<div *ngIf="blur" class="background" [class.open]="circleOpen" (click)="toggle()">
 </div>
 
 <div class="buttons" [class.open]="circleOpen" (click)="$event.stopPropagation()">

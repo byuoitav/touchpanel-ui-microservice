@@ -1,6 +1,6 @@
 import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 
-import { APIService } from './api.service';
+import { APIService } from '../services/api.service';
 
 const LOW: number = 3;
 const REDIRECT: string = "http://" + window.location.hostname + ":10000/dash";
@@ -8,7 +8,7 @@ const REDIRECT: string = "http://" + window.location.hostname + ":10000/dash";
 @Component({
     selector: 'management',
     templateUrl: './management.component.html',
-    styleUrls: ['./management.component.scss', './colors.scss']
+    styleUrls: ['./management.component.scss', '../colorscheme.scss']
 })
 
 export class ManagementComponent implements OnChanges {

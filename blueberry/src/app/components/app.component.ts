@@ -1,15 +1,17 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { MatDialog } from '@angular/material';
 
-import { Preset, Panel } from './objects';
-import { Device, Input, Output, Display, AudioDevice, POWER, INPUT, BLANKED, MUTED, VOLUME } from './status.objects';
-import { APIService } from './api.service';
-import { SocketService, MESSAGE } from './socket.service';
+import { Preset, Panel } from '../objects/objects';
+import { Device, Input, Output, Display, AudioDevice, POWER, INPUT, BLANKED, MUTED, VOLUME } from '../objects/status.objects';
+import { APIService } from '../services/api.service';
+import { SocketService, MESSAGE } from '../services/socket.service';
 import { WheelComponent } from './wheel.component';
+import { ShareScreenDialog } from '../dialogs/sharescreen.dialog';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss', './colors.scss'],
+  styleUrls: ['./app.component.scss', '../colorscheme.scss'],
   providers: [APIService],
 })
 export class AppComponent implements OnInit {
@@ -31,7 +33,7 @@ export class AppComponent implements OnInit {
 
     locked: boolean = true;
 
-	constructor (private api: APIService, private socket: SocketService) {}
+	constructor (private api: APIService, private socket: SocketService, private dialog: MatDialog) {}
 
 	public ngOnInit() {
 		this.api.loaded.subscribe(() => {
@@ -111,14 +113,20 @@ export class AppComponent implements OnInit {
 		let baseHeight: number; 
 		let heightBetween: number = 0;
 
-		// TODO mathematically deicde these numbers somehow
+        // always just the default preset
+        rows = 1;
+        columns = 1;
+        baseWidth = 50;
+        baseHeight = 50;
+
+        /*
 		switch(this.panel.presets.length) {
 			case 1:
 				rows = 1;
 				columns = 1;
 
 				baseWidth = 50;
-				baseHeight = 30;
+				baseHeight = 50;
 				break;
 			case 2:
 				rows = 1;
@@ -133,6 +141,7 @@ export class AppComponent implements OnInit {
 				columns = 2;
 				break;
 		}
+       */
 
 		for (let r = 0; r < rows; r++) {
 			let index = r * columns;
@@ -216,7 +225,12 @@ export class AppComponent implements OnInit {
     }
 
     public lock() {
-        console.log("here");
         this.locked = true;
+    }
+
+    public shareScreen() {
+        let dialogRef = this.dialog.open(ShareScreenDialog, {
+            data: { displays: this.displays }
+        });
     }
 }

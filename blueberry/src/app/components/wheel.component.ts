@@ -1,13 +1,13 @@
 import { Component, Input as AngularInput, OnInit, ElementRef, ViewChild } from '@angular/core';
 
-import { Preset } from './objects';
-import { Display, Input, AudioDevice } from './status.objects';
-import { CommandService } from './command.service';
+import { Preset } from '../objects/objects';
+import { Display, Input, AudioDevice } from '../objects/status.objects';
+import { CommandService } from '../services/command.service';
 
 @Component({
 	selector: 'wheel',
 	templateUrl: './wheel.component.html',
-	styleUrls: ['./wheel.component.scss', './colors.scss'],
+	styleUrls: ['./wheel.component.scss', '../colorscheme.scss'],
 })
 
 export class WheelComponent implements OnInit {
@@ -15,6 +15,7 @@ export class WheelComponent implements OnInit {
 	private static TITLE_ANGLE_ROTATE: number = WheelComponent.TITLE_ANGLE / 2;
 
 	@AngularInput() preset: Preset; 
+    @AngularInput() blur: boolean;
 
 	arcpath: string;
 	titlearcpath: string;

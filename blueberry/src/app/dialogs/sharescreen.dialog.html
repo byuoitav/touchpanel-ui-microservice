@@ -1,0 +1,12 @@
+<h1 mat-dialog-title>Share Screen<h1>
+
+<div mat-dialog-content>
+    <div *ngFor="let display of data.displays">
+        <span>{{display.name}}</span>
+    </div>
+</div>
+
+<div mat-dialog-actions>
+    <button mat-button (click)="cancel()" tabindex="-1">Cancel</button>
+    <button mat-button [matDialogClose]="data.animal" tabindex="2">Share</button>
+</div>

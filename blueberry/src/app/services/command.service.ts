@@ -4,8 +4,8 @@ import { Observable } from 'rxjs/Rx';
 import { MatSliderChange } from '@angular/material';
 
 import { APIService } from './api.service';
-import { Input, Display, AudioDevice } from './status.objects';
-import { WheelComponent } from './wheel.component';
+import { Input, Display, AudioDevice } from '../objects/status.objects';
+import { WheelComponent } from '../components/wheel.component';
 
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/timeout';
