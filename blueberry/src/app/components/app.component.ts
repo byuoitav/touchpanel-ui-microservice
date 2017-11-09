@@ -45,7 +45,13 @@ export class AppComponent {
     public shareScreen() {
         let dialogRef = this.dialog.open(ShareScreenDialog, {
             width: '50vw',
-            data: { displays: this.data.displays }
+            data: { displays: this.data.displays },
+            backdropClass: 'dialog-backdrop'
+        });
+
+        dialogRef.afterClosed().subscribe(result => {
+            console.log("data", result); 
+            this.home.wheel.command.setInput(Output.getInput(this.home.wheel.preset.displays), result);
         });
     }
 }

@@ -65,3 +65,14 @@ $icon: white;
         }
     }
 }
+
+/* ShareScreenDialog
+* 
+*/
+.selection {
+    background-color: $background;
+
+    &.selected {
+        background-color: $centerOn;
+    }
+}
