@@ -2,7 +2,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { HttpModule } from '@angular/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { MatSliderModule, MatIconModule, MatButtonModule, MatMenuModule, MatDialogModule } from '@angular/material';
+import { MatSliderModule, MatIconModule, MatButtonModule, MatMenuModule, MatDialogModule, MatGridListModule, MatChipsModule } from '@angular/material';
 import { UiSwitchModule } from 'ngx-ui-switch';
 import 'hammerjs';
 
@@ -30,6 +30,8 @@ import { CommandService } from './services/command.service';
     MatButtonModule,
     MatMenuModule,
     MatDialogModule,
+    MatGridListModule,
+    MatChipsModule,
     UiSwitchModule
   ],
   providers: [

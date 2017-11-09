@@ -1,12 +1,14 @@
-<h1 mat-dialog-title>Share Screen<h1>
+<h1 mat-dialog-title class="center">Share Screen<h1>
 
-<div mat-dialog-content>
-    <div *ngFor="let display of data.displays">
-        <span>{{display.name}}</span>
-    </div>
+<div mat-dialog-content class="content">
+    <mat-grid-list cols="3">
+        <mat-grid-tile *ngFor="let d of data.displays" [colspan]="1" [rowspan]="1">
+            <button mat-fab color="primary">{{d.name}}</button>
+        </mat-grid-tile>
+    </mat-grid-list>
 </div>
 
-<div mat-dialog-actions>
-    <button mat-button (click)="cancel()" tabindex="-1">Cancel</button>
-    <button mat-button [matDialogClose]="data.animal" tabindex="2">Share</button>
+<div mat-dialog-actions class="buttons">
+    <button mat-raised-button color="warn" (click)="cancel()" tabindex="-1">Cancel</button>
+    <button mat-raised-button color="primary" [matDialogClose]="data.animal" tabindex="2">Share</button>
 </div>

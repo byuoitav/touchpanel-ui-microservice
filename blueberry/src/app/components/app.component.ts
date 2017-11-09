@@ -230,6 +230,7 @@ export class AppComponent implements OnInit {
 
     public shareScreen() {
         let dialogRef = this.dialog.open(ShareScreenDialog, {
+            width: '50vw',
             data: { displays: this.displays }
         });
     }
