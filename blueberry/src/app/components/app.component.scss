@@ -38,13 +38,24 @@
 
     .buttons {
         position: absolute;
-        height: 3vh;
-        margin-left: 3%;
+        margin-left: 3vw;
         color: white; 
 
-        .power {
+        .button {
+            margin-right: 1vw; 
+        }
+
+        &.top {
             margin-top: 3vh;
-            background-color: #757575;
+        
+            .power {
+                background-color: #757575;
+            }
+        }
+
+        &.bottom {
+            bottom: 0;
+            margin-bottom: 3vh; 
         }
     }
 }
