@@ -39,6 +39,7 @@ export class UIConfiguration {
     inputConfiguration: InputConfiguration[];
 
     Api: string[];
+    roomWideAudios: string[];
 }
 
 export class PanelConfiguration {

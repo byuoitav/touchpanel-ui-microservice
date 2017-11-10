@@ -19,6 +19,7 @@ type UIConfig struct {
 	Panels             []Panel              `json:"panels"`
 	Presets            []Preset             `json:"presets"`
 	InputConfiguration []InputConfiguration `json:"inputConfiguration"`
+	RoomWideAudios     []string             `json:"roomWideAudios"`
 }
 
 type Preset struct {

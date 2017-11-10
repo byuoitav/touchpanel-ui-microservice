@@ -23,7 +23,6 @@ $icon: white;
 }
 
 .circle {
-
     .wheel {
         border: .2vh solid white;
 
@@ -45,7 +44,12 @@ $icon: white;
         }
 
         .selected-input {
+            
             background-color: $selectedSlice; 
+
+            // selection animation  
+            @keyframes selectInput {
+            }
         }
     }
 

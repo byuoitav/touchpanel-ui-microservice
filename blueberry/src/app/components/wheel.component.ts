@@ -25,6 +25,7 @@ export class WheelComponent implements AfterContentInit {
     translate: string;
 	circleOpen: boolean;
     thumbLabel: boolean = true;
+    newSelection: boolean = false;
 
 	@ViewChild("wheel") wheel: ElementRef;
 
@@ -174,5 +175,11 @@ export class WheelComponent implements AfterContentInit {
 
     private getMute(): boolean {
         return AudioDevice.getMute(this.preset.audioDevices); 
+    }
+
+    public displayToAll(displays: Display[], audioDevices: AudioDevice[]) {
+        let input: Input = Display.getInput(this.preset.displays);
+
+        this.command.displayToAll(input, displays, audioDevices);
     }
 }

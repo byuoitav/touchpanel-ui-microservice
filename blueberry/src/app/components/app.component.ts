@@ -49,4 +49,8 @@ export class AppComponent {
         this.wheel.preset.top = "50vh";
         this.wheel.preset.right = "50vw";
     }
+
+    public displayToAll() {
+        this.wheel.displayToAll(this.data.displays, this.data.audioDevices);
+    }
 }

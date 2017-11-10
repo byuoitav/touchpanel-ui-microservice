@@ -134,4 +134,40 @@ export class CommandService {
 			}
 		);
     }
+
+    public displayToAll(i: Input, displays: Display[], audioDevices: AudioDevice[]) {
+        console.log("displaying", i, "to all displays:", displays);
+        let body = { displays: [], audioDevices: [] }; 
+        for (let d of displays) {
+            body.displays.push({
+                "name": d.name,
+                "power": "on",
+                "blanked": false,
+                "input": i.name
+            }); 
+        }
+
+        for (let a of audioDevices) {
+            if (a.roomWideAudio) {
+                body.audioDevices.push({
+                    "name": a.name,
+                    "input": i.name,
+                    "muted": false,
+                    "volume": 30
+                });
+            } else {
+                body.audioDevices.push({
+                    "name": a.name,
+                    "input": i.name,
+                    "muted": true
+                });
+            }
+        }
+
+		this.put(body).subscribe(
+			data => {
+			}, err => {
+			}
+		);
+    }
 }
