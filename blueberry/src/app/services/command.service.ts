@@ -219,7 +219,7 @@ export class CommandService {
             body.audioDevices.push({
                 "name": a.name,
                 "power": a.power,
-                "muted": a.roomWideAudio,
+                "muted": a.muted,
                 "volume": a.volume,
                 "input": a.input.name
             });

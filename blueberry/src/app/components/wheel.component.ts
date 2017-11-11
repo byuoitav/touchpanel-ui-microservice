@@ -25,7 +25,6 @@ export class WheelComponent implements AfterContentInit {
     translate: string;
 	circleOpen: boolean;
     thumbLabel: boolean = true;
-    newSelection: boolean = false;
 
 	@ViewChild("wheel") wheel: ElementRef;
 

@@ -61,10 +61,8 @@ export class HomeComponent {
     }
 
     public displayToAll() {
-        // make a copy of the old data (so it doesn't change)
-        // TODO these need to become the correct objects
-        this.oldDisplayData = JSON.parse(JSON.stringify(this.data.displays));
-        this.oldAudioDevicesData = JSON.parse(JSON.stringify(this.data.audioDevices));
+        this.oldDisplayData = deserialize<Display[]>(Display, this.data.displays);
+        this.oldAudioDevicesData = deserialize<AudioDevice[]>(AudioDevice, this.data.audioDevices);
 
         this.wheel.displayToAll(this.data.displays, this.data.audioDevices);
         this.wheel.preset = this.dtaPreset;

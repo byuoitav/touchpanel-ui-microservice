@@ -92,21 +92,29 @@ export class DataService {
                     case POWER: {
                         let output: Output;
                         output = this.displays.find(d => d.name === e.device);
-                        if (output == null) {
-                            output = this.audioDevices.find(a => a.name === e.device);
+                        if (output != null) {
+                              output.power = e.eventInfoValue;
                         }
 
-                        output.power = e.eventInfoValue;
+                        output = this.audioDevices.find(a => a.name === e.device);
+                        if (output != null) {
+                              output.power = e.eventInfoValue;
+                        }
+
                         break;
                     }
                     case INPUT: {
                         let output: Output;
                         output = this.displays.find(d => d.name === e.device);
-                        if (output == null) {
-                            output = this.audioDevices.find(a => a.name === e.device);
+                        if (output != null) {
+                            output.input = Input.getInput(e.eventInfoValue, this.inputs);
                         }
 
-                        output.input = Input.getInput(e.eventInfoValue, this.inputs);
+                        output = this.audioDevices.find(a => a.name === e.device);
+                        if (output != null) {
+                            output.input = Input.getInput(e.eventInfoValue, this.inputs);
+                        }
+
                         break;
                     }
                     case BLANKED: {
@@ -136,6 +144,4 @@ export class DataService {
             }
         });
     }
-
-
 }
