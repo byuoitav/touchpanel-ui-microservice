@@ -44,15 +44,17 @@ export class WheelComponent implements AfterContentInit {
         if (this.circleOpen) {
             this.close();
         } else {
-            this.open(true);
+            this.open(true, 0);
         }
 	}
 
-    public open(togglePower: boolean) {
+    public open(togglePower: boolean, delay: number) {
         if (togglePower && this.getPower() != "on")
             this.command.setPower('on', this.preset.displays);
 
-        this.circleOpen = true;
+        setTimeout(() => {
+            this.circleOpen = true;
+        }, delay);
     }
 
     public close() {
@@ -181,5 +183,9 @@ export class WheelComponent implements AfterContentInit {
         let input: Input = Display.getInput(this.preset.displays);
 
         this.command.displayToAll(input, displays, audioDevices);
+    }
+
+    public unDisplayToAll(displays: Display[], audioDevices: AudioDevice[]) {
+        this.command.unDisplayToAll(displays, audioDevices); 
     }
 }

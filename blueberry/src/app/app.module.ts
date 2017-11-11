@@ -7,6 +7,7 @@ import { UiSwitchModule } from 'ngx-ui-switch';
 import 'hammerjs';
 
 import { AppComponent } from './components/app.component';
+import { HomeComponent } from './components/home.component';
 import { WheelComponent } from './components/wheel.component';
 import { ManagementComponent } from './components/management.component';
 import { HelpDialog } from './dialogs/help.dialog';
@@ -19,6 +20,7 @@ import { DataService } from './services/data.service';
   declarations: [
     HelpDialog,
     AppComponent,
+    HomeComponent,
 	WheelComponent,
     ManagementComponent,
   ],

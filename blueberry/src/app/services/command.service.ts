@@ -30,7 +30,8 @@ export class CommandService {
 						.map(res => res.json());
 	}
 
-    public setPower(p: string, displays: Display[]) {
+    public setPower(p: string, displays: Display[]): EventEmitter<boolean> {
+        let ret: EventEmitter<boolean> = new EventEmitter<boolean>();
 		console.log("Setting power to", p,"on", displays);
         let prev = Display.getPower(displays);
         Display.setPower(p, displays);
@@ -45,13 +46,18 @@ export class CommandService {
 
 		this.put(body).subscribe(
 			data => {
+                ret.emit(true);
 			}, err => {
                 Display.setPower(p, displays);
+                ret.emit(false);
 			}
 		);
+
+        return ret;
     }
 
-	public setInput(i: Input, displays: Display[],) {
+	public setInput(i: Input, displays: Display[]): EventEmitter<boolean> {
+        let ret: EventEmitter<boolean> = new EventEmitter<boolean>();
 		console.log("Changing input on", displays,"to", i.name);
         let prev = Display.getInput(displays);
         Display.setInput(i, displays);
@@ -66,13 +72,18 @@ export class CommandService {
 
 		this.put(body).subscribe(
 			data => {
+                ret.emit(true);
 			}, err => {
                 Display.setInput(prev, displays);
+                ret.emit(false);
 			}
 		);
+
+        return ret;
 	}
 
-    public setBlank(b: boolean, displays: Display[]) {
+    public setBlank(b: boolean, displays: Display[]): EventEmitter<boolean> {
+        let ret: EventEmitter<boolean> = new EventEmitter<boolean>();
 		console.log("Setting blanked to", b,"on", displays);
         let prev = Display.getBlank(displays);
         Display.setBlank(b, displays);
@@ -87,13 +98,18 @@ export class CommandService {
 
 		this.put(body).subscribe(
 			data => {
+                ret.emit(true);
 			}, err => {
                 Display.setBlank(prev, displays);
+                ret.emit(false);
 			}
 		);
+
+        return ret;
     }
 
-    public setVolume(v: number, audioDevices: AudioDevice[]) {
+    public setVolume(v: number, audioDevices: AudioDevice[]): EventEmitter<boolean> {
+        let ret: EventEmitter<boolean> = new EventEmitter<boolean>();
         console.log("changing volume to", v);
         let prev = AudioDevice.getVolume(audioDevices);
         AudioDevice.setVolume(v, audioDevices);
@@ -108,13 +124,18 @@ export class CommandService {
 
 		this.put(body).subscribe(
 			data => {
+                ret.emit(true);
 			}, err => {
                 AudioDevice.setVolume(prev, audioDevices);
+                ret.emit(false);
 			}
 		);
+
+        return ret;
     }
 
-    public setMute(m: boolean, audioDevices: AudioDevice[]) {
+    public setMute(m: boolean, audioDevices: AudioDevice[]): EventEmitter<boolean> {
+        let ret: EventEmitter<boolean> = new EventEmitter<boolean>();
         console.log("changing mute to", m);
         let prev = AudioDevice.getMute(audioDevices);
         AudioDevice.setMute(m, audioDevices);
@@ -129,13 +150,18 @@ export class CommandService {
 
 		this.put(body).subscribe(
 			data => {
+                ret.emit(true);
 			}, err => {
                 AudioDevice.setMute(prev, audioDevices);
+                ret.emit(false);
 			}
 		);
+
+        return ret;
     }
 
-    public displayToAll(i: Input, displays: Display[], audioDevices: AudioDevice[]) {
+    public displayToAll(i: Input, displays: Display[], audioDevices: AudioDevice[]): EventEmitter<boolean> {
+        let ret: EventEmitter<boolean> = new EventEmitter<boolean>();
         console.log("displaying", i, "to all displays:", displays);
         let body = { displays: [], audioDevices: [] }; 
         for (let d of displays) {
@@ -166,8 +192,46 @@ export class CommandService {
 
 		this.put(body).subscribe(
 			data => {
+                ret.emit(true);
 			}, err => {
+                ret.emit(false);
 			}
 		);
+
+        return ret;
+    }
+
+    public unDisplayToAll(oldDisplays: Display[], oldAudioDevices: AudioDevice[]): EventEmitter<boolean> {
+        let ret: EventEmitter<boolean> = new EventEmitter<boolean>();
+        console.log("un displaying-to-all to displays", oldDisplays);
+        let body = { displays: [], audioDevices: [] }; 
+
+        for (let d of oldDisplays) {
+            body.displays.push({
+                "name": d.name,
+                "power": d.power,
+                "blanked": d.blanked,
+                "input": d.input.name
+            }); 
+        }
+
+        for (let a of oldAudioDevices) {
+            body.audioDevices.push({
+                "name": a.name,
+                "power": a.power,
+                "muted": a.roomWideAudio,
+                "volume": a.volume,
+                "input": a.input.name
+            });
+        }
+
+		this.put(body).subscribe(
+			data => {
+                ret.emit(true);
+			}, err => {
+                ret.emit(false);
+			}
+		);
+        return ret;
     }
 }
