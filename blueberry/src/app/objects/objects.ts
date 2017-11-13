@@ -103,6 +103,7 @@ export class Preset {
     displays: Display[] = [];
     audioDevices: AudioDevice[] = [];
     inputs: Input[] = [];
+    extraInputs: Input[] = [];
 
     top: string;
     right: string;

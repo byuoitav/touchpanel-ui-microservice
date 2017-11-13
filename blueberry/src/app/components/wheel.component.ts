@@ -60,7 +60,7 @@ export class WheelComponent implements AfterContentInit {
         this.circleOpen = false;
     }
 	
-	private render() {
+	public render() {
         this.setTranslate();
 
 		let numOfChildren = this.preset.inputs.length;	

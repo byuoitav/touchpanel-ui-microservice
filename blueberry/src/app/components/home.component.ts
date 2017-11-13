@@ -1,13 +1,15 @@
-import { Component, ViewChild, Input, EventEmitter } from '@angular/core';
+import { Component, ViewChild,  EventEmitter } from '@angular/core';
 import { MatDialog } from '@angular/material';
 import { deserialize } from 'serializer.ts/Serializer';
 
 import { WheelComponent } from './wheel.component';
 import { DataService } from '../services/data.service';
+import { APIService } from '../services/api.service';
+import { SocketService, MESSAGE, Event } from '../services/socket.service';
 import { HelpDialog } from '../dialogs/help.dialog';
 
 import { Preset } from '../objects/objects';
-import { Display, AudioDevice } from '../objects/status.objects';
+import { Display, AudioDevice, INPUT, Input } from '../objects/status.objects';
 
 @Component({
     selector: 'home',
@@ -16,7 +18,9 @@ import { Display, AudioDevice } from '../objects/status.objects';
 })
 export class HomeComponent {
     
-    constructor(private data: DataService, private dialog: MatDialog) {}
+    constructor(private data: DataService, private dialog: MatDialog, private socket: SocketService) {
+        this.updateFromEvents();
+    }
 
     @ViewChild(WheelComponent)
     public wheel: WheelComponent;
@@ -72,5 +76,30 @@ export class HomeComponent {
         this.wheel.unDisplayToAll(this.oldDisplayData, this.oldAudioDevicesData);
 
         this.wheel.preset = this.oldPreset;
+    }
+
+    private updateFromEvents() {
+        this.socket.getEventListener().subscribe(event => {
+            if (event.type == MESSAGE) {
+                let e: Event = event.data;
+
+                if (e.requestor.includes(APIService.hostname)) {
+                    switch(e.eventInfoKey) {
+                        case INPUT: {
+                            let input: Input = Input.getInput(e.eventInfoValue, this.data.inputs); 
+                            this.wheel.preset.extraInputs.length = 0;
+
+                            if (input != null && !this.wheel.preset.inputs.includes(input)) {
+                                this.wheel.preset.extraInputs.push(input);
+                            }
+
+                            this.wheel.render()
+                        }
+                        default:
+                           break; 
+                    }
+                }
+            }
+        }); 
     }
 }

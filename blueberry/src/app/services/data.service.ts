@@ -74,7 +74,7 @@ export class DataService {
 
     private createPanel() {
         // find my panel
-        let panel = APIService.room.uiconfig.panels.find(p => p.hostname == APIService.hostname)
+        let panel = APIService.room.uiconfig.panels.find(p => p.hostname == APIService.piHostname)
 
         let presets = Preset.filterPresets(panel.presets, this.presets);
         let independentAudioDevices = Device.filterDevices<AudioDevice>(panel.independentAudioDevices, this.audioDevices);

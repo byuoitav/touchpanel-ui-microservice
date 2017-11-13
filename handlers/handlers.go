@@ -17,6 +17,15 @@ import (
 )
 
 func GetHostname(context echo.Context) error {
+	hostname, err := os.Hostname()
+	if err != nil {
+		return context.JSON(http.StatusInternalServerError, err.Error())
+	}
+
+	return context.JSON(http.StatusOK, hostname)
+}
+
+func GetPiHostname(context echo.Context) error {
 	hostname := os.Getenv("PI_HOSTNAME")
 	return context.JSON(http.StatusOK, hostname)
 }
