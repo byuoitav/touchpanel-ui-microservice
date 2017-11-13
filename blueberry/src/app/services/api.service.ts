@@ -1,7 +1,7 @@
 import { Injectable, EventEmitter } from '@angular/core';
 import { Http, Response, Headers, RequestOptions } from '@angular/http';
 import { Observable } from 'rxjs/Rx';
-import { UIConfiguration, Room, RoomConfiguration, RoomStatus} from './objects';
+import { UIConfiguration, Room, RoomConfiguration, RoomStatus} from '../objects/objects';
 
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/timeout';
@@ -16,6 +16,7 @@ export class APIService {
 
 	public static building: string;
 	public static roomName: string;
+	public static piHostname: string;
 	public static hostname: string;
 	public static apiurl: string;
 
@@ -44,19 +45,29 @@ export class APIService {
 		}
 	}
 
-	// hostname, building, room
-	public setupHostname() {
-		this.getHostname().subscribe(
-			data => {
-				APIService.hostname = String(data);
+    private setupHostname() {
+        this.getHostname().subscribe(
+            data => {
+                APIService.hostname = String(data); 
+                this.setupPiHostname();
+            }, err => {
+                setTimeout(() => this.setupHostname(), RETRY_TIMEOUT); 
+            }); 
+    }
 
-				let split = APIService.hostname.split('-');
+	// hostname, building, room
+	public setupPiHostname() {
+		this.getPiHostname().subscribe(
+			data => {
+				APIService.piHostname = String(data);
+
+				let split = APIService.piHostname.split('-');
 				APIService.building = split[0];
 				APIService.roomName = split[1];
 				
 				this.setupAPIUrl(false);
 			}, err => {
-				setTimeout(() => this.setupHostname(), RETRY_TIMEOUT);
+				setTimeout(() => this.setupPiHostname(), RETRY_TIMEOUT);
 			});
 	}
 
@@ -165,6 +176,11 @@ export class APIService {
 
 	getHostname(): Observable<Object> {
 		return this.http.get(APIService.localurl + ":8888/hostname")
+			.map(response => response.json());
+	}
+
+	getPiHostname(): Observable<Object> {
+		return this.http.get(APIService.localurl + ":8888/pihostname")
 			.map(response => response.json());
 	}
 

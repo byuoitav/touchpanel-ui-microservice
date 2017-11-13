@@ -112,11 +112,13 @@ export class Display extends Output {
 export class AudioDevice extends Output {
 	muted: boolean;
 	volume: number;
+    roomWideAudio: boolean;
 
-    constructor(name: string, displayname: string, power: string, input: Input, muted: boolean, volume: number) {
+    constructor(name: string, displayname: string, power: string, input: Input, muted: boolean, volume: number, roomWideAudio: boolean) {
         super(name, displayname, power, input);
         this.muted = muted;
         this.volume = volume;
+        this.roomWideAudio = roomWideAudio;
     }
 
     // return average of all volumes

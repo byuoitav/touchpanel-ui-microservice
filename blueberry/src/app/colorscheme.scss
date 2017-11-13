@@ -23,7 +23,6 @@ $icon: white;
 }
 
 .circle {
-
     .wheel {
         border: .2vh solid white;
 
@@ -45,7 +44,18 @@ $icon: white;
         }
 
         .selected-input {
+            
             background-color: $selectedSlice; 
+            animation: selectInput 1s 3;
+
+            // selection animation  
+            @keyframes selectInput {
+                from {
+                    box-shadow: inset 0 0 6vh 2vh rgba(0,0,0,0.8);
+                } to {
+                    box-shadow: inset 0 0 6vh 2vh rgba(255,255,255,0.8);
+                }
+            }
         }
     }
 
@@ -63,5 +73,16 @@ $icon: white;
         .icon {
             color: $icon; 
         }
+    }
+}
+
+/* ShareScreenDialog
+* 
+*/
+.selection {
+    background-color: $background;
+
+    &.selected {
+        background-color: $centerOn;
     }
 }

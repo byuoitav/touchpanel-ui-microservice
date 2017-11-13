@@ -1,20 +1,22 @@
-import { Component, Input as AngularInput, OnInit, ElementRef, ViewChild } from '@angular/core';
+import { Component, Input as AngularInput, Output as AngularOutput, AfterContentInit, ElementRef, ViewChild, EventEmitter } from '@angular/core';
 
-import { Preset } from './objects';
-import { Display, Input, AudioDevice } from './status.objects';
-import { CommandService } from './command.service';
+import { Preset } from '../objects/objects';
+import { Display, Input, AudioDevice } from '../objects/status.objects';
+import { CommandService } from '../services/command.service';
 
 @Component({
 	selector: 'wheel',
 	templateUrl: './wheel.component.html',
-	styleUrls: ['./wheel.component.scss', './colors.scss'],
+	styleUrls: ['./wheel.component.scss', '../colorscheme.scss'],
 })
 
-export class WheelComponent implements OnInit {
+export class WheelComponent implements AfterContentInit {
 	private static TITLE_ANGLE: number =  100;
 	private static TITLE_ANGLE_ROTATE: number = WheelComponent.TITLE_ANGLE / 2;
 
 	@AngularInput() preset: Preset; 
+    @AngularInput() blur: boolean;
+    @AngularOutput() init: EventEmitter<any> = new EventEmitter();
 
 	arcpath: string;
 	titlearcpath: string;
@@ -30,30 +32,35 @@ export class WheelComponent implements OnInit {
 		this.circleOpen = false;
 	}
 
-	ngOnInit() {
-		setTimeout(() => this.render(), 0);
+	ngAfterContentInit() {
+		setTimeout(() => {
+            this.render(); 
+            this.init.emit(true)
+        }, 0);
 	}
 
 	public toggle() {
         if (this.circleOpen) {
             this.close();
         } else {
-            this.open(true);
+            this.open(true, 0);
         }
 	}
 
-    public open(togglePower: boolean) {
+    public open(togglePower: boolean, delay: number) {
         if (togglePower && this.getPower() != "on")
             this.command.setPower('on', this.preset.displays);
 
-        this.circleOpen = true;
+        setTimeout(() => {
+            this.circleOpen = true;
+        }, delay);
     }
 
     public close() {
         this.circleOpen = false;
     }
 	
-	private render() {
+	public render() {
         this.setTranslate();
 
 		let numOfChildren = this.preset.inputs.length;	
@@ -169,5 +176,15 @@ export class WheelComponent implements OnInit {
 
     private getMute(): boolean {
         return AudioDevice.getMute(this.preset.audioDevices); 
+    }
+
+    public displayToAll(displays: Display[], audioDevices: AudioDevice[]) {
+        let input: Input = Display.getInput(this.preset.displays);
+
+        this.command.displayToAll(input, displays, audioDevices);
+    }
+
+    public unDisplayToAll(displays: Display[], audioDevices: AudioDevice[]) {
+        this.command.unDisplayToAll(displays, audioDevices); 
     }
 }

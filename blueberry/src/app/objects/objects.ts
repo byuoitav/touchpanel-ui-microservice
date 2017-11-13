@@ -39,6 +39,7 @@ export class UIConfiguration {
     inputConfiguration: InputConfiguration[];
 
     Api: string[];
+    roomWideAudios: string[];
 }
 
 export class PanelConfiguration {
@@ -102,6 +103,7 @@ export class Preset {
     displays: Display[] = [];
     audioDevices: AudioDevice[] = [];
     inputs: Input[] = [];
+    extraInputs: Input[] = [];
 
     top: string;
     right: string;

@@ -58,6 +58,7 @@ func main() {
 		return context.JSON(http.StatusOK, si)
 	})
 
+	router.GET("/pihostname", handlers.GetPiHostname)
 	router.GET("/hostname", handlers.GetHostname)
 	router.GET("/deviceinfo", handlers.GetDeviceInfo)
 	router.GET("/reboot", handlers.Reboot)
