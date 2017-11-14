@@ -158,7 +158,7 @@ export class WheelComponent implements AfterContentInit {
         }, 750);
     }
 
-    private getInput(): Input {
+    public getInput(): Input {
         return Display.getInput(this.preset.displays);
     }
 

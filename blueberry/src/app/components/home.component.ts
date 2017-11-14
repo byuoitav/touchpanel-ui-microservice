@@ -97,27 +97,30 @@ export class HomeComponent {
                         switch(e.eventInfoKey) {
                             case INPUT: {
                                 let input: Input = Input.getInput(e.eventInfoValue, this.data.inputs); 
-                                this.wheel.preset.extraInputs.length = 0;
 
-                                if (input != null && !this.wheel.preset.inputs.includes(input)) {
-                                    this.wheel.preset.extraInputs.push(input);
+                                if (input != null) {
+                                    this.wheel.preset.extraInputs.length = 0;
 
-                                    this.dialog.closeAll();
-                                    let dialogRef = this.dialog.open(ChangedDialog, {
-                                        width: '50vw',
-                                        backdropClass: 'dialog-backdrop',
-                                        data: { number: e.device.charAt(e.device.length - 1) }
-                                    });
-                                } if (input != null) {
-                                    this.dialog.closeAll();
-                                    let dialogRef = this.dialog.open(ChangedDialog, {
-                                        width: '50vw',
-                                        backdropClass: 'dialog-backdrop',
-                                        data: { number: e.device.charAt(e.device.length - 1) }
-                                    });
+                                    if (!this.wheel.preset.inputs.includes(input)) {
+                                        this.wheel.preset.extraInputs.push(input);
+
+                                        let dialogRef = this.dialog.open(ChangedDialog, {
+                                            width: '50vw',
+                                            backdropClass: 'dialog-backdrop',
+                                            data: { number: this.numberFromHostname(e.requestor) } 
+                                        });
+                                    } else {
+                                        /*
+                                        let dialogRef = this.dialog.open(ChangedDialog, {
+                                            width: '50vw',
+                                            backdropClass: 'dialog-backdrop',
+                                            data: { number: this.numberFromHostname(e.requestor) } 
+                                        });
+                                       */
+                                    }
+                                
+                                    setTimeout(() => this.wheel.render(), 0);
                                 }
-
-                                setTimeout(() => this.wheel.render(), 0);
                             }
                             default:
                                break; 
@@ -126,5 +129,10 @@ export class HomeComponent {
                 }
             }
         }); 
+    }
+
+    private numberFromHostname(requestor: string): string {
+        let num = requestor.split("-")[2].split(".")[0][2];
+        return num; 
     }
 }
