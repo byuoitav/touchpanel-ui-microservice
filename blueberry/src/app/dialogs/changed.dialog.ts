@@ -37,7 +37,7 @@ export class ChangedDialog {
 
     constructor(public dialogRef: MatDialogRef<ChangedDialog>, @Inject(MAT_DIALOG_DATA) public data: any) {}
 
-    private cancel() {
+    cancel() {
         this.dialogRef.close(); 
     }
 }

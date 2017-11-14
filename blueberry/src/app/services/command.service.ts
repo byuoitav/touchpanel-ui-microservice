@@ -183,7 +183,6 @@ export class CommandService {
         for (let a of preset.audioDevices) {
             body.audioDevices.push({
                 "name": a.name,
-                "input": preset.inputs[0].name,
                 "muted": false,
                 "volume": 30
             }); 
@@ -224,13 +223,12 @@ export class CommandService {
             } else {
                 body.audioDevices.push({
                     "name": a.name,
-                    "input": i.name,
                     "muted": true
                 });
             }
         }
 
-		this.put(body).subscribe(
+		this.putWithCustomTimeout(body, 2.5*1000).subscribe(
 			data => {
                 ret.emit(true);
 			}, err => {
@@ -261,11 +259,10 @@ export class CommandService {
                 "power": a.power,
                 "muted": a.muted,
                 "volume": a.volume,
-                "input": a.input.name
             });
         }
 
-		this.put(body).subscribe(
+		this.putWithCustomTimeout(body, 2.5*1000).subscribe(
 			data => {
                 ret.emit(true);
 			}, err => {

@@ -21,15 +21,15 @@ export class HomeComponent {
 
     @AngularOutput() lockPress: EventEmitter<any> = new EventEmitter();
     
-    constructor(private data: DataService, private dialog: MatDialog, private socket: SocketService) {
+    constructor(public data: DataService, private dialog: MatDialog, private socket: SocketService) {
         this.updateFromEvents();
     }
 
     @ViewChild(WheelComponent)
     public wheel: WheelComponent;
 
-    private dtaPreset: Preset;
-    private oldPreset: Preset;
+    dtaPreset: Preset;
+    oldPreset: Preset;
     
     private oldDisplayData: Display[];
     private oldAudioDevicesData: AudioDevice[];
@@ -107,8 +107,11 @@ export class HomeComponent {
                                 
                                     setTimeout(() => this.wheel.render(), 0);
                                 }
+
+                                break;
                             }
                             case DTA: {
+                                console.log("DTA event", e);
                                 if (e.eventInfoValue === "true") {
                                     let dialogRef = this.dialog.open(ChangedDialog, {
                                         width: '50vw',
@@ -122,6 +125,8 @@ export class HomeComponent {
                                         data: { number: this.numberFromHostname(e.requestor), message: "is no longer sharing an input with you."} 
                                     });
                                 }
+
+                                break;
                             }
                             default:
                                break; 
