@@ -75,4 +75,13 @@ export class Event {
 	device: string;
 	eventInfoKey: string;
 	eventInfoValue: string;
+
+    constructor(type: number, eventCause: number, requestor: string, device: string, eventInfoKey: string, eventInfoValue: string) {
+        this.type = type;
+        this.eventCause = eventCause;
+        this.requestor = requestor;
+        this.device = device;
+        this.eventInfoKey = eventInfoKey;
+        this.eventInfoValue = eventInfoValue;
+    }
 }

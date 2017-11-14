@@ -7,7 +7,7 @@ import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
         <h1 mat-dialog-title class="center">Input Changed<h1>
         
         <div mat-dialog-content class="content">
-            <span>Display {{data.number}} shared an input with you.</span>
+            <span>Display {{data.number}} {{data.message}}</span>
         </div>
         
         <div mat-dialog-actions class="buttons">

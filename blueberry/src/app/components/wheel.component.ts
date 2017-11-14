@@ -1,8 +1,10 @@
 import { Component, Input as AngularInput, Output as AngularOutput, AfterContentInit, ElementRef, ViewChild, EventEmitter } from '@angular/core';
 
 import { Preset } from '../objects/objects';
-import { Display, Input, AudioDevice } from '../objects/status.objects';
+import { Display, Input, AudioDevice, DTA } from '../objects/status.objects';
 import { CommandService } from '../services/command.service';
+import { Event } from '../services/socket.service';
+import { APIService } from '../services/api.service';
 
 @Component({
 	selector: 'wheel',
@@ -28,7 +30,7 @@ export class WheelComponent implements AfterContentInit {
 
 	@ViewChild("wheel") wheel: ElementRef;
 
-	constructor(public command: CommandService) {
+	constructor(public command: CommandService, private api: APIService) {
 		this.circleOpen = false;
 	}
 
@@ -182,9 +184,15 @@ export class WheelComponent implements AfterContentInit {
         let input: Input = Display.getInput(this.preset.displays);
 
         this.command.displayToAll(input, displays, audioDevices);
+
+        let event: Event = new Event(0, 0, APIService.piHostname, "", DTA, "true");
+        this.api.sendFeatureEvent(event);
     }
 
     public unDisplayToAll(displays: Display[], audioDevices: AudioDevice[]) {
         this.command.unDisplayToAll(displays, audioDevices); 
+
+        let event: Event = new Event(0, 0, APIService.piHostname, "", DTA, "false");
+        this.api.sendFeatureEvent(event);
     }
 }
