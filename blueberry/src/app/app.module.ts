@@ -11,6 +11,7 @@ import { HomeComponent } from './components/home.component';
 import { WheelComponent } from './components/wheel.component';
 import { ManagementComponent } from './components/management.component';
 import { HelpDialog } from './dialogs/help.dialog';
+import { ChangedDialog } from './dialogs/changed.dialog';
 import { APIService } from './services/api.service';
 import { SocketService } from './services/socket.service';
 import { CommandService } from './services/command.service';
@@ -19,6 +20,7 @@ import { DataService } from './services/data.service';
 @NgModule({
   declarations: [
     HelpDialog,
+    ChangedDialog,
     AppComponent,
     HomeComponent,
 	WheelComponent,
@@ -45,6 +47,7 @@ import { DataService } from './services/data.service';
   ],
   entryComponents: [
       HelpDialog,
+      ChangedDialog,
   ],
   bootstrap: [
       AppComponent,

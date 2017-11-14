@@ -63,7 +63,7 @@ export class WheelComponent implements AfterContentInit {
 	public render() {
         this.setTranslate();
 
-		let numOfChildren = this.preset.inputs.length;	
+		let numOfChildren = this.preset.inputs.length + this.preset.extraInputs.length;	
 		let children = this.wheel.nativeElement.children;
 		let angle = (360 - WheelComponent.TITLE_ANGLE) / numOfChildren;
 
@@ -102,7 +102,7 @@ export class WheelComponent implements AfterContentInit {
 		let top: number;
 		let right: number;
 
-		switch (this.preset.inputs.length) {
+		switch (this.preset.inputs.length + this.preset.extraInputs.length) {
 			case 4:
 				top = 4;
 				right = 17.5;

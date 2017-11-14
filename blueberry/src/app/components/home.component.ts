@@ -7,9 +7,10 @@ import { DataService } from '../services/data.service';
 import { APIService } from '../services/api.service';
 import { SocketService, MESSAGE, Event } from '../services/socket.service';
 import { HelpDialog } from '../dialogs/help.dialog';
+import { ChangedDialog } from '../dialogs/changed.dialog';
 
 import { Preset } from '../objects/objects';
-import { Display, AudioDevice, INPUT, Input } from '../objects/status.objects';
+import { Output, Display, AudioDevice, INPUT, Input } from '../objects/status.objects';
 
 @Component({
     selector: 'home',
@@ -83,20 +84,39 @@ export class HomeComponent {
             if (event.type == MESSAGE) {
                 let e: Event = event.data;
 
-                if (e.requestor.includes(APIService.hostname)) {
-                    switch(e.eventInfoKey) {
-                        case INPUT: {
-                            let input: Input = Input.getInput(e.eventInfoValue, this.data.inputs); 
-                            this.wheel.preset.extraInputs.length = 0;
+                if (!e.requestor.includes(APIService.hostname)) {
+                    let output: Output = this.wheel.preset.displays.find(d => d.name === e.device);
 
-                            if (input != null && !this.wheel.preset.inputs.includes(input)) {
-                                this.wheel.preset.extraInputs.push(input);
+                    if (output != null) {
+                        switch(e.eventInfoKey) {
+                            case INPUT: {
+                                let input: Input = Input.getInput(e.eventInfoValue, this.data.inputs); 
+                                this.wheel.preset.extraInputs.length = 0;
+
+                                if (input != null && !this.wheel.preset.inputs.includes(input)) {
+                                    this.wheel.preset.extraInputs.push(input);
+
+                                    this.dialog.closeAll();
+                                    let dialogRef = this.dialog.open(ChangedDialog, {
+                                        width: '50vw',
+                                        backdropClass: 'dialog-backdrop',
+                                        data: { number: e.device.charAt(e.device.length - 1) }
+                                    });
+                                } if (input != null) {
+
+                                    this.dialog.closeAll();
+                                    let dialogRef = this.dialog.open(ChangedDialog, {
+                                        width: '50vw',
+                                        backdropClass: 'dialog-backdrop',
+                                        data: { number: e.device.charAt(e.device.length - 1) }
+                                    });
+                                }
+
+                                setTimeout(() => this.wheel.render(), 0);
                             }
-
-                            this.wheel.render()
+                            default:
+                               break; 
                         }
-                        default:
-                           break; 
                     }
                 }
             }

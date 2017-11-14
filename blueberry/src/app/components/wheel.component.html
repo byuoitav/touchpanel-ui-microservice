@@ -38,6 +38,11 @@
 			<div class="line">
 			</div>
 		</li>
+
+		<li *ngFor="let i of preset.extraInputs" class="thin">
+			<div class="line">
+			</div>
+		</li>
 	</ul>
 	
 	<div class="center" [class.open]="circleOpen" [class.on]="getPower() == 'on'" (click)="toggle()">
