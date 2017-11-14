@@ -21,15 +21,15 @@ export class HomeComponent {
 
     @AngularOutput() lockPress: EventEmitter<any> = new EventEmitter();
     
-    constructor(private data: DataService, private dialog: MatDialog, private socket: SocketService) {
+    constructor(public data: DataService, private dialog: MatDialog, private socket: SocketService) {
         this.updateFromEvents();
     }
 
     @ViewChild(WheelComponent)
     public wheel: WheelComponent;
 
-    private dtaPreset: Preset;
-    private oldPreset: Preset;
+    dtaPreset: Preset;
+    oldPreset: Preset;
     
     private oldDisplayData: Display[];
     private oldAudioDevicesData: AudioDevice[];

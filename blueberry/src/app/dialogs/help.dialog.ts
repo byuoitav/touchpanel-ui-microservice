@@ -21,7 +21,7 @@ export class HelpDialog {
 
     constructor(public dialogRef: MatDialogRef<HelpDialog>, @Inject(MAT_DIALOG_DATA) public data: any) {}
 
-    private cancel() {
+    cancel() {
         this.dialogRef.close(); 
     }
 }
