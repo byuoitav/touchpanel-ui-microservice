@@ -5,6 +5,7 @@ export const INPUT: string = "input";
 export const BLANKED: string = "blanked";
 export const MUTED: string = "muted";
 export const VOLUME: string = "volume";
+export const DTA: string = "dta";
 
 export class Device {
 	name: string;

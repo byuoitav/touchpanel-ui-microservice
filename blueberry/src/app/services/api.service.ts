@@ -2,6 +2,7 @@ import { Injectable, EventEmitter } from '@angular/core';
 import { Http, Response, Headers, RequestOptions } from '@angular/http';
 import { Observable } from 'rxjs/Rx';
 import { UIConfiguration, Room, RoomConfiguration, RoomStatus} from '../objects/objects';
+import { Event } from './socket.service';
 
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/timeout';
@@ -56,7 +57,7 @@ export class APIService {
     }
 
 	// hostname, building, room
-	public setupPiHostname() {
+	private setupPiHostname() {
 		this.getPiHostname().subscribe(
 			data => {
 				APIService.piHostname = String(data);
@@ -174,47 +175,55 @@ export class APIService {
 		);
 	}
 
-	getHostname(): Observable<Object> {
+	private getHostname(): Observable<Object> {
 		return this.http.get(APIService.localurl + ":8888/hostname")
 			.map(response => response.json());
 	}
 
-	getPiHostname(): Observable<Object> {
+	private getPiHostname(): Observable<Object> {
 		return this.http.get(APIService.localurl + ":8888/pihostname")
 			.map(response => response.json());
 	}
 
-	getAPIUrl(): Observable<Object> {
+	private getAPIUrl(): Observable<Object> {
 		return this.http.get(APIService.localurl + ":8888/api")
 			.map(response => response.json());
 	}
 
-	getAPIHealth(): Observable<Object> {
+	private getAPIHealth(): Observable<Object> {
 		return this.http.get(APIService.apihost + ":8000/mstatus")
 			.timeout(RETRY_TIMEOUT)
 			.map(response => response.json());
 	}
 
-	getNextAPIUrl(): Observable<Object> {
+	private getNextAPIUrl(): Observable<Object> {
 		return this.http.get(APIService.localurl + ":8888/nextapi")
 			.map(response => response.json());
 	}
 
-	getUIConfig(): Observable<Object> {
+	private getUIConfig(): Observable<Object> {
 		return this.http.get(APIService.localurl + ":8888/uiconfig")
 			.map(response => response.json())
 			.map(res => deserialize<UIConfiguration>(UIConfiguration, res));
 	}
 
-	getRoomConfig(): Observable<Object> {
+	private getRoomConfig(): Observable<Object> {
 		return this.http.get(APIService.apiurl + "/configuration")
 			.map(response => response.json())
 			.map(res => deserialize<RoomConfiguration>(RoomConfiguration, res));
 	}
 
-	getRoomStatus(): Observable<Object> {
+	private getRoomStatus(): Observable<Object> {
 		return this.http.get(APIService.apiurl)
 			.map(response => response.json())
 			.map(res => deserialize<RoomStatus>(RoomStatus, res));
 	}
+
+    public sendFeatureEvent(event: Event) {
+        console.log("sending feature event", event);    
+
+        this.http.post(APIService.localurl + ":8888/publishfeature", event, APIService.options)
+                .map(res => res.json())
+                .subscribe();
+    }
 }

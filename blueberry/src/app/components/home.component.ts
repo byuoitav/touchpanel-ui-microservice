@@ -10,7 +10,7 @@ import { HelpDialog } from '../dialogs/help.dialog';
 import { ChangedDialog } from '../dialogs/changed.dialog';
 
 import { Preset } from '../objects/objects';
-import { Output, Display, AudioDevice, INPUT, Input } from '../objects/status.objects';
+import { Output, Display, AudioDevice, INPUT, Input, DTA } from '../objects/status.objects';
 
 @Component({
     selector: 'home',
@@ -90,7 +90,7 @@ export class HomeComponent {
             if (event.type == MESSAGE) {
                 let e: Event = event.data;
 
-                if (!e.requestor.includes(APIService.hostname)) {
+                if (!e.requestor.includes(APIService.hostname) && e.requestor.length > 0) {
                     let output: Output = this.wheel.preset.displays.find(d => d.name === e.device);
 
                     if (output != null) {
@@ -103,23 +103,24 @@ export class HomeComponent {
 
                                     if (!this.wheel.preset.inputs.includes(input)) {
                                         this.wheel.preset.extraInputs.push(input);
-
-                                        let dialogRef = this.dialog.open(ChangedDialog, {
-                                            width: '50vw',
-                                            backdropClass: 'dialog-backdrop',
-                                            data: { number: this.numberFromHostname(e.requestor) } 
-                                        });
-                                    } else {
-                                        /*
-                                        let dialogRef = this.dialog.open(ChangedDialog, {
-                                            width: '50vw',
-                                            backdropClass: 'dialog-backdrop',
-                                            data: { number: this.numberFromHostname(e.requestor) } 
-                                        });
-                                       */
                                     }
                                 
                                     setTimeout(() => this.wheel.render(), 0);
+                                }
+                            }
+                            case DTA: {
+                                if (e.eventInfoValue === "true") {
+                                    let dialogRef = this.dialog.open(ChangedDialog, {
+                                        width: '50vw',
+                                        backdropClass: 'dialog-backdrop',
+                                        data: { number: this.numberFromHostname(e.requestor), message: "has shared an input with you."} 
+                                    });
+                                } else {
+                                    let dialogRef = this.dialog.open(ChangedDialog, {
+                                        width: '50vw',
+                                        backdropClass: 'dialog-backdrop',
+                                        data: { number: this.numberFromHostname(e.requestor), message: "is no longer sharing an input with you."} 
+                                    });
                                 }
                             }
                             default:
@@ -132,7 +133,7 @@ export class HomeComponent {
     }
 
     private numberFromHostname(requestor: string): string {
-        let num = requestor.split("-")[2].split(".")[0][2];
+        let num = requestor.split("-")[2][2];
         return num; 
     }
 }
