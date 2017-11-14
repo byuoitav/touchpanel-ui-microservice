@@ -1,4 +1,4 @@
-import { Component, ViewChild,  EventEmitter } from '@angular/core';
+import { Component, ViewChild,  EventEmitter, Output as AngularOutput } from '@angular/core';
 import { MatDialog } from '@angular/material';
 import { deserialize } from 'serializer.ts/Serializer';
 
@@ -18,6 +18,8 @@ import { Output, Display, AudioDevice, INPUT, Input } from '../objects/status.ob
     styleUrls: ['home.component.scss', '../colorscheme.scss']
 })
 export class HomeComponent {
+
+    @AngularOutput() lockPress: EventEmitter<any> = new EventEmitter();
     
     constructor(private data: DataService, private dialog: MatDialog, private socket: SocketService) {
         this.updateFromEvents();
@@ -44,15 +46,19 @@ export class HomeComponent {
     }
 
     public turnOn(): EventEmitter<boolean> {
-        let ret: EventEmitter<boolean> = this.wheel.command.setPower('on', this.wheel.preset.displays);
+        let ret: EventEmitter<boolean> = this.wheel.command.powerOnDefault(this.wheel.preset);
 
         ret.subscribe(success => {
             if (success) {
-                this.wheel.open(false, 400);
+                this.wheel.open(false, 500);
             }
         });
 
         return ret;
+    }
+
+    public lock() {
+        this.lockPress.emit(true); 
     }
 
     public help() {
@@ -103,7 +109,6 @@ export class HomeComponent {
                                         data: { number: e.device.charAt(e.device.length - 1) }
                                     });
                                 } if (input != null) {
-
                                     this.dialog.closeAll();
                                     let dialogRef = this.dialog.open(ChangedDialog, {
                                         width: '50vw',

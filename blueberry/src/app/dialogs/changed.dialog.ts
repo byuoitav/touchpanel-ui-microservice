@@ -15,10 +15,14 @@ import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
         </div>
     `,
     styles: [`
+        .center {
+            text-align: center; 
+        }
+
         .content {
             overflow: hidden; 
-
-            font-size: 1vh;
+            font-size: 3vh;
+            text-align: center;
         }
 
         .buttons {
