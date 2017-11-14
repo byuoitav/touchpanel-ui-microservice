@@ -37,7 +37,7 @@ test:
         - npm install -g @angular/cli
         - cd touchpanel-ui && npm install && ng build --base-href="./circle-default/"
         - mv touchpanel-ui/dist/ circle-default && rm -r touchpanel-ui
-        - cd blueberry && npm install && ng build --base-href="./blueberry/"
+        - cd blueberry && npm install && ng build --base-href="./blueberry/" --prod
         - mv blueberry/dist/ blueberry-tmp && rm -r blueberry && mv blueberry-tmp blueberry
 
 deployment:

@@ -107,8 +107,11 @@ export class HomeComponent {
                                 
                                     setTimeout(() => this.wheel.render(), 0);
                                 }
+
+                                break;
                             }
                             case DTA: {
+                                console.log("DTA event", e);
                                 if (e.eventInfoValue === "true") {
                                     let dialogRef = this.dialog.open(ChangedDialog, {
                                         width: '50vw',
@@ -122,6 +125,8 @@ export class HomeComponent {
                                         data: { number: this.numberFromHostname(e.requestor), message: "is no longer sharing an input with you."} 
                                     });
                                 }
+
+                                break;
                             }
                             default:
                                break; 
