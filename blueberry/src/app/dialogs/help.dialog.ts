@@ -14,7 +14,7 @@ import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
             <button mat-raised-button color="primary" tabindex="2">Request Help</button>
         </div>
     `,
-    styleUrls: ['../colorscheme.scss', './sharescreen.dialog.scss'],
+    styleUrls: ['../colorscheme.scss', './help.dialog.scss'],
 })
 
 export class HelpDialog {

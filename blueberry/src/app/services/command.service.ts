@@ -5,6 +5,7 @@ import { MatSliderChange } from '@angular/material';
 
 import { APIService } from './api.service';
 import { Input, Display, AudioDevice } from '../objects/status.objects';
+import { Preset } from '../objects/objects';
 import { WheelComponent } from '../components/wheel.component';
 
 import 'rxjs/add/operator/map';
@@ -27,6 +28,12 @@ export class CommandService {
 	private put(data: any): Observable<Object> {
 		return this.http.put(APIService.apiurl, data, this.options)
 						.timeout(TIMEOUT)
+						.map(res => res.json());
+	}
+
+	private putWithCustomTimeout(data: any, timeout: number): Observable<Object> {
+		return this.http.put(APIService.apiurl, data, this.options)
+						.timeout(timeout)
 						.map(res => res.json());
 	}
 
@@ -156,6 +163,39 @@ export class CommandService {
                 ret.emit(false);
 			}
 		);
+
+        return ret;
+    }
+
+    public powerOnDefault(preset: Preset): EventEmitter<boolean> {
+        let ret: EventEmitter<boolean> = new EventEmitter<boolean>();
+        
+        let body = { displays: [], audioDevices: [] }
+
+        for (let d of preset.displays) {
+            body.displays.push({
+                "name": d.name,
+                "input": preset.inputs[0].name,
+                "blanked": false
+            }); 
+        }
+
+        for (let a of preset.audioDevices) {
+            body.audioDevices.push({
+                "name": a.name,
+                "input": preset.inputs[0].name,
+                "muted": false,
+                "volume": 30
+            }); 
+        }
+
+        this.putWithCustomTimeout(body, 3*1000).subscribe(
+			data => {
+                ret.emit(true);
+			}, err => {
+                ret.emit(false);
+			}
+        );
 
         return ret;
     }

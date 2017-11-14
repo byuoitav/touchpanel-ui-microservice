@@ -1,4 +1,4 @@
-import { Component, ViewChild,  EventEmitter } from '@angular/core';
+import { Component, ViewChild,  EventEmitter, Output as AngularOutput } from '@angular/core';
 import { MatDialog } from '@angular/material';
 import { deserialize } from 'serializer.ts/Serializer';
 
@@ -7,9 +7,10 @@ import { DataService } from '../services/data.service';
 import { APIService } from '../services/api.service';
 import { SocketService, MESSAGE, Event } from '../services/socket.service';
 import { HelpDialog } from '../dialogs/help.dialog';
+import { ChangedDialog } from '../dialogs/changed.dialog';
 
 import { Preset } from '../objects/objects';
-import { Display, AudioDevice, INPUT, Input } from '../objects/status.objects';
+import { Output, Display, AudioDevice, INPUT, Input } from '../objects/status.objects';
 
 @Component({
     selector: 'home',
@@ -17,6 +18,8 @@ import { Display, AudioDevice, INPUT, Input } from '../objects/status.objects';
     styleUrls: ['home.component.scss', '../colorscheme.scss']
 })
 export class HomeComponent {
+
+    @AngularOutput() lockPress: EventEmitter<any> = new EventEmitter();
     
     constructor(private data: DataService, private dialog: MatDialog, private socket: SocketService) {
         this.updateFromEvents();
@@ -43,15 +46,19 @@ export class HomeComponent {
     }
 
     public turnOn(): EventEmitter<boolean> {
-        let ret: EventEmitter<boolean> = this.wheel.command.setPower('on', this.wheel.preset.displays);
+        let ret: EventEmitter<boolean> = this.wheel.command.powerOnDefault(this.wheel.preset);
 
         ret.subscribe(success => {
             if (success) {
-                this.wheel.open(false, 400);
+                this.wheel.open(false, 500);
             }
         });
 
         return ret;
+    }
+
+    public lock() {
+        this.lockPress.emit(true); 
     }
 
     public help() {
@@ -83,20 +90,38 @@ export class HomeComponent {
             if (event.type == MESSAGE) {
                 let e: Event = event.data;
 
-                if (e.requestor.includes(APIService.hostname)) {
-                    switch(e.eventInfoKey) {
-                        case INPUT: {
-                            let input: Input = Input.getInput(e.eventInfoValue, this.data.inputs); 
-                            this.wheel.preset.extraInputs.length = 0;
+                if (!e.requestor.includes(APIService.hostname)) {
+                    let output: Output = this.wheel.preset.displays.find(d => d.name === e.device);
 
-                            if (input != null && !this.wheel.preset.inputs.includes(input)) {
-                                this.wheel.preset.extraInputs.push(input);
+                    if (output != null) {
+                        switch(e.eventInfoKey) {
+                            case INPUT: {
+                                let input: Input = Input.getInput(e.eventInfoValue, this.data.inputs); 
+                                this.wheel.preset.extraInputs.length = 0;
+
+                                if (input != null && !this.wheel.preset.inputs.includes(input)) {
+                                    this.wheel.preset.extraInputs.push(input);
+
+                                    this.dialog.closeAll();
+                                    let dialogRef = this.dialog.open(ChangedDialog, {
+                                        width: '50vw',
+                                        backdropClass: 'dialog-backdrop',
+                                        data: { number: e.device.charAt(e.device.length - 1) }
+                                    });
+                                } if (input != null) {
+                                    this.dialog.closeAll();
+                                    let dialogRef = this.dialog.open(ChangedDialog, {
+                                        width: '50vw',
+                                        backdropClass: 'dialog-backdrop',
+                                        data: { number: e.device.charAt(e.device.length - 1) }
+                                    });
+                                }
+
+                                setTimeout(() => this.wheel.render(), 0);
                             }
-
-                            this.wheel.render()
+                            default:
+                               break; 
                         }
-                        default:
-                           break; 
                     }
                 }
             }
