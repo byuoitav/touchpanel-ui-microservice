@@ -90,47 +90,42 @@ export class HomeComponent {
             if (event.type == MESSAGE) {
                 let e: Event = event.data;
 
-                if (!e.requestor.includes(APIService.hostname) && e.requestor.length > 0) {
-                    let output: Output = this.wheel.preset.displays.find(d => d.name === e.device);
-
-                    if (output != null) {
-                        switch(e.eventInfoKey) {
-                            case INPUT: {
-                                let input: Input = Input.getInput(e.eventInfoValue, this.data.inputs); 
-
-                                if (input != null) {
-                                    this.wheel.preset.extraInputs.length = 0;
-
-                                    if (!this.wheel.preset.inputs.includes(input)) {
-                                        this.wheel.preset.extraInputs.push(input);
-                                    }
-                                
-                                    setTimeout(() => this.wheel.render(), 0);
-                                }
-
-                                break;
-                            }
-                            case DTA: {
-                                console.log("DTA event", e);
-                                if (e.eventInfoValue === "true") {
-                                    let dialogRef = this.dialog.open(ChangedDialog, {
-                                        width: '50vw',
-                                        backdropClass: 'dialog-backdrop',
-                                        data: { number: this.numberFromHostname(e.requestor), message: "has shared an input with you."} 
-                                    });
-                                } else {
-                                    let dialogRef = this.dialog.open(ChangedDialog, {
-                                        width: '50vw',
-                                        backdropClass: 'dialog-backdrop',
-                                        data: { number: this.numberFromHostname(e.requestor), message: "is no longer sharing an input with you."} 
-                                    });
-                                }
-
-                                break;
-                            }
-                            default:
-                               break; 
+                switch(e.eventInfoKey) {
+                    case INPUT: {
+                        if (this.wheel.preset.displays.find(d => d.name === e.device) == null) {
+                            break;
                         }
+
+                        let input = Input.getInput(e.eventInfoValue, this.data.inputs);
+
+                        if (input != null && !this.wheel.preset.inputs.includes(input)) {
+                            console.log("Creating a new input on the wheel from event:", e);
+                            this.wheel.preset.extraInputs.length = 0;
+                            this.wheel.preset.extraInputs.push(input); 
+                            setTimeout(() => this.wheel.render(), 0);
+                        }
+                        break; 
+                    } 
+                    case DTA: {
+                        console.log("DTA Event:", e);
+                        if (e.eventInfoValue === "true") {
+                            let dialogRef = this.dialog.open(ChangedDialog, {
+                                width: '50vw',
+                                backdropClass: 'dialog-backdrop',
+                                data: { number: this.numberFromHostname(e.requestor), message: "has shared an input with you."} 
+                            });
+                        } else {
+                            // no more extra inputs should be showing
+                            this.wheel.preset.extraInputs.length = 0; 
+                            setTimeout(() => this.wheel.render(), 0);
+
+                            let dialogRef = this.dialog.open(ChangedDialog, {
+                                width: '50vw',
+                                backdropClass: 'dialog-backdrop',
+                                data: { number: this.numberFromHostname(e.requestor), message: "is no longer sharing an input with you."} 
+                            });
+                        }
+                        break; 
                     }
                 }
             }

@@ -110,12 +110,12 @@ export class WheelComponent implements AfterContentInit {
 				right = 17.5;
 				break;
 			case 3: 
-				top = 13;
-				right = 16;
+				top = 9;
+				right = 12;
 				break;
 			case 2:
-				top = 26;
-				right = 10;
+				top = 20;
+				right = 2;
 				break;
 			case 1:
 				top = 64;
