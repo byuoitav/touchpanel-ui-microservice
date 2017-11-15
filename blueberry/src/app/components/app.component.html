@@ -2,7 +2,7 @@
     <management [enabled]="home?.wheel?.getPower() != 'on'"></management>
 
     <div class="lock" [class.disabled]="home?.wheel?.getPower() == 'on'" (click)="unlock()">
-        <object type="image/svg+xml" data="./assets/byu_medallion_white.svg" class="logo">
+        <object type="image/svg+xml" data="./assets/byu_medallion_white.svg" class="logo" [class.animate]="animate">
         </object>
     </div>
 

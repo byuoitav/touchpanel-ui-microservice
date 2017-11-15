@@ -14,15 +14,23 @@ import { HomeComponent } from './home.component';
 export class AppComponent {
 
     @ViewChild(HomeComponent)
-    private home: HomeComponent;
+    public home: HomeComponent;
+    public animate: boolean = false;
 
 	constructor (private api: APIService, private data: DataService) {}
 
     public unlock() {
+        if (this.home.wheel == null) {
+            return; 
+        }
+
+        this.animate = true;
         this.home.turnOn().subscribe(success => {
             if (!success) {
                 console.log("failed to turn on"); 
                 setTimeout(() => this.unlock, 1000);
+            } else {
+                setTimeout(() => this.animate = false, 1000); 
             }
         });
     }

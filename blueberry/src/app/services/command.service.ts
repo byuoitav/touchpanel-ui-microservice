@@ -190,7 +190,7 @@ export class CommandService {
             }); 
         }
 
-        this.putWithCustomTimeout(body, 5*1000).subscribe(
+        this.putWithCustomTimeout(body, 10*1000).subscribe(
 			data => {
                 ret.emit(true);
 			}, err => {
