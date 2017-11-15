@@ -160,11 +160,11 @@ export class WheelComponent implements AfterContentInit {
         }, 750);
     }
 
-    private getInput(): Input {
+    getInput(): Input {
         return Display.getInput(this.preset.displays);
     }
 
-    private getVolume(): number {
+    getVolume(): number {
         return AudioDevice.getVolume(this.preset.audioDevices); 
     }
 
@@ -176,7 +176,7 @@ export class WheelComponent implements AfterContentInit {
         return Display.getPower(this.preset.displays); 
     }
 
-    private getMute(): boolean {
+    getMute(): boolean {
         return AudioDevice.getMute(this.preset.audioDevices); 
     }
 
