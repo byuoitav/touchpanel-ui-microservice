@@ -196,8 +196,7 @@ export class APIService {
 			.map(response => response.json());
 	}
 
-	private getNextAPIUrl(): Observable<Object> {
-		return this.http.get(APIService.localurl + ":8888/nextapi")
+private getNextAPIUrl(): Observable<Object> { return this.http.get(APIService.localurl + ":8888/nextapi")
 			.map(response => response.json());
 	}
 
@@ -225,5 +224,13 @@ export class APIService {
         this.http.post(APIService.localurl + ":8888/publishfeature", event, APIService.options)
                 .map(res => res.json())
                 .subscribe();
+    }
+
+    public requestHelp(): Observable<Object> {
+        let body = { building: APIService.building, room: APIService.roomName};
+        console.log("requesting help", body); 
+
+        return this.http.post(APIService.localurl + ":8888/help", body,APIService.options)
+            .map(res => res.json())
     }
 }

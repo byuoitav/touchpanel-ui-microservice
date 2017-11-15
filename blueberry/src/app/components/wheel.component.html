@@ -47,7 +47,7 @@
 		</li>
 	</ul>
 	
-	<div class="center" [class.open]="circleOpen" [class.on]="getPower() == 'on'" (click)="toggle()">
+	<div class="center" [class.open]="circleOpen" [class.on]="getPower() == 'on'">
         <span class="center-item name" [class.open]="circleOpen">{{preset.name}}</span>
         <i class="center-item material-icons icon" [class.open]="circleOpen">{{preset.icon}}</i>
         <span *ngIf="!getBlank()" class="center-item picture" [class.open]="circleOpen">picture on</span>

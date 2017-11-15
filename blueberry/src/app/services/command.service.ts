@@ -245,6 +245,10 @@ export class CommandService {
         let body = { displays: [], audioDevices: [] }; 
 
         for (let d of oldDisplays) {
+            if (d.name == null || d.power == null || d.blanked == null || d.input == null) {
+                continue; 
+            }
+
             body.displays.push({
                 "name": d.name,
                 "power": d.power,
@@ -254,6 +258,10 @@ export class CommandService {
         }
 
         for (let a of oldAudioDevices) {
+            if (a.name == null || a.power == null || a.muted == null || a.volume == null) {
+                continue; 
+            }
+
             body.audioDevices.push({
                 "name": a.name,
                 "power": a.power,
