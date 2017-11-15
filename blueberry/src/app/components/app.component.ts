@@ -26,11 +26,8 @@ export class AppComponent {
                 this.locked = false;
             else {
                 console.log("failed to turn on"); 
+                setTimeout(() => this.unlock, 1000);
             }
         });
-    }
-
-    public lock() {
-        this.locked = true;
     }
 }

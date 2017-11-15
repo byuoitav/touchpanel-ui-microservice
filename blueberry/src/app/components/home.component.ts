@@ -1,6 +1,8 @@
-import { Component, ViewChild,  EventEmitter, Output as AngularOutput } from '@angular/core';
+import { Component, ViewChild,  EventEmitter, Output as AngularOutput, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material';
 import { deserialize } from 'serializer.ts/Serializer';
+import { SweetAlertOptions } from 'sweetalert2';
+import { SwalComponent } from '@toverux/ngsweetalert2';
 
 import { WheelComponent } from './wheel.component';
 import { DataService } from '../services/data.service';
@@ -17,13 +19,9 @@ import { Output, Display, AudioDevice, INPUT, Input, DTA } from '../objects/stat
     templateUrl: 'home.component.html',
     styleUrls: ['home.component.scss', '../colorscheme.scss']
 })
-export class HomeComponent {
+export class HomeComponent implements OnInit {
 
-    @AngularOutput() lockPress: EventEmitter<any> = new EventEmitter();
-    
-    constructor(public data: DataService, private dialog: MatDialog, private socket: SocketService) {
-        this.updateFromEvents();
-    }
+    @AngularOutput() power: EventEmitter<boolean> = new EventEmitter();
 
     @ViewChild(WheelComponent)
     public wheel: WheelComponent;
@@ -34,6 +32,71 @@ export class HomeComponent {
     private oldDisplayData: Display[];
     private oldAudioDevicesData: AudioDevice[];
 
+    @ViewChild("changed") changedDialog: SwalComponent;
+    @ViewChild("help") helpDialog: SwalComponent;
+    @ViewChild("helpConfirm") helpConfirmDialog: SwalComponent;
+    
+    constructor(public data: DataService, private dialog: MatDialog, private socket: SocketService, private api: APIService) {
+        this.updateFromEvents();
+    }
+
+    public ngOnInit() {
+        this.setupDialogs();
+    }
+
+    private setupDialogs() {
+        this.helpDialog.confirm.subscribe(() => {
+            this.helpConfirmDialog.show();
+        });
+
+        this.helpDialog.options = {
+            title: "Help",
+            type: "question",
+            html: "<span>Please call AV Support at 801-422-7671 for help, or request help by pressing 'Request Help'",
+            confirmButtonText: "Request Help",
+            showCancelButton: true,
+            showLoaderOnConfirm: true,
+            preConfirm: () => {
+                return new Promise(resolve => {
+                    this.api.help("help").subscribe(
+                        data => {
+                            resolve();
+                        }
+                    );
+                });
+            },
+        };
+
+        this.helpConfirmDialog.cancel.subscribe(() => {
+            this.api.help("cancel").subscribe();
+        });
+
+        this.helpConfirmDialog.options = {
+            title: "Confirm",
+            type: "success",
+            html: "<span>Your help request has been recieved. A technician is on their way.</span>",
+            confirmButtonText: "Confirm",
+            showCancelButton: true,
+            showLoaderOnConfirm: true,
+            preConfirm: () => {
+                return new Promise(resolve => {
+                    this.api.help("confirm").subscribe(
+                        data => {
+                            resolve();
+                        }
+                    );
+                });
+            },
+        }
+
+        this.changedDialog.options = {
+            title: "Input Changed",
+            type: "info",
+            focusConfirm: false,
+            confirmButtonText: "Dismiss",
+        };
+    }
+
     private onWheelInit() {
         this.wheel.preset.top = "50vh";
         this.wheel.preset.right = "50vw";
@@ -43,6 +106,11 @@ export class HomeComponent {
         this.dtaPreset = new Preset("All Displays", "subscriptions", this.data.displays, this.data.audioDevices.filter(a => a.roomWideAudio), this.wheel.preset.inputs);
         this.dtaPreset.top = this.wheel.preset.top;
         this.dtaPreset.right = this.wheel.preset.right;
+
+        if (this.wheel.getPower() == "on") {
+            this.wheel.open(false, 500);
+            this.power.emit(false);
+        }
     }
 
     public turnOn(): EventEmitter<boolean> {
@@ -58,17 +126,11 @@ export class HomeComponent {
     }
 
     public lock() {
-        this.lockPress.emit(true); 
+        this.power.emit(true); 
     }
 
-    public help() {
-        let dialogRef = this.dialog.open(HelpDialog, {
-            width: '50vw',
-            backdropClass: 'dialog-backdrop'
-        });
-
-        dialogRef.afterClosed().subscribe(result => {
-        });
+    public unlock() {
+        this.power.emit(false); 
     }
 
     public displayToAll() {
@@ -109,22 +171,17 @@ export class HomeComponent {
                     case DTA: {
                         console.log("DTA Event:", e);
                         if (e.eventInfoValue === "true") {
-                            let dialogRef = this.dialog.open(ChangedDialog, {
-                                width: '50vw',
-                                backdropClass: 'dialog-backdrop',
-                                data: { number: this.numberFromHostname(e.requestor), message: "has shared an input with you."} 
-                            });
+                            this.changedDialog.options.html = "<span>Display" + this.numberFromHostname(e.requestor) + " has shared an input with you.";
                         } else {
                             // no more extra inputs should be showing
                             this.wheel.preset.extraInputs.length = 0; 
                             setTimeout(() => this.wheel.render(), 0);
 
-                            let dialogRef = this.dialog.open(ChangedDialog, {
-                                width: '50vw',
-                                backdropClass: 'dialog-backdrop',
-                                data: { number: this.numberFromHostname(e.requestor), message: "is no longer sharing an input with you."} 
-                            });
+                            this.changedDialog.options.timer = 6000;
+                            this.changedDialog.options.html = "<span>Display" + this.numberFromHostname(e.requestor) + " is no longer sharing an input with you";
                         }
+
+                        this.changedDialog.show();
                         break; 
                     }
                 }

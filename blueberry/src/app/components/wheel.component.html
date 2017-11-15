@@ -1,14 +1,6 @@
 <div *ngIf="blur" class="background" [class.open]="circleOpen" (click)="toggle()">
 </div>
 
-<div class="buttons" [class.open]="circleOpen" (click)="$event.stopPropagation()">
-    <!-->
-    <button mat-fab class="power" (click)="command.setPower('standby', preset.displays); toggle()">
-        <mat-icon>power_settings_new</mat-icon>
-    </button>
-    -->
-</div>
-
 <div class="circle" [ngStyle]="{'margin-top': preset.top, 'margin-left': preset.right, 'z-index': circleOpen ? 10 : 0, 'transform': circleOpen ? translate : 'translate(0,0)'}">
 	<!-- wheel -->
 	<ul #wheel class="wheel" [class.open]="circleOpen">
@@ -47,7 +39,7 @@
 		</li>
 	</ul>
 	
-	<div class="center" [class.open]="circleOpen" [class.on]="getPower() == 'on'" (click)="toggle()">
+	<div class="center" [class.open]="circleOpen" [class.on]="getPower() == 'on'">
         <span class="center-item name" [class.open]="circleOpen">{{preset.name}}</span>
         <i class="center-item material-icons icon" [class.open]="circleOpen">{{preset.icon}}</i>
         <span *ngIf="!getBlank()" class="center-item picture" [class.open]="circleOpen">picture on</span>

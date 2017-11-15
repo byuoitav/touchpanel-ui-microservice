@@ -2,7 +2,7 @@
     <button mat-fab class="power button" (click)="lock()">
         <mat-icon>power_settings_new</mat-icon>
     </button>
-    <button mat-fab class="help button" (click)="help()">
+    <button mat-fab class="help button" (click)="help.show()">
         <mat-icon>help</mat-icon>
     </button>
 </div> 
@@ -12,10 +12,16 @@
 </div>
 
 <div class="buttons bottom">
-    <button *ngIf="wheel?.preset === oldPreset" mat-fab class="power button" (click)="displayToAll()">
-        <mat-icon>screen_share</mat-icon>
-    </button>
-    <button *ngIf="wheel?.preset === dtaPreset" mat-fab class="power button" (click)="unDisplayToAll()">
-        <mat-icon>stop_screen_share</mat-icon>
-    </button>
+    <div *ngIf="!wheel?.preset?.extraInputs.includes(wheel?.getInput())">
+        <button *ngIf="wheel?.preset === oldPreset" mat-fab class="dta button" (click)="displayToAll()">
+            <mat-icon>screen_share</mat-icon>
+        </button>
+        <button *ngIf="wheel?.preset === dtaPreset" mat-fab class="dta button" (click)="unDisplayToAll()">
+            <mat-icon>stop_screen_share</mat-icon>
+        </button>
+    </div>
 </div> 
+
+<swal #help></swal>
+<swal #helpConfirm></swal>
+<swal #changed></swal>

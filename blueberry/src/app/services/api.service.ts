@@ -196,8 +196,7 @@ export class APIService {
 			.map(response => response.json());
 	}
 
-	private getNextAPIUrl(): Observable<Object> {
-		return this.http.get(APIService.localurl + ":8888/nextapi")
+private getNextAPIUrl(): Observable<Object> { return this.http.get(APIService.localurl + ":8888/nextapi")
 			.map(response => response.json());
 	}
 
@@ -225,5 +224,18 @@ export class APIService {
         this.http.post(APIService.localurl + ":8888/publishfeature", event, APIService.options)
                 .map(res => res.json())
                 .subscribe();
+    }
+
+    public help(type: string): Observable<Object> {
+        let body = { building: APIService.building, room: APIService.roomName};
+
+        switch(type) {
+            case "help":
+                return this.http.post(APIService.localurl + ":8888/help", body,APIService.options).map(res => res.json());
+            case "confirm":
+                return this.http.post(APIService.localurl + ":8888/confirmhelp", body,APIService.options).map(res => res.json());
+            case "cancel":
+                return this.http.post(APIService.localurl + ":8888/cancelhelp", body,APIService.options).map(res => res.json());
+        }
     }
 }

@@ -133,7 +133,7 @@ ul {
         margin-top: 20%;
         
         &.open {
-            transform: translateY(-350%);
+            transform: translateY(-390%);
         }
     }
 
@@ -186,36 +186,19 @@ ul {
     }
 
     .mute {
+        height: 8vw;
+        width: 8vw;
+
         background-color: #1E88E5;
 
         &.muted {
             background-color: #c62828; 
         }
-    }
-}
 
-.buttons {
-    position: absolute;
-    height: 3vh;
-    margin-left: 3%;
-
-    color: white;
-
-    opacity: 0;
-    pointer-events: none;
-
-    z-index: 50;
-
-    will-change: opacity;
-    transition: opacity $duration*3 ease-in;
-
-    &.open {
-        opacity: 1;
-        pointer-events: auto;
-    }
-
-    .power {
-        background-color: #b71c1c;
-        margin-top: 3vh;
+        .mat-icon {
+            font-size: 4vw; 
+            height: 4vw;
+            width: 4vw;
+        }
     }
 }
