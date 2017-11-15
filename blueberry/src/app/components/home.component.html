@@ -12,7 +12,7 @@
 </div>
 
 <div class="buttons bottom">
-    <div *ngIf="!wheel?.preset?.extraInputs.includes(wheel?.getInput())">
+    <div *ngIf="!wheel?.preset?.extraInputs.includes(wheel?.getInput()) && data?.panel?.features.includes('display-to-all')">
         <button *ngIf="wheel?.preset === oldPreset" mat-fab class="dta button" (click)="displayToAll()">
             <mat-icon>screen_share</mat-icon>
         </button>
