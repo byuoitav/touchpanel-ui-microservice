@@ -21,8 +21,6 @@ import { Output, Display, AudioDevice, INPUT, Input, DTA } from '../objects/stat
 })
 export class HomeComponent implements OnInit {
 
-    @AngularOutput() power: EventEmitter<boolean> = new EventEmitter();
-
     @ViewChild(WheelComponent)
     public wheel: WheelComponent;
 
@@ -52,6 +50,7 @@ export class HomeComponent implements OnInit {
         this.helpDialog.options = {
             title: "Help",
             type: "question",
+            focusConfirm: false,
             html: "<span>Please call AV Support at 801-422-7671 for help, or request help by pressing 'Request Help'",
             confirmButtonText: "Request Help",
             showCancelButton: true,
@@ -74,6 +73,7 @@ export class HomeComponent implements OnInit {
         this.helpConfirmDialog.options = {
             title: "Confirm",
             type: "success",
+            focusConfirm: false,
             html: "<span>Your help request has been recieved. A technician is on their way.</span>",
             confirmButtonText: "Confirm",
             showCancelButton: true,
@@ -109,7 +109,6 @@ export class HomeComponent implements OnInit {
 
         if (this.wheel.getPower() == "on") {
             this.wheel.open(false, 500);
-            this.power.emit(false);
         }
     }
 
@@ -118,19 +117,21 @@ export class HomeComponent implements OnInit {
 
         ret.subscribe(success => {
             if (success) {
-                this.wheel.open(false, 500);
+                this.wheel.open(false, 200);
             }
         });
 
         return ret;
     }
 
-    public lock() {
-        this.power.emit(true); 
-    }
-
-    public unlock() {
-        this.power.emit(false); 
+    public turnOff(): EventEmitter<boolean> {
+        let ret: EventEmitter<boolean> = this.wheel.command.setPower('standby', this.wheel.preset.displays); 
+        ret.subscribe(success => {
+            if (success) {
+                this.wheel.close();
+            } 
+        });
+        return ret;
     }
 
     public displayToAll() {

@@ -175,6 +175,7 @@ export class CommandService {
         for (let d of preset.displays) {
             body.displays.push({
                 "name": d.name,
+                "power": "on",
                 "input": preset.inputs[0].name,
                 "blanked": false
             }); 
@@ -183,12 +184,13 @@ export class CommandService {
         for (let a of preset.audioDevices) {
             body.audioDevices.push({
                 "name": a.name,
+                "power": "on",
                 "muted": false,
                 "volume": 30
             }); 
         }
 
-        this.putWithCustomTimeout(body, 3*1000).subscribe(
+        this.putWithCustomTimeout(body, 5*1000).subscribe(
 			data => {
                 ret.emit(true);
 			}, err => {

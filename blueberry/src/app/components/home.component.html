@@ -1,5 +1,5 @@
 <div class="buttons top">
-    <button mat-fab class="power button" (click)="lock()">
+    <button mat-fab class="power button" (click)="turnOff()">
         <mat-icon>power_settings_new</mat-icon>
     </button>
     <button mat-fab class="help button" (click)="help.show()">
@@ -8,7 +8,7 @@
 </div> 
 
 <div *ngIf="data.panel?.render">
-    <wheel [blur]="false" [preset]="data.panel.presets[0]" (init)="onWheelInit()"></wheel>
+    <wheel [openControlledByPower]="true" [blur]="false" [preset]="data.panel.presets[0]" (init)="onWheelInit()"></wheel>
 </div>
 
 <div class="buttons bottom">

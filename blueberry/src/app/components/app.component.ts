@@ -13,8 +13,6 @@ import { HomeComponent } from './home.component';
 })
 export class AppComponent {
 
-    public locked: boolean = true;
-
     @ViewChild(HomeComponent)
     private home: HomeComponent;
 
@@ -22,9 +20,7 @@ export class AppComponent {
 
     public unlock() {
         this.home.turnOn().subscribe(success => {
-            if (success)
-                this.locked = false;
-            else {
+            if (!success) {
                 console.log("failed to turn on"); 
                 setTimeout(() => this.unlock, 1000);
             }

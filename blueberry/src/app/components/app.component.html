@@ -1,10 +1,10 @@
 <div class="basediv">
-    <management [enabled]="locked"></management>
+    <management [enabled]="home?.wheel?.getPower() != 'on'"></management>
 
-    <div class="lock" [class.disabled]="!locked" (click)="unlock()">
+    <div class="lock" [class.disabled]="home?.wheel?.getPower() == 'on'" (click)="unlock()">
         <object type="image/svg+xml" data="./assets/byu_medallion_white.svg" class="logo">
         </object>
     </div>
 
-    <home (power)="locked = $event"></home>
+    <home></home>
 </div>

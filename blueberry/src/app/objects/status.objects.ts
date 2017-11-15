@@ -1,4 +1,5 @@
 import { Type } from 'serializer.ts/Decorators';
+import { EventEmitter } from '@angular/core';
 
 export const POWER: string = "power";
 export const INPUT: string = "input";
@@ -42,10 +43,14 @@ export class Output extends Device {
     power: string;
     input: Input;
 
+    powerEmitter: EventEmitter<string>;
+
     constructor(name: string, displayname: string, power: string, input: Input) {
         super(name, displayname); 
         this.power = power;
         this.input = input;
+
+        this.powerEmitter = new EventEmitter();
     }
 
     // return on (true) if at least one is on
