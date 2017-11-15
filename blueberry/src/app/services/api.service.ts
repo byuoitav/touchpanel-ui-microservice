@@ -1,7 +1,8 @@
 import { Injectable, EventEmitter } from '@angular/core';
 import { Http, Response, Headers, RequestOptions } from '@angular/http';
 import { Observable } from 'rxjs/Rx';
-import { UIConfiguration, Room, RoomConfiguration, RoomStatus, Device } from './objects';
+import { UIConfiguration, Room, RoomConfiguration, RoomStatus} from '../objects/objects';
+import { Event } from './socket.service';
 
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/timeout';
@@ -16,10 +17,10 @@ export class APIService {
 
 	public static building: string;
 	public static roomName: string;
+	public static piHostname: string;
 	public static hostname: string;
 	public static apiurl: string;
 
-	public static uiconfig: UIConfiguration;
 	public static room: Room;
 
 	private static apihost: string;
@@ -37,7 +38,6 @@ export class APIService {
 			let base = location.origin.split(':');
 			APIService.localurl = base[0] + ":" + base[1];
 	
-			APIService.uiconfig = new UIConfiguration();
 			APIService.room = new Room();	
 			
 			this.setupHostname();
@@ -46,19 +46,29 @@ export class APIService {
 		}
 	}
 
-	// hostname, building, room
-	public setupHostname() {
-		this.getHostname().subscribe(
-			data => {
-				APIService.hostname = String(data);
+    private setupHostname() {
+        this.getHostname().subscribe(
+            data => {
+                APIService.hostname = String(data); 
+                this.setupPiHostname();
+            }, err => {
+                setTimeout(() => this.setupHostname(), RETRY_TIMEOUT); 
+            }); 
+    }
 
-				let split = APIService.hostname.split('-');
+	// hostname, building, room
+	private setupPiHostname() {
+		this.getPiHostname().subscribe(
+			data => {
+				APIService.piHostname = String(data);
+
+				let split = APIService.piHostname.split('-');
 				APIService.building = split[0];
 				APIService.roomName = split[1];
 				
 				this.setupAPIUrl(false);
 			}, err => {
-				setTimeout(() => this.setupHostname(), RETRY_TIMEOUT);
+				setTimeout(() => this.setupPiHostname(), RETRY_TIMEOUT);
 			});
 	}
 
@@ -76,17 +86,12 @@ export class APIService {
 		this.getAPIUrl().subscribe(
 			data => {
 				APIService.apihost = "http://" + location.hostname;
-				if (!data["apihost"].includes("localhost") && data["enabled"]) {
-					APIService.apihost = "http://" + data["apihost"];
+				if (!data["hostname"].includes("localhost")) {
+					APIService.apihost = "http://" + data["hostname"];
 				}
 
 				APIService.apiurl = APIService.apihost + ":8000/buildings/" + APIService.building + "/rooms/" + APIService.roomName; 
 				console.info("API url:", APIService.apiurl);
-
-				if (data["enabled"] && !next) {
-					console.info("Monitoring API");
-					this.monitorAPI();
-				}
 
 				if (!next) {
 					this.setupUIConfig();
@@ -113,9 +118,9 @@ export class APIService {
 	private setupUIConfig() {
 		this.getUIConfig().subscribe(
 			data => {
-				APIService.uiconfig = new UIConfiguration();
-				Object.assign(APIService.uiconfig, data);
-				console.info("UI Configuration:", APIService.uiconfig);
+				APIService.room.uiconfig = new UIConfiguration();
+				Object.assign(APIService.room.uiconfig, data);
+				console.info("UI Configuration:", APIService.room.uiconfig);
 
 				this.setupRoomConfig();
 			}, err => {
@@ -170,42 +175,67 @@ export class APIService {
 		);
 	}
 
-	getHostname(): Observable<Object> {
+	private getHostname(): Observable<Object> {
 		return this.http.get(APIService.localurl + ":8888/hostname")
 			.map(response => response.json());
 	}
 
-	getAPIUrl(): Observable<Object> {
+	private getPiHostname(): Observable<Object> {
+		return this.http.get(APIService.localurl + ":8888/pihostname")
+			.map(response => response.json());
+	}
+
+	private getAPIUrl(): Observable<Object> {
 		return this.http.get(APIService.localurl + ":8888/api")
 			.map(response => response.json());
 	}
 
-	getAPIHealth(): Observable<Object> {
+	private getAPIHealth(): Observable<Object> {
 		return this.http.get(APIService.apihost + ":8000/mstatus")
 			.timeout(RETRY_TIMEOUT)
 			.map(response => response.json());
 	}
 
-	getNextAPIUrl(): Observable<Object> {
-		return this.http.get(APIService.localurl + ":8888/nextapi")
+private getNextAPIUrl(): Observable<Object> { return this.http.get(APIService.localurl + ":8888/nextapi")
 			.map(response => response.json());
 	}
 
-	getUIConfig(): Observable<Object> {
-		return this.http.get(APIService.localurl + ":8888/json")
+	private getUIConfig(): Observable<Object> {
+		return this.http.get(APIService.localurl + ":8888/uiconfig")
 			.map(response => response.json())
 			.map(res => deserialize<UIConfiguration>(UIConfiguration, res));
 	}
 
-	getRoomConfig(): Observable<Object> {
+	private getRoomConfig(): Observable<Object> {
 		return this.http.get(APIService.apiurl + "/configuration")
 			.map(response => response.json())
 			.map(res => deserialize<RoomConfiguration>(RoomConfiguration, res));
 	}
 
-	getRoomStatus(): Observable<Object> {
+	private getRoomStatus(): Observable<Object> {
 		return this.http.get(APIService.apiurl)
 			.map(response => response.json())
 			.map(res => deserialize<RoomStatus>(RoomStatus, res));
 	}
+
+    public sendFeatureEvent(event: Event) {
+        console.log("sending feature event", event);    
+
+        this.http.post(APIService.localurl + ":8888/publishfeature", event, APIService.options)
+                .map(res => res.json())
+                .subscribe();
+    }
+
+    public help(type: string): Observable<Object> {
+        let body = { building: APIService.building, room: APIService.roomName};
+
+        switch(type) {
+            case "help":
+                return this.http.post(APIService.localurl + ":8888/help", body,APIService.options).map(res => res.json());
+            case "confirm":
+                return this.http.post(APIService.localurl + ":8888/confirmhelp", body,APIService.options).map(res => res.json());
+            case "cancel":
+                return this.http.post(APIService.localurl + ":8888/cancelhelp", body,APIService.options).map(res => res.json());
+        }
+    }
 }
