@@ -18,6 +18,7 @@ export class WheelComponent implements AfterContentInit {
 
 	@AngularInput() preset: Preset; 
     @AngularInput() blur: boolean;
+    @AngularInput() openControlledByPower: boolean;
     @AngularOutput() init: EventEmitter<any> = new EventEmitter();
 
 	arcpath: string;
@@ -25,19 +26,22 @@ export class WheelComponent implements AfterContentInit {
 	rightoffset: string;
 	topoffset: string;
     translate: string;
-	circleOpen: boolean;
+	circleOpen: boolean = false;
     thumbLabel: boolean = true;
 
 	@ViewChild("wheel") wheel: ElementRef;
 
-	constructor(public command: CommandService, private api: APIService) {
-		this.circleOpen = false;
-	}
+	constructor(public command: CommandService, private api: APIService) {}
 
 	ngAfterContentInit() {
 		setTimeout(() => {
             this.render(); 
             this.init.emit(true)
+            if (this.openControlledByPower) {
+                setInterval(() => {
+                    this.circleOpen = this.getPower() == "on";
+                }, 1000);
+           }
         }, 0);
 	}
 
