@@ -34,6 +34,7 @@ export class HomeComponent implements OnInit {
 
     @ViewChild("changed") changedDialog: SwalComponent;
     @ViewChild("help") helpDialog: SwalComponent;
+    @ViewChild("helpConfirm") helpConfirmDialog: SwalComponent;
     
     constructor(public data: DataService, private dialog: MatDialog, private socket: SocketService, private api: APIService) {
         this.updateFromEvents();
@@ -45,7 +46,7 @@ export class HomeComponent implements OnInit {
 
     private setupDialogs() {
         this.helpDialog.confirm.subscribe(() => {
-        
+            this.helpConfirmDialog.show();
         });
 
         this.helpDialog.options = {
@@ -57,17 +58,36 @@ export class HomeComponent implements OnInit {
             showLoaderOnConfirm: true,
             preConfirm: () => {
                 return new Promise(resolve => {
-                    this.api.requestHelp().subscribe(
+                    this.api.help("help").subscribe(
                         data => {
-                            console.log("success"); 
                             resolve();
-                        }, err => {
-                            console.log("failed"); 
-                        } 
+                        }
                     );
-                }); 
-            }
+                });
+            },
         };
+
+        this.helpConfirmDialog.cancel.subscribe(() => {
+            this.api.help("cancel").subscribe();
+        });
+
+        this.helpConfirmDialog.options = {
+            title: "Confirm",
+            type: "success",
+            html: "<span>Your help request has been recieved. A technician is on their way.</span>",
+            confirmButtonText: "Confirm",
+            showCancelButton: true,
+            showLoaderOnConfirm: true,
+            preConfirm: () => {
+                return new Promise(resolve => {
+                    this.api.help("confirm").subscribe(
+                        data => {
+                            resolve();
+                        }
+                    );
+                });
+            },
+        }
 
         this.changedDialog.options = {
             title: "Input Changed",
@@ -89,7 +109,6 @@ export class HomeComponent implements OnInit {
 
         if (this.wheel.getPower() == "on") {
             this.wheel.open(false, 500);
-            console.log("here");
             this.power.emit(false);
         }
     }
@@ -112,18 +131,6 @@ export class HomeComponent implements OnInit {
 
     public unlock() {
         this.power.emit(false); 
-    }
-
-    public help() {
-        /*
-        let dialogRef = this.dialog.open(HelpDialog, {
-            width: '50vw',
-            backdropClass: 'dialog-backdrop'
-        });
-
-        dialogRef.afterClosed().subscribe(result => {
-        });
-       */
     }
 
     public displayToAll() {

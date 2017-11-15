@@ -13,14 +13,15 @@
 
 <div class="buttons bottom">
     <div *ngIf="!wheel?.preset?.extraInputs.includes(wheel?.getInput())">
-        <button *ngIf="wheel?.preset === oldPreset" mat-fab class="power button" (click)="displayToAll()">
+        <button *ngIf="wheel?.preset === oldPreset" mat-fab class="dta button" (click)="displayToAll()">
             <mat-icon>screen_share</mat-icon>
         </button>
-        <button *ngIf="wheel?.preset === dtaPreset" mat-fab class="power button" (click)="unDisplayToAll()">
+        <button *ngIf="wheel?.preset === dtaPreset" mat-fab class="dta button" (click)="unDisplayToAll()">
             <mat-icon>stop_screen_share</mat-icon>
         </button>
     </div>
 </div> 
 
 <swal #help></swal>
+<swal #helpConfirm></swal>
 <swal #changed></swal>

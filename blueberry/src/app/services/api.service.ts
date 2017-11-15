@@ -226,11 +226,16 @@ private getNextAPIUrl(): Observable<Object> { return this.http.get(APIService.lo
                 .subscribe();
     }
 
-    public requestHelp(): Observable<Object> {
+    public help(type: string): Observable<Object> {
         let body = { building: APIService.building, room: APIService.roomName};
-        console.log("requesting help", body); 
 
-        return this.http.post(APIService.localurl + ":8888/help", body,APIService.options)
-            .map(res => res.json())
+        switch(type) {
+            case "help":
+                return this.http.post(APIService.localurl + ":8888/help", body,APIService.options).map(res => res.json());
+            case "confirm":
+                return this.http.post(APIService.localurl + ":8888/confirmhelp", body,APIService.options).map(res => res.json());
+            case "cancel":
+                return this.http.post(APIService.localurl + ":8888/cancelhelp", body,APIService.options).map(res => res.json());
+        }
     }
 }

@@ -19,13 +19,21 @@
         margin-top: 3vh;
     
         .power {
-            background-color: #757575;
+            background-color: #931208;
+        }
+
+        .help {
+            background-color: #2c496f; 
         }
     }
 
     &.bottom {
         bottom: 0;
         margin-bottom: 3vh; 
+
+        .dta {
+            background-color: #2c496f; 
+        }
     }
 }
 
