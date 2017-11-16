@@ -119,6 +119,7 @@ export class HomeComponent implements OnInit {
 
         this.dtaDialog.options = {
             title: "Displaying to all...",
+            allowOutsideClick: false,
             onOpen: () => {
                 swal.showLoading(); 
 
@@ -144,6 +145,7 @@ export class HomeComponent implements OnInit {
 
         this.unDtaDialog.options = {
             title: "Reverting room to old state...",
+            allowOutsideClick: false,
             onOpen: () => {
                 swal.showLoading(); 
 
