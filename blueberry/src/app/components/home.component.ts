@@ -12,7 +12,7 @@ import { HelpDialog } from '../dialogs/help.dialog';
 import { ChangedDialog } from '../dialogs/changed.dialog';
 
 import { Preset } from '../objects/objects';
-import { Output, Display, AudioDevice, INPUT, Input, DTA } from '../objects/status.objects';
+import { Output, Display, AudioDevice, INPUT, Input, DTA, POWER } from '../objects/status.objects';
 
 @Component({
     selector: 'home',
@@ -30,9 +30,10 @@ export class HomeComponent implements OnInit {
     private oldDisplayData: Display[];
     private oldAudioDevicesData: AudioDevice[];
 
-    @ViewChild("changed") changedDialog: SwalComponent;
+    @ViewChild("poweroffall") powerOffAllDialog: SwalComponent;
     @ViewChild("help") helpDialog: SwalComponent;
     @ViewChild("helpConfirm") helpConfirmDialog: SwalComponent;
+    @ViewChild("changed") changedDialog: SwalComponent;
     
     constructor(public data: DataService, private dialog: MatDialog, private socket: SocketService, private api: APIService) {
         this.updateFromEvents();
@@ -43,6 +44,27 @@ export class HomeComponent implements OnInit {
     }
 
     private setupDialogs() {
+        this.powerOffAllDialog.options = {
+            title: "Power Off All",
+            type: "warning",
+            focusConfirm: false,
+            html: "<span>Would you like to turn off everything?</span>",
+            confirmButtonText: "Yes",
+            showCancelButton: true,
+            showLoaderOnConfirm: true,
+            preConfirm: () => {
+                return new Promise((resolve, reject) => {
+                    this.wheel.command.powerOffAll().subscribe(
+                        success => {
+                            if (success) 
+                                resolve();
+                            reject();
+                        }
+                    );
+                });
+            },
+        };
+
         this.helpDialog.confirm.subscribe(() => {
             this.helpConfirmDialog.show();
         });
@@ -51,15 +73,17 @@ export class HomeComponent implements OnInit {
             title: "Help",
             type: "question",
             focusConfirm: false,
-            html: "<span>Please call AV Support at 801-422-7671 for help, or request help by pressing 'Request Help'",
+            html: "<span>Please call AV Support at 801-422-7671 for help, or request help by pressing 'Request Help'</span>",
             confirmButtonText: "Request Help",
             showCancelButton: true,
             showLoaderOnConfirm: true,
             preConfirm: () => {
-                return new Promise(resolve => {
+                return new Promise((resolve, reject) => {
                     this.api.help("help").subscribe(
                         data => {
                             resolve();
+                        }, err => {
+                            reject();
                         }
                     );
                 });
@@ -79,10 +103,12 @@ export class HomeComponent implements OnInit {
             showCancelButton: true,
             showLoaderOnConfirm: true,
             preConfirm: () => {
-                return new Promise(resolve => {
+                return new Promise((resolve, reject) => {
                     this.api.help("confirm").subscribe(
                         data => {
                             resolve();
+                        }, err => {
+                            reject();
                         }
                     );
                 });
@@ -154,6 +180,17 @@ export class HomeComponent implements OnInit {
                 let e: Event = event.data;
 
                 switch(e.eventInfoKey) {
+                    case POWER: {
+                        if (e.eventInfoValue == "standby" && this.wheel.preset.displays.find(d => d.name === e.device) != null) {
+                            if (this.wheel.preset === this.dtaPreset) {
+                                this.unDisplayToAll();
+                                this.wheel.command.setPower("standby", this.wheel.preset.displays);
+
+                            } else {
+                                this.removeExtraInputs();
+                            }
+                        }
+                    }
                     case INPUT: {
                         if (this.wheel.preset.displays.find(d => d.name === e.device) == null) {
                             break;
@@ -174,9 +211,7 @@ export class HomeComponent implements OnInit {
                         if (e.eventInfoValue === "true") {
                             this.changedDialog.options.html = "<span>Display" + this.numberFromHostname(e.requestor) + " has shared an input with you.";
                         } else {
-                            // no more extra inputs should be showing
-                            this.wheel.preset.extraInputs.length = 0; 
-                            setTimeout(() => this.wheel.render(), 0);
+                            this.removeExtraInputs();
 
                             this.changedDialog.options.timer = 6000;
                             this.changedDialog.options.html = "<span>Display" + this.numberFromHostname(e.requestor) + " is no longer sharing an input with you";
@@ -193,5 +228,10 @@ export class HomeComponent implements OnInit {
     private numberFromHostname(requestor: string): string {
         let num = requestor.split("-")[2][2];
         return num; 
+    }
+
+    private removeExtraInputs() {
+        this.wheel.preset.extraInputs.length = 0; 
+        setTimeout(() => this.wheel.render(), 0);
     }
 }

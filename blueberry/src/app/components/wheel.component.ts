@@ -168,16 +168,16 @@ export class WheelComponent implements AfterContentInit {
         return Display.getInput(this.preset.displays);
     }
 
-    getVolume(): number {
-        return AudioDevice.getVolume(this.preset.audioDevices); 
-    }
-
     getBlank(): boolean {
         return Display.getBlank(this.preset.displays); 
     }
 
     getPower(): string {
         return Display.getPower(this.preset.displays); 
+    }
+
+    getVolume(): number {
+        return AudioDevice.getVolume(this.preset.audioDevices); 
     }
 
     getMute(): boolean {

@@ -1,5 +1,5 @@
 <div class="buttons top">
-    <button mat-fab class="power button" (click)="turnOff()">
+    <button mat-fab class="power button" (click)="turnOff()" (press)="poweroffall.show()">
         <mat-icon>power_settings_new</mat-icon>
     </button>
     <button mat-fab class="help button" (click)="help.show()">
@@ -22,6 +22,7 @@
     </div>
 </div> 
 
+<swal #poweroffall></swal>
 <swal #help></swal>
 <swal #helpConfirm></swal>
 <swal #changed></swal>
