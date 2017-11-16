@@ -78,7 +78,7 @@ func Publish(en *eventinfrastructure.EventNode, event eventinfrastructure.EventI
 		e.Event.Device = event.Device
 	}
 
-	if len(e.Event.Device) == 0 || len(e.Event.EventInfoKey) == 0 || len(e.Event.EventInfoValue) == 0 {
+	if len(e.Event.EventInfoKey) == 0 || len(e.Event.EventInfoValue) == 0 {
 		return errors.New("Please fill in all the necessary fields")
 	}
 

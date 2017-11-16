@@ -1,6 +1,7 @@
 import { Injectable, EventEmitter } from '@angular/core'
 import { Http } from '@angular/http'
 import { $WebSocket, WebSocketConfig } from 'angular2-websocket/angular2-websocket'
+import { deserialize } from 'serializer.ts/Serializer';
 
 export const OPEN: string = "open";
 export const CLOSE: string = "close";
@@ -36,7 +37,9 @@ export class SocketService {
 		 console.log("adding screenoff element"); 
 		 this.screenoff = true; 
 	  } else { 
-	  	this.listener.emit({ "type": MESSAGE, "data": msg }); 
+        let data = JSON.parse(msg.data);
+        let event = deserialize<Event>(Event, data.event);
+	  	this.listener.emit({ "type": MESSAGE, "data": event }); 
 	  } 
 	}, {autoApply: false} 
 	); 
@@ -65,3 +68,20 @@ export class SocketService {
   }
 }
 
+export class Event {
+	type: number;
+	eventCause: number;
+	requestor: string;
+	device: string;
+	eventInfoKey: string;
+	eventInfoValue: string;
+
+    constructor(type: number, eventCause: number, requestor: string, device: string, eventInfoKey: string, eventInfoValue: string) {
+        this.type = type;
+        this.eventCause = eventCause;
+        this.requestor = requestor;
+        this.device = device;
+        this.eventInfoKey = eventInfoKey;
+        this.eventInfoValue = eventInfoValue;
+    }
+}
