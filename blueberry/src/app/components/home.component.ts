@@ -1,7 +1,7 @@
 import { Component, ViewChild,  EventEmitter, Output as AngularOutput, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material';
 import { deserialize } from 'serializer.ts/Serializer';
-import { SweetAlertOptions } from 'sweetalert2';
+import swal, { SweetAlertOptions } from 'sweetalert2';
 import { SwalComponent } from '@toverux/ngsweetalert2';
 
 import { WheelComponent } from './wheel.component';
@@ -33,6 +33,8 @@ export class HomeComponent implements OnInit {
     @ViewChild("poweroffall") powerOffAllDialog: SwalComponent;
     @ViewChild("help") helpDialog: SwalComponent;
     @ViewChild("helpConfirm") helpConfirmDialog: SwalComponent;
+    @ViewChild("displaytoall") dtaDialog: SwalComponent;
+    @ViewChild("undisplaytoall") unDtaDialog: SwalComponent;
     @ViewChild("changed") changedDialog: SwalComponent;
     
     constructor(public data: DataService, private dialog: MatDialog, private socket: SocketService, private api: APIService) {
@@ -115,6 +117,57 @@ export class HomeComponent implements OnInit {
             },
         }
 
+        this.dtaDialog.options = {
+            title: "Displaying to all...",
+            onOpen: () => {
+                swal.showLoading(); 
+
+                this.displayToAll().subscribe(
+                    success => {
+                        if (success) {
+                            swal({
+                                type: "success",
+                                timer: 1500,
+                                showConfirmButton: false
+                            }); 
+                        } else {
+                            swal({
+                                type: "error",
+                                timer: 1500,
+                                showConfirmButton: false
+                            }); 
+                        } 
+                    }
+                );
+            }
+        }
+
+        this.unDtaDialog.options = {
+            title: "Reverting room to old state...",
+            onOpen: () => {
+                swal.showLoading(); 
+
+                this.unDisplayToAll().subscribe(
+                    success => {
+                        if (success) {
+                            swal({
+                                type: "success",
+                                timer: 1500,
+                                showConfirmButton: false
+                            }); 
+                        } else {
+                            swal({
+                                type: "error",
+                                timer: 1500,
+                                showConfirmButton: false
+                            }); 
+                        } 
+                    }
+                );
+            }
+        }
+
+
         this.changedDialog.options = {
             title: "Input Changed",
             type: "info",
@@ -160,18 +213,43 @@ export class HomeComponent implements OnInit {
         return ret;
     }
 
-    public displayToAll() {
+    public displayToAll(): EventEmitter<boolean> {
+        let ret: EventEmitter<boolean> = new EventEmitter();
+
         this.oldDisplayData = deserialize<Display[]>(Display, this.data.displays);
         this.oldAudioDevicesData = deserialize<AudioDevice[]>(AudioDevice, this.data.audioDevices);
 
-        this.wheel.displayToAll(this.data.displays, this.data.audioDevices);
-        this.wheel.preset = this.dtaPreset;
+        this.wheel.displayToAll(this.data.displays, this.data.audioDevices).subscribe(
+            success => {
+                if (success) {
+                    this.wheel.preset = this.dtaPreset;
+
+                    ret.emit(true);
+                } else {
+                    ret.emit(false);
+                } 
+            }
+        );
+
+        return ret;
     }
 
-    public unDisplayToAll() {
-        this.wheel.unDisplayToAll(this.oldDisplayData, this.oldAudioDevicesData);
+    public unDisplayToAll(): EventEmitter<boolean> {
+        let ret: EventEmitter<boolean> = new EventEmitter();
 
-        this.wheel.preset = this.oldPreset;
+        this.wheel.unDisplayToAll(this.oldDisplayData, this.oldAudioDevicesData).subscribe(
+            success => {
+                if (success) {
+                    this.wheel.preset = this.oldPreset;
+
+                    ret.emit(true);
+                } else {
+                    ret.emit(false);
+                }
+            }
+        );
+
+        return ret;
     }
 
     private updateFromEvents() {

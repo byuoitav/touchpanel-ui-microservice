@@ -13,10 +13,10 @@
 
 <div class="buttons bottom">
     <div *ngIf="!wheel?.preset?.extraInputs.includes(wheel?.getInput()) && data?.panel?.features.includes('display-to-all')">
-        <button *ngIf="wheel?.preset === oldPreset" mat-fab class="dta button" (click)="displayToAll()">
+        <button *ngIf="wheel?.preset === oldPreset" mat-fab class="dta button" (click)="displaytoall.show()">
             <mat-icon>screen_share</mat-icon>
         </button>
-        <button *ngIf="wheel?.preset === dtaPreset" mat-fab class="dta button" (click)="unDisplayToAll()">
+        <button *ngIf="wheel?.preset === dtaPreset" mat-fab class="dta button" (click)="undisplaytoall.show()">
             <mat-icon>stop_screen_share</mat-icon>
         </button>
     </div>
@@ -25,4 +25,6 @@
 <swal #poweroffall></swal>
 <swal #help></swal>
 <swal #helpConfirm></swal>
+<swal #displaytoall></swal>
+<swal #undisplaytoall></swal>
 <swal #changed></swal>

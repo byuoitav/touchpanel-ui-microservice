@@ -184,19 +184,40 @@ export class WheelComponent implements AfterContentInit {
         return AudioDevice.getMute(this.preset.audioDevices); 
     }
 
-    public displayToAll(displays: Display[], audioDevices: AudioDevice[]) {
+    public displayToAll(displays: Display[], audioDevices: AudioDevice[]): EventEmitter<boolean> {
+        let ret: EventEmitter<boolean> = new EventEmitter();
         let input: Input = Display.getInput(this.preset.displays);
 
-        this.command.displayToAll(input, displays, audioDevices);
+        this.command.displayToAll(input, displays, audioDevices).subscribe(
+            success => {
+                if (success) {
+                    ret.emit(true);
+                    let event: Event = new Event(0, 0, APIService.piHostname, "", DTA, "true");
+                    this.api.sendFeatureEvent(event);
+                } else {
+                    ret.emit(false);
+                }
+            }
+        );
 
-        let event: Event = new Event(0, 0, APIService.piHostname, "", DTA, "true");
-        this.api.sendFeatureEvent(event);
+        return ret;
     }
 
-    public unDisplayToAll(displays: Display[], audioDevices: AudioDevice[]) {
-        this.command.unDisplayToAll(displays, audioDevices); 
+    public unDisplayToAll(displays: Display[], audioDevices: AudioDevice[]): EventEmitter<boolean> {
+        let ret: EventEmitter<boolean> = new EventEmitter();
 
-        let event: Event = new Event(0, 0, APIService.piHostname, "", DTA, "false");
-        this.api.sendFeatureEvent(event);
+        this.command.unDisplayToAll(displays, audioDevices).subscribe(
+            success => {
+                if (success) {
+                    ret.emit(true);
+                    let event: Event = new Event(0, 0, APIService.piHostname, "", DTA, "false");
+                    this.api.sendFeatureEvent(event);
+                } else {
+                    ret.emit(false); 
+                }
+            }
+        ); 
+
+        return ret;
     }
 }
