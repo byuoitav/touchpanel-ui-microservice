@@ -216,6 +216,7 @@ export class HomeComponent implements OnInit {
     }
 
     public displayToAll(): EventEmitter<boolean> {
+        this.removeExtraInputs();
         let ret: EventEmitter<boolean> = new EventEmitter();
 
         this.oldDisplayData = deserialize<Display[]>(Display, this.data.displays);
