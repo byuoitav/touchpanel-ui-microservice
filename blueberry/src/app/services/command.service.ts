@@ -12,7 +12,7 @@ import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/timeout';
 import { deserialize } from 'serializer.ts/Serializer';
 
-const TIMEOUT = 1.5 * 1000;
+const TIMEOUT = 5 * 1000;
 
 @Injectable()
 export class CommandService {
