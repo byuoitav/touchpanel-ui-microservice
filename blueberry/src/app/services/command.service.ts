@@ -117,7 +117,7 @@ export class CommandService {
 
     public setVolume(v: number, audioDevices: AudioDevice[]): EventEmitter<boolean> {
         let ret: EventEmitter<boolean> = new EventEmitter<boolean>();
-        console.log("changing volume to", v);
+        console.log("changing volume to", v, "on", audioDevices);
         let prev = AudioDevice.getVolume(audioDevices);
         AudioDevice.setVolume(v, audioDevices);
 
@@ -143,7 +143,7 @@ export class CommandService {
 
     public setMute(m: boolean, audioDevices: AudioDevice[]): EventEmitter<boolean> {
         let ret: EventEmitter<boolean> = new EventEmitter<boolean>();
-        console.log("changing mute to", m);
+        console.log("changing mute to", m, "on", audioDevices);
         let prev = AudioDevice.getMute(audioDevices);
         AudioDevice.setMute(m, audioDevices);
 
@@ -198,6 +198,22 @@ export class CommandService {
 			}
         );
 
+        return ret;
+    }
+
+    public powerOffAll(): EventEmitter<boolean> {
+        let ret: EventEmitter<boolean> = new EventEmitter<boolean>();
+
+        let body = { power: "standby" };
+
+        this.put(body).subscribe(
+            data => {
+                ret.emit(true);
+            }, err => {
+                ret.emit(false);
+            }
+        );
+         
         return ret;
     }
 
