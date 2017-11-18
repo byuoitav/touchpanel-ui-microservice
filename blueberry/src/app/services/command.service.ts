@@ -12,7 +12,7 @@ import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/timeout';
 import { deserialize } from 'serializer.ts/Serializer';
 
-const TIMEOUT = 5 * 1000;
+const TIMEOUT = 7.5 * 1000;
 
 @Injectable()
 export class CommandService {
@@ -246,7 +246,7 @@ export class CommandService {
             }
         }
 
-		this.putWithCustomTimeout(body, 2.5*1000).subscribe(
+		this.putWithCustomTimeout(body, 10*1000).subscribe(
 			data => {
                 ret.emit(true);
 			}, err => {
@@ -288,7 +288,7 @@ export class CommandService {
             });
         }
 
-		this.putWithCustomTimeout(body, 2.5*1000).subscribe(
+		this.putWithCustomTimeout(body, 10*1000).subscribe(
 			data => {
                 ret.emit(true);
 			}, err => {
