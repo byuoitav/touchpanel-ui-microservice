@@ -281,6 +281,13 @@ export class HomeComponent implements OnInit {
 
                         if (input != null && !this.wheel.preset.inputs.includes(input)) {
                             console.log("Creating a new input on the wheel from event:", e);
+
+                            if (this.oldPreset.displays.find(d => d.name === e.device) != null && this.wheel.preset == this.dtaPreset) {
+                                // someone else has taken control.
+                                // revert back to old control. 
+                                this.wheel.preset = this.oldPreset;
+                            }
+
                             this.wheel.preset.extraInputs.length = 0;
                             this.wheel.preset.extraInputs.push(input); 
                             setTimeout(() => this.wheel.render(), 0);
@@ -290,12 +297,14 @@ export class HomeComponent implements OnInit {
                     case DTA: {
                         console.log("DTA Event:", e);
                         if (e.eventInfoValue === "true") {
-                            this.changedDialog.options.html = "<span>Display" + this.numberFromHostname(e.requestor) + " has shared an input with you.";
+
+                            this.changedDialog.options.html = "<span>Station " + this.numberFromHostname(e.requestor) + " has shared an input with you.";
                         } else {
+
                             this.removeExtraInputs();
 
                             this.changedDialog.options.timer = 6000;
-                            this.changedDialog.options.html = "<span>Display" + this.numberFromHostname(e.requestor) + " is no longer sharing an input with you";
+                            this.changedDialog.options.html = "<span>Station " + this.numberFromHostname(e.requestor) + " is no longer sharing an input with you";
                         }
 
                         this.changedDialog.show();
