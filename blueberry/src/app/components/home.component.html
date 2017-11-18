@@ -12,15 +12,14 @@
 </div>
 
 <div class="buttons bottom">
-    <div *ngIf="!wheel?.preset?.extraInputs.includes(wheel?.getInput()) && data?.panel?.features.includes('display-to-all')">
-        <button *ngIf="wheel?.preset === oldPreset" mat-fab class="dta button" (click)="displaytoall.show()">
-            <mat-icon>screen_share</mat-icon>
-        </button>
-        <button *ngIf="wheel?.preset === dtaPreset" mat-fab class="dta button" (click)="undisplaytoall.show()">
-            <mat-icon>stop_screen_share</mat-icon>
+    <div *ngIf="data?.panel?.features.includes('advanced-option') || true">
+        <button mat-fab class="dta button" (click)="openAdvanced()">
+            <mat-icon>blur_on</mat-icon>
         </button>
     </div>
 </div> 
+
+<advanced [visible]="true"></advanced>
 
 <swal #poweroffall></swal>
 <swal #help></swal>
