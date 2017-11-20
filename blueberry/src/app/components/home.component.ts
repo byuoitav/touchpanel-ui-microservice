@@ -299,28 +299,29 @@ export class HomeComponent implements OnInit {
 
                         let input = Input.getInput(e.eventInfoValue, this.data.inputs);
 
-                        if (input != null && !this.wheel.preset.inputs.includes(input) && this.wheel.preset != this.dtaPreset) {
-                            console.log("Creating a new input on the wheel from event:", e);
+                        // its a valid input, it's not on your wheel
+                        if (input != null && !this.wheel.preset.inputs.includes(input)) {
 
+                            // if the input gets changed on a device that is yours, and you're in display to all mode
                             if (this.oldPreset.displays.find(d => d.name === e.device) != null && this.wheel.preset == this.dtaPreset) {
-                                // someone else has taken control.
-                                // revert back to old control. 
+                                console.info("no longer display to all master")
                                 this.wheel.preset = this.oldPreset;
-                            }
+                            } 
 
-                            this.wheel.preset.extraInputs.length = 0;
-                            this.wheel.preset.extraInputs.push(input); 
-                            setTimeout(() => this.wheel.render(), 0);
+                            if (this.wheel.preset != this.dtaPreset) {
+                                console.log("Creating a new input on the wheel from event:", e);
+                                this.wheel.preset.extraInputs.length = 0;
+                                this.wheel.preset.extraInputs.push(input); 
+                                setTimeout(() => this.wheel.render(), 0);
+                            }
                         }
                         break; 
                     } 
                     case DTA: {
                         console.log("DTA Event:", e);
-                        if (e.eventInfoValue === "true") {
-
+                        if (e.eventInfoValue === "true" && e.requestor !== APIService.piHostname) {
                             this.changedDialog.options.html = "<span>Station " + this.numberFromHostname(e.requestor) + " has shared an input with you.";
                         } else {
-
                             this.removeExtraInputs();
 
                             this.changedDialog.options.timer = 6000;
