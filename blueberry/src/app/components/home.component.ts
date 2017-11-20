@@ -206,6 +206,30 @@ export class HomeComponent implements OnInit {
     }
 
     public turnOff(): EventEmitter<boolean> {
+        if (this.wheel.preset === this.dtaPreset) {
+            // remove displays and audioDevices from my oldPreset before un displaying-to-all.
+            // this way, unDisplayToAll doesn't undo turning off this panels displays.
+            for (let old of this.oldDisplayData) {
+                for (let n of this.oldPreset.displays) {
+                    if (old.name === n.name) {
+                        let index = this.oldDisplayData.indexOf(old);
+                        this.oldDisplayData.splice(index, 1);
+                    }
+                } 
+            }
+
+            for (let old of this.oldAudioDevicesData) {
+                for (let n of this.oldPreset.audioDevices) {
+                    if (old.name == n.name) {
+                        let index = this.oldAudioDevicesData.indexOf(old);
+                        this.oldAudioDevicesData.splice(index, 1);
+                    }
+                } 
+            }
+
+            this.unDisplayToAll(); 
+        }
+
         let ret: EventEmitter<boolean> = this.wheel.command.setPower('standby', this.wheel.preset.displays); 
         ret.subscribe(success => {
             if (success) {
@@ -222,13 +246,15 @@ export class HomeComponent implements OnInit {
         this.oldDisplayData = deserialize<Display[]>(Display, this.data.displays);
         this.oldAudioDevicesData = deserialize<AudioDevice[]>(AudioDevice, this.data.audioDevices);
 
-        this.wheel.displayToAll(this.data.displays, this.data.audioDevices).subscribe(
+        let input: Input = Display.getInput(this.wheel.preset.displays);
+        this.wheel.preset = this.dtaPreset;
+
+        this.wheel.displayToAll(input, this.data.displays, this.data.audioDevices).subscribe(
             success => {
                 if (success) {
-                    this.wheel.preset = this.dtaPreset;
-
                     ret.emit(true);
                 } else {
+                    this.wheel.preset = this.oldPreset;
                     ret.emit(false);
                 } 
             }
@@ -240,13 +266,13 @@ export class HomeComponent implements OnInit {
     public unDisplayToAll(): EventEmitter<boolean> {
         let ret: EventEmitter<boolean> = new EventEmitter();
 
+        this.wheel.preset = this.oldPreset;
         this.wheel.unDisplayToAll(this.oldDisplayData, this.oldAudioDevicesData).subscribe(
             success => {
                 if (success) {
-                    this.wheel.preset = this.oldPreset;
-
                     ret.emit(true);
                 } else {
+                    this.wheel.preset = this.dtaPreset;
                     ret.emit(false);
                 }
             }
@@ -263,13 +289,7 @@ export class HomeComponent implements OnInit {
                 switch(e.eventInfoKey) {
                     case POWER: {
                         if (e.eventInfoValue == "standby" && this.wheel.preset.displays.find(d => d.name === e.device) != null) {
-                            if (this.wheel.preset === this.dtaPreset) {
-                                this.unDisplayToAll();
-                                this.wheel.command.setPower("standby", this.wheel.preset.displays);
-
-                            } else {
-                                this.removeExtraInputs();
-                            }
+                            this.removeExtraInputs();
                         }
                     }
                     case INPUT: {
@@ -279,7 +299,7 @@ export class HomeComponent implements OnInit {
 
                         let input = Input.getInput(e.eventInfoValue, this.data.inputs);
 
-                        if (input != null && !this.wheel.preset.inputs.includes(input)) {
+                        if (input != null && !this.wheel.preset.inputs.includes(input) && this.wheel.preset != this.dtaPreset) {
                             console.log("Creating a new input on the wheel from event:", e);
 
                             if (this.oldPreset.displays.find(d => d.name === e.device) != null && this.wheel.preset == this.dtaPreset) {
