@@ -241,7 +241,8 @@ export class CommandService {
             } else {
                 body.audioDevices.push({
                     "name": a.name,
-                    "muted": true
+                    "muted": true,
+                    "volume": 0
                 });
             }
         }
