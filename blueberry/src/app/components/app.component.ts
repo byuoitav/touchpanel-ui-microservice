@@ -2,6 +2,7 @@ import { Component, OnInit, ViewChild, ElementRef, ComponentRef } from '@angular
 
 import { APIService } from '../services/api.service';
 import { DataService } from '../services/data.service';
+import { SocketService } from '../services/socket.service';
 import { Preset, Panel } from '../objects/objects';
 import { Device, Input, Output, Display, AudioDevice, POWER, INPUT, BLANKED, MUTED, VOLUME } from '../objects/status.objects';
 import { HomeComponent } from './home.component';
@@ -17,7 +18,7 @@ export class AppComponent {
     public home: HomeComponent;
     public animate: boolean = false;
 
-	constructor (private api: APIService, private data: DataService) {}
+	constructor (private api: APIService, private data: DataService, public socket: SocketService) {}
 
     public unlock() {
         if (this.home.wheel == null) {

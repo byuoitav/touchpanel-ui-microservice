@@ -8,3 +8,7 @@
 
     <home></home>
 </div>
+
+<div *ngIf="socket.screenoff" id="screenoff" (click)="socket.screenoff = false">
+    press anywhere to start
+</div>

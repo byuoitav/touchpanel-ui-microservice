@@ -22,6 +22,12 @@ $icon: white;
     }
 }
 
+#screenoff {
+    background-color: $background;
+    box-shadow: $backgroundShadow;
+    color: white;
+}
+
 .circle {
     .wheel {
         border: .2vh solid white;

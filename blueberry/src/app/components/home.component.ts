@@ -27,14 +27,12 @@ export class HomeComponent implements OnInit {
     dtaPreset: Preset;
     oldPreset: Preset;
     
-    private oldDisplayData: Display[];
-    private oldAudioDevicesData: AudioDevice[];
-
     @ViewChild("poweroffall") powerOffAllDialog: SwalComponent;
     @ViewChild("help") helpDialog: SwalComponent;
     @ViewChild("helpConfirm") helpConfirmDialog: SwalComponent;
     @ViewChild("displaytoall") dtaDialog: SwalComponent;
     @ViewChild("undisplaytoall") unDtaDialog: SwalComponent;
+    @ViewChild("undisplaytoallfacade") unDtaFacadeDialog: SwalComponent;
     @ViewChild("changed") changedDialog: SwalComponent;
     
     constructor(public data: DataService, private dialog: MatDialog, private socket: SocketService, private api: APIService) {
@@ -144,7 +142,7 @@ export class HomeComponent implements OnInit {
         }
 
         this.unDtaDialog.options = {
-            title: "Reverting room to old state...",
+            title: "Returning room to default state...",
             allowOutsideClick: false,
             onOpen: () => {
                 swal.showLoading(); 
@@ -168,6 +166,11 @@ export class HomeComponent implements OnInit {
                 );
             }
         }
+
+        this.unDtaFacadeDialog.options = this.unDtaDialog.options;
+        this.unDtaFacadeDialog.options.onOpen = () => {
+            swal.showLoading(); 
+        };
 
 
         this.changedDialog.options = {
@@ -207,44 +210,33 @@ export class HomeComponent implements OnInit {
 
     public turnOff(): EventEmitter<boolean> {
         if (this.wheel.preset === this.dtaPreset) {
-            // remove displays and audioDevices from my oldPreset before un displaying-to-all.
-            // this way, unDisplayToAll doesn't undo turning off this panels displays.
-            for (let old of this.oldDisplayData) {
-                for (let n of this.oldPreset.displays) {
-                    if (old.name === n.name) {
-                        let index = this.oldDisplayData.indexOf(old);
-                        this.oldDisplayData.splice(index, 1);
-                    }
-                } 
-            }
+            // show something?
+            this.unDtaFacadeDialog.show();
+            this.unDisplayToAll().subscribe(success => {
+                swal.close();
 
-            for (let old of this.oldAudioDevicesData) {
-                for (let n of this.oldPreset.audioDevices) {
-                    if (old.name == n.name) {
-                        let index = this.oldAudioDevicesData.indexOf(old);
-                        this.oldAudioDevicesData.splice(index, 1);
-                    }
+                let ret: EventEmitter<boolean> = this.wheel.command.setPower('standby', this.wheel.preset.displays); 
+                ret.subscribe(success => {
+                    if (success) {
+                        this.wheel.close();
+                    } 
+                });
+                return ret;
+            });
+        } else {
+            let ret: EventEmitter<boolean> = this.wheel.command.setPower('standby', this.wheel.preset.displays); 
+            ret.subscribe(success => {
+                if (success) {
+                    this.wheel.close();
                 } 
-            }
-
-            this.unDisplayToAll(); 
+            });
+            return ret;
         }
-
-        let ret: EventEmitter<boolean> = this.wheel.command.setPower('standby', this.wheel.preset.displays); 
-        ret.subscribe(success => {
-            if (success) {
-                this.wheel.close();
-            } 
-        });
-        return ret;
     }
 
     public displayToAll(): EventEmitter<boolean> {
         this.removeExtraInputs();
         let ret: EventEmitter<boolean> = new EventEmitter();
-
-        this.oldDisplayData = deserialize<Display[]>(Display, this.data.displays);
-        this.oldAudioDevicesData = deserialize<AudioDevice[]>(AudioDevice, this.data.audioDevices);
 
         let input: Input = Display.getInput(this.wheel.preset.displays);
         this.wheel.preset = this.dtaPreset;
@@ -267,7 +259,7 @@ export class HomeComponent implements OnInit {
         let ret: EventEmitter<boolean> = new EventEmitter();
 
         this.wheel.preset = this.oldPreset;
-        this.wheel.unDisplayToAll(this.oldDisplayData, this.oldAudioDevicesData).subscribe(
+        this.wheel.unDisplayToAll(this.data.presets).subscribe(
             success => {
                 if (success) {
                     ret.emit(true);

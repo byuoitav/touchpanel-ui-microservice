@@ -86,7 +86,8 @@ export class APIService {
 		this.getAPIUrl().subscribe(
 			data => {
 				APIService.apihost = "http://" + location.hostname;
-				if (!data["hostname"].includes("localhost")) {
+                // TODO add ! in front of data["hostname"]
+				if (data["hostname"].includes("localhost")) {
 					APIService.apihost = "http://" + data["hostname"];
 				}
 
@@ -196,7 +197,8 @@ export class APIService {
 			.map(response => response.json());
 	}
 
-private getNextAPIUrl(): Observable<Object> { return this.http.get(APIService.localurl + ":8888/nextapi")
+    private getNextAPIUrl(): Observable<Object> { 
+        return this.http.get(APIService.localurl + ":8888/nextapi")
 			.map(response => response.json());
 	}
 

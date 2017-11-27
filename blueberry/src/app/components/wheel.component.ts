@@ -202,10 +202,10 @@ export class WheelComponent implements AfterContentInit {
         return ret;
     }
 
-    public unDisplayToAll(displays: Display[], audioDevices: AudioDevice[]): EventEmitter<boolean> {
+    public unDisplayToAll(presets: Preset[]): EventEmitter<boolean> {
         let ret: EventEmitter<boolean> = new EventEmitter();
 
-        this.command.unDisplayToAll(displays, audioDevices).subscribe(
+        this.command.unDisplayToAll(presets).subscribe(
             success => {
                 if (success) {
                     ret.emit(true);
