@@ -167,7 +167,7 @@ export class HomeComponent implements OnInit {
             }
         }
 
-        this.unDtaFacadeDialog.options = this.unDtaDialog.options;
+        this.unDtaFacadeDialog.options = Object.assign({}, this.unDtaDialog.options);
         this.unDtaFacadeDialog.options.onOpen = () => {
             swal.showLoading(); 
         };
