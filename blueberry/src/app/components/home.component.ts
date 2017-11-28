@@ -27,14 +27,12 @@ export class HomeComponent implements OnInit {
     dtaPreset: Preset;
     oldPreset: Preset;
     
-    private oldDisplayData: Display[];
-    private oldAudioDevicesData: AudioDevice[];
-
     @ViewChild("poweroffall") powerOffAllDialog: SwalComponent;
     @ViewChild("help") helpDialog: SwalComponent;
     @ViewChild("helpConfirm") helpConfirmDialog: SwalComponent;
     @ViewChild("displaytoall") dtaDialog: SwalComponent;
     @ViewChild("undisplaytoall") unDtaDialog: SwalComponent;
+    @ViewChild("undisplaytoallfacade") unDtaFacadeDialog: SwalComponent;
     @ViewChild("changed") changedDialog: SwalComponent;
     
     constructor(public data: DataService, private dialog: MatDialog, private socket: SocketService, private api: APIService) {
@@ -144,7 +142,7 @@ export class HomeComponent implements OnInit {
         }
 
         this.unDtaDialog.options = {
-            title: "Reverting room to old state...",
+            title: "Returning room to default state...",
             allowOutsideClick: false,
             onOpen: () => {
                 swal.showLoading(); 
@@ -168,6 +166,11 @@ export class HomeComponent implements OnInit {
                 );
             }
         }
+
+        this.unDtaFacadeDialog.options = Object.assign({}, this.unDtaDialog.options);
+        this.unDtaFacadeDialog.options.onOpen = () => {
+            swal.showLoading(); 
+        };
 
 
         this.changedDialog.options = {
@@ -206,29 +209,44 @@ export class HomeComponent implements OnInit {
     }
 
     public turnOff(): EventEmitter<boolean> {
-        let ret: EventEmitter<boolean> = this.wheel.command.setPower('standby', this.wheel.preset.displays); 
-        ret.subscribe(success => {
-            if (success) {
-                this.wheel.close();
-            } 
-        });
-        return ret;
+        if (this.wheel.preset === this.dtaPreset) {
+            // show something?
+            this.unDtaFacadeDialog.show();
+            this.unDisplayToAll().subscribe(success => {
+                swal.close();
+
+                let ret: EventEmitter<boolean> = this.wheel.command.setPower('standby', this.wheel.preset.displays); 
+                ret.subscribe(success => {
+                    if (success) {
+                        this.wheel.close();
+                    } 
+                });
+                return ret;
+            });
+        } else {
+            let ret: EventEmitter<boolean> = this.wheel.command.setPower('standby', this.wheel.preset.displays); 
+            ret.subscribe(success => {
+                if (success) {
+                    this.wheel.close();
+                } 
+            });
+            return ret;
+        }
     }
 
     public displayToAll(): EventEmitter<boolean> {
         this.removeExtraInputs();
         let ret: EventEmitter<boolean> = new EventEmitter();
 
-        this.oldDisplayData = deserialize<Display[]>(Display, this.data.displays);
-        this.oldAudioDevicesData = deserialize<AudioDevice[]>(AudioDevice, this.data.audioDevices);
+        let input: Input = Display.getInput(this.wheel.preset.displays);
+        this.wheel.preset = this.dtaPreset;
 
-        this.wheel.displayToAll(this.data.displays, this.data.audioDevices).subscribe(
+        this.wheel.displayToAll(input, this.data.displays, this.data.audioDevices).subscribe(
             success => {
                 if (success) {
-                    this.wheel.preset = this.dtaPreset;
-
                     ret.emit(true);
                 } else {
+                    this.wheel.preset = this.oldPreset;
                     ret.emit(false);
                 } 
             }
@@ -240,13 +258,13 @@ export class HomeComponent implements OnInit {
     public unDisplayToAll(): EventEmitter<boolean> {
         let ret: EventEmitter<boolean> = new EventEmitter();
 
-        this.wheel.unDisplayToAll(this.oldDisplayData, this.oldAudioDevicesData).subscribe(
+        this.wheel.preset = this.oldPreset;
+        this.wheel.unDisplayToAll(this.data.presets).subscribe(
             success => {
                 if (success) {
-                    this.wheel.preset = this.oldPreset;
-
                     ret.emit(true);
                 } else {
+                    this.wheel.preset = this.dtaPreset;
                     ret.emit(false);
                 }
             }
@@ -263,13 +281,7 @@ export class HomeComponent implements OnInit {
                 switch(e.eventInfoKey) {
                     case POWER: {
                         if (e.eventInfoValue == "standby" && this.wheel.preset.displays.find(d => d.name === e.device) != null) {
-                            if (this.wheel.preset === this.dtaPreset) {
-                                this.unDisplayToAll();
-                                this.wheel.command.setPower("standby", this.wheel.preset.displays);
-
-                            } else {
-                                this.removeExtraInputs();
-                            }
+                            this.removeExtraInputs();
                         }
                     }
                     case INPUT: {
@@ -279,28 +291,29 @@ export class HomeComponent implements OnInit {
 
                         let input = Input.getInput(e.eventInfoValue, this.data.inputs);
 
+                        // its a valid input, it's not on your wheel
                         if (input != null && !this.wheel.preset.inputs.includes(input)) {
-                            console.log("Creating a new input on the wheel from event:", e);
 
+                            // if the input gets changed on a device that is yours, and you're in display to all mode
                             if (this.oldPreset.displays.find(d => d.name === e.device) != null && this.wheel.preset == this.dtaPreset) {
-                                // someone else has taken control.
-                                // revert back to old control. 
+                                console.info("no longer display to all master")
                                 this.wheel.preset = this.oldPreset;
-                            }
+                            } 
 
-                            this.wheel.preset.extraInputs.length = 0;
-                            this.wheel.preset.extraInputs.push(input); 
-                            setTimeout(() => this.wheel.render(), 0);
+                            if (this.wheel.preset != this.dtaPreset) {
+                                console.log("Creating a new input on the wheel from event:", e);
+                                this.wheel.preset.extraInputs.length = 0;
+                                this.wheel.preset.extraInputs.push(input); 
+                                setTimeout(() => this.wheel.render(), 0);
+                            }
                         }
                         break; 
                     } 
                     case DTA: {
                         console.log("DTA Event:", e);
-                        if (e.eventInfoValue === "true") {
-
+                        if (e.eventInfoValue === "true" && e.requestor !== APIService.piHostname) {
                             this.changedDialog.options.html = "<span>Station " + this.numberFromHostname(e.requestor) + " has shared an input with you.";
                         } else {
-
                             this.removeExtraInputs();
 
                             this.changedDialog.options.timer = 6000;

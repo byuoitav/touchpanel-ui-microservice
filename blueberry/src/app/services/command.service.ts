@@ -241,7 +241,8 @@ export class CommandService {
             } else {
                 body.audioDevices.push({
                     "name": a.name,
-                    "muted": true
+                    "muted": true,
+                    "volume": 0
                 });
             }
         }
@@ -257,36 +258,34 @@ export class CommandService {
         return ret;
     }
 
-    public unDisplayToAll(oldDisplays: Display[], oldAudioDevices: AudioDevice[]): EventEmitter<boolean> {
+    public unDisplayToAll(presets: Preset[]): EventEmitter<boolean> {
         let ret: EventEmitter<boolean> = new EventEmitter<boolean>();
-        console.log("un displaying-to-all to displays", oldDisplays);
         let body = { displays: [], audioDevices: [] }; 
 
-        for (let d of oldDisplays) {
-            if (d.name == null || d.power == null || d.blanked == null || d.input == null) {
-                continue; 
-            }
+        for (let p of presets) {
+            for (let d of p.displays) {
+                if (!body.displays.some(di => di.name === d.name)) {
+                    body.displays.push({
+                        "name": d.name,
+                        "power": "on",
+                        "input": p.inputs[0].name,
+                        "blanked": false
+                    });
+                } 
+            } 
 
-            body.displays.push({
-                "name": d.name,
-                "power": d.power,
-                "blanked": d.blanked,
-                "input": d.input.name
-            }); 
+            for (let a of p.audioDevices) {
+                if (!body.audioDevices.some(au => au.name === a.name)) {
+                    body.audioDevices.push({
+                        "name": a.name,
+                        "power": "on",
+                        "muted": true,
+                        "volume": 30
+                    });
+                } 
+            } 
         }
-
-        for (let a of oldAudioDevices) {
-            if (a.name == null || a.power == null || a.muted == null || a.volume == null) {
-                continue; 
-            }
-
-            body.audioDevices.push({
-                "name": a.name,
-                "power": a.power,
-                "muted": a.muted,
-                "volume": a.volume,
-            });
-        }
+        console.log("body", body);
 
 		this.putWithCustomTimeout(body, 10*1000).subscribe(
 			data => {
