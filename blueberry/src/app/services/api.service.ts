@@ -86,8 +86,7 @@ export class APIService {
 		this.getAPIUrl().subscribe(
 			data => {
 				APIService.apihost = "http://" + location.hostname;
-                // TODO add ! in front of data["hostname"]
-				if (data["hostname"].includes("localhost")) {
+				if (!data["hostname"].includes("localhost")) {
 					APIService.apihost = "http://" + data["hostname"];
 				}
 
