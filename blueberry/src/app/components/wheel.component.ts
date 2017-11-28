@@ -122,8 +122,8 @@ export class WheelComponent implements AfterContentInit {
 				right = 2;
 				break;
 			case 1:
-				top = 64;
-				right = 15;
+				top = 63;
+				right = 7;
 				break;	
 			default:
 				break;
@@ -202,10 +202,10 @@ export class WheelComponent implements AfterContentInit {
         return ret;
     }
 
-    public unDisplayToAll(displays: Display[], audioDevices: AudioDevice[]): EventEmitter<boolean> {
+    public unDisplayToAll(presets: Preset[]): EventEmitter<boolean> {
         let ret: EventEmitter<boolean> = new EventEmitter();
 
-        this.command.unDisplayToAll(displays, audioDevices).subscribe(
+        this.command.unDisplayToAll(presets).subscribe(
             success => {
                 if (success) {
                     ret.emit(true);

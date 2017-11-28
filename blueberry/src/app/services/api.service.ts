@@ -196,7 +196,8 @@ export class APIService {
 			.map(response => response.json());
 	}
 
-private getNextAPIUrl(): Observable<Object> { return this.http.get(APIService.localurl + ":8888/nextapi")
+    private getNextAPIUrl(): Observable<Object> { 
+        return this.http.get(APIService.localurl + ":8888/nextapi")
 			.map(response => response.json());
 	}
 

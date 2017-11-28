@@ -21,8 +21,16 @@ export class Device {
         if (names == null || devices == null) {
             return [];
         }
+        let ret: T[] = []; 
 
-        return devices.filter(d => names.includes(d.name));
+        for (let name of names) {
+            let dev = devices.find(d => d.name == name);
+            if (dev != null) {
+                ret.push(dev); 
+            }
+        }
+
+        return ret;
     }
 }
 

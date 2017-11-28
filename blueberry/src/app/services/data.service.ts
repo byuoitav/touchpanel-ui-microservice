@@ -61,7 +61,7 @@ export class DataService {
 
 	private createPresets() {
         for (let preset of APIService.room.uiconfig.presets) {
-            let displays =  Device.filterDevices<Display>(preset.displays, this.displays);
+            let displays = Device.filterDevices<Display>(preset.displays, this.displays);
             let audioDevices = Device.filterDevices<AudioDevice>(preset.audioDevices, this.audioDevices);
             let inputs = Device.filterDevices<Input>(preset.inputs, this.inputs);
 
