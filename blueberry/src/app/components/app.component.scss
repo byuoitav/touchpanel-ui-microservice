@@ -46,6 +46,19 @@
     }
 }
 
+#screenoff {
+    position: absolute;
+    min-height: 100vh;
+    min-width: 100vw;
+    z-index: 2000;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    font-size: 8vh;
+}
+
 @keyframes grow {
     from {
         transform: scale(.7, .7); 
