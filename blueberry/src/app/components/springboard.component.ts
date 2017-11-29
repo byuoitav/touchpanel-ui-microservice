@@ -46,7 +46,7 @@ export class SpringboardComponent implements OnInit {
     @Input() items: SpringboardItem[];
 
     // pages is a map of the page to its children
-    private pages: Page[] = [];
+    public pages: Page[] = [];
 
     constructor() {}
 

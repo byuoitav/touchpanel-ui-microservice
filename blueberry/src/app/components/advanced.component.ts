@@ -12,5 +12,5 @@ export class AdvancedComponent {
 
     @AngularInput() visible: boolean;
 
-    constructor(private data: DataService) {}
+    constructor(public data: DataService) {}
 }
