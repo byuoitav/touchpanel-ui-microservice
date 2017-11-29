@@ -19,6 +19,7 @@
     </div>
 </div> 
 
+<!-- modal windows -->
 <swal #poweroffall>
     <div *swalPartial="content">
         <span>Would you like to turn off everything?</span>
@@ -27,11 +28,31 @@
 
 <swal #help 
     (confirm)="helpConfirmDialog.show()">
+
+    <div *swalPartial="swalTargets.content">
+        <span>Please call AV Support at 801-422-7671 for help, or request help by pressing 'Request Help'</span>
+    </div>
 </swal>
 
-<swal #helpConfirm></swal>
-<swal #selectdisplays></swal>
+<swal #helpConfirm 
+    (cancel)="api.help('cancel').subscribe()">
+    
+    <div *swalPartial="swalTargets.content">
+        <span>Your help request has been recieved. A technician is on their way.</span>
+    </div>
+</swal>
+
+<swal #selectdisplays 
+    (open)="wheel.getInput() == null ? swalStatus(false) : void">
+
+    <div *swalPartial="swalTargets.title">
+        <span>Select displays to share {{wheel.getInput()?.displayname}} with</span>
+    </div>
+
+    <div *swalPartial="swalTargets.content">
+    </div>
+</swal>
+
 <swal #displaytoall></swal>
 <swal #undisplaytoall></swal>
-<swal #undisplaytoallfacade></swal>
 <swal #changed></swal>

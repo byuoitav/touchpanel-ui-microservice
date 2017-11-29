@@ -1,8 +1,7 @@
 import { Component, ViewChild,  EventEmitter, Output as AngularOutput, OnInit } from '@angular/core';
-import { MatDialog } from '@angular/material';
 import { deserialize } from 'serializer.ts/Serializer';
 import swal, { SweetAlertOptions } from 'sweetalert2';
-import { SwalComponent } from '@toverux/ngx-sweetalert2';
+import { SwalComponent, SwalPartialTargets } from '@toverux/ngx-sweetalert2';
 
 import { WheelComponent } from './wheel.component';
 import { DataService } from '../services/data.service';
@@ -33,10 +32,9 @@ export class HomeComponent implements OnInit {
     @ViewChild("selectdisplays") selectDisplaysDialog: SwalComponent;
     @ViewChild("displaytoall") dtaDialog: SwalComponent;
     @ViewChild("undisplaytoall") unDtaDialog: SwalComponent;
-    @ViewChild("undisplaytoallfacade") unDtaFacadeDialog: SwalComponent;
     @ViewChild("changed") changedDialog: SwalComponent;
     
-    constructor(public data: DataService, private dialog: MatDialog, private socket: SocketService, private api: APIService) {
+    constructor(public data: DataService, private socket: SocketService, public api: APIService, public readonly swalTargets: SwalPartialTargets) {
         this.updateFromEvents();
     }
 
@@ -69,8 +67,8 @@ export class HomeComponent implements OnInit {
         this.helpDialog.options = {
             title: "Help",
             type: "question",
+            text: "i should be hidden",
             focusConfirm: false,
-            html: "<span>Please call AV Support at 801-422-7671 for help, or request help by pressing 'Request Help'</span>",
             confirmButtonText: "Request Help",
             showCancelButton: true,
             showLoaderOnConfirm: true,
@@ -87,15 +85,11 @@ export class HomeComponent implements OnInit {
             },
         };
 
-        this.helpConfirmDialog.cancel.subscribe(() => {
-            this.api.help("cancel").subscribe();
-        });
-
         this.helpConfirmDialog.options = {
             title: "Confirm",
             type: "success",
+            text: "i should be hidden",
             focusConfirm: false,
-            html: "<span>Your help request has been recieved. A technician is on their way.</span>",
             confirmButtonText: "Confirm",
             showCancelButton: true,
             showLoaderOnConfirm: true,
@@ -114,61 +108,13 @@ export class HomeComponent implements OnInit {
 
         this.dtaDialog.options = {
             title: "Displaying to all...",
-            allowOutsideClick: false,
-            onOpen: () => {
-                swal.showLoading(); 
-
-                this.displayToAll().subscribe(
-                    success => {
-                        if (success) {
-                            swal({
-                                type: "success",
-                                timer: 1500,
-                                showConfirmButton: false
-                            }); 
-                        } else {
-                            swal({
-                                type: "error",
-                                timer: 1500,
-                                showConfirmButton: false
-                            }); 
-                        } 
-                    }
-                );
-            }
+            allowOutsideClick: false
         }
 
         this.unDtaDialog.options = {
             title: "Returning room to default state...",
-            allowOutsideClick: false,
-            onOpen: () => {
-                swal.showLoading(); 
-
-                this.unDisplayToAll().subscribe(
-                    success => {
-                        if (success) {
-                            swal({
-                                type: "success",
-                                timer: 1500,
-                                showConfirmButton: false
-                            }); 
-                        } else {
-                            swal({
-                                type: "error",
-                                timer: 1500,
-                                showConfirmButton: false
-                            }); 
-                        } 
-                    }
-                );
-            }
+            allowOutsideClick: false
         }
-
-        this.unDtaFacadeDialog.options = Object.assign({}, this.unDtaDialog.options);
-        this.unDtaFacadeDialog.options.onOpen = () => {
-            swal.showLoading(); 
-        };
-
 
         this.changedDialog.options = {
             title: "Input Changed",
@@ -178,10 +124,11 @@ export class HomeComponent implements OnInit {
         };
 
         this.selectDisplaysDialog.options = {
-            title: "Select Displays", 
+            text: "i should be hidden",
             focusConfirm: false,
-            confirmButtonText: "Display To All",
+            confirmButtonText: "Share",
             showCancelButton: true,
+            width: "85vw",
         }
     }
 
@@ -214,11 +161,7 @@ export class HomeComponent implements OnInit {
 
     public turnOff(): EventEmitter<boolean> {
         if (this.wheel.preset === this.dtaPreset) {
-            // show something?
-            this.unDtaFacadeDialog.show();
             this.unDisplayToAll().subscribe(success => {
-                swal.close();
-
                 let ret: EventEmitter<boolean> = this.wheel.command.setPower('standby', this.wheel.preset.displays); 
                 ret.subscribe(success => {
                     if (success) {
@@ -239,18 +182,28 @@ export class HomeComponent implements OnInit {
     }
 
     public displayToAll(): EventEmitter<boolean> {
+        this.dtaDialog.show();
+        swal.showLoading();
+
         this.removeExtraInputs();
         let ret: EventEmitter<boolean> = new EventEmitter();
 
         let input: Input = Display.getInput(this.wheel.preset.displays);
+        if (input == null) {
+            this.swalStatus(false); 
+        }
+
         this.wheel.preset = this.dtaPreset;
 
         this.wheel.displayToAll(input, this.data.displays, this.data.audioDevices).subscribe(
             success => {
                 if (success) {
+                    this.swalStatus(true);
                     ret.emit(true);
                 } else {
                     this.wheel.preset = this.oldPreset;
+
+                    this.swalStatus(false);
                     ret.emit(false);
                 } 
             }
@@ -260,15 +213,21 @@ export class HomeComponent implements OnInit {
     }
 
     public unDisplayToAll(): EventEmitter<boolean> {
+        this.unDtaDialog.show();
+        swal.showLoading();
+
         let ret: EventEmitter<boolean> = new EventEmitter();
 
         this.wheel.preset = this.oldPreset;
         this.wheel.unDisplayToAll(this.data.presets).subscribe(
             success => {
                 if (success) {
+                    this.swalStatus(true);
                     ret.emit(true);
                 } else {
                     this.wheel.preset = this.dtaPreset;
+
+                    this.swalStatus(false);
                     ret.emit(false);
                 }
             }
@@ -340,5 +299,24 @@ export class HomeComponent implements OnInit {
     private removeExtraInputs() {
         this.wheel.preset.extraInputs.length = 0; 
         setTimeout(() => this.wheel.render(), 0);
+    }
+
+    private swalStatus(success: boolean): void {
+        if (!swal.isVisible())
+            return
+
+        if (success) {
+            swal({
+                type: "success",
+                timer: 1500,
+                showConfirmButton: false
+            });
+        } else {
+            swal({
+                type: "error",
+                timer: 1500,
+                showConfirmButton: false
+            });
+        } 
     }
 }
