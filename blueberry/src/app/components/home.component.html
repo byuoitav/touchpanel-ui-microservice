@@ -12,16 +12,25 @@
 </div>
 
 <div class="buttons bottom">
-    <div *ngIf="data?.panel?.features.includes('advanced-option') || true">
-        <button mat-fab class="dta button" (click)="console.log('not implemented')">
+    <div *ngIf="data?.panel?.features.includes('share') || true">
+        <button mat-fab class="dta button" (click)="selectdisplays.show()">
             <mat-icon>share</mat-icon>
         </button>
     </div>
 </div> 
 
-<swal #poweroffall></swal>
-<swal #help></swal>
+<swal #poweroffall>
+    <div *swalPartial="content">
+        <span>Would you like to turn off everything?</span>
+    </div>
+</swal>
+
+<swal #help 
+    (confirm)="helpConfirmDialog.show()">
+</swal>
+
 <swal #helpConfirm></swal>
+<swal #selectdisplays></swal>
 <swal #displaytoall></swal>
 <swal #undisplaytoall></swal>
 <swal #undisplaytoallfacade></swal>

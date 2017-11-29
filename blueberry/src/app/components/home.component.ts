@@ -2,7 +2,7 @@ import { Component, ViewChild,  EventEmitter, Output as AngularOutput, OnInit } 
 import { MatDialog } from '@angular/material';
 import { deserialize } from 'serializer.ts/Serializer';
 import swal, { SweetAlertOptions } from 'sweetalert2';
-import { SwalComponent } from '@toverux/ngsweetalert2';
+import { SwalComponent } from '@toverux/ngx-sweetalert2';
 
 import { WheelComponent } from './wheel.component';
 import { DataService } from '../services/data.service';
@@ -30,6 +30,7 @@ export class HomeComponent implements OnInit {
     @ViewChild("poweroffall") powerOffAllDialog: SwalComponent;
     @ViewChild("help") helpDialog: SwalComponent;
     @ViewChild("helpConfirm") helpConfirmDialog: SwalComponent;
+    @ViewChild("selectdisplays") selectDisplaysDialog: SwalComponent;
     @ViewChild("displaytoall") dtaDialog: SwalComponent;
     @ViewChild("undisplaytoall") unDtaDialog: SwalComponent;
     @ViewChild("undisplaytoallfacade") unDtaFacadeDialog: SwalComponent;
@@ -47,8 +48,8 @@ export class HomeComponent implements OnInit {
         this.powerOffAllDialog.options = {
             title: "Power Off All",
             type: "warning",
+            text: "i should be hidden",
             focusConfirm: false,
-            html: "<span>Would you like to turn off everything?</span>",
             confirmButtonText: "Yes",
             showCancelButton: true,
             showLoaderOnConfirm: true,
@@ -64,10 +65,6 @@ export class HomeComponent implements OnInit {
                 });
             },
         };
-
-        this.helpDialog.confirm.subscribe(() => {
-            this.helpConfirmDialog.show();
-        });
 
         this.helpDialog.options = {
             title: "Help",
@@ -179,6 +176,13 @@ export class HomeComponent implements OnInit {
             focusConfirm: false,
             confirmButtonText: "Dismiss",
         };
+
+        this.selectDisplaysDialog.options = {
+            title: "Select Displays", 
+            focusConfirm: false,
+            confirmButtonText: "Display To All",
+            showCancelButton: true,
+        }
     }
 
     private onWheelInit() {
