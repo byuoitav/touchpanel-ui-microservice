@@ -80,8 +80,6 @@ export class Output extends Device {
     }
 
     public static getPower(outputs: Output[]): string {
-        let state: string = null;
-
         for (let o of outputs) {
             if (o.power == 'on') {
                 return o.power;
