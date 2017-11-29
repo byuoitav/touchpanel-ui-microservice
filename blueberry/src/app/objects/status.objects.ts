@@ -1,5 +1,6 @@
 import { Type } from 'serializer.ts/Decorators';
 import { EventEmitter } from '@angular/core';
+import { SpringboardItem } from '../components/springboard.component';
 
 export const POWER: string = "power";
 export const INPUT: string = "input";
@@ -32,9 +33,18 @@ export class Device {
 
         return ret;
     }
+
+    public getName(): string {
+        return this.name; 
+    }
+
+    public getDisplayName(): string {
+        return this.displayname; 
+    }
+
 }
 
-export class Input extends Device {
+export class Input extends Device implements SpringboardItem {
 	icon: string;
 
     constructor(name: string, displayname: string, icon: string) {
@@ -44,6 +54,14 @@ export class Input extends Device {
 
     public static getInput(name: string, inputs: Input[]): Input {
         return inputs.find(i => i.name == name);
+    }
+
+    public getColor(): string {
+        return "red";  
+    }
+
+    public getIcon(): string {
+        return this.icon; 
     }
 }
 
@@ -61,7 +79,6 @@ export class Output extends Device {
         this.powerEmitter = new EventEmitter();
     }
 
-    // return on (true) if at least one is on
     public static getPower(outputs: Output[]): string {
         for (let o of outputs) {
             if (o.power == 'on') {

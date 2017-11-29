@@ -19,7 +19,7 @@
     </div>
 </div> 
 
-<advanced [visible]="true"></advanced>
+<advanced *ngIf="data.panel?.render" [visible]="true"></advanced>
 
 <swal #poweroffall></swal>
 <swal #help></swal>
