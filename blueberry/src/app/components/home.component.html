@@ -8,7 +8,7 @@
 </div> 
 
 <div *ngIf="data.panel?.render">
-    <wheel [openControlledByPower]="true" [blur]="false" [preset]="data.panel.presets[0]" (init)="onWheelInit()"></wheel>
+    <wheel [openControlledByPower]="true" [blur]="false" [preset]="data.panel.preset" (init)="onWheelInit()"></wheel>
 </div>
 
 <div class="buttons bottom">
@@ -21,7 +21,7 @@
 
 <!-- modal windows -->
 <swal #poweroffall>
-    <div *swalPartial="content">
+    <div *swalPartial="swalTargets.content">
         <span>Would you like to turn off everything?</span>
     </div>
 </swal>

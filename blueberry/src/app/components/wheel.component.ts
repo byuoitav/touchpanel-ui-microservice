@@ -18,6 +18,8 @@ export class WheelComponent implements AfterContentInit {
 
 	@AngularInput() preset: Preset; 
     @AngularInput() blur: boolean;
+    @AngularInput() top: string;
+    @AngularInput() right: string;
     @AngularInput() openControlledByPower: boolean;
     @AngularOutput() init: EventEmitter<any> = new EventEmitter();
 
@@ -95,8 +97,8 @@ export class WheelComponent implements AfterContentInit {
 	}
 
     private setTranslate() {
-        let offsetX: number = parseInt(this.preset.right);
-        let offsetY: number = parseInt(this.preset.top);
+        let offsetX: number = parseInt(this.right);
+        let offsetY: number = parseInt(this.top);
 
         let x = 50 - offsetX;
         let y = 50 - offsetY;

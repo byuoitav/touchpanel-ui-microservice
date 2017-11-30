@@ -148,14 +148,12 @@ export class HomeComponent implements OnInit {
     }
 
     private onWheelInit() {
-        this.wheel.preset.top = "50vh";
-        this.wheel.preset.right = "50vw";
+//        this.wheel.preset.top = "50vh";
+//        this.wheel.preset.right = "50vw";
 
         this.oldPreset = this.wheel.preset;
 
-        this.dtaPreset = new Preset("All Displays", "subscriptions", this.data.displays, this.data.audioDevices.filter(a => a.roomWideAudio), this.wheel.preset.inputs);
-        this.dtaPreset.top = this.wheel.preset.top;
-        this.dtaPreset.right = this.wheel.preset.right;
+//        this.dtaPreset = new Preset("All Displays", "subscriptions", this.data.displays, this.data.audioDevices.filter(a => a.roomWideAudio), this.wheel.preset.inputs);
 
         if (this.wheel.getPower() == "on") {
             this.wheel.open(false, 500);

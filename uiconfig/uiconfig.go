@@ -23,19 +23,20 @@ type UIConfig struct {
 }
 
 type Preset struct {
-	Name         string   `json:"name"`
-	Icon         string   `json:"icon"`
-	Displays     []string `json:"displays"`
-	AudioDevices []string `json:"audioDevices"`
-	Inputs       []string `json:"inputs"`
+	Name                    string   `json:"name"`
+	Icon                    string   `json:"icon"`
+	Displays                []string `json:"displays"`
+	ShareableDisplays       []string `json:"shareableDisplays"`
+	AudioDevices            []string `json:"audioDevices"`
+	Inputs                  []string `json:"inputs"`
+	IndependentAudioDevices []string `json:"indpendentAudioDevices"`
 }
 
 type Panel struct {
-	Hostname                string   `json:"hostname"`
-	UIPath                  string   `json:"uipath"`
-	Presets                 []string `json:"presets"`
-	Features                []string `json:"features"`
-	IndependentAudioDevices []string `json:"indpendentAudioDevices"`
+	Hostname string   `json:"hostname"`
+	UIPath   string   `json:"uipath"`
+	Preset   string   `json:"preset"`
+	Features []string `json:"features"`
 }
 
 type InputConfiguration struct {
