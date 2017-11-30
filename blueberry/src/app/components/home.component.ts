@@ -25,15 +25,19 @@ export class HomeComponent implements OnInit {
 
     dtaPreset: Preset;
     oldPreset: Preset;
-    
+
+    selectedDisplays: Display[] = [];
+   
     @ViewChild("poweroffall") powerOffAllDialog: SwalComponent;
     @ViewChild("help") helpDialog: SwalComponent;
     @ViewChild("helpConfirm") helpConfirmDialog: SwalComponent;
     @ViewChild("selectdisplays") selectDisplaysDialog: SwalComponent;
+
     @ViewChild("displaytoall") dtaDialog: SwalComponent;
     @ViewChild("undisplaytoall") unDtaDialog: SwalComponent;
+
     @ViewChild("changed") changedDialog: SwalComponent;
-    
+
     constructor(public data: DataService, private socket: SocketService, public api: APIService, public readonly swalTargets: SwalPartialTargets) {
         this.updateFromEvents();
     }
@@ -129,6 +133,19 @@ export class HomeComponent implements OnInit {
             confirmButtonText: "Share",
             showCancelButton: true,
             width: "85vw",
+            preConfirm: () => {
+                return new Promise((resolve, reject) => {
+                    this.displayToAll().subscribe(success => {
+                        if (success) {
+                            this.swalStatus(true);
+                            resolve(); 
+                        } else {
+                            this.swalStatus(false);
+                            reject(); 
+                        }
+                    });
+                });
+            },
         }
     }
 
@@ -182,28 +199,25 @@ export class HomeComponent implements OnInit {
     }
 
     public displayToAll(): EventEmitter<boolean> {
-        this.dtaDialog.show();
-        swal.showLoading();
-
         this.removeExtraInputs();
         let ret: EventEmitter<boolean> = new EventEmitter();
 
         let input: Input = Display.getInput(this.wheel.preset.displays);
         if (input == null) {
-            this.swalStatus(false); 
+            ret.emit(false);
+            return ret;
         }
 
+        // change to a preset with the displays selected in it
         this.wheel.preset = this.dtaPreset;
 
         this.wheel.displayToAll(input, this.data.displays, this.data.audioDevices).subscribe(
             success => {
                 if (success) {
-                    this.swalStatus(true);
                     ret.emit(true);
                 } else {
                     this.wheel.preset = this.oldPreset;
 
-                    this.swalStatus(false);
                     ret.emit(false);
                 } 
             }
@@ -303,7 +317,7 @@ export class HomeComponent implements OnInit {
 
     private swalStatus(success: boolean): void {
         if (!swal.isVisible())
-            return
+            return;
 
         if (success) {
             swal({
@@ -318,5 +332,13 @@ export class HomeComponent implements OnInit {
                 showConfirmButton: false
             });
         } 
+    }
+
+    public toggleSelected(d: Display) {
+        if (this.selectedDisplays.includes(d)) {
+            // remove from array
+        } else {
+            this.selectedDisplays.push(d);
+        }
     }
 }
