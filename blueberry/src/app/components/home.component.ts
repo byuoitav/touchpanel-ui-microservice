@@ -32,10 +32,8 @@ export class HomeComponent implements OnInit {
     @ViewChild("help") helpDialog: SwalComponent;
     @ViewChild("helpConfirm") helpConfirmDialog: SwalComponent;
     @ViewChild("selectdisplays") selectDisplaysDialog: SwalComponent;
-
     @ViewChild("displaytoall") dtaDialog: SwalComponent;
     @ViewChild("undisplaytoall") unDtaDialog: SwalComponent;
-
     @ViewChild("changed") changedDialog: SwalComponent;
 
     constructor(public data: DataService, private socket: SocketService, public api: APIService, public readonly swalTargets: SwalPartialTargets) {
@@ -135,7 +133,7 @@ export class HomeComponent implements OnInit {
             width: "85vw",
             preConfirm: () => {
                 return new Promise((resolve, reject) => {
-                    this.displayToAll().subscribe(success => {
+                    this.share().subscribe(success => {
                         if (success) {
                             this.swalStatus(true);
                             resolve(); 
@@ -198,26 +196,40 @@ export class HomeComponent implements OnInit {
         }
     }
 
-    public displayToAll(): EventEmitter<boolean> {
-        this.removeExtraInputs();
+    public openedSelectDisplaysDialog() {
+        if (this.wheel.getInput() == null) 
+            this.swalStatus(false); 
+
+        // check all displays
+        for (let d of this.data.displays) {
+            if (!this.wheel.preset.displays.includes(d)) {
+                this.selectedDisplays.push(d); 
+            }
+        }
+    }
+
+    public share(): EventEmitter<boolean> {
         let ret: EventEmitter<boolean> = new EventEmitter();
 
-        let input: Input = Display.getInput(this.wheel.preset.displays);
-        if (input == null) {
-            ret.emit(false);
-            return ret;
+        // change to a preset with the displays selected in it
+        this.removeExtraInputs();
+
+        // get audioDevices from selected displays
+        let audioDevices: AudioDevice[] = [];
+        for (let d of this.selectedDisplays) {
+            let a = this.data.audioDevices.find(a => a.name == d.name);
+            if (a != null) {
+                audioDevices.push(a);  
+            }
         }
 
-        // change to a preset with the displays selected in it
-        this.wheel.preset = this.dtaPreset;
-
-        this.wheel.displayToAll(input, this.data.displays, this.data.audioDevices).subscribe(
+        this.wheel.share(this.selectedDisplays, audioDevices).subscribe(
             success => {
                 if (success) {
+                    this.wheel.preset = this.dtaPreset;
                     ret.emit(true);
                 } else {
                     this.wheel.preset = this.oldPreset;
-
                     ret.emit(false);
                 } 
             }
@@ -335,10 +347,12 @@ export class HomeComponent implements OnInit {
     }
 
     public toggleSelected(d: Display) {
-        if (this.selectedDisplays.includes(d)) {
-            // remove from array
-        } else {
+        let index = this.selectedDisplays.indexOf(d);
+
+        if (index === -1) {
             this.selectedDisplays.push(d);
+        } else {
+            this.selectedDisplays.splice(index, 1);
         }
     }
 }

@@ -184,10 +184,10 @@ export class WheelComponent implements AfterContentInit {
         return AudioDevice.getMute(this.preset.audioDevices); 
     }
 
-    public displayToAll(input: Input, displays: Display[], audioDevices: AudioDevice[]): EventEmitter<boolean> {
+    public share(displays: Display[], audioDevices: AudioDevice[]): EventEmitter<boolean> {
         let ret: EventEmitter<boolean> = new EventEmitter();
 
-        this.command.displayToAll(input, displays, audioDevices).subscribe(
+        this.command.share(this.preset.displays[0], displays, audioDevices).subscribe(
             success => {
                 if (success) {
                     ret.emit(true);

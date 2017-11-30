@@ -43,7 +43,7 @@
 </swal>
 
 <swal #selectdisplays 
-    (open)="wheel.getInput() == null ? swalStatus(false) : void">
+    (open)="openedSelectDisplaysDialog()">
 
     <div *swalPartial="swalTargets.title">
         <span>Select displays to share {{wheel.getInput()?.displayname}} with</span>
@@ -52,7 +52,7 @@
     <div *swalPartial="swalTargets.content">
         <mat-grid-list cols="3">
             <mat-grid-tile *ngFor="let d of data.displays" [colspan]="1" [rowspan]="1">
-                <button mat-fab color="primary" (click)="toggleSelected(d)">{{d.name}}
+                <button *ngIf="!wheel.preset.displays.includes(d)" mat-fab color="primary" (click)="toggleSelected(d)">{{d.name}}
                     <div *ngIf="selectedDisplays.includes(d)" class="badge">
                         <mat-icon>check</mat-icon>
                     </div>
