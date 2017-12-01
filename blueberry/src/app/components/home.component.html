@@ -8,7 +8,7 @@
 </div> 
 
 <div *ngIf="data.panel?.render">
-    <wheel [openControlledByPower]="true" [blur]="false" [preset]="data.panel.preset" (init)="onWheelInit()"></wheel>
+    <wheel top="50vh" right="50vw" [openControlledByPower]="true" [blur]="false" [preset]="data.panel.preset" (init)="onWheelInit()"></wheel>
 </div>
 
 <div class="buttons bottom">

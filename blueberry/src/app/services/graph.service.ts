@@ -22,8 +22,17 @@ import { SocketService, MESSAGE } from './socket.service';
 export class GraphService {
 
     private root: Node;
+    private exists: boolean = false;
+
 
     constructor(private data: DataService, private socket: SocketService) {
+    }
+
+    public init() {
+        if (this.exists) {
+            return; 
+        }
+
         this.data.loaded.subscribe(() => {
             // the root node is the set of displays and shareableDisplays for the preset
             let displays: Set<string> = new Set();
@@ -31,9 +40,31 @@ export class GraphService {
             this.data.panel.preset.shareableDisplays.forEach(d => displays.add(d));
 
             this.root = new Node(displays);
+            this.exists = true;
 
             this.update();
         });
+    }
+
+    public getDisplayList(): Set<string> {
+        let ret: Set<string> = new Set();
+
+        this.getdisplaylist(this.root, ret);
+        return ret;
+    }
+
+    /*
+     * recursivly descends through nodes and adds their displays to the list
+     */
+    private getdisplaylist(node: Node, list: Set<string>) {
+        console.log("recursive descent: ", node);
+        node.displays.forEach(d => list.add(d));
+
+        node.children.forEach(n => {
+            this.getdisplaylist(n, list); 
+        });
+
+        return list; 
     }
 
     private update() {

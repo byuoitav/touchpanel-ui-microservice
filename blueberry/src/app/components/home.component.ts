@@ -6,6 +6,7 @@ import { SwalComponent, SwalPartialTargets } from '@toverux/ngx-sweetalert2';
 import { WheelComponent } from './wheel.component';
 import { DataService } from '../services/data.service';
 import { APIService } from '../services/api.service';
+import { GraphService } from '../services/graph.service';
 import { SocketService, MESSAGE, Event } from '../services/socket.service';
 import { HelpDialog } from '../dialogs/help.dialog';
 import { ChangedDialog } from '../dialogs/changed.dialog';
@@ -36,7 +37,8 @@ export class HomeComponent implements OnInit {
     @ViewChild("undisplaytoall") unDtaDialog: SwalComponent;
     @ViewChild("changed") changedDialog: SwalComponent;
 
-    constructor(public data: DataService, private socket: SocketService, public api: APIService, public readonly swalTargets: SwalPartialTargets) {
+    constructor(public data: DataService, private socket: SocketService, public api: APIService, public readonly swalTargets: SwalPartialTargets, private graph: GraphService) {
+        this.graph.init();
         this.updateFromEvents();
     }
 

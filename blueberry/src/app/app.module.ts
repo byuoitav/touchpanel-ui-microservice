@@ -19,6 +19,7 @@ import { APIService } from './services/api.service';
 import { SocketService } from './services/socket.service';
 import { CommandService } from './services/command.service';
 import { DataService } from './services/data.service';
+import { GraphService } from './services/graph.service';
 
 @NgModule({
   declarations: [
@@ -49,7 +50,8 @@ import { DataService } from './services/data.service';
 	  APIService,
 	  SocketService,
 	  CommandService,
-      DataService
+      DataService,
+      GraphService,
   ],
   entryComponents: [
       HelpDialog,
