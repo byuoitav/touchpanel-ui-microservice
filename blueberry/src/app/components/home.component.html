@@ -49,16 +49,14 @@
         <span>Select displays to share {{wheel.getInput()?.displayname}} with</span>
     </div>
 
-    <div *swalPartial="swalTargets.content">
-        <mat-grid-list cols="3">
-            <mat-grid-tile *ngFor="let d of data.displays" [colspan]="1" [rowspan]="1">
-                <button *ngIf="!wheel.preset.displays.includes(d)" mat-fab color="primary" (click)="toggleSelected(d)">{{d.name}}
-                    <div *ngIf="selectedDisplays.includes(d)" class="badge">
-                        <mat-icon>check</mat-icon>
-                    </div>
-                </button>
-            </mat-grid-tile>
-        </mat-grid-list>
+    <div *swalPartial="swalTargets.content" class="grid">
+        <div *ngFor="let d of wheel.preset.shareableDisplays" class="item">
+            <button mat-fab color="primary" (click)="toggleSelected(d)">{{d}}
+                <div *ngIf="isSelected(d)" class="badge">
+                    <mat-icon>check</mat-icon>
+                </div>
+            </button>
+        </div>
     </div>
 </swal>
 

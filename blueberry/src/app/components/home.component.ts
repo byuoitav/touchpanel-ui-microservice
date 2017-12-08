@@ -24,10 +24,12 @@ export class HomeComponent implements OnInit {
     @ViewChild(WheelComponent)
     public wheel: WheelComponent;
 
-    dtaPreset: Preset;
-    oldPreset: Preset;
+    sharePreset: Preset;
+    preset: Preset;
 
     selectedDisplays: Display[] = [];
+
+    selectDisplaysColumns = 0;
    
     @ViewChild("poweroffall") powerOffAllDialog: SwalComponent;
     @ViewChild("help") helpDialog: SwalComponent;
@@ -134,6 +136,7 @@ export class HomeComponent implements OnInit {
             showCancelButton: true,
             width: "85vw",
             preConfirm: () => {
+                console.log("here");
                 return new Promise((resolve, reject) => {
                     this.share().subscribe(success => {
                         if (success) {
@@ -150,12 +153,7 @@ export class HomeComponent implements OnInit {
     }
 
     private onWheelInit() {
-//        this.wheel.preset.top = "50vh";
-//        this.wheel.preset.right = "50vw";
-
-        this.oldPreset = this.wheel.preset;
-
-//        this.dtaPreset = new Preset("All Displays", "subscriptions", this.data.displays, this.data.audioDevices.filter(a => a.roomWideAudio), this.wheel.preset.inputs);
+        this.preset = this.wheel.preset;
 
         if (this.wheel.getPower() == "on") {
             this.wheel.open(false, 500);
@@ -175,7 +173,7 @@ export class HomeComponent implements OnInit {
     }
 
     public turnOff(): EventEmitter<boolean> {
-        if (this.wheel.preset === this.dtaPreset) {
+        if (this.wheel.preset === this.sharePreset) {
             this.unDisplayToAll().subscribe(success => {
                 let ret: EventEmitter<boolean> = this.wheel.command.setPower('standby', this.wheel.preset.displays); 
                 ret.subscribe(success => {
@@ -211,7 +209,6 @@ export class HomeComponent implements OnInit {
     public share(): EventEmitter<boolean> {
         let ret: EventEmitter<boolean> = new EventEmitter();
 
-        // change to a preset with the displays selected in it
         this.removeExtraInputs();
 
         // get audioDevices from selected displays
@@ -219,17 +216,24 @@ export class HomeComponent implements OnInit {
         for (let d of this.selectedDisplays) {
             let a = this.data.audioDevices.find(a => a.name == d.name);
             if (a != null) {
-                audioDevices.push(a);  
+                audioDevices.push(a);
             }
         }
+
+        let displays: Display[] = [];
+        this.selectedDisplays.forEach(d => displays.push(d));
+        this.wheel.preset.displays.forEach(d => displays.push(d));
+
+        this.sharePreset = new Preset("Sharing", "subscriptions", displays, this.wheel.preset.audioDevices, this.wheel.preset.inputs, this.wheel.preset.shareableDisplays);
+        console.log("sharePreset", this.sharePreset);
 
         this.wheel.share(this.selectedDisplays, audioDevices).subscribe(
             success => {
                 if (success) {
-                    this.wheel.preset = this.dtaPreset;
+                    this.wheel.preset = this.sharePreset;
                     ret.emit(true);
                 } else {
-                    this.wheel.preset = this.oldPreset;
+                    this.wheel.preset = this.preset;
                     ret.emit(false);
                 } 
             }
@@ -244,14 +248,14 @@ export class HomeComponent implements OnInit {
 
         let ret: EventEmitter<boolean> = new EventEmitter();
 
-        this.wheel.preset = this.oldPreset;
+        this.wheel.preset = this.preset;
         this.wheel.unDisplayToAll(this.data.presets).subscribe(
             success => {
                 if (success) {
                     this.swalStatus(true);
                     ret.emit(true);
                 } else {
-                    this.wheel.preset = this.dtaPreset;
+                    this.wheel.preset = this.sharePreset;
 
                     this.swalStatus(false);
                     ret.emit(false);
@@ -284,12 +288,12 @@ export class HomeComponent implements OnInit {
                         if (input != null && !this.wheel.preset.inputs.includes(input)) {
 
                             // if the input gets changed on a device that is yours, and you're in display to all mode
-                            if (this.oldPreset.displays.find(d => d.name === e.device) != null && this.wheel.preset == this.dtaPreset) {
+                            if (this.preset.displays.find(d => d.name === e.device) != null && this.wheel.preset == this.sharePreset) {
                                 console.info("no longer display to all master")
-                                this.wheel.preset = this.oldPreset;
+                                this.wheel.preset = this.preset;
                             } 
 
-                            if (this.wheel.preset != this.dtaPreset) {
+                            if (this.wheel.preset != this.sharePreset) {
                                 console.log("Creating a new input on the wheel from event:", e);
                                 this.wheel.preset.extraInputs.length = 0;
                                 this.wheel.preset.extraInputs.push(input); 
@@ -346,13 +350,19 @@ export class HomeComponent implements OnInit {
         } 
     }
 
-    public toggleSelected(d: Display) {
-        let index = this.selectedDisplays.indexOf(d);
+    public toggleSelected(name: string) {
+        let disp: Display = this.selectedDisplays.find(d => d.name === name);
 
-        if (index === -1) {
-            this.selectedDisplays.push(d);
+        if (disp == null) {
+            let add: Display = this.data.displays.find(d => d.name === name);
+            this.selectedDisplays.push(add);
         } else {
+            let index = this.selectedDisplays.indexOf(disp);
             this.selectedDisplays.splice(index, 1);
         }
+    }
+
+    public isSelected(name: string) {
+        return this.selectedDisplays.some(d => d.name === name);
     }
 }

@@ -10,7 +10,6 @@ const REDIRECT: string = "http://" + window.location.hostname + ":10000/dash";
     templateUrl: './management.component.html',
     styleUrls: ['./management.component.scss', '../colorscheme.scss']
 })
-
 export class ManagementComponent implements OnChanges {
     @Input() enabled: boolean;
 
