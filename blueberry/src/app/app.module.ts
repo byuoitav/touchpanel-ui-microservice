@@ -4,7 +4,7 @@ import { HttpModule } from '@angular/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatSliderModule, MatIconModule, MatButtonModule, MatMenuModule, MatDialogModule, MatGridListModule, MatChipsModule } from '@angular/material';
 import { UiSwitchModule } from 'ngx-ui-switch';
-import { SweetAlert2Module } from '@toverux/ngsweetalert2';
+import { SweetAlert2Module } from '@toverux/ngx-sweetalert2';
 import 'hammerjs';
 
 import { AppComponent } from './components/app.component';
@@ -19,6 +19,7 @@ import { APIService } from './services/api.service';
 import { SocketService } from './services/socket.service';
 import { CommandService } from './services/command.service';
 import { DataService } from './services/data.service';
+import { GraphService } from './services/graph.service';
 
 @NgModule({
   declarations: [
@@ -49,7 +50,8 @@ import { DataService } from './services/data.service';
 	  APIService,
 	  SocketService,
 	  CommandService,
-      DataService
+      DataService,
+      GraphService,
   ],
   entryComponents: [
       HelpDialog,

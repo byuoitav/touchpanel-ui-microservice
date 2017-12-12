@@ -1,7 +1,7 @@
 <div *ngIf="blur" class="background" [class.open]="circleOpen" (click)="toggle()">
 </div>
 
-<div class="circle" [ngStyle]="{'margin-top': preset.top, 'margin-left': preset.right, 'z-index': circleOpen ? 10 : 0, 'transform': circleOpen ? translate : 'translate(0,0)'}">
+<div class="circle" [ngStyle]="{'margin-top': top, 'margin-left': right, 'z-index': circleOpen ? 10 : 0, 'transform': circleOpen ? translate : 'translate(0,0)'}">
 	<!-- wheel -->
 	<ul #wheel class="wheel" [class.open]="circleOpen">
 		<li class="title-slice">

@@ -1,12 +1,12 @@
 import { Component, ViewChild,  EventEmitter, Output as AngularOutput, OnInit } from '@angular/core';
-import { MatDialog } from '@angular/material';
 import { deserialize } from 'serializer.ts/Serializer';
 import swal, { SweetAlertOptions } from 'sweetalert2';
-import { SwalComponent } from '@toverux/ngsweetalert2';
+import { SwalComponent, SwalPartialTargets } from '@toverux/ngx-sweetalert2';
 
 import { WheelComponent } from './wheel.component';
 import { DataService } from '../services/data.service';
 import { APIService } from '../services/api.service';
+import { GraphService } from '../services/graph.service';
 import { SocketService, MESSAGE, Event } from '../services/socket.service';
 import { HelpDialog } from '../dialogs/help.dialog';
 import { ChangedDialog } from '../dialogs/changed.dialog';
@@ -24,18 +24,23 @@ export class HomeComponent implements OnInit {
     @ViewChild(WheelComponent)
     public wheel: WheelComponent;
 
-    dtaPreset: Preset;
-    oldPreset: Preset;
-    
+    sharePreset: Preset;
+    preset: Preset;
+
+    selectedDisplays: Display[] = [];
+
+    selectDisplaysColumns = 0;
+   
     @ViewChild("poweroffall") powerOffAllDialog: SwalComponent;
     @ViewChild("help") helpDialog: SwalComponent;
     @ViewChild("helpConfirm") helpConfirmDialog: SwalComponent;
+    @ViewChild("selectdisplays") selectDisplaysDialog: SwalComponent;
     @ViewChild("displaytoall") dtaDialog: SwalComponent;
     @ViewChild("undisplaytoall") unDtaDialog: SwalComponent;
-    @ViewChild("undisplaytoallfacade") unDtaFacadeDialog: SwalComponent;
     @ViewChild("changed") changedDialog: SwalComponent;
-    
-    constructor(public data: DataService, private dialog: MatDialog, private socket: SocketService, private api: APIService) {
+
+    constructor(public data: DataService, private socket: SocketService, public api: APIService, public readonly swalTargets: SwalPartialTargets, private graph: GraphService) {
+        this.graph.init();
         this.updateFromEvents();
     }
 
@@ -47,8 +52,8 @@ export class HomeComponent implements OnInit {
         this.powerOffAllDialog.options = {
             title: "Power Off All",
             type: "warning",
+            text: "i should be hidden",
             focusConfirm: false,
-            html: "<span>Would you like to turn off everything?</span>",
             confirmButtonText: "Yes",
             showCancelButton: true,
             showLoaderOnConfirm: true,
@@ -65,15 +70,11 @@ export class HomeComponent implements OnInit {
             },
         };
 
-        this.helpDialog.confirm.subscribe(() => {
-            this.helpConfirmDialog.show();
-        });
-
         this.helpDialog.options = {
             title: "Help",
             type: "question",
+            text: "i should be hidden",
             focusConfirm: false,
-            html: "<span>Please call AV Support at 801-422-7671 for help, or request help by pressing 'Request Help'</span>",
             confirmButtonText: "Request Help",
             showCancelButton: true,
             showLoaderOnConfirm: true,
@@ -90,15 +91,11 @@ export class HomeComponent implements OnInit {
             },
         };
 
-        this.helpConfirmDialog.cancel.subscribe(() => {
-            this.api.help("cancel").subscribe();
-        });
-
         this.helpConfirmDialog.options = {
             title: "Confirm",
             type: "success",
+            text: "i should be hidden",
             focusConfirm: false,
-            html: "<span>Your help request has been recieved. A technician is on their way.</span>",
             confirmButtonText: "Confirm",
             showCancelButton: true,
             showLoaderOnConfirm: true,
@@ -117,61 +114,13 @@ export class HomeComponent implements OnInit {
 
         this.dtaDialog.options = {
             title: "Displaying to all...",
-            allowOutsideClick: false,
-            onOpen: () => {
-                swal.showLoading(); 
-
-                this.displayToAll().subscribe(
-                    success => {
-                        if (success) {
-                            swal({
-                                type: "success",
-                                timer: 1500,
-                                showConfirmButton: false
-                            }); 
-                        } else {
-                            swal({
-                                type: "error",
-                                timer: 1500,
-                                showConfirmButton: false
-                            }); 
-                        } 
-                    }
-                );
-            }
+            allowOutsideClick: false
         }
 
         this.unDtaDialog.options = {
             title: "Returning room to default state...",
-            allowOutsideClick: false,
-            onOpen: () => {
-                swal.showLoading(); 
-
-                this.unDisplayToAll().subscribe(
-                    success => {
-                        if (success) {
-                            swal({
-                                type: "success",
-                                timer: 1500,
-                                showConfirmButton: false
-                            }); 
-                        } else {
-                            swal({
-                                type: "error",
-                                timer: 1500,
-                                showConfirmButton: false
-                            }); 
-                        } 
-                    }
-                );
-            }
+            allowOutsideClick: false
         }
-
-        this.unDtaFacadeDialog.options = Object.assign({}, this.unDtaDialog.options);
-        this.unDtaFacadeDialog.options.onOpen = () => {
-            swal.showLoading(); 
-        };
-
 
         this.changedDialog.options = {
             title: "Input Changed",
@@ -179,17 +128,32 @@ export class HomeComponent implements OnInit {
             focusConfirm: false,
             confirmButtonText: "Dismiss",
         };
+
+        this.selectDisplaysDialog.options = {
+            text: "i should be hidden",
+            focusConfirm: false,
+            confirmButtonText: "Share",
+            showCancelButton: true,
+            width: "85vw",
+            preConfirm: () => {
+                console.log("here");
+                return new Promise((resolve, reject) => {
+                    this.share().subscribe(success => {
+                        if (success) {
+                            this.swalStatus(true);
+                            resolve(); 
+                        } else {
+                            this.swalStatus(false);
+                            reject(); 
+                        }
+                    });
+                });
+            },
+        }
     }
 
     private onWheelInit() {
-        this.wheel.preset.top = "50vh";
-        this.wheel.preset.right = "50vw";
-
-        this.oldPreset = this.wheel.preset;
-
-        this.dtaPreset = new Preset("All Displays", "subscriptions", this.data.displays, this.data.audioDevices.filter(a => a.roomWideAudio), this.wheel.preset.inputs);
-        this.dtaPreset.top = this.wheel.preset.top;
-        this.dtaPreset.right = this.wheel.preset.right;
+        this.preset = this.wheel.preset;
 
         if (this.wheel.getPower() == "on") {
             this.wheel.open(false, 500);
@@ -209,12 +173,8 @@ export class HomeComponent implements OnInit {
     }
 
     public turnOff(): EventEmitter<boolean> {
-        if (this.wheel.preset === this.dtaPreset) {
-            // show something?
-            this.unDtaFacadeDialog.show();
+        if (this.wheel.preset === this.sharePreset) {
             this.unDisplayToAll().subscribe(success => {
-                swal.close();
-
                 let ret: EventEmitter<boolean> = this.wheel.command.setPower('standby', this.wheel.preset.displays); 
                 ret.subscribe(success => {
                     if (success) {
@@ -234,19 +194,46 @@ export class HomeComponent implements OnInit {
         }
     }
 
-    public displayToAll(): EventEmitter<boolean> {
-        this.removeExtraInputs();
+    public openedSelectDisplaysDialog() {
+        if (this.wheel.getInput() == null) 
+            this.swalStatus(false); 
+
+        // check all displays
+        for (let d of this.data.displays) {
+            if (!this.wheel.preset.displays.includes(d)) {
+                this.selectedDisplays.push(d); 
+            }
+        }
+    }
+
+    public share(): EventEmitter<boolean> {
         let ret: EventEmitter<boolean> = new EventEmitter();
 
-        let input: Input = Display.getInput(this.wheel.preset.displays);
-        this.wheel.preset = this.dtaPreset;
+        this.removeExtraInputs();
 
-        this.wheel.displayToAll(input, this.data.displays, this.data.audioDevices).subscribe(
+        // get audioDevices from selected displays
+        let audioDevices: AudioDevice[] = [];
+        for (let d of this.selectedDisplays) {
+            let a = this.data.audioDevices.find(a => a.name == d.name);
+            if (a != null) {
+                audioDevices.push(a);
+            }
+        }
+
+        let displays: Display[] = [];
+        this.selectedDisplays.forEach(d => displays.push(d));
+        this.wheel.preset.displays.forEach(d => displays.push(d));
+
+        this.sharePreset = new Preset("Sharing", "subscriptions", displays, this.wheel.preset.audioDevices, this.wheel.preset.inputs, this.wheel.preset.shareableDisplays);
+        console.log("sharePreset", this.sharePreset);
+
+        this.wheel.share(this.selectedDisplays, audioDevices).subscribe(
             success => {
                 if (success) {
+                    this.wheel.preset = this.sharePreset;
                     ret.emit(true);
                 } else {
-                    this.wheel.preset = this.oldPreset;
+                    this.wheel.preset = this.preset;
                     ret.emit(false);
                 } 
             }
@@ -256,15 +243,21 @@ export class HomeComponent implements OnInit {
     }
 
     public unDisplayToAll(): EventEmitter<boolean> {
+        this.unDtaDialog.show();
+        swal.showLoading();
+
         let ret: EventEmitter<boolean> = new EventEmitter();
 
-        this.wheel.preset = this.oldPreset;
+        this.wheel.preset = this.preset;
         this.wheel.unDisplayToAll(this.data.presets).subscribe(
             success => {
                 if (success) {
+                    this.swalStatus(true);
                     ret.emit(true);
                 } else {
-                    this.wheel.preset = this.dtaPreset;
+                    this.wheel.preset = this.sharePreset;
+
+                    this.swalStatus(false);
                     ret.emit(false);
                 }
             }
@@ -295,12 +288,12 @@ export class HomeComponent implements OnInit {
                         if (input != null && !this.wheel.preset.inputs.includes(input)) {
 
                             // if the input gets changed on a device that is yours, and you're in display to all mode
-                            if (this.oldPreset.displays.find(d => d.name === e.device) != null && this.wheel.preset == this.dtaPreset) {
+                            if (this.preset.displays.find(d => d.name === e.device) != null && this.wheel.preset == this.sharePreset) {
                                 console.info("no longer display to all master")
-                                this.wheel.preset = this.oldPreset;
+                                this.wheel.preset = this.preset;
                             } 
 
-                            if (this.wheel.preset != this.dtaPreset) {
+                            if (this.wheel.preset != this.sharePreset) {
                                 console.log("Creating a new input on the wheel from event:", e);
                                 this.wheel.preset.extraInputs.length = 0;
                                 this.wheel.preset.extraInputs.push(input); 
@@ -336,5 +329,40 @@ export class HomeComponent implements OnInit {
     private removeExtraInputs() {
         this.wheel.preset.extraInputs.length = 0; 
         setTimeout(() => this.wheel.render(), 0);
+    }
+
+    private swalStatus(success: boolean): void {
+        if (!swal.isVisible())
+            return;
+
+        if (success) {
+            swal({
+                type: "success",
+                timer: 1500,
+                showConfirmButton: false
+            });
+        } else {
+            swal({
+                type: "error",
+                timer: 1500,
+                showConfirmButton: false
+            });
+        } 
+    }
+
+    public toggleSelected(name: string) {
+        let disp: Display = this.selectedDisplays.find(d => d.name === name);
+
+        if (disp == null) {
+            let add: Display = this.data.displays.find(d => d.name === name);
+            this.selectedDisplays.push(add);
+        } else {
+            let index = this.selectedDisplays.indexOf(disp);
+            this.selectedDisplays.splice(index, 1);
+        }
+    }
+
+    public isSelected(name: string) {
+        return this.selectedDisplays.some(d => d.name === name);
     }
 }

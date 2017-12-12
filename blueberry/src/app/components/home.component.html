@@ -8,21 +8,58 @@
 </div> 
 
 <div *ngIf="data.panel?.render">
-    <wheel [openControlledByPower]="true" [blur]="false" [preset]="data.panel.presets[0]" (init)="onWheelInit()"></wheel>
+    <wheel top="50vh" right="50vw" [openControlledByPower]="true" [blur]="false" [preset]="data.panel.preset" (init)="onWheelInit()"></wheel>
 </div>
 
 <div class="buttons bottom">
-    <div *ngIf="data?.panel?.features.includes('advanced-option') || true">
-        <button mat-fab class="dta button" (click)="console.log('not implemented')">
+    <div *ngIf="data?.panel?.features.includes('share') || true">
+        <button mat-fab class="dta button" (click)="selectdisplays.show()">
             <mat-icon>share</mat-icon>
         </button>
     </div>
 </div> 
 
-<swal #poweroffall></swal>
-<swal #help></swal>
-<swal #helpConfirm></swal>
+<!-- modal windows -->
+<swal #poweroffall>
+    <div *swalPartial="swalTargets.content">
+        <span>Would you like to turn off everything?</span>
+    </div>
+</swal>
+
+<swal #help 
+    (confirm)="helpConfirmDialog.show()">
+
+    <div *swalPartial="swalTargets.content">
+        <span>Please call AV Support at 801-422-7671 for help, or request help by pressing 'Request Help'</span>
+    </div>
+</swal>
+
+<swal #helpConfirm 
+    (cancel)="api.help('cancel').subscribe()">
+    
+    <div *swalPartial="swalTargets.content">
+        <span>Your help request has been recieved. A technician is on their way.</span>
+    </div>
+</swal>
+
+<swal #selectdisplays 
+    (open)="openedSelectDisplaysDialog()">
+
+    <div *swalPartial="swalTargets.title">
+        <span>Select displays to share {{wheel.getInput()?.displayname}} with</span>
+    </div>
+
+    <div *swalPartial="swalTargets.content" class="grid">
+        <div *ngFor="let d of wheel.preset.shareableDisplays" class="item">
+            <button mat-fab color="primary" (click)="toggleSelected(d)">{{d}}
+                <div *ngIf="isSelected(d)" class="badge">
+                    <mat-icon>check</mat-icon>
+                </div>
+            </button>
+        </div>
+    </div>
+</swal>
+
 <swal #displaytoall></swal>
 <swal #undisplaytoall></swal>
-<swal #undisplaytoallfacade></swal>
 <swal #changed></swal>

@@ -217,35 +217,60 @@ export class CommandService {
         return ret;
     }
 
-    public displayToAll(i: Input, displays: Display[], audioDevices: AudioDevice[]): EventEmitter<boolean> {
+    public share(from: Display, to: Display[], toAudio: AudioDevice[]): EventEmitter<boolean> {
         let ret: EventEmitter<boolean> = new EventEmitter<boolean>();
-        console.log("displaying", i, "to all displays:", displays);
+        if (from.input == null) {
+            setTimeout(() => ret.emit(false), 150); 
+            return ret;
+        }
+
+
         let body = { displays: [], audioDevices: [] }; 
-        for (let d of displays) {
+        for (let d of to) {
             body.displays.push({
                 "name": d.name,
                 "power": "on",
                 "blanked": false,
-                "input": i.name
+                "input": from.input.name
             }); 
         }
 
-        for (let a of audioDevices) {
-            if (a.roomWideAudio) {
-                body.audioDevices.push({
-                    "name": a.name,
-                    "input": i.name,
-                    "muted": false,
-                    "volume": 30
-                });
-            } else {
+        if (toAudio.some(a => a.roomWideAudio)) {
+            // mute the source device
+            body.audioDevices.push({
+                "name": from.name,
+                "muted": true,
+                "volume": 0
+            }); 
+
+            for (let a of toAudio) {
+                if (a.roomWideAudio) {
+                    body.audioDevices.push({
+                        "name": a.name,
+                        "input": from.input.name,
+                        "muted": false,
+                        "volume": 30
+                    });  
+                } else {
+                    body.audioDevices.push({
+                        "name": a.name,
+                        "muted": true,
+                        "volume": 0
+                    }); 
+                }
+            }
+        } else {
+            // mute everything else
+            for (let a of toAudio) {
                 body.audioDevices.push({
                     "name": a.name,
                     "muted": true,
                     "volume": 0
-                });
+                }); 
             }
         }
+
+        console.log("display to all body:", body);
 
 		this.putWithCustomTimeout(body, 10*1000).subscribe(
 			data => {
