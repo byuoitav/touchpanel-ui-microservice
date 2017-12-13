@@ -28,15 +28,13 @@ export class HomeComponent implements OnInit {
     preset: Preset;
 
     selectedDisplays: Display[] = [];
+    shareableDisplays: Display[] = [];
 
-    selectDisplaysColumns = 0;
-   
     @ViewChild("poweroffall") powerOffAllDialog: SwalComponent;
     @ViewChild("help") helpDialog: SwalComponent;
     @ViewChild("helpConfirm") helpConfirmDialog: SwalComponent;
     @ViewChild("selectdisplays") selectDisplaysDialog: SwalComponent;
-    @ViewChild("displaytoall") dtaDialog: SwalComponent;
-    @ViewChild("undisplaytoall") unDtaDialog: SwalComponent;
+    @ViewChild("unshare") unShareDialog: SwalComponent;
     @ViewChild("changed") changedDialog: SwalComponent;
 
     constructor(public data: DataService, private socket: SocketService, public api: APIService, public readonly swalTargets: SwalPartialTargets, private graph: GraphService) {
@@ -112,12 +110,7 @@ export class HomeComponent implements OnInit {
             },
         }
 
-        this.dtaDialog.options = {
-            title: "Displaying to all...",
-            allowOutsideClick: false
-        }
-
-        this.unDtaDialog.options = {
+        this.unShareDialog.options = {
             title: "Returning room to default state...",
             allowOutsideClick: false
         }
@@ -135,8 +128,8 @@ export class HomeComponent implements OnInit {
             confirmButtonText: "Share",
             showCancelButton: true,
             width: "85vw",
+            showLoaderOnConfirm: true,
             preConfirm: () => {
-                console.log("here");
                 return new Promise((resolve, reject) => {
                     this.share().subscribe(success => {
                         if (success) {
@@ -174,7 +167,7 @@ export class HomeComponent implements OnInit {
 
     public turnOff(): EventEmitter<boolean> {
         if (this.wheel.preset === this.sharePreset) {
-            this.unDisplayToAll().subscribe(success => {
+            this.unShare().subscribe(success => {
                 let ret: EventEmitter<boolean> = this.wheel.command.setPower('standby', this.wheel.preset.displays); 
                 ret.subscribe(success => {
                     if (success) {
@@ -198,12 +191,20 @@ export class HomeComponent implements OnInit {
         if (this.wheel.getInput() == null) 
             this.swalStatus(false); 
 
-        // check all displays
-        for (let d of this.data.displays) {
-            if (!this.wheel.preset.displays.includes(d)) {
-                this.selectedDisplays.push(d); 
+        this.shareableDisplays.length = 0;
+
+        this.graph.getDisplayList().forEach(name => {
+            if (!this.wheel.preset.displays.some(d => d.name === name)) {
+                let display = this.data.displays.find(d => d.name === name); 
+                if (display != null)
+                    this.shareableDisplays.push(display);
             }
-        }
+        });
+
+        // check all displays
+        this.shareableDisplays.forEach(name => {
+            this.selectedDisplays.push(name);
+        });
     }
 
     public share(): EventEmitter<boolean> {
@@ -242,21 +243,26 @@ export class HomeComponent implements OnInit {
         return ret;
     }
 
-    public unDisplayToAll(): EventEmitter<boolean> {
-        this.unDtaDialog.show();
+    public unShare(): EventEmitter<boolean> {
         swal.showLoading();
-
         let ret: EventEmitter<boolean> = new EventEmitter();
 
-        this.wheel.preset = this.preset;
-        this.wheel.unDisplayToAll(this.data.presets).subscribe(
+        let audioDevices: AudioDevice[] = [];
+        for (let d of this.selectedDisplays) {
+            let a = this.data.audioDevices.find(a => a.name == d.name);
+            if (a != null) {
+                audioDevices.push(a);
+            }
+        }
+        
+        this.wheel.unShare(this.selectedDisplays, audioDevices).subscribe(
             success => {
                 if (success) {
                     this.swalStatus(true);
+
+                    this.wheel.preset = this.preset;
                     ret.emit(true);
                 } else {
-                    this.wheel.preset = this.sharePreset;
-
                     this.swalStatus(false);
                     ret.emit(false);
                 }
@@ -350,19 +356,17 @@ export class HomeComponent implements OnInit {
         } 
     }
 
-    public toggleSelected(name: string) {
-        let disp: Display = this.selectedDisplays.find(d => d.name === name);
+    public toggleSelected(d: Display) {
+        let index = this.selectedDisplays.indexOf(d);
 
-        if (disp == null) {
-            let add: Display = this.data.displays.find(d => d.name === name);
-            this.selectedDisplays.push(add);
+        if (index === -1) {
+            this.selectedDisplays.push(d);
         } else {
-            let index = this.selectedDisplays.indexOf(disp);
             this.selectedDisplays.splice(index, 1);
         }
     }
 
-    public isSelected(name: string) {
-        return this.selectedDisplays.some(d => d.name === name);
+    public isSelected(d: Display) {
+        return this.selectedDisplays.includes(d);
     }
 }
