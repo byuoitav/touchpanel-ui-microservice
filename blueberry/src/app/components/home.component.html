@@ -12,10 +12,20 @@
 </div>
 
 <div class="buttons bottom">
-    <div *ngIf="data?.panel?.features.includes('share') || true">
-        <button mat-fab class="dta button" (click)="selectdisplays.show()">
-            <mat-icon>share</mat-icon>
-        </button>
+    <div *ngIf="data?.panel?.features.includes('share')">
+        <div *ngIf="wheel?.preset == preset; then shareIcon else unShareIcon"></div>
+
+        <ng-template #shareIcon>
+            <button mat-fab class="dta button" (click)="selectdisplays.show()">
+                <mat-icon>screen_share</mat-icon>
+            </button>
+        </ng-template>
+
+        <ng-template #unShareIcon>
+            <button mat-fab class="dta button" (click)="unShareDialog.show()">
+                <mat-icon>stop_screen_share</mat-icon>
+            </button>
+        </ng-template>
     </div>
 </div> 
 
@@ -50,8 +60,8 @@
     </div>
 
     <div *swalPartial="swalTargets.content" class="grid">
-        <div *ngFor="let d of wheel.preset.shareableDisplays" class="item">
-            <button mat-fab color="primary" (click)="toggleSelected(d)">{{d}}
+        <div *ngFor="let d of shareableDisplays" class="item">
+            <button mat-fab color="primary" (click)="toggleSelected(d)">{{d.name}}
                 <div *ngIf="isSelected(d)" class="badge">
                     <mat-icon>check</mat-icon>
                 </div>
@@ -60,6 +70,7 @@
     </div>
 </swal>
 
-<swal #displaytoall></swal>
-<swal #undisplaytoall></swal>
+<swal #unshare
+    (open)="unShare()">
+</swal>
 <swal #changed></swal>
