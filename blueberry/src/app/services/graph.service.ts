@@ -24,7 +24,6 @@ export class GraphService {
     private root: Node;
     private exists: boolean = false;
 
-
     constructor(private data: DataService, private socket: SocketService) {
     }
 
@@ -57,7 +56,6 @@ export class GraphService {
      * recursivly descends through nodes and adds their displays to the list
      */
     private getdisplaylist(node: Node, list: Set<string>) {
-        console.log("recursive descent: ", node);
         node.displays.forEach(d => list.add(d));
 
         node.children.forEach(n => {
