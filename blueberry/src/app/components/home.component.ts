@@ -232,6 +232,14 @@ export class HomeComponent implements OnInit {
             success => {
                 if (success) {
                     this.wheel.preset = this.sharePreset;
+
+                    let names: string[] = []; 
+                    this.selectedDisplays.forEach(d => names.push(d.name));
+                    let device: string = names.join(",");
+
+                    let event: Event = new Event(0, 0, APIService.piHostname, device, DTA, "true");
+                    this.api.sendFeatureEvent(event);
+
                     ret.emit(true);
                 } else {
                     this.wheel.preset = this.preset;
@@ -258,9 +266,16 @@ export class HomeComponent implements OnInit {
         this.wheel.unShare(this.selectedDisplays, audioDevices).subscribe(
             success => {
                 if (success) {
-                    this.swalStatus(true);
-
                     this.wheel.preset = this.preset;
+
+                    let names: string[] = []; 
+                    this.selectedDisplays.forEach(d => names.push(d.name));
+                    let device: string = names.join(",");
+
+                    let event: Event = new Event(0, 0, APIService.piHostname, device, DTA, "false");
+                    this.api.sendFeatureEvent(event);
+
+                    this.swalStatus(true);
                     ret.emit(true);
                 } else {
                     this.swalStatus(false);
@@ -310,6 +325,9 @@ export class HomeComponent implements OnInit {
                     } 
                     case DTA: {
                         console.log("DTA Event:", e);
+                        // Device field on DTA determines what devices got changed. If one of mine did, then show the popup.
+                        // TODO implement only showing popup when one of my displays gets changed
+                        
                         if (e.eventInfoValue === "true" && e.requestor !== APIService.piHostname) {
                             this.changedDialog.options.html = "<span>Station " + this.numberFromHostname(e.requestor) + " has shared an input with you.";
                         } else {

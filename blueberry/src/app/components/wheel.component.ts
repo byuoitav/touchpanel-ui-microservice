@@ -193,8 +193,6 @@ export class WheelComponent implements AfterContentInit {
             success => {
                 if (success) {
                     ret.emit(true);
-                    let event: Event = new Event(0, 0, APIService.piHostname, "", DTA, "true");
-                    this.api.sendFeatureEvent(event);
                 } else {
                     ret.emit(false);
                 }
@@ -211,8 +209,6 @@ export class WheelComponent implements AfterContentInit {
             success => {
                 if (success) {
                     ret.emit(true);
-                    let event: Event = new Event(0, 0, APIService.piHostname, "", DTA, "false");
-                    this.api.sendFeatureEvent(event);
                 } else {
                     ret.emit(false); 
                 }
