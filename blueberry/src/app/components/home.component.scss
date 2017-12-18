@@ -58,8 +58,11 @@
     display: flex;
     justify-content: space-around;
     align-items: center;
+    flex-wrap: wrap;
 
     .item {
-             
+        margin-left: 5vw;
+        margin-right: 5vw;
+        margin-bottom: 2vh;
     }
 }

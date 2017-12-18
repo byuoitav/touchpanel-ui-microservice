@@ -327,17 +327,26 @@ export class HomeComponent implements OnInit {
                         console.log("DTA Event:", e);
                         // Device field on DTA determines what devices got changed. If one of mine did, then show the popup.
                         // TODO implement only showing popup when one of my displays gets changed
-                        
-                        if (e.eventInfoValue === "true" && e.requestor !== APIService.piHostname) {
-                            this.changedDialog.options.html = "<span>Station " + this.numberFromHostname(e.requestor) + " has shared an input with you.";
-                        } else {
-                            this.removeExtraInputs();
+                        let names: string[] = e.device.split(",");
 
-                            this.changedDialog.options.timer = 6000;
-                            this.changedDialog.options.html = "<span>Station " + this.numberFromHostname(e.requestor) + " is no longer sharing an input with you";
+                        let showPopup: boolean = false;
+                        this.wheel.preset.displays.forEach(d => {
+                            if (names.includes(d.name))
+                                showPopup = true;
+                        });
+
+                        if (showPopup) {
+                            if (e.eventInfoValue === "true" && e.requestor !== APIService.piHostname) {
+                                this.changedDialog.options.html = "<span>Station " + this.numberFromHostname(e.requestor) + " has shared an input with you.";
+                            } else {
+                                this.removeExtraInputs();
+
+                                this.changedDialog.options.timer = 6000;
+                                this.changedDialog.options.html = "<span>Station " + this.numberFromHostname(e.requestor) + " is no longer sharing an input with you";
+                            }
+
+                            this.changedDialog.show();
                         }
-
-                        this.changedDialog.show();
                         break; 
                     }
                 }
