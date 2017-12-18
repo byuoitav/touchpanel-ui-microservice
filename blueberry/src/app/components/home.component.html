@@ -8,24 +8,69 @@
 </div> 
 
 <div *ngIf="data.panel?.render">
-    <wheel [openControlledByPower]="true" [blur]="false" [preset]="data.panel.presets[0]" (init)="onWheelInit()"></wheel>
+    <wheel top="50vh" right="50vw" [openControlledByPower]="true" [blur]="false" [preset]="data.panel.preset" (init)="onWheelInit()"></wheel>
 </div>
 
 <div class="buttons bottom">
-    <div *ngIf="!wheel?.preset?.extraInputs.includes(wheel?.getInput()) && data?.panel?.features.includes('display-to-all')">
-        <button *ngIf="wheel?.preset === oldPreset" mat-fab class="dta button" (click)="displaytoall.show()">
-            <mat-icon>screen_share</mat-icon>
-        </button>
-        <button *ngIf="wheel?.preset === dtaPreset" mat-fab class="dta button" (click)="undisplaytoall.show()">
-            <mat-icon>stop_screen_share</mat-icon>
-        </button>
+    <div *ngIf="data?.panel?.features.includes('share')">
+        <div *ngIf="wheel?.preset == preset; then shareIcon else unShareIcon"></div>
+
+        <ng-template #shareIcon>
+            <button mat-fab class="dta button" (click)="selectdisplays.show()">
+                <mat-icon>screen_share</mat-icon>
+            </button>
+        </ng-template>
+
+        <ng-template #unShareIcon>
+            <button mat-fab class="dta button" (click)="unShareDialog.show()">
+                <mat-icon>stop_screen_share</mat-icon>
+            </button>
+        </ng-template>
     </div>
 </div> 
 
-<swal #poweroffall></swal>
-<swal #help></swal>
-<swal #helpConfirm></swal>
-<swal #displaytoall></swal>
-<swal #undisplaytoall></swal>
-<swal #undisplaytoallfacade></swal>
+<!-- modal windows -->
+<swal #poweroffall>
+    <div *swalPartial="swalTargets.content">
+        <span>Would you like to turn everything off?</span>
+    </div>
+</swal>
+
+<swal #help 
+    (confirm)="helpConfirmDialog.show()">
+
+    <div *swalPartial="swalTargets.content">
+        <span>Please call AV Support at 801-422-7671 for help, or request help by pressing 'Request Help'</span>
+    </div>
+</swal>
+
+<swal #helpConfirm 
+    (cancel)="api.help('cancel').subscribe()">
+    
+    <div *swalPartial="swalTargets.content">
+        <span>Your help request has been recieved. A technician is on their way.</span>
+    </div>
+</swal>
+
+<swal #selectdisplays 
+    (open)="openedSelectDisplaysDialog()">
+
+    <div *swalPartial="swalTargets.title">
+        <span>Select displays to share {{wheel.getInput()?.displayname}} with</span>
+    </div>
+
+    <div *swalPartial="swalTargets.content" class="grid">
+        <div *ngFor="let d of shareableDisplays" class="item">
+            <button mat-fab color="primary" (click)="toggleSelected(d)">{{d.name}}
+                <div *ngIf="isSelected(d)" class="badge">
+                    <mat-icon>check</mat-icon>
+                </div>
+            </button>
+        </div>
+    </div>
+</swal>
+
+<swal #unshare
+    (open)="unShare()">
+</swal>
 <swal #changed></swal>

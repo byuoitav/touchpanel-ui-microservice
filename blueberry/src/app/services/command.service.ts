@@ -4,6 +4,7 @@ import { Observable } from 'rxjs/Rx';
 import { MatSliderChange } from '@angular/material';
 
 import { APIService } from './api.service';
+import { DataService } from './data.service';
 import { Input, Display, AudioDevice } from '../objects/status.objects';
 import { Preset } from '../objects/objects';
 import { WheelComponent } from '../components/wheel.component';
@@ -12,14 +13,14 @@ import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/timeout';
 import { deserialize } from 'serializer.ts/Serializer';
 
-const TIMEOUT = 7.5 * 1000;
+const TIMEOUT = 12 * 1000;
 
 @Injectable()
 export class CommandService {
 
 	private options: RequestOptions;
 
-	constructor(private http: Http) {
+	constructor(private http: Http, private data: DataService) {
 		let headers = new Headers();	
 		headers.append('content-type', 'application/json');
 		this.options = new RequestOptions({ headers: headers})
@@ -190,7 +191,7 @@ export class CommandService {
             }); 
         }
 
-        this.putWithCustomTimeout(body, 10*1000).subscribe(
+        this.putWithCustomTimeout(body, 20*1000).subscribe(
 			data => {
                 ret.emit(true);
 			}, err => {
@@ -217,37 +218,62 @@ export class CommandService {
         return ret;
     }
 
-    public displayToAll(i: Input, displays: Display[], audioDevices: AudioDevice[]): EventEmitter<boolean> {
+    public share(from: Display, to: Display[], toAudio: AudioDevice[]): EventEmitter<boolean> {
         let ret: EventEmitter<boolean> = new EventEmitter<boolean>();
-        console.log("displaying", i, "to all displays:", displays);
+        if (from.input == null) {
+            setTimeout(() => ret.emit(false), 150); 
+            return ret;
+        }
+
+
         let body = { displays: [], audioDevices: [] }; 
-        for (let d of displays) {
+        for (let d of to) {
             body.displays.push({
                 "name": d.name,
                 "power": "on",
                 "blanked": false,
-                "input": i.name
+                "input": from.input.name
             }); 
         }
 
-        for (let a of audioDevices) {
-            if (a.roomWideAudio) {
-                body.audioDevices.push({
-                    "name": a.name,
-                    "input": i.name,
-                    "muted": false,
-                    "volume": 30
-                });
-            } else {
+        if (toAudio.some(a => a.roomWideAudio)) {
+            // mute the source device
+            body.audioDevices.push({
+                "name": from.name,
+                "muted": true,
+                "volume": 0
+            }); 
+
+            for (let a of toAudio) {
+                if (a.roomWideAudio) {
+                    body.audioDevices.push({
+                        "name": a.name,
+                        "input": from.input.name,
+                        "muted": false,
+                        "volume": 30
+                    });  
+                } else {
+                    body.audioDevices.push({
+                        "name": a.name,
+                        "muted": true,
+                        "volume": 0
+                    }); 
+                }
+            }
+        } else {
+            // mute everything else
+            for (let a of toAudio) {
                 body.audioDevices.push({
                     "name": a.name,
                     "muted": true,
                     "volume": 0
-                });
+                }); 
             }
         }
 
-		this.putWithCustomTimeout(body, 10*1000).subscribe(
+        console.log("display to all body:", body);
+
+		this.putWithCustomTimeout(body, 20*1000).subscribe(
 			data => {
                 ret.emit(true);
 			}, err => {
@@ -258,42 +284,44 @@ export class CommandService {
         return ret;
     }
 
-    public unDisplayToAll(presets: Preset[]): EventEmitter<boolean> {
+    public unShare(to: Display[], toAudio: AudioDevice[]): EventEmitter<boolean> {
         let ret: EventEmitter<boolean> = new EventEmitter<boolean>();
         let body = { displays: [], audioDevices: [] }; 
 
-        for (let p of presets) {
-            for (let d of p.displays) {
-                if (!body.displays.some(di => di.name === d.name)) {
-                    body.displays.push({
-                        "name": d.name,
-                        "power": "on",
-                        "input": p.inputs[0].name,
-                        "blanked": false
-                    });
-                } 
-            } 
+        for (let d of to) {
+            let preset: Preset = this.data.presets.find(p => p.displays.includes(d));
 
-            for (let a of p.audioDevices) {
-                if (!body.audioDevices.some(au => au.name === a.name)) {
-                    body.audioDevices.push({
-                        "name": a.name,
-                        "power": "on",
-                        "muted": true,
-                        "volume": 30
-                    });
-                } 
-            } 
+            if (preset != null) {
+                body.displays.push({
+                    "name": d.name,
+                    "power": "on",
+                    "input": preset.inputs[0].name,
+                    "blanked": false
+                });
+            }
         }
+
+        for (let a of toAudio) {
+//            let preset: Preset = this.data.presets.find(p => p.audioDevices.includes(a));
+            
+            body.audioDevices.push({
+                "name": a.name,
+                "power": "on",
+                "volume": 30,
+                "muted": false
+            });
+        }
+
         console.log("body", body);
 
-		this.putWithCustomTimeout(body, 10*1000).subscribe(
+		this.putWithCustomTimeout(body, 20*1000).subscribe(
 			data => {
                 ret.emit(true);
 			}, err => {
                 ret.emit(false);
 			}
 		);
+
         return ret;
     }
 }
