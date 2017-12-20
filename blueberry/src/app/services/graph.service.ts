@@ -21,7 +21,8 @@ import { SocketService, MESSAGE } from './socket.service';
 
 const CONNECT: string = "connect";
 const DISCONNECT: string = "disconnect";
-const LEFT_RIGHT_BREAKUP: string = "/";
+const LEFT_RIGHT_DELIMITER: string = "/";
+const DISPLAY_DELIMITER: string = ",";
 
 @Injectable()
 export class GraphService {
@@ -48,15 +49,6 @@ export class GraphService {
             this.update();
 
             console.log("root", this.root);
-
-            let tmp = new Set<string>(["D5", "D7", "D0"]);
-            let node = new Node(tmp);
-
-            let tmp2 = new Set<string>(["D5", "D7", "D0"]);
-            console.log("testing for match", tmp2);
-
-            let match = this.findMatchingNode(tmp2);
-            console.log("match", match);
         });
     }
 
@@ -73,9 +65,9 @@ export class GraphService {
     private getdisplaylist(node: Node, list: Set<string>): Set<string> {
         node.displays.forEach(d => list.add(d));
 
-        node.children.forEach(n => {
-            this.getdisplaylist(n, list); 
-        });
+        for (let child of node.children) {
+            this.getdisplaylist(child, list); 
+        }
 
         return list; 
     }
@@ -87,12 +79,11 @@ export class GraphService {
     private findmatchingnode(node: Node, list: Set<string>): Node {
         if (node.matches(list)) return node;
 
-        node.children.forEach(n => {
-            console.log("here", n);
-            let ret: Node = this.findmatchingnode(n, list);
+        for (let child of node.children) {
+            let ret: Node = this.findmatchingnode(child, list);
             if (ret != null)
                 return ret;
-        });
+        }
 
         return null;
     }
@@ -103,17 +94,56 @@ export class GraphService {
                 let e = event.data; 
 
                 let sides: string;
-                let left: string;
-                let right: string; 
+                let left: Set<string>;
+                let right: Set<string>; 
 
                 switch (e.eventInfoKey) {
                     case CONNECT: 
-                        sides = e.eventInfoValue.split(LEFT_RIGHT_BREAKUP); 
-                        left = sides[0]; 
-                        right = sides[1];
+                        sides = e.eventInfoValue.split(LEFT_RIGHT_DELIMITER); 
+                        left = new Set(sides[0].split(DISPLAY_DELIMITER)); 
+                        right = new Set(sides[1].split(DISPLAY_DELIMITER));
 
+                        let node: Node = this.findMatchingNode(left);
+                        if (node != null) {
+                            node.children.push(new Node(right));
+                        } else {
+                            node = this.findMatchingNode(right);
+                            
+                            if (node != null) {
+                                console.log("adding node:", node, ". root node:", this.root);
+                                node.children.push(new Node(left));
+                            }
+                        }
                         break;
                     case DISCONNECT: {
+                        sides = e.eventInfoValue.split(LEFT_RIGHT_DELIMITER); 
+                        left = new Set(sides[0].split(DISPLAY_DELIMITER)); 
+                        right = new Set(sides[1].split(DISPLAY_DELIMITER));
+
+                        let leftNode: Node = this.findMatchingNode(left);
+                        let rightNode: Node = this.findMatchingNode(right);
+
+                        if (leftNode != null && rightNode != null) {
+
+                            let found = false;
+                            for (let i = 0; i < leftNode.children.length; ++i) {
+                                if (leftNode.children[i] === rightNode) {
+                                    leftNode.children.splice(i);
+                                    found = true;
+                                    break;
+                                }
+                            }
+
+                            if (!found) {
+                                for (let i = 0; i < rightNode.children.length; ++i) {
+                                    if (rightNode.children[i] === leftNode) {
+                                        rightNode.children.splice(i);
+                                        found = true;
+                                        break;
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
             } 
@@ -135,17 +165,12 @@ class Node {
     public matches(list: Set<string>): boolean {
         if (this.displays.size !== list.size) return false;
 
-        console.log("does", this.displays, "match", list, "?");
-
-        for (let d of this.displays) {
-            console.log("checking for", d);
+        for (let d of Array.from(this.displays)) {
             if (!list.has(d)) {
-                console.log("doesn't have it");
                 return false;
             }
         }
 
-        console.log("yes!");
         return true;
     }
 }

@@ -11,7 +11,6 @@ import { APIService } from '../services/api.service';
 	templateUrl: './wheel.component.html',
 	styleUrls: ['./wheel.component.scss', '../colorscheme.scss'],
 })
-
 export class WheelComponent implements AfterContentInit {
 	private static TITLE_ANGLE: number =  100;
 	private static TITLE_ANGLE_ROTATE: number = WheelComponent.TITLE_ANGLE / 2;
