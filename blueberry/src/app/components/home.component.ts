@@ -192,6 +192,7 @@ export class HomeComponent implements OnInit {
             this.swalStatus(false); 
 
         this.shareableDisplays.length = 0;
+        this.selectedDisplays.length = 0;
 
         this.graph.getDisplayList().forEach(name => {
             if (!this.wheel.preset.displays.some(d => d.name === name)) {
