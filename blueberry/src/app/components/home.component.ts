@@ -322,7 +322,7 @@ export class HomeComponent implements OnInit {
                             }
                         }
                         break; 
-                    } 
+                    }
                     case DTA: {
                         console.log("DTA Event:", e);
                         // Device field on DTA determines what devices got changed. If one of mine did, then show the popup.
