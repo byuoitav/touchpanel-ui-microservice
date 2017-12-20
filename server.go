@@ -57,6 +57,10 @@ func main() {
 		si, _ := socket.GetSocketInfo(hub)
 		return context.JSON(http.StatusOK, si)
 	})
+	router.PUT("/socketTest", func(context echo.Context) error {
+		events.SendTest(hub)
+		return context.JSON(http.StatusOK, "sent")
+	})
 
 	router.GET("/pihostname", handlers.GetPiHostname)
 	router.GET("/hostname", handlers.GetHostname)
