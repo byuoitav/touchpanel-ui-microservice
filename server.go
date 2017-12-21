@@ -19,7 +19,7 @@ import (
 
 func main() {
 	filters := []string{eventinfrastructure.UI, eventinfrastructure.UIFeature}
-	en := eventinfrastructure.NewEventNode("Touchpanel UI", "7003", filters, os.Getenv("EVENT_ROUTER_ADDRESS"))
+	en := eventinfrastructure.NewEventNode("Touchpanel UI", filters, os.Getenv("EVENT_ROUTER_ADDRESS"))
 
 	// websocket hub
 	hub := socket.NewHub()
