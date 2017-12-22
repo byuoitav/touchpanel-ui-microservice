@@ -12,7 +12,7 @@ import { HelpDialog } from '../dialogs/help.dialog';
 import { ChangedDialog } from '../dialogs/changed.dialog';
 
 import { Preset } from '../objects/objects';
-import { Output, Display, AudioDevice, INPUT, Input, DTA, POWER } from '../objects/status.objects';
+import { Output, Display, AudioDevice, INPUT, Input, DTA, POWER, SHARING } from '../objects/status.objects';
 
 @Component({
     selector: 'home',
@@ -35,7 +35,7 @@ export class HomeComponent implements OnInit {
     @ViewChild("helpConfirm") helpConfirmDialog: SwalComponent;
     @ViewChild("selectdisplays") selectDisplaysDialog: SwalComponent;
     @ViewChild("unshare") unShareDialog: SwalComponent;
-    @ViewChild("changed") changedDialog: SwalComponent;
+    @ViewChild("mirror") mirrorDialog: SwalComponent;
 
     constructor(public data: DataService, private socket: SocketService, public api: APIService, public readonly swalTargets: SwalPartialTargets, private graph: GraphService) {
         this.graph.init();
@@ -115,12 +115,14 @@ export class HomeComponent implements OnInit {
             allowOutsideClick: false
         }
 
-        this.changedDialog.options = {
-            title: "Input Changed",
+        this.mirrorDialog.options = {
             type: "info",
             focusConfirm: false,
-            confirmButtonText: "Dismiss",
-        };
+            confirmButtonText: "Stop",
+            showCancelButton: false,
+            allowOutsideClick: false,
+            width: "85vw",
+        }
 
         this.selectDisplaysDialog.options = {
             text: "i should be hidden",
@@ -192,6 +194,7 @@ export class HomeComponent implements OnInit {
             this.swalStatus(false); 
 
         this.shareableDisplays.length = 0;
+        this.selectedDisplays.length = 0;
 
         this.graph.getDisplayList().forEach(name => {
             if (!this.wheel.preset.displays.some(d => d.name === name)) {
@@ -269,7 +272,7 @@ export class HomeComponent implements OnInit {
                     this.wheel.preset = this.preset;
 
                     let names: string[] = []; 
-                    this.selectedDisplays.forEach(d => names.push(d.name));
+                    this.wheel.preset.displays.forEach(d => names.push(d.name));
                     let device: string = names.join(",");
 
                     let event: Event = new Event(0, 0, APIService.piHostname, device, DTA, "false");
@@ -285,6 +288,19 @@ export class HomeComponent implements OnInit {
         );
 
         return ret;
+    }
+
+    public mirror(preset: Preset) {
+        this.wheel.command.mirror(preset, this.wheel.preset.displays);
+    }
+
+    public unMirror() {
+        let names: string[] = [];
+        this.wheel.preset.displays.forEach(d => names.push(d.name));
+        let device: string = names.join(",");
+
+        let event: Event = new Event(0, 0, APIService.piHostname, device, SHARING, "remove");
+        this.api.sendFeatureEvent(event);
     }
 
     private updateFromEvents() {
@@ -326,7 +342,6 @@ export class HomeComponent implements OnInit {
                     case DTA: {
                         console.log("DTA Event:", e);
                         // Device field on DTA determines what devices got changed. If one of mine did, then show the popup.
-                        // TODO implement only showing popup when one of my displays gets changed
                         let names: string[] = e.device.split(",");
 
                         let showPopup: boolean = false;
@@ -337,17 +352,47 @@ export class HomeComponent implements OnInit {
 
                         if (showPopup) {
                             if (e.eventInfoValue === "true" && e.requestor !== APIService.piHostname) {
-                                this.changedDialog.options.html = "<span>Station " + this.numberFromHostname(e.requestor) + " has shared an input with you.";
+                                this.wheel.preset.extraInputs[0].displayname = "Station " + this.numberFromHostname(e.requestor);
+                                this.wheel.preset.extraInputs[0].click.subscribe(() => {
+                                    let panel = this.data.panels.find(p => p.hostname === e.requestor);
+                                    console.log("clicked 'mirror' input");
+
+                                    if (panel != null) {
+                                        this.mirror(panel.preset);
+                                        this.mirrorDialog.options.html = "<span>Mirroring station " + this.numberFromHostname(e.requestor) + "</span>";
+                                        this.mirrorDialog.show();
+                                    } else {
+                                        console.error("failed to find panel with hostname", e.requestor, ". panels: ", this.data.panels);
+                                    }
+                                });
+
+                                this.mirrorDialog.options.html = "<span>Mirroring station " + this.numberFromHostname(e.requestor) + "</span>"
+                                this.mirrorDialog.show();
                             } else {
                                 this.removeExtraInputs();
 
-                                this.changedDialog.options.timer = 6000;
-                                this.changedDialog.options.html = "<span>Station " + this.numberFromHostname(e.requestor) + " is no longer sharing an input with you";
+                                swal.close();
                             }
-
-                            this.changedDialog.show();
                         }
                         break; 
+                    }
+                    case SHARING: {
+                        if (this.sharePreset == this.wheel.preset) {
+                            let names = e.device.split(","); 
+
+                            if (e.eventInfoValue === "remove") {
+                                this.wheel.preset.displays = this.wheel.preset.displays.filter(d => !names.includes(d.name));
+                                console.log("removed displays. now mirroring to", this.wheel.preset.displays);
+                            } else if (e.eventInfoValue === "add") {
+                                let displays: Display[] = [];
+                                this.data.displays.filter(d => names.includes(d.name))
+                                                  .forEach(d => displays.push(d));
+
+                                this.sharePreset.displays.push(...displays);
+                            }
+                        } else {
+                        }
+                        break;
                     }
                 }
             }

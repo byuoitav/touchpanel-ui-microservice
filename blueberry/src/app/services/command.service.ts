@@ -65,6 +65,8 @@ export class CommandService {
     }
 
 	public setInput(i: Input, displays: Display[]): EventEmitter<boolean> {
+        i.click.emit();
+
         let ret: EventEmitter<boolean> = new EventEmitter<boolean>();
 		console.log("Changing input on", displays,"to", i.name);
         let prev = Display.getInput(displays);
@@ -321,6 +323,34 @@ export class CommandService {
                 ret.emit(false);
 			}
 		);
+
+        return ret;
+    }
+
+    public mirror(mirror: Preset, on: Display[]) {
+        let ret: EventEmitter<boolean> = new EventEmitter<boolean>();
+        let body = { displays: [] };
+
+        let power: string = Display.getPower(mirror.displays);
+        let input: Input = Display.getInput(mirror.displays);
+        let blanked: boolean = Display.getBlank(mirror.displays);
+
+        for (let d of on) {
+            body.displays.push({
+                "name": d.name,
+                "power": power,
+                "input": input.name,
+                "blanked": blanked,
+            });
+        }
+
+        this.put(body).subscribe(
+            data => {
+                ret.emit(true);
+            }, err => {
+                ret.emit(false);
+            }
+        );
 
         return ret;
     }

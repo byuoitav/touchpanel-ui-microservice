@@ -8,6 +8,7 @@ export const BLANKED: string = "blanked";
 export const MUTED: string = "muted";
 export const VOLUME: string = "volume";
 export const DTA: string = "dta";
+export const SHARING: string = "sharing";
 
 export class Device {
 	name: string;
@@ -46,6 +47,7 @@ export class Device {
 
 export class Input extends Device implements SpringboardItem {
 	icon: string;
+    click: EventEmitter<null> = new EventEmitter();
 
     constructor(name: string, displayname: string, icon: string) {
         super(name, displayname);

@@ -47,6 +47,15 @@ func SendRefresh(h *socket.Hub, delay *time.Timer) {
 	h.WriteToSockets(Message{Message: "refresh"})
 }
 
+func SendTest(h *socket.Hub) {
+	defer color.Unset()
+
+	color.Set(color.FgYellow)
+	log.Printf("Sending event test...")
+
+	h.WriteToSockets(Message{Message: "websocketTest"})
+}
+
 func Publish(en *eventinfrastructure.EventNode, event eventinfrastructure.EventInfo, eventType string) error {
 	var e eventinfrastructure.Event
 
