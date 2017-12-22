@@ -271,14 +271,14 @@ export class HomeComponent implements OnInit {
         this.wheel.unShare(this.selectedDisplays, audioDevices).subscribe(
             success => {
                 if (success) {
-                    this.wheel.preset = this.preset;
-
                     let names: string[] = []; 
                     this.wheel.preset.displays.forEach(d => names.push(d.name));
                     let device: string = names.join(",");
 
                     let event: Event = new Event(0, 0, APIService.piHostname, device, DTA, "false");
                     this.api.sendFeatureEvent(event);
+
+                    this.wheel.preset = this.preset;
 
                     this.swalStatus(true);
                     ret.emit(true);
