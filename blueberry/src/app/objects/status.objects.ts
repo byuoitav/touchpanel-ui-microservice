@@ -8,6 +8,7 @@ export const BLANKED: string = "blanked";
 export const MUTED: string = "muted";
 export const VOLUME: string = "volume";
 export const DTA: string = "dta";
+export const SHARING: string = "sharing";
 
 export class Device {
 	name: string;
