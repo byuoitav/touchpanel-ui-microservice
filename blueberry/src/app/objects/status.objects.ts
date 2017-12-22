@@ -47,6 +47,7 @@ export class Device {
 
 export class Input extends Device implements SpringboardItem {
 	icon: string;
+    click: EventEmitter<null> = new EventEmitter();
 
     constructor(name: string, displayname: string, icon: string) {
         super(name, displayname);

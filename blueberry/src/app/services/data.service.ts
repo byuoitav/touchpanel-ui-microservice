@@ -14,6 +14,7 @@ export class DataService {
     public displays: Display[] = [];
     public audioDevices: AudioDevice[] = [];
     public presets: Preset[] = [];
+    public panels: Panel[] = [];
 
     constructor(private api: APIService, private socket: SocketService) {
         this.loaded = new EventEmitter<boolean>();
@@ -23,10 +24,7 @@ export class DataService {
             this.createOutputs();
 
 			this.createPresets();
-            this.createPanel();
-
-            this.panel.render = true;
-            console.info("Panel", this.panel);
+            this.createPanels();
 
             this.loaded.emit(true);
         }); 
@@ -78,14 +76,20 @@ export class DataService {
         console.info("Presets", this.presets);
 	} 
 
-    private createPanel() {
-        // find my panel
-        let panel = APIService.room.uiconfig.panels.find(p => p.hostname == APIService.piHostname)
+    private createPanels() {
+        for (let panel of APIService.room.uiconfig.panels) {
+            let preset = this.presets.find(p => p.name === panel.preset);
+            let independentAudioDevices = Device.filterDevices<AudioDevice>(panel.independentAudioDevices, this.audioDevices);
 
-        let preset = this.presets.find(p => p.name === panel.preset);
-        let independentAudioDevices = Device.filterDevices<AudioDevice>(panel.independentAudioDevices, this.audioDevices);
+            this.panels.push(new Panel(panel.hostname, panel.uipath, preset, panel.features, independentAudioDevices));
 
-        this.panel = new Panel(panel.hostname, panel.uipath, preset, panel.features, independentAudioDevices);
+        }
+        console.info("Panels", this.panels);
+
+        this.panel = this.panels.find(p => p.hostname === APIService.piHostname);
+        this.panel.render = true;
+
+        console.info("Panel", this.panel);
     }
 
     private update() {

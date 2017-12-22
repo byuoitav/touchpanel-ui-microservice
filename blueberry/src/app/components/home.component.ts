@@ -290,12 +290,17 @@ export class HomeComponent implements OnInit {
         return ret;
     }
 
+    public mirror(preset: Preset) {
+        this.wheel.command.mirror(preset, this.wheel.preset.displays);
+    }
+
     public unMirror() {
         let names: string[] = [];
         this.wheel.preset.displays.forEach(d => names.push(d.name));
         let device: string = names.join(",");
 
         let event: Event = new Event(0, 0, APIService.piHostname, device, SHARING, "remove");
+        this.api.sendFeatureEvent(event);
     }
 
     private updateFromEvents() {
@@ -347,7 +352,20 @@ export class HomeComponent implements OnInit {
 
                         if (showPopup) {
                             if (e.eventInfoValue === "true" && e.requestor !== APIService.piHostname) {
-//                                this.changedDialog.options.html = "<span>Station " + this.numberFromHostname(e.requestor) + " has shared an input with you.";
+                                this.wheel.preset.extraInputs[0].displayname = "Station " + this.numberFromHostname(e.requestor);
+                                this.wheel.preset.extraInputs[0].click.subscribe(() => {
+                                    let panel = this.data.panels.find(p => p.hostname === e.requestor);
+                                    console.log("clicked 'mirror' input");
+
+                                    if (panel != null) {
+                                        this.mirror(panel.preset);
+                                        this.mirrorDialog.options.html = "<span>Mirroring station " + this.numberFromHostname(e.requestor) + "</span>";
+                                        this.mirrorDialog.show();
+                                    } else {
+                                        console.error("failed to find panel with hostname", e.requestor, ". panels: ", this.data.panels);
+                                    }
+                                });
+
                                 this.mirrorDialog.options.html = "<span>Mirroring station " + this.numberFromHostname(e.requestor) + "</span>"
                                 this.mirrorDialog.show();
                             } else {
