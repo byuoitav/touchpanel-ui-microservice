@@ -76,4 +76,8 @@
 
 <swal #mirror
     (confirm)="unMirror()">
+
+    <div *swalPartial="swalTargets.title">
+        <span>Mirroring Station {{mirrorNumber}}</span>
+    </div>
 </swal>
