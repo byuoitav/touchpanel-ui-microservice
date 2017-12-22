@@ -30,6 +30,8 @@ export class HomeComponent implements OnInit {
     selectedDisplays: Display[] = [];
     shareableDisplays: Display[] = [];
 
+    mirrorNumber: string;
+
     @ViewChild("poweroffall") powerOffAllDialog: SwalComponent;
     @ViewChild("help") helpDialog: SwalComponent;
     @ViewChild("helpConfirm") helpConfirmDialog: SwalComponent;
@@ -292,6 +294,12 @@ export class HomeComponent implements OnInit {
 
     public mirror(preset: Preset) {
         this.wheel.command.mirror(preset, this.wheel.preset.displays);
+
+        let names: string[] = [];
+        this.wheel.preset.displays.forEach(d => names.push(d.name));
+        let device: string = names.join(",");
+
+        let event: Event = new Event(0, 0, APIService.piHostname, device, SHARING, "add");
     }
 
     public unMirror() {
@@ -301,6 +309,9 @@ export class HomeComponent implements OnInit {
 
         let event: Event = new Event(0, 0, APIService.piHostname, device, SHARING, "remove");
         this.api.sendFeatureEvent(event);
+
+        // switch the input back to default
+        this.wheel.command.powerOnDefault(this.data.panel.preset);
     }
 
     private updateFromEvents() {
@@ -355,18 +366,18 @@ export class HomeComponent implements OnInit {
                                 this.wheel.preset.extraInputs[0].displayname = "Station " + this.numberFromHostname(e.requestor);
                                 this.wheel.preset.extraInputs[0].click.subscribe(() => {
                                     let panel = this.data.panels.find(p => p.hostname === e.requestor);
-                                    console.log("clicked 'mirror' input");
 
                                     if (panel != null) {
                                         this.mirror(panel.preset);
-                                        this.mirrorDialog.options.html = "<span>Mirroring station " + this.numberFromHostname(e.requestor) + "</span>";
+
+                                        this.mirrorNumber = this.numberFromHostname(e.requestor);
                                         this.mirrorDialog.show();
                                     } else {
                                         console.error("failed to find panel with hostname", e.requestor, ". panels: ", this.data.panels);
                                     }
                                 });
 
-                                this.mirrorDialog.options.html = "<span>Mirroring station " + this.numberFromHostname(e.requestor) + "</span>"
+                                this.mirrorNumber = this.numberFromHostname(e.requestor);
                                 this.mirrorDialog.show();
                             } else {
                                 this.removeExtraInputs();
