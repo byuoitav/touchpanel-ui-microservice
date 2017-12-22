@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild, ElementRef, ComponentRef } from '@angular/core';
-import { Options } from 'angular2-notifications';
+//import { Options } from 'angular2-notifications';
 
 import { APIService } from '../services/api.service';
 import { DataService } from '../services/data.service';
@@ -19,6 +19,7 @@ export class AppComponent {
     public home: HomeComponent;
     public animate: boolean = false;
 
+    /*
     public notificationOptions: Options = {
         position: ["top", "right"],
         timeOut: 3000,
@@ -29,6 +30,7 @@ export class AppComponent {
         maxStack: 3,
         preventDuplicates: true,
     }
+   */
 
 	constructor (private api: APIService, private data: DataService, public socket: SocketService) {}
 

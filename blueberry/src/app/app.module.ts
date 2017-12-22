@@ -5,7 +5,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatSliderModule, MatIconModule, MatButtonModule, MatMenuModule, MatDialogModule, MatGridListModule, MatChipsModule } from '@angular/material';
 import { UiSwitchModule } from 'ngx-ui-switch';
 import { SweetAlert2Module } from '@toverux/ngx-sweetalert2';
-import { SimpleNotificationsModule } from 'angular2-notifications';
+//import { SimpleNotificationsModule } from 'angular2-notifications';
 import 'hammerjs';
 
 import { AppComponent } from './components/app.component';
@@ -46,7 +46,7 @@ import { GraphService } from './services/graph.service';
     MatChipsModule,
     UiSwitchModule,
     SweetAlert2Module.forRoot(),
-    SimpleNotificationsModule.forRoot(),
+//    SimpleNotificationsModule.forRoot(),
   ],
   providers: [
 	  APIService,

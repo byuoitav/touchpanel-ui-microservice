@@ -2,7 +2,7 @@ import { Injectable, EventEmitter } from '@angular/core'
 import { Http } from '@angular/http'
 import { $WebSocket, WebSocketConfig } from 'angular2-websocket/angular2-websocket'
 import { deserialize } from 'serializer.ts/Serializer';
-import { NotificationsService } from 'angular2-notifications';
+//import { NotificationsService } from 'angular2-notifications';
 
 export const OPEN: string = "open";
 export const CLOSE: string = "close";
@@ -23,7 +23,8 @@ export class SocketService {
 
   public screenoff: boolean;
 
-  public constructor(private notify: NotificationsService) { 
+//  public constructor(private notify: NotificationsService) { 
+    public constructor() {
 	this.url = "ws://" + location.hostname + ":8888/websocket";
 	this.socket = new $WebSocket(this.url, null, this.webSocketConfig); 
 	this.listener = new EventEmitter(); 
@@ -39,10 +40,12 @@ export class SocketService {
 		 this.screenoff = true; 
 	  } else if (msg.data.includes("websocketTest")) {
           console.log("socket test");
+          /*
           this.notify.success("websocket", "test (click to dismiss)", {
               timeOut: 0,
               clickToClose: true
           });
+         */
       } else { 
         let data = JSON.parse(msg.data);
         let event = deserialize<Event>(Event, data.event);
@@ -53,7 +56,7 @@ export class SocketService {
 
 	this.socket.onOpen((msg) => { 
 		console.log("Websocket opened with", this.url ,":", msg);	
-        this.notify.success("websocket", "opened");
+//        this.notify.success("websocket", "opened");
 		this.listener.emit({"type": OPEN});
 	});
 
