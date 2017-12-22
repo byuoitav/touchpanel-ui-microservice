@@ -19,23 +19,16 @@ type Message struct {
 
 func WriteEventsToSocket(en *eventinfrastructure.EventNode, h *socket.Hub) {
 	for {
-		select {
-		case message, ok := <-en.Read:
-			if !ok {
-				color.Set(color.FgRed)
-				log.Fatalf("eventnode read channel closed.")
-				color.Unset()
-			}
 
-			var e eventinfrastructure.Event
-			err := json.Unmarshal(message.MessageBody, &e)
-			if err != nil {
-				color.Set(color.FgRed)
-				log.Printf("failed to unmarshal message into Event type: %s", message.MessageBody)
-				color.Unset()
-			} else {
-				h.WriteToSockets(e)
-			}
+		message := en.Read()
+		var e eventinfrastructure.Event
+		err := json.Unmarshal(message.MessageBody, &e)
+		if err != nil {
+			color.Set(color.FgRed)
+			log.Printf("failed to unmarshal message into Event type: %s", message.MessageBody)
+			color.Unset()
+		} else {
+			h.WriteToSockets(e)
 		}
 	}
 }
