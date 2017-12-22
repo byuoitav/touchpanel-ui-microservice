@@ -15,7 +15,7 @@
 			</div>
 		</li>
 
-		<li *ngFor="let i of preset.extraInputs" class="input-slice" [class.selected-input]="getInput() === i" (click)="command.setInput(i, preset.displays)">
+		<li *ngFor="let i of preset.extraInputs" class="input-slice" [class.selected-input]="getInput() === i" (click)="i.click.emit()">
 			<div class="input" [style.top]="topoffset" [style.right]="rightoffset">
 				<i class="material-icons">{{i.icon}}</i>
 				<span class="name">{{i.displayname}}</span>
