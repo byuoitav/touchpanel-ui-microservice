@@ -217,6 +217,18 @@ export class HomeComponent implements OnInit {
 
         this.removeExtraInputs();
 
+        // TODO
+        // If the selectedDisplays contains a display that is mapped to a roomWideAudio,
+        // then the audioDevices of the sharePreset needs to be changed to the audioDevices mapped to that display.
+        /*
+        let roomWideAudio: boolean;
+        displays.forEach(d => {
+            let ac = d.getAudioConfiguration(); 
+            if (ac != null && ac.roomWide) {
+            }
+        });
+       */
+
         // get audioDevices from selected displays
         let audioDevices: AudioDevice[] = [];
         for (let d of this.selectedDisplays) {
@@ -229,8 +241,8 @@ export class HomeComponent implements OnInit {
         let displays: Display[] = [];
         this.selectedDisplays.forEach(d => displays.push(d));
         this.wheel.preset.displays.forEach(d => displays.push(d));
-
-        this.sharePreset = new Preset("Sharing", "subscriptions", displays, this.wheel.preset.audioDevices, this.wheel.preset.inputs, this.wheel.preset.shareableDisplays);
+        
+        this.sharePreset = new Preset("Sharing", "subscriptions", displays, audioDevices, this.wheel.preset.inputs, this.wheel.preset.shareableDisplays);
         console.log("sharePreset", this.sharePreset);
 
         this.wheel.share(this.selectedDisplays, audioDevices).subscribe(
@@ -293,7 +305,7 @@ export class HomeComponent implements OnInit {
     }
 
     public mirror(preset: Preset) {
-        this.wheel.command.mirror(preset, this.wheel.preset.displays);
+        this.wheel.command.mirror(preset, this.wheel.preset);
 
         let names: string[] = [];
         this.wheel.preset.displays.forEach(d => names.push(d.name));

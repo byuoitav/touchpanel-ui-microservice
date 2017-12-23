@@ -38,8 +38,10 @@ export class UIConfiguration {
     @Type(() => InputConfiguration)
     inputConfiguration: InputConfiguration[];
 
+    @Type(() => AudioConfiguration)
+    audioConfiguration: AudioConfiguration[];
+
     Api: string[];
-    roomWideAudios: string[];
 }
 
 export class PanelConfiguration {
@@ -57,6 +59,12 @@ export class PresetConfiguration {
     shareableDisplays: string[];
     audioDevices: string[];
     inputs: string[];
+}
+
+export class AudioConfiguration {
+    display: string;
+    audioDevices: string[];
+    roomWide: boolean;
 }
 
 export class InputConfiguration {

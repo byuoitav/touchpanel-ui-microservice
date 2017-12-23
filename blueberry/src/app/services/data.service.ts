@@ -54,9 +54,8 @@ export class DataService {
         // create audioDevices
         for (let status of APIService.room.status.audioDevices) {
             let config = APIService.room.config.devices.find(d => d.name == status.name);
-            let roomWide: boolean = APIService.room.uiconfig.roomWideAudios.includes(status.name);
 
-            let a = new AudioDevice(status.name, config.display_name, status.power, Input.getInput(status.input, this.inputs), status.muted, status.volume, roomWide);
+            let a = new AudioDevice(status.name, config.display_name, status.power, Input.getInput(status.input, this.inputs), status.muted, status.volume);
             this.audioDevices.push(a);
         }
 

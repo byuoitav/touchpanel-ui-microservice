@@ -238,6 +238,8 @@ export class CommandService {
             }); 
         }
 
+        // TODO fix
+        /*
         if (toAudio.some(a => a.roomWideAudio)) {
             // mute the source device
             body.audioDevices.push({
@@ -272,6 +274,7 @@ export class CommandService {
                 }); 
             }
         }
+       */
 
         console.log("display to all body:", body);
 
@@ -327,21 +330,28 @@ export class CommandService {
         return ret;
     }
 
-    public mirror(mirror: Preset, on: Display[]) {
+    public mirror(mirror: Preset, on: Preset) {
         let ret: EventEmitter<boolean> = new EventEmitter<boolean>();
-        let body = { displays: [] };
+        let body = { displays: [], audioDevices: [] };
 
         let power: string = Display.getPower(mirror.displays);
         let input: Input = Display.getInput(mirror.displays);
         let blanked: boolean = Display.getBlank(mirror.displays);
 
-        for (let d of on) {
+        for (let d of on.displays) {
             body.displays.push({
                 "name": d.name,
                 "power": power,
                 "input": input.name,
                 "blanked": blanked,
             });
+        }
+
+        for (let a of on.audioDevices) {
+            body.audioDevices.push({
+                "name": a.name,
+                "muted": true
+            })
         }
 
         this.put(body).subscribe(
