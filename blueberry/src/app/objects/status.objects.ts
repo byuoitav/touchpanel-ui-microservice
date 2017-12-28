@@ -1,5 +1,6 @@
 import { Type } from 'serializer.ts/Decorators';
 import { EventEmitter } from '@angular/core';
+import { SpringboardItem } from '../components/springboard.component';
 
 export const POWER: string = "power";
 export const INPUT: string = "input";
@@ -7,6 +8,7 @@ export const BLANKED: string = "blanked";
 export const MUTED: string = "muted";
 export const VOLUME: string = "volume";
 export const DTA: string = "dta";
+export const SHARING: string = "sharing";
 
 export class Device {
 	name: string;
@@ -32,10 +34,20 @@ export class Device {
 
         return ret;
     }
+
+    public getName(): string {
+        return this.name; 
+    }
+
+    public getDisplayName(): string {
+        return this.displayname; 
+    }
+
 }
 
-export class Input extends Device {
+export class Input extends Device implements SpringboardItem {
 	icon: string;
+    click: EventEmitter<null> = new EventEmitter();
 
     constructor(name: string, displayname: string, icon: string) {
         super(name, displayname);
@@ -44,6 +56,14 @@ export class Input extends Device {
 
     public static getInput(name: string, inputs: Input[]): Input {
         return inputs.find(i => i.name == name);
+    }
+
+    public getColor(): string {
+        return "red";  
+    }
+
+    public getIcon(): string {
+        return this.icon; 
     }
 }
 
@@ -61,19 +81,14 @@ export class Output extends Device {
         this.powerEmitter = new EventEmitter();
     }
 
-    // return on (true) if at least one is on
     public static getPower(outputs: Output[]): string {
-        let state: string = null;
-
         for (let o of outputs) {
-            if (state == null) {
-                state = o.power;
-            } else if (o.power != state) {
-                return null;
+            if (o.power == 'on') {
+                return o.power;
             }
         }
 
-        return state; 
+        return 'standby'; 
     }
 
     public static getInput(outputs: Output[]): Input {

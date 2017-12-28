@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, EventEmitter } from '@angular/core';
 
 import { APIService } from './api.service';
 import { SocketService, MESSAGE } from './socket.service';
@@ -7,22 +7,26 @@ import { Device, Input, Output, Display, AudioDevice, POWER, INPUT, BLANKED, MUT
 
 @Injectable()
 export class DataService {
+    public loaded: EventEmitter<boolean>;
+
     public panel: Panel;
     public inputs: Input[] = [];
     public displays: Display[] = [];
     public audioDevices: AudioDevice[] = [];
     public presets: Preset[] = [];
+    public panels: Panel[] = [];
 
     constructor(private api: APIService, private socket: SocketService) {
+        this.loaded = new EventEmitter<boolean>();
+
         this.api.loaded.subscribe(() => {
             this.createInputs();
             this.createOutputs();
 
 			this.createPresets();
-            this.createPanel();
+            this.createPanels();
 
-            this.panel.render = true;
-            console.info("Panel", this.panel);
+            this.loaded.emit(true);
         }); 
 
         this.update();
@@ -65,21 +69,27 @@ export class DataService {
             let audioDevices = Device.filterDevices<AudioDevice>(preset.audioDevices, this.audioDevices);
             let inputs = Device.filterDevices<Input>(preset.inputs, this.inputs);
 
-            let p = new Preset(preset.name, preset.icon, displays, audioDevices, inputs)  
+            let p = new Preset(preset.name, preset.icon, displays, audioDevices, inputs, preset.shareableDisplays);  
             this.presets.push(p);
         }
 
         console.info("Presets", this.presets);
 	} 
 
-    private createPanel() {
-        // find my panel
-        let panel = APIService.room.uiconfig.panels.find(p => p.hostname == APIService.piHostname)
+    private createPanels() {
+        for (let panel of APIService.room.uiconfig.panels) {
+            let preset = this.presets.find(p => p.name === panel.preset);
+            let independentAudioDevices = Device.filterDevices<AudioDevice>(panel.independentAudioDevices, this.audioDevices);
 
-        let presets = Preset.filterPresets(panel.presets, this.presets);
-        let independentAudioDevices = Device.filterDevices<AudioDevice>(panel.independentAudioDevices, this.audioDevices);
+            this.panels.push(new Panel(panel.hostname, panel.uipath, preset, panel.features, independentAudioDevices));
 
-        this.panel = new Panel(panel.hostname, panel.uipath, presets, panel.features, independentAudioDevices);
+        }
+        console.info("Panels", this.panels);
+
+        this.panel = this.panels.find(p => p.hostname === APIService.piHostname);
+        this.panel.render = true;
+
+        console.info("Panel", this.panel);
     }
 
     private update() {

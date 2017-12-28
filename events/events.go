@@ -19,23 +19,16 @@ type Message struct {
 
 func WriteEventsToSocket(en *eventinfrastructure.EventNode, h *socket.Hub) {
 	for {
-		select {
-		case message, ok := <-en.Read:
-			if !ok {
-				color.Set(color.FgRed)
-				log.Fatalf("eventnode read channel closed.")
-				color.Unset()
-			}
 
-			var e eventinfrastructure.Event
-			err := json.Unmarshal(message.MessageBody, &e)
-			if err != nil {
-				color.Set(color.FgRed)
-				log.Printf("failed to unmarshal message into Event type: %s", message.MessageBody)
-				color.Unset()
-			} else {
-				h.WriteToSockets(e)
-			}
+		message := en.Read()
+		var e eventinfrastructure.Event
+		err := json.Unmarshal(message.MessageBody, &e)
+		if err != nil {
+			color.Set(color.FgRed)
+			log.Printf("failed to unmarshal message into Event type: %s", message.MessageBody)
+			color.Unset()
+		} else {
+			h.WriteToSockets(e)
 		}
 	}
 }
@@ -52,6 +45,15 @@ func SendRefresh(h *socket.Hub, delay *time.Timer) {
 	log.Printf("Refreshing...")
 
 	h.WriteToSockets(Message{Message: "refresh"})
+}
+
+func SendTest(h *socket.Hub) {
+	defer color.Unset()
+
+	color.Set(color.FgYellow)
+	log.Printf("Sending event test...")
+
+	h.WriteToSockets(Message{Message: "websocketTest"})
 }
 
 func Publish(en *eventinfrastructure.EventNode, event eventinfrastructure.EventInfo, eventType string) error {

@@ -1,7 +1,7 @@
 <div *ngIf="blur" class="background" [class.open]="circleOpen" (click)="toggle()">
 </div>
 
-<div class="circle" [ngStyle]="{'margin-top': preset.top, 'margin-left': preset.right, 'z-index': circleOpen ? 10 : 0, 'transform': circleOpen ? translate : 'translate(0,0)'}">
+<div class="circle" [ngStyle]="{'margin-top': top, 'margin-left': right, 'z-index': circleOpen ? 10 : 0, 'transform': circleOpen ? translate : 'translate(0,0)'}">
 	<!-- wheel -->
 	<ul #wheel class="wheel" [class.open]="circleOpen">
 		<li class="title-slice">
@@ -15,7 +15,7 @@
 			</div>
 		</li>
 
-		<li *ngFor="let i of preset.extraInputs" class="input-slice" [class.selected-input]="getInput() === i" (click)="command.setInput(i, preset.displays)">
+		<li *ngFor="let i of preset.extraInputs" class="input-slice" [class.selected-input]="getInput() === i" (click)="i.click.emit()">
 			<div class="input" [style.top]="topoffset" [style.right]="rightoffset">
 				<i class="material-icons">{{i.icon}}</i>
 				<span class="name">{{i.displayname}}</span>

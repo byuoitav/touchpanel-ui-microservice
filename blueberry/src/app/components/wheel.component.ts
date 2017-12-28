@@ -11,13 +11,14 @@ import { APIService } from '../services/api.service';
 	templateUrl: './wheel.component.html',
 	styleUrls: ['./wheel.component.scss', '../colorscheme.scss'],
 })
-
 export class WheelComponent implements AfterContentInit {
 	private static TITLE_ANGLE: number =  100;
 	private static TITLE_ANGLE_ROTATE: number = WheelComponent.TITLE_ANGLE / 2;
 
 	@AngularInput() preset: Preset; 
     @AngularInput() blur: boolean;
+    @AngularInput() top: string;
+    @AngularInput() right: string;
     @AngularInput() openControlledByPower: boolean;
     @AngularOutput() init: EventEmitter<any> = new EventEmitter();
 
@@ -95,8 +96,8 @@ export class WheelComponent implements AfterContentInit {
 	}
 
     private setTranslate() {
-        let offsetX: number = parseInt(this.preset.right);
-        let offsetY: number = parseInt(this.preset.top);
+        let offsetX: number = parseInt(this.right);
+        let offsetY: number = parseInt(this.top);
 
         let x = 50 - offsetX;
         let y = 50 - offsetY;
@@ -184,15 +185,13 @@ export class WheelComponent implements AfterContentInit {
         return AudioDevice.getMute(this.preset.audioDevices); 
     }
 
-    public displayToAll(input: Input, displays: Display[], audioDevices: AudioDevice[]): EventEmitter<boolean> {
+    public share(displays: Display[], audioDevices: AudioDevice[]): EventEmitter<boolean> {
         let ret: EventEmitter<boolean> = new EventEmitter();
 
-        this.command.displayToAll(input, displays, audioDevices).subscribe(
+        this.command.share(this.preset.displays[0], displays, audioDevices).subscribe(
             success => {
                 if (success) {
                     ret.emit(true);
-                    let event: Event = new Event(0, 0, APIService.piHostname, "", DTA, "true");
-                    this.api.sendFeatureEvent(event);
                 } else {
                     ret.emit(false);
                 }
@@ -202,15 +201,13 @@ export class WheelComponent implements AfterContentInit {
         return ret;
     }
 
-    public unDisplayToAll(presets: Preset[]): EventEmitter<boolean> {
+    public unShare(to: Display[], toAudio: AudioDevice[]): EventEmitter<boolean> {
         let ret: EventEmitter<boolean> = new EventEmitter();
 
-        this.command.unDisplayToAll(presets).subscribe(
+        this.command.unShare(to, toAudio).subscribe(
             success => {
                 if (success) {
                     ret.emit(true);
-                    let event: Event = new Event(0, 0, APIService.piHostname, "", DTA, "false");
-                    this.api.sendFeatureEvent(event);
                 } else {
                     ret.emit(false); 
                 }
