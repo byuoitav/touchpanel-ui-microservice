@@ -6,7 +6,7 @@ import { MatSliderChange } from '@angular/material';
 import { APIService } from './api.service';
 import { DataService } from './data.service';
 import { Input, Display, AudioDevice } from '../objects/status.objects';
-import { Preset } from '../objects/objects';
+import { Preset, AudioConfig } from '../objects/objects';
 import { WheelComponent } from '../components/wheel.component';
 
 import 'rxjs/add/operator/map';
@@ -132,6 +132,8 @@ export class CommandService {
             });
         }
 
+        console.log("volume body", body);
+
 		this.put(body).subscribe(
 			data => {
                 ret.emit(true);
@@ -220,12 +222,14 @@ export class CommandService {
         return ret;
     }
 
-    public share(from: Display, to: Display[], toAudio: AudioDevice[]): EventEmitter<boolean> {
+    public share(from: Display, to: Display[]): EventEmitter<boolean> {
         let ret: EventEmitter<boolean> = new EventEmitter<boolean>();
         if (from.input == null) {
             setTimeout(() => ret.emit(false), 150); 
             return ret;
         }
+
+        console.log("sharing to", to, "from", from);
 
 
         let body = { displays: [], audioDevices: [] }; 
@@ -238,42 +242,40 @@ export class CommandService {
             }); 
         }
 
-        if (toAudio.some(a => a.roomWideAudio)) {
-            // mute the source device
+        let audioConfigs = this.data.getAudioConfigurations(to);
+        let hasRoomWide = this.data.hasRoomWide(audioConfigs);
+
+        if (hasRoomWide) {
+            // mute the source device (yourself)
             body.audioDevices.push({
                 "name": from.name,
                 "muted": true,
                 "volume": 0
-            }); 
+            });
 
-            for (let a of toAudio) {
-                if (a.roomWideAudio) {
+            for (let config of audioConfigs) {
+                for (let audio of config.audioDevices) {
                     body.audioDevices.push({
-                        "name": a.name,
-                        "input": from.input.name,
-                        "muted": false,
-                        "volume": 30
-                    });  
-                } else {
-                    body.audioDevices.push({
-                        "name": a.name,
-                        "muted": true,
-                        "volume": 0
-                    }); 
+                        "name": audio.name,
+                        "muted": !config.roomWide,
+                        "volume": config.roomWide ? 30 : 0,
+                    });
                 }
             }
         } else {
-            // mute everything else
-            for (let a of toAudio) {
-                body.audioDevices.push({
-                    "name": a.name,
-                    "muted": true,
-                    "volume": 0
-                }); 
+            // mute everything except for yourself
+            for (let config of audioConfigs) {
+                for (let audio of config.audioDevices) {
+                    body.audioDevices.push({
+                        "name": audio.name,
+                        "muted": true,
+                        "volume": 0,
+                    });
+                }
             }
         }
 
-        console.log("display to all body:", body);
+        console.log("share body:", body);
 
 		this.putWithCustomTimeout(body, 20*1000).subscribe(
 			data => {
@@ -314,7 +316,7 @@ export class CommandService {
             });
         }
 
-        console.log("body", body);
+        console.log("unshare body", body);
 
 		this.putWithCustomTimeout(body, 20*1000).subscribe(
 			data => {
@@ -327,21 +329,28 @@ export class CommandService {
         return ret;
     }
 
-    public mirror(mirror: Preset, on: Display[]) {
+    public mirror(mirror: Preset, on: Preset) {
         let ret: EventEmitter<boolean> = new EventEmitter<boolean>();
-        let body = { displays: [] };
+        let body = { displays: [], audioDevices: [] };
 
         let power: string = Display.getPower(mirror.displays);
         let input: Input = Display.getInput(mirror.displays);
         let blanked: boolean = Display.getBlank(mirror.displays);
 
-        for (let d of on) {
+        for (let d of on.displays) {
             body.displays.push({
                 "name": d.name,
                 "power": power,
                 "input": input.name,
                 "blanked": blanked,
             });
+        }
+
+        for (let a of on.audioDevices) {
+            body.audioDevices.push({
+                "name": a.name,
+                "muted": true
+            })
         }
 
         this.put(body).subscribe(

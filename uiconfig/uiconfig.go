@@ -19,7 +19,7 @@ type UIConfig struct {
 	Panels             []Panel              `json:"panels"`
 	Presets            []Preset             `json:"presets"`
 	InputConfiguration []InputConfiguration `json:"inputConfiguration"`
-	RoomWideAudios     []string             `json:"roomWideAudios"`
+	AudioConfiguration []AudioConfiguration `json:"audioConfiguration"`
 }
 
 type Preset struct {
@@ -37,6 +37,12 @@ type Panel struct {
 	UIPath   string   `json:"uipath"`
 	Preset   string   `json:"preset"`
 	Features []string `json:"features"`
+}
+
+type AudioConfiguration struct {
+	Display      string   `json:"display"`
+	AudioDevices []string `json:"audioDevices"`
+	RoomWide     bool     `json:"roomWide"`
 }
 
 type InputConfiguration struct {
