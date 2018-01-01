@@ -185,10 +185,10 @@ export class WheelComponent implements AfterContentInit {
         return AudioDevice.getMute(this.preset.audioDevices); 
     }
 
-    public share(displays: Display[], audioDevices: AudioDevice[]): EventEmitter<boolean> {
+    public share(displays: Display[]): EventEmitter<boolean> {
         let ret: EventEmitter<boolean> = new EventEmitter();
 
-        this.command.share(this.preset.displays[0], displays, audioDevices).subscribe(
+        this.command.share(this.preset.displays[0], displays).subscribe(
             success => {
                 if (success) {
                     ret.emit(true);
