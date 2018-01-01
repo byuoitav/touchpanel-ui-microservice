@@ -12,7 +12,7 @@ import { HelpDialog } from '../dialogs/help.dialog';
 import { ChangedDialog } from '../dialogs/changed.dialog';
 
 import { Preset, AudioConfig } from '../objects/objects';
-import { Output, Display, AudioDevice, INPUT, Input, DTA, POWER, SHARING } from '../objects/status.objects';
+import { Output, Display, AudioDevice, INPUT, Input, DTA, POWER, SHARING, POWER_OFF_ALL } from '../objects/status.objects';
 
 @Component({
     selector: 'home',
@@ -61,8 +61,12 @@ export class HomeComponent implements OnInit {
                 return new Promise((resolve, reject) => {
                     this.wheel.command.powerOffAll().subscribe(
                         success => {
-                            if (success) 
+                            if (success) {
                                 resolve();
+
+                                let event: Event = new Event(0, 0, APIService.piHostname, "", POWER_OFF_ALL, "");
+                                this.api.sendFeatureEvent(event);
+                            }
                             reject();
                         }
                     );
@@ -233,15 +237,6 @@ export class HomeComponent implements OnInit {
             }
         }
 
-        /*
-        for (let d of this.selectedDisplays) {
-            let a = this.data.audioDevices.find(a => a.name == d.name);
-            if (a != null) {
-                audioDevices.push(a);
-            }
-        }
-       */
-
         let displays: Display[] = [];
         this.selectedDisplays.forEach(d => displays.push(d));
         this.wheel.preset.displays.forEach(d => displays.push(d));
@@ -316,6 +311,8 @@ export class HomeComponent implements OnInit {
         let device: string = names.join(",");
 
         let event: Event = new Event(0, 0, APIService.piHostname, device, SHARING, "add");
+
+        // TODO check if adding self back into group is implemented?
     }
 
     public unMirror() {
@@ -420,6 +417,14 @@ export class HomeComponent implements OnInit {
                         } else {
                         }
                         break;
+                    }
+                    case POWER_OFF_ALL: {
+                        if (this.sharePreset == this.wheel.preset) {
+                            this.unShare().subscribe(success => {
+                                if (success)
+                                    this.wheel.command.powerOffAll();
+                            });
+                        }
                     }
                 }
             }

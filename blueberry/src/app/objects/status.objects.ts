@@ -11,6 +11,7 @@ export const MUTED: string = "muted";
 export const VOLUME: string = "volume";
 export const DTA: string = "dta";
 export const SHARING: string = "sharing";
+export const POWER_OFF_ALL: string = "power_off_all";
 
 export class Device {
 	name: string;
