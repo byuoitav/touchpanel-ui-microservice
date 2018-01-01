@@ -2,7 +2,7 @@ import { Injectable, EventEmitter } from '@angular/core';
 
 import { APIService } from './api.service';
 import { SocketService, MESSAGE } from './socket.service';
-import { Preset, Panel } from '../objects/objects';
+import { Preset, Panel, AudioConfig } from '../objects/objects';
 import { Device, Input, Output, Display, AudioDevice, POWER, INPUT, BLANKED, MUTED, VOLUME } from '../objects/status.objects';
 
 @Injectable()
@@ -13,6 +13,7 @@ export class DataService {
     public inputs: Input[] = [];
     public displays: Display[] = [];
     public audioDevices: AudioDevice[] = [];
+    public audioConfig: Map<Display, AudioConfig> = new Map();
     public presets: Preset[] = [];
     public panels: Panel[] = [];
 
@@ -51,6 +52,8 @@ export class DataService {
             this.displays.push(d);
         }
 
+        console.info("Displays", this.displays);
+
         // create audioDevices
         for (let status of APIService.room.status.audioDevices) {
             let config = APIService.room.config.devices.find(d => d.name == status.name);
@@ -59,7 +62,31 @@ export class DataService {
             this.audioDevices.push(a);
         }
 
-        console.info("Outputs", this.audioDevices);
+        console.info("AudioDevices", this.audioDevices);
+
+        // create room wide audio map
+        for (let config of APIService.room.uiconfig.audioConfiguration) {
+            // get display
+            let display = this.displays.find(d => d.name === config.display);
+            let audioDevices = this.audioDevices.filter(a => config.audioDevices.includes(a.name));
+
+            this.audioConfig.set(display, new AudioConfig(display, audioDevices, config.roomWide));
+        }
+
+        // fill out rest of audio config
+        for (let preset of APIService.room.uiconfig.presets) {
+            let audioDevices = this.audioDevices.filter(a => preset.audioDevices.includes(a.name));
+
+            for (let display of preset.displays) {
+                let d: Display = this.displays.find(d => d.name == display);
+
+                if (!this.audioConfig.has(d)) {
+                    this.audioConfig.set(d, new AudioConfig(d, audioDevices, false));
+                }
+            }
+        }
+
+        console.log("AudioConfig", this.audioConfig);
     }
 
 	private createPresets() {
@@ -152,5 +179,28 @@ export class DataService {
                 }
             }
         });
+    }
+
+    public getAudioConfigurations(displays: Display[]): AudioConfig[] {
+        let audioConfigs: AudioConfig[] = [];
+
+        for (let display of displays) {
+            let config = this.audioConfig.get(display);
+
+            if (config != null) {
+                audioConfigs.push(config);
+            }
+        }
+
+        return audioConfigs;
+    }
+
+    public hasRoomWide(audioConfigs: AudioConfig[]): boolean {
+        for (let config of audioConfigs) {
+            if (config.roomWide)
+                return true;
+        }
+
+        return false;
     }
 }

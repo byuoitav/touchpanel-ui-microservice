@@ -67,6 +67,18 @@ export class AudioConfiguration {
     roomWide: boolean;
 }
 
+export class AudioConfig {
+    display: Display;
+    audioDevices: AudioDevice[];
+    roomWide: boolean;
+
+    constructor(display: Display, audioDevices: AudioDevice[], roomWide: boolean) {
+        this.display = display;
+        this.audioDevices = audioDevices;
+        this.roomWide = roomWide;
+    }
+}
+
 export class InputConfiguration {
     name: string;
     icon: string;

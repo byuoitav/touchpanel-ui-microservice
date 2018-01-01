@@ -11,7 +11,7 @@ import { SocketService, MESSAGE, Event } from '../services/socket.service';
 import { HelpDialog } from '../dialogs/help.dialog';
 import { ChangedDialog } from '../dialogs/changed.dialog';
 
-import { Preset } from '../objects/objects';
+import { Preset, AudioConfig } from '../objects/objects';
 import { Output, Display, AudioDevice, INPUT, Input, DTA, POWER, SHARING } from '../objects/status.objects';
 
 @Component({
@@ -217,26 +217,30 @@ export class HomeComponent implements OnInit {
 
         this.removeExtraInputs();
 
-        // TODO
-        // If the selectedDisplays contains a display that is mapped to a roomWideAudio,
-        // then the audioDevices of the sharePreset needs to be changed to the audioDevices mapped to that display.
-        /*
-        let roomWideAudio: boolean;
-        displays.forEach(d => {
-            let ac = d.getAudioConfiguration(); 
-            if (ac != null && ac.roomWide) {
-            }
-        });
-       */
+        // only control audio on the display that is sharing
+        // unless the group includes a roomWideAudio, then control 
+        // those audioDevices.
+        let audioDevices = this.wheel.preset.audioDevices.slice();
+        let audioConfigs = this.data.getAudioConfigurations(this.selectedDisplays);
+        let hasRoomWide = this.data.hasRoomWide(audioConfigs);
 
-        // get audioDevices from selected displays
-        let audioDevices: AudioDevice[] = [];
+        if (hasRoomWide) {
+            audioDevices.length = 0;
+
+            for (let config of audioConfigs) {
+                if (config.roomWide) 
+                    audioDevices.push(...config.audioDevices);
+            }
+        }
+
+        /*
         for (let d of this.selectedDisplays) {
             let a = this.data.audioDevices.find(a => a.name == d.name);
             if (a != null) {
                 audioDevices.push(a);
             }
         }
+       */
 
         let displays: Display[] = [];
         this.selectedDisplays.forEach(d => displays.push(d));
@@ -245,7 +249,7 @@ export class HomeComponent implements OnInit {
         this.sharePreset = new Preset("Sharing", "subscriptions", displays, audioDevices, this.wheel.preset.inputs, this.wheel.preset.shareableDisplays);
         console.log("sharePreset", this.sharePreset);
 
-        this.wheel.share(this.selectedDisplays, audioDevices).subscribe(
+        this.wheel.share(this.selectedDisplays).subscribe(
             success => {
                 if (success) {
                     this.wheel.preset = this.sharePreset;
