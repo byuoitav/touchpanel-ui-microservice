@@ -185,6 +185,10 @@ ul {
         height: 100%;
     }
 
+    .notouch {
+        pointer-events: none; 
+    }
+
     .mute {
         height: 8vw;
         width: 8vw;
