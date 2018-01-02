@@ -36,10 +36,11 @@ export class DataService {
 	private createInputs() {
         APIService.room.config.devices.filter(device => device.hasRole("VideoIn") || device.hasRole("AudioIn")).forEach(input => {
             let inputConfiguration = APIService.room.uiconfig.inputConfiguration.find(i => i.name == input.name);
-            console.log("input config", inputConfiguration);
-            console.log("input", input);
-            let i = new Input(input.name, input.display_name, inputConfiguration.icon);
-            this.inputs.push(i);
+            if (inputConfiguration != null) {
+                let i = new Input(input.name, input.display_name, inputConfiguration.icon);
+                this.inputs.push(i);
+            } else 
+                console.warn("No input configuration found for:", input);
         });
 
 		console.info("Inputs", this.inputs);
@@ -50,8 +51,11 @@ export class DataService {
         for (let status of APIService.room.status.displays) {
             let config = APIService.room.config.devices.find(d => d.name == status.name);
 
-            let d = new Display(status.name, config.display_name, status.power, Input.getInput(status.input, this.inputs), status.blanked)
-            this.displays.push(d);
+            if (config != null) {
+                let d = new Display(status.name, config.display_name, status.power, Input.getInput(status.input, this.inputs), status.blanked)
+                this.displays.push(d);
+            } else 
+                console.warn("No configuration found for this display:", status);
         }
 
         console.info("Displays", this.displays);
@@ -60,8 +64,11 @@ export class DataService {
         for (let status of APIService.room.status.audioDevices) {
             let config = APIService.room.config.devices.find(d => d.name == status.name);
 
-            let a = new AudioDevice(status.name, config.display_name, status.power, Input.getInput(status.input, this.inputs), status.muted, status.volume);
-            this.audioDevices.push(a);
+            if (config != null) {
+                let a = new AudioDevice(status.name, config.display_name, status.power, Input.getInput(status.input, this.inputs), status.muted, status.volume);
+                this.audioDevices.push(a);
+            } else 
+                console.warn("No configuration found for this audio device:", status);
         }
 
         console.info("AudioDevices", this.audioDevices);
@@ -90,7 +97,8 @@ export class DataService {
             }
 
             console.log("AudioConfig", this.audioConfig);
-        }
+        } else 
+            console.warn("No AudioConfig present.");
     }
 
 	private createPresets() {
