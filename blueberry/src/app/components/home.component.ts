@@ -285,7 +285,7 @@ export class HomeComponent implements OnInit {
             success => {
                 if (success) {
                     let names: string[] = []; 
-                    this.wheel.preset.displays.forEach(d => names.push(d.name));
+                    this.selectedDisplays.forEach(d => names.push(d.name));
                     let device: string = names.join(",");
 
                     let event: Event = new Event(0, 0, APIService.piHostname, device, DTA, "false");
@@ -394,9 +394,10 @@ export class HomeComponent implements OnInit {
                                 this.mirrorNumber = this.numberFromHostname(e.requestor);
                                 this.mirrorDialog.show();
                             } else {
-                                this.removeExtraInputs();
-
-                                swal.close();
+                                if (this.mirrorNumber == this.numberFromHostname(e.requestor)) {
+                                    this.removeExtraInputs();
+                                    swal.close();
+                                }
                             }
                         }
                         break; 
