@@ -267,19 +267,21 @@ export class HomeComponent implements OnInit {
         return ret;
     }
 
+    // TODO make unShare use audioConfigs instead 
+    // of using the same name for display/audio. see function for sharing.  
     public unShare(): EventEmitter<boolean> {
         swal.showLoading();
         let ret: EventEmitter<boolean> = new EventEmitter();
 
         let audioDevices: AudioDevice[] = [];
-        for (let d of this.selectedDisplays) {
+        for (let d of this.wheel.preset.displays) {
             let a = this.data.audioDevices.find(a => a.name == d.name);
             if (a != null) {
                 audioDevices.push(a);
             }
         }
         
-        this.wheel.unShare(this.selectedDisplays, audioDevices).subscribe(
+        this.wheel.unShare(this.wheel.preset.displays, audioDevices).subscribe(
             success => {
                 if (success) {
                     let names: string[] = []; 
@@ -311,8 +313,7 @@ export class HomeComponent implements OnInit {
         let device: string = names.join(",");
 
         let event: Event = new Event(0, 0, APIService.piHostname, device, SHARING, "add");
-
-        // TODO check if adding self back into group is implemented?
+        this.api.sendFeatureEvent(event);
     }
 
     public unMirror() {
@@ -412,10 +413,10 @@ export class HomeComponent implements OnInit {
                                 this.data.displays.filter(d => names.includes(d.name))
                                                   .forEach(d => displays.push(d));
 
-                                this.sharePreset.displays.push(...displays);
+                                this.wheel.preset.displays.push(...displays);
+                                console.log("added", displays, "to mirror list. now mirroring to", this.wheel.preset.displays);
                             }
-                        } else {
-                        }
+                        } 
                         break;
                     }
                     case POWER_OFF_ALL: {
