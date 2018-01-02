@@ -62,10 +62,10 @@ export class HomeComponent implements OnInit {
                     this.wheel.command.powerOffAll().subscribe(
                         success => {
                             if (success) {
-                                resolve();
-
-                                let event: Event = new Event(0, 0, APIService.piHostname, "", POWER_OFF_ALL, "");
+                                let event: Event = new Event(0, 0, APIService.piHostname, " ", POWER_OFF_ALL, " ");
                                 this.api.sendFeatureEvent(event);
+
+                                resolve();
                             }
                             reject();
                         }
@@ -427,6 +427,9 @@ export class HomeComponent implements OnInit {
                         break;
                     }
                     case POWER_OFF_ALL: {
+                        this.removeExtraInputs();
+                        swal.close();
+
                         if (this.sharePreset == this.wheel.preset) {
                             this.unShare().subscribe(success => {
                                 if (success)
