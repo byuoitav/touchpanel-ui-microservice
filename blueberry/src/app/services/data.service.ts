@@ -36,6 +36,8 @@ export class DataService {
 	private createInputs() {
         APIService.room.config.devices.filter(device => device.hasRole("VideoIn") || device.hasRole("AudioIn")).forEach(input => {
             let inputConfiguration = APIService.room.uiconfig.inputConfiguration.find(i => i.name == input.name);
+            console.log("input config", inputConfiguration);
+            console.log("input", input);
             let i = new Input(input.name, input.display_name, inputConfiguration.icon);
             this.inputs.push(i);
         });
@@ -65,28 +67,30 @@ export class DataService {
         console.info("AudioDevices", this.audioDevices);
 
         // create room wide audio map
-        for (let config of APIService.room.uiconfig.audioConfiguration) {
-            // get display
-            let display = this.displays.find(d => d.name === config.display);
-            let audioDevices = this.audioDevices.filter(a => config.audioDevices.includes(a.name));
+        if (APIService.room.uiconfig.audioConfiguration != null) {
+            for (let config of APIService.room.uiconfig.audioConfiguration) {
+                // get display
+                let display = this.displays.find(d => d.name === config.display);
+                let audioDevices = this.audioDevices.filter(a => config.audioDevices.includes(a.name));
 
-            this.audioConfig.set(display, new AudioConfig(display, audioDevices, config.roomWide));
-        }
+                this.audioConfig.set(display, new AudioConfig(display, audioDevices, config.roomWide));
+            }
 
-        // fill out rest of audio config
-        for (let preset of APIService.room.uiconfig.presets) {
-            let audioDevices = this.audioDevices.filter(a => preset.audioDevices.includes(a.name));
+            // fill out rest of audio config
+            for (let preset of APIService.room.uiconfig.presets) {
+                let audioDevices = this.audioDevices.filter(a => preset.audioDevices.includes(a.name));
 
-            for (let display of preset.displays) {
-                let d: Display = this.displays.find(d => d.name == display);
+                for (let display of preset.displays) {
+                    let d: Display = this.displays.find(d => d.name == display);
 
-                if (!this.audioConfig.has(d)) {
-                    this.audioConfig.set(d, new AudioConfig(d, audioDevices, false));
+                    if (!this.audioConfig.has(d)) {
+                        this.audioConfig.set(d, new AudioConfig(d, audioDevices, false));
+                    }
                 }
             }
-        }
 
-        console.log("AudioConfig", this.audioConfig);
+            console.log("AudioConfig", this.audioConfig);
+        }
     }
 
 	private createPresets() {
