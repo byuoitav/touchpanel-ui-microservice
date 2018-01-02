@@ -1,6 +1,8 @@
 import { Type } from 'serializer.ts/Decorators';
 import { EventEmitter } from '@angular/core';
 import { SpringboardItem } from '../components/springboard.component';
+import { AudioConfiguration } from './objects';
+import { APIService } from '../services/api.service';
 
 export const POWER: string = "power";
 export const INPUT: string = "input";
@@ -9,6 +11,7 @@ export const MUTED: string = "muted";
 export const VOLUME: string = "volume";
 export const DTA: string = "dta";
 export const SHARING: string = "sharing";
+export const POWER_OFF_ALL: string = "power_off_all";
 
 export class Device {
 	name: string;
@@ -136,18 +139,20 @@ export class Display extends Output {
     public static setBlank(b: boolean, displays: Display[]) {
         displays.forEach(d => d.blanked = b); 
     }
+
+    public getAudioConfiguration(): AudioConfiguration {
+        return APIService.room.uiconfig.audioConfiguration.find(a => a.display === this.name);
+    }
 }
 
 export class AudioDevice extends Output {
 	muted: boolean;
 	volume: number;
-    roomWideAudio: boolean;
 
-    constructor(name: string, displayname: string, power: string, input: Input, muted: boolean, volume: number, roomWideAudio: boolean) {
+    constructor(name: string, displayname: string, power: string, input: Input, muted: boolean, volume: number) {
         super(name, displayname, power, input);
         this.muted = muted;
         this.volume = volume;
-        this.roomWideAudio = roomWideAudio;
     }
 
     // return average of all volumes
