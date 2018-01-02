@@ -250,7 +250,13 @@ export class HomeComponent implements OnInit {
                     this.wheel.preset = this.sharePreset;
 
                     let names: string[] = []; 
-                    this.selectedDisplays.forEach(d => names.push(d.name));
+                    this.selectedDisplays.forEach(d => {
+                        names.push(d.name);
+
+                        let event = new Event(0,0, APIService.piHostname, d.name, SHARING, "remove")
+                        this.api.sendFeatureEvent(event);
+                    });
+
                     let device: string = names.join(",");
 
                     let event: Event = new Event(0, 0, APIService.piHostname, device, DTA, "true");
