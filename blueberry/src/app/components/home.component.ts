@@ -381,7 +381,7 @@ export class HomeComponent implements OnInit {
 
                                 if (this.wheel.preset == this.sharePreset) {
                                     let minions: string[] = [];
-                                    this.sharePreset.displays.forEach(d => {
+                                    this.selectedDisplays.forEach(d => {
                                         if (!this.preset.displays.includes(d))
                                             minions.push(d.name);
                                     });
@@ -454,7 +454,9 @@ export class HomeComponent implements OnInit {
                                 this.data.displays.filter(d => names.includes(d.name))
                                                   .forEach(d => displays.push(d));
 
-                                this.wheel.preset.displays.push(...displays);
+                                this.sharePreset.displays.push(...displays);
+                                this.selectedDisplays.push(...displays);
+
                                 console.log("added", displays, "to mirror list. now mirroring to", this.wheel.preset.displays);
                             }
                         } 
