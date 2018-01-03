@@ -102,7 +102,9 @@ export class Output extends Device {
             if (input == null) {
                 input = o.input;
             } else if (o.input != input) {
-                return null;
+                // this means the input that appears selected may not actually be selected on all displays.
+                // to get the ~correct~ behavior, return null.
+                return o.input;
             }
         }
 

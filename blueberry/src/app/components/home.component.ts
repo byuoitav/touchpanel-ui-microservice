@@ -288,8 +288,10 @@ export class HomeComponent implements OnInit {
                 audioDevices.push(a);
             }
         }
+
+        this.sharePreset.displays = this.sharePreset.displays.filter(d => !this.preset.displays.includes(d));
         
-        this.wheel.unShare(this.wheel.preset.displays, audioDevices).subscribe(
+        this.wheel.unShare(this.sharePreset.displays, audioDevices).subscribe(
             success => {
                 if (success) {
                     let names: string[] = []; 
@@ -349,30 +351,13 @@ export class HomeComponent implements OnInit {
                         }
                     }
                     case INPUT: {
-                        if (this.wheel.preset.displays.find(d => d.name === e.device) == null) {
+                        if (this.preset.displays.find(d => d.name === e.device) == null) {
                             break;
                         }
 
                         let input = Input.getInput(e.eventInfoValue, this.data.inputs);
 
-                        // its a valid input, it's not on your wheel
-                        if (input != null && !this.wheel.preset.inputs.includes(input)) {
-
-                            /* if the input gets changed on a device that is yours, and you're in display to all mode
-                            if (this.preset.displays.find(d => d.name === e.device) != null && this.wheel.preset == this.sharePreset) {
-                                console.info("no longer display to all master")
-                                this.wheel.preset = this.preset;
-                            } 
-                           */
-
-                          /*
-                            if (this.wheel.preset != this.sharePreset) {
-                                console.log("Creating a new input on the wheel from event:", e);
-                                this.wheel.preset.extraInputs.length = 0;
-                                this.wheel.preset.extraInputs.push(input); 
-                                setTimeout(() => this.wheel.render(), 0);
-                            }
-                           */
+                        if (input != null && !this.preset.inputs.includes(input)) {
                             console.log("Creating a new input on the wheel from event:", e);
                             this.preset.extraInputs.length = 0;
                             this.preset.extraInputs.push(input); 
@@ -449,7 +434,7 @@ export class HomeComponent implements OnInit {
                             console.log("mirroring preset:", panelToMirror.preset);
                             this.mirror(panelToMirror.preset);
 
-                            this.mirrorNumber = this.numberFromHostname(e.requestor);
+                            this.mirrorNumber = this.numberFromHostname(e.eventInfoValue);
                         }
                     }
                     case SHARING: {
