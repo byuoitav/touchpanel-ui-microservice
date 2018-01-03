@@ -248,6 +248,7 @@ export class HomeComponent implements OnInit {
             success => {
                 if (success) {
                     this.wheel.preset = this.sharePreset;
+                    setTimeout(() => this.wheel.render(), 0);
 
                     let names: string[] = []; 
                     this.selectedDisplays.forEach(d => {
@@ -265,6 +266,7 @@ export class HomeComponent implements OnInit {
                     ret.emit(true);
                 } else {
                     this.wheel.preset = this.preset;
+                    setTimeout(() => this.wheel.render(), 0);
                     ret.emit(false);
                 } 
             }
@@ -298,6 +300,7 @@ export class HomeComponent implements OnInit {
                     this.api.sendFeatureEvent(event);
 
                     this.wheel.preset = this.preset;
+                    setTimeout(() => this.wheel.render(), 0);
 
                     this.swalStatus(true);
                     ret.emit(true);
@@ -405,10 +408,8 @@ export class HomeComponent implements OnInit {
                                     event = new Event(0, 0, e.requestor, device, DTA, "true");
                                     this.api.sendFeatureEvent(event);
 
-                                    event= new Event(0, 0, APIService.piHostname, device, SHARING, "add");
-                                    this.api.sendFeatureEvent(event);
-
                                     this.wheel.preset = this.preset;
+                                    setTimeout(() => this.wheel.render(), 0);
                                 }
 
                                 if (this.wheel.preset.extraInputs.length > 0) {
