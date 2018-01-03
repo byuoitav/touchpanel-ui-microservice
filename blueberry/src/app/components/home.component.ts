@@ -12,7 +12,7 @@ import { HelpDialog } from '../dialogs/help.dialog';
 import { ChangedDialog } from '../dialogs/changed.dialog';
 
 import { Preset, AudioConfig } from '../objects/objects';
-import { Output, Display, AudioDevice, INPUT, Input, DTA, POWER, SHARING, POWER_OFF_ALL } from '../objects/status.objects';
+import { Output, Display, AudioDevice, INPUT, Input, DTA, POWER, SHARING, POWER_OFF_ALL, MIRROR } from '../objects/status.objects';
 
 @Component({
     selector: 'home',
@@ -355,18 +355,25 @@ export class HomeComponent implements OnInit {
                         // its a valid input, it's not on your wheel
                         if (input != null && !this.wheel.preset.inputs.includes(input)) {
 
-                            // if the input gets changed on a device that is yours, and you're in display to all mode
+                            /* if the input gets changed on a device that is yours, and you're in display to all mode
                             if (this.preset.displays.find(d => d.name === e.device) != null && this.wheel.preset == this.sharePreset) {
                                 console.info("no longer display to all master")
                                 this.wheel.preset = this.preset;
                             } 
+                           */
 
+                          /*
                             if (this.wheel.preset != this.sharePreset) {
                                 console.log("Creating a new input on the wheel from event:", e);
                                 this.wheel.preset.extraInputs.length = 0;
                                 this.wheel.preset.extraInputs.push(input); 
                                 setTimeout(() => this.wheel.render(), 0);
                             }
+                           */
+                            console.log("Creating a new input on the wheel from event:", e);
+                            this.preset.extraInputs.length = 0;
+                            this.preset.extraInputs.push(input); 
+                            setTimeout(() => this.wheel.render(), 0);
                         }
                         break; 
                     }
@@ -383,22 +390,46 @@ export class HomeComponent implements OnInit {
 
                         if (showPopup) {
                             if (e.eventInfoValue === "true" && e.requestor !== APIService.piHostname) {
-                                this.wheel.preset.extraInputs[0].displayname = "Station " + this.numberFromHostname(e.requestor);
-                                this.wheel.preset.extraInputs[0].click.subscribe(() => {
-                                    let panel = this.data.panels.find(p => p.hostname === e.requestor);
 
-                                    if (panel != null) {
-                                        this.mirror(panel.preset);
+                                if (this.wheel.preset == this.sharePreset) {
+                                    let minions: string[] = [];
+                                    this.sharePreset.displays.forEach(d => {
+                                        if (!this.preset.displays.includes(d))
+                                            minions.push(d.name);
+                                    });
+                                    let device: string = minions.join(",");
 
-                                        this.mirrorNumber = this.numberFromHostname(e.requestor);
-                                        this.mirrorDialog.show();
-                                    } else {
-                                        console.error("failed to find panel with hostname", e.requestor, ". panels: ", this.data.panels);
-                                    }
-                                });
+                                    let event = new Event(0, 0, APIService.hostname, device, MIRROR, e.requestor);
+                                    this.api.sendFeatureEvent(event);
 
-                                this.mirrorNumber = this.numberFromHostname(e.requestor);
-                                this.mirrorDialog.show();
+                                    event = new Event(0, 0, e.requestor, device, DTA, "true");
+                                    this.api.sendFeatureEvent(event);
+
+                                    event= new Event(0, 0, APIService.piHostname, device, SHARING, "add");
+                                    this.api.sendFeatureEvent(event);
+
+                                    this.wheel.preset = this.preset;
+                                }
+
+                                if (this.wheel.preset.extraInputs.length > 0) {
+                                    this.wheel.preset.extraInputs[0].displayname = "Station " + this.numberFromHostname(e.requestor);
+                                    this.wheel.preset.extraInputs[0].click.subscribe(() => {
+                                        let panel = this.data.panels.find(p => p.hostname === e.requestor);
+
+                                        if (panel != null) {
+                                            this.mirror(panel.preset);
+
+                                            this.mirrorNumber = this.numberFromHostname(e.requestor);
+                                            this.mirrorDialog.show();
+                                        } else {
+                                            console.error("failed to find panel with hostname", e.requestor, ". panels: ", this.data.panels);
+                                        }
+                                    });
+                                    this.mirrorNumber = this.numberFromHostname(e.requestor);
+                                    this.mirrorDialog.show();
+                                } else
+                                    console.warn("No extra inputs have been created. Current preset", this.wheel.preset);
+
                             } else {
                                 if (this.mirrorNumber == this.numberFromHostname(e.requestor)) {
                                     this.removeExtraInputs();
@@ -408,12 +439,29 @@ export class HomeComponent implements OnInit {
                         }
                         break; 
                     }
+                    case MIRROR: {
+                        let names: string[] = e.device.split(",");
+
+                        // if the mirror event applies to me
+                        if(this.wheel.preset.displays.some(d => names.includes(d.name))) {
+                            let panelToMirror = this.data.panels.find(p => p.hostname === e.eventInfoValue);
+                            console.log("mirroring preset:", panelToMirror.preset);
+                            this.mirror(panelToMirror.preset);
+
+                            this.mirrorNumber = this.numberFromHostname(e.requestor);
+                        }
+                    }
                     case SHARING: {
                         if (this.sharePreset == this.wheel.preset) {
                             let names = e.device.split(","); 
 
                             if (e.eventInfoValue === "remove") {
-                                this.wheel.preset.displays = this.wheel.preset.displays.filter(d => !names.includes(d.name));
+                                this.sharePreset.displays = this.sharePreset.displays.filter(d => !names.includes(d.name));
+                                this.preset.displays.forEach(d => {
+                                    if (!this.sharePreset.displays.includes(d))
+                                        this.sharePreset.displays.push(d);
+                                });
+
                                 console.log("removed displays. now mirroring to", this.wheel.preset.displays);
                             } else if (e.eventInfoValue === "add") {
                                 let displays: Display[] = [];
