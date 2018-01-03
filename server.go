@@ -80,7 +80,6 @@ func main() {
 	// all the different ui's
 	router.Static("/", "redirect.html")
 	router.Any("/404", redirect)
-	router.Static("/circle-default", "circle-default")
 	router.Static("/blueberry", "blueberry")
 
 	router.Start(port)

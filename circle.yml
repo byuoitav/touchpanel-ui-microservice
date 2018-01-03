@@ -35,8 +35,6 @@ test:
     override:
         - cd $BUILD_PATH && go test -v -race $(go list ./... | grep -v /vendor/)
         - npm install -g @angular/cli
-        - cd touchpanel-ui && npm install && ng build --base-href="./circle-default/"
-        - mv touchpanel-ui/dist/ circle-default && rm -r touchpanel-ui
         - cd blueberry && npm install && ng build --base-href="./blueberry/" --prod --aot --build-optimizer
         - mv blueberry/dist/ blueberry-tmp && rm -r blueberry && mv blueberry-tmp blueberry
 
