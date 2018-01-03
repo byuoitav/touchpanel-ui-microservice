@@ -1,6 +1,6 @@
 machine:
     node:
-        version: 7.10.0
+        version: 8.7.0
     services:
         - docker
     environment:
@@ -34,10 +34,11 @@ compile:
 test:
     override:
         - cd $BUILD_PATH && go test -v -race $(go list ./... | grep -v /vendor/)
-        - npm install -g @angular/core
         - npm install -g @angular/cli
         - cd touchpanel-ui && npm install && ng build --base-href="./circle-default/"
         - mv touchpanel-ui/dist/ circle-default && rm -r touchpanel-ui
+        - cd blueberry && npm install && ng build --base-href="./blueberry/" --prod --aot --build-optimizer
+        - mv blueberry/dist/ blueberry-tmp && rm -r blueberry && mv blueberry-tmp blueberry
 
 deployment:
     development:
@@ -49,7 +50,6 @@ deployment:
             - docker login -e $DOCKER_EMAIL -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
             - docker push byuoitav/${CIRCLE_PROJECT_REPONAME}:development
             - docker push byuoitav/rpi-${CIRCLE_PROJECT_REPONAME}:development
-            - ./deploy-pi.sh development
     testing:
         branch: testing
         commands:
@@ -60,7 +60,6 @@ deployment:
             - docker login -e $DOCKER_EMAIL -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
             - docker push byuoitav/${CIRCLE_PROJECT_REPONAME}:testing
             - docker push byuoitav/rpi-${CIRCLE_PROJECT_REPONAME}:testing
-            - ./deploy-pi.sh testing
     stage:
         branch: stage
         commands:
@@ -71,7 +70,6 @@ deployment:
             - docker login -e $DOCKER_EMAIL -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
             - docker push byuoitav/${CIRCLE_PROJECT_REPONAME}:stage
             - docker push byuoitav/rpi-${CIRCLE_PROJECT_REPONAME}:stage
-            - ./deploy-pi.sh stage
     production:
         branch: production
         commands:
@@ -82,4 +80,3 @@ deployment:
             - docker login -e $DOCKER_EMAIL -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
             - docker push byuoitav/${CIRCLE_PROJECT_REPONAME}:latest
             - docker push byuoitav/rpi-${CIRCLE_PROJECT_REPONAME}:latest
-            - ./deploy-pi.sh production

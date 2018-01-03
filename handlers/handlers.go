@@ -17,6 +17,15 @@ import (
 )
 
 func GetHostname(context echo.Context) error {
+	hostname, err := os.Hostname()
+	if err != nil {
+		return context.JSON(http.StatusInternalServerError, err.Error())
+	}
+
+	return context.JSON(http.StatusOK, hostname)
+}
+
+func GetPiHostname(context echo.Context) error {
 	hostname := os.Getenv("PI_HOSTNAME")
 	return context.JSON(http.StatusOK, hostname)
 }
@@ -219,65 +228,4 @@ func CancelHelp(context echo.Context) error {
 
 	return context.JSON(http.StatusOK, string(body))
 
-}
-
-var configcache map[string]interface{}
-
-func GetJSON(context echo.Context) error {
-	address := os.Getenv("UI_CONFIGURATION_ADDRESS")
-	hn := os.Getenv("PI_HOSTNAME")
-
-	log.Printf("Getting the UI configuration")
-
-	if len(hn) == 0 {
-		log.Printf("[error] PI_HOSTNAME is not set.")
-		return context.JSON(http.StatusInternalServerError, "PI_HOSTNAME is not set.")
-	}
-
-	if len(address) == 0 {
-		if configcache != nil {
-			log.Printf("[error] UI_CONFIGURATION_ADDRESS is not set. Returning cached configuration...")
-			return context.JSON(http.StatusOK, configcache[hn])
-		}
-		return context.JSON(http.StatusInternalServerError, "UI_CONFIGURATION_ADDRESS is not set.")
-	}
-
-	log.Printf("getting json object from %s", address)
-	resp, err := http.Get(address)
-	if err != nil {
-		if configcache != nil {
-			log.Printf("[error] %s. Returning cached configuration...", err.Error())
-			return context.JSON(http.StatusOK, configcache[hn])
-		}
-		log.Printf("[error] %s. No cache to serve. Cannot continue.", err.Error())
-		return context.JSON(http.StatusGatewayTimeout, err.Error())
-	}
-	defer resp.Body.Close()
-
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		if configcache != nil {
-			log.Printf("[error] %s. Returning cached configuration...", err.Error())
-			return context.JSON(http.StatusOK, configcache[hn])
-		}
-		log.Printf("[error] %s. Could not read response body and there is no cache.", err.Error())
-		return context.JSON(http.StatusInternalServerError, err.Error())
-	}
-
-	var data map[string]interface{}
-	err = json.Unmarshal(body, &data)
-	if err != nil {
-		if configcache != nil {
-			log.Printf("[error] %s. Returning cached configuration...", err.Error())
-			return context.JSON(http.StatusOK, configcache[hn])
-		}
-		log.Printf("[error] %s. Error unmarshalling the body, and there is no cache.", err.Error())
-		return context.JSON(http.StatusInternalServerError, err.Error())
-	} else {
-		configcache = data
-	}
-
-	log.Printf("Done.")
-
-	return context.JSON(http.StatusOK, data[hn])
 }

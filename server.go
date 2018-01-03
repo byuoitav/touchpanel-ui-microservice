@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/byuoitav/device-monitoring-microservice/statusinfrastructure"
@@ -10,19 +11,15 @@ import (
 	"github.com/byuoitav/touchpanel-ui-microservice/events"
 	"github.com/byuoitav/touchpanel-ui-microservice/handlers"
 	"github.com/byuoitav/touchpanel-ui-microservice/socket"
+	"github.com/byuoitav/touchpanel-ui-microservice/uiconfig"
 	"github.com/jessemillar/health"
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
 )
 
 func main() {
-	filters := []string{eventinfrastructure.UI}
-	en := eventinfrastructure.NewEventNode("Touchpanel UI", "7003", filters)
-
-	var req eventinfrastructure.ConnectionRequest
-	req.PublisherAddr = "localhost:7003"
-	req.SubscriberEndpoint = "http://localhost:8888/subscribe"
-	go eventinfrastructure.SendConnectionRequest("http://localhost:6999/subscribe", req, true)
+	filters := []string{eventinfrastructure.UI, eventinfrastructure.UIFeature}
+	en := eventinfrastructure.NewEventNode("Touchpanel UI", filters, os.Getenv("EVENT_ROUTER_ADDRESS"))
 
 	// websocket hub
 	hub := socket.NewHub()
@@ -38,7 +35,6 @@ func main() {
 	router.GET("/mstatus", GetStatus)
 
 	// event endpoints
-	router.POST("/subscribe", Subscribe, BindEventNode(en))
 	router.POST("/publish", handlers.PublishEvent, BindEventNode(en))
 	router.POST("/publishfeature", handlers.PublishFeature, BindEventNode(en))
 
@@ -61,12 +57,21 @@ func main() {
 		si, _ := socket.GetSocketInfo(hub)
 		return context.JSON(http.StatusOK, si)
 	})
+	router.PUT("/socketTest", func(context echo.Context) error {
+		events.SendTest(hub)
+		return context.JSON(http.StatusOK, "sent")
+	})
 
+	router.GET("/pihostname", handlers.GetPiHostname)
 	router.GET("/hostname", handlers.GetHostname)
 	router.GET("/deviceinfo", handlers.GetDeviceInfo)
 	router.GET("/reboot", handlers.Reboot)
 	router.GET("/dockerstatus", handlers.GetDockerStatus)
-	router.GET("/json", handlers.GetJSON)
+
+	router.GET("/uiconfig", uiconfig.GetUIConfig)
+	router.GET("/uipath", uiconfig.GetUIPath)
+	router.GET("/api", uiconfig.GetAPI)
+	router.GET("/nextapi", uiconfig.NextAPI)
 
 	router.POST("/help", handlers.Help)
 	router.POST("/confirmhelp", handlers.ConfirmHelp)
@@ -74,23 +79,11 @@ func main() {
 
 	// all the different ui's
 	router.Static("/", "redirect.html")
+	router.Any("/404", redirect)
 	router.Static("/circle-default", "circle-default")
+	router.Static("/blueberry", "blueberry")
 
 	router.Start(port)
-}
-
-func Subscribe(context echo.Context) error {
-	var cr eventinfrastructure.ConnectionRequest
-	context.Bind(&cr)
-
-	e := context.Get(eventinfrastructure.ContextEventNode)
-	if en, ok := e.(*eventinfrastructure.EventNode); ok {
-		err := eventinfrastructure.HandleSubscriptionRequest(cr, en)
-		if err != nil {
-			return context.JSON(http.StatusBadRequest, err.Error())
-		}
-	}
-	return context.JSON(http.StatusOK, nil)
 }
 
 func BindEventNode(en *eventinfrastructure.EventNode) echo.MiddlewareFunc {
@@ -117,4 +110,9 @@ func GetStatus(context echo.Context) error {
 	}
 
 	return context.JSON(http.StatusOK, s)
+}
+
+func redirect(context echo.Context) error {
+	http.Redirect(context.Response().Writer, context.Request(), "http://github.com/404", 302)
+	return nil
 }

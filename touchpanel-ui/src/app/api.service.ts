@@ -4,6 +4,9 @@ import { Observable } from 'rxjs/Rx';
 import { UIConfiguration } from './objects'
 
 import 'rxjs/add/operator/map';
+import 'rxjs/add/operator/timeout';
+
+const maxErrorsBeforeSwitch = 1;
 
 @Injectable()
 export class APIService {
@@ -11,9 +14,11 @@ export class APIService {
   public room: string;
   public baseurl: string;
   public url: string;
+  public urlhost: string;
   public loaded: EventEmitter<any>;
   public uiconfig: UIConfiguration; 
   public hostname: string;
+  public errorcount: number = 0;
   private bool: boolean;
 
   private options: RequestOptions;
@@ -42,15 +47,37 @@ export class APIService {
 	
 	      this.building = b;
 	      this.room = split[1];
-	
-	      this.url = this.baseurl + ":8000" + "/buildings/" + this.building + "/rooms/" + this.room;
-	      console.log("url =", this.url);
 
-		  this.setupUiConfig();
+		  this.setupAPIUrl();
 	  }, err => {
 		  console.log("error getting hostname");
 		  setTimeout(() => this.setupHostname(), 2500);
 	  });
+  }
+
+  setupAPIUrl() {
+ 	this.getAPIUrl().subscribe(data => {
+		if (data["apihost"].includes("localhost")) {
+			let split = this.baseurl.split('://');
+			this.urlhost = split[1];
+		} else {
+			this.urlhost = data["apihost"]
+		}
+
+		this.url = "http://" + this.urlhost + ":8000" + "/buildings/" + this.building + "/rooms/" + this.room;
+	    console.log("api url =", this.url);
+
+		this.setupUiConfig();
+		if (data["enabled"] == true) {
+			console.log("monitoring api status");
+			this.monitorAPI();
+		} else {
+			console.log("not monitoring api");	
+		}
+	}), err => {
+		console.log("error getting api url");
+		setTimeout(() => this.setupAPIUrl(), 2500);
+	} 
   }
 
   setupUiConfig() {
@@ -66,6 +93,60 @@ export class APIService {
 	});
   }
 
+  monitorAPI() {
+	this.getAPIHealth().subscribe(data => {
+		if (data["statuscode"] != 0) {
+			this.apiError();	
+		}
+		setTimeout(() => this.monitorAPI(), 45*1000);
+	}, err => {
+		this.apiError();
+		setTimeout(() => this.monitorAPI(), 45*1000);
+	});	
+  }
+
+  apiError() {
+ 	this.errorcount++;
+    if (this.errorcount == maxErrorsBeforeSwitch || this.errorcount > maxErrorsBeforeSwitch) {
+		this.errorcount = 0;
+		console.log("Switching to next api");
+		this.switchToNextAPI();	
+	}	
+  }
+
+  switchToNextAPI() {
+ 	this.getNextAPIUrl().subscribe(data => {
+		if (data["apihost"].includes("localhost")) {
+			let split = this.baseurl.split('://');
+			this.urlhost = split[1];
+		} else {
+			this.urlhost = data["apihost"]
+		}
+
+		this.url = "http://" + this.urlhost + ":8000" + "/buildings/" + this.building + "/rooms/" + this.room;
+	    console.log("new url =", this.url);
+	}, err => {
+		console.log("error getting next api");
+		setTimeout(() => this.switchToNextAPI(), 2500);
+	});
+  }
+
+  getAPIHealth(): Observable<Object> {
+ 	return this.http.get("http://"+ this.urlhost + ":8000/mstatus")
+		.timeout(3000)
+   		.map(response => response.json());	
+  }
+
+  getNextAPIUrl(): Observable<Object> {
+ 	return this.http.get(this.baseurl + ":8888/nextapi")
+   		.map(response => response.json());	
+  }
+
+  getAPIUrl(): Observable<Object> {
+ 	return this.http.get(this.baseurl + ":8888/api")
+   		.map(response => response.json());	
+  }
+  
   getJSON(): Observable<Object> {
  	return this.http.get(this.baseurl + ":8888/json")
   		.map(response => response.json());	
@@ -93,11 +174,13 @@ export class APIService {
 
   getRoomConfig(): Observable<Object> {
     return this.http.get(this.url + "/configuration")
+      .timeout(3000)
       .map(response => response.json());
   }
 
   getRoomStatus(): Observable<Object> {
     return this.http.get(this.url)
+      .timeout(3000)
       .map(response => response.json());
   }
 

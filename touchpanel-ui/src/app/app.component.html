@@ -1,6 +1,6 @@
 <!-- screenoff cover -->
 <div *ngIf="socket.screenoff" id="screenoff" (click)="socket.screenoff = false">
-	*gasp* you shouldn't be seeing me...this is weird. just click anywhere:)	
+	press anywhere to start
 </div>
 
 <!-- notifications -->
@@ -11,7 +11,8 @@
 	<span *ngFor="let e of events">{{e | json}}<br></span>
 </div>
 
-<!-- main body --> <div class='basediv' [class.innerglow]="dtaMaster">
+<!-- main body --> 
+<div class='basediv' [class.innerglow]="dtaMaster">
     <!-- power, help -->
     <div class='power-row'>
         <div class='power' (click)="buttonpress('power'); powerOff()" (press)="poweroffmodal.show()">
@@ -68,6 +69,12 @@
 						<span>{{i.displayname}}</span>
 					</div>
                 </li>
+                <li *ngIf="dtaMinion()" class="slice input-slice" [class.blanked-input]="selectedDisplay.blanked && selectedDisplay.oinput === selectedDisplay.DTADevice" [class.selectedInput]="selectedDisplay.oinput === selectedDisplay.DTADevice" (click)="buttonpress('change to DTA input'); changeInput(selectedDisplay.DTADevice)" (press)="buttonpress('long press DTA input'); longPressInput(selectedDisplay.DTADevice)">
+					<div [style.right]="rightoffset" [style.top]="topoffset" class='input'>
+						<i class='material-icons'>{{selectedDisplay.DTADevice.icon}}</i>
+						<span>{{selectedDisplay.DTADevice.displayname}}</span>
+					</div>
+                </li>
             </ul>
         </div>
     </div>
@@ -75,7 +82,7 @@
 	<!-- bottom left control -->
     <div class='blank-row'>
 		<!-- display to all -->
-		<div *ngIf="displaytoall && !dtaMinion" class="displaytoall" [class.pulse]="dtaMaster" [class.dtaalignleft]="!multipledisplays && !dtaMaster" [class.dtaalignleftshort]="!multipledisplays && dtaMaster">
+		<div *ngIf="displaytoall && (selectedDisplay.DTADevice != selectedDisplay.oinput)" class="displaytoall" [class.pulse]="dtaMaster" [class.dtaalignleft]="!multipledisplays && !dtaMaster" [class.dtaalignleftshort]="!multipledisplays && dtaMaster">
 			<i class='material-icons' [class.persimmion]="dtaMaster" (click)="toggleDisplayToAll();">call_split</i>
 			<span *ngIf="!dtaMaster" (click)="toggleDisplayToAll();">Display All</span>
 			<span *ngIf="dtaMaster" (click)="toggleDisplayToAll();">Stop</span>
@@ -92,14 +99,14 @@
 		<div *ngIf="mics.length > 0" class="microphone" (click)="micmodal.show()">
 			<i class="material-icons">mic</i>
 		</div>
-		<div *ngIf="!displayselection && !dtaMinion" (click)="buttonpress('mute'); toggleMute()" [class.alignright]="!mics.length > 0">
+		<div *ngIf="!displayselection && (selectedDisplay.DTADevice != selectedDisplay.oinput)" (click)="buttonpress('mute'); toggleMute()" [class.alignright]="!mics.length > 0">
        	    <i *ngIf="isMuted()" class="material-icons red">volume_off</i>
        	    <i *ngIf="!isMuted()" class="material-icons">volume_up</i>
        	</div>
     </div>
 
     <!-- sidebar -->
-    <div *ngIf="!displayselection && !dtaMinion" class='sidebar'>
+    <div *ngIf="!displayselection && (selectedDisplay.DTADevice != selectedDisplay.oinput)" class='sidebar'>
         <div class='volume alignright'>
             <md-slider id="colored-slider" vertical [value]="volumeLevel()" (change)="buttonpress('volume slider'); changeVolume($event.value);" (input)="updateVolume($event.value)"></md-slider>
         </div>
@@ -131,11 +138,11 @@
 
 <!-- management dialog -->
 <div class="management basediv priority" *ngIf="!showing">
-    <div class="top right" (click)="management(1)">
+    <div class="top right" (click)="management(2)">
     </div>
-    <div class="top left" (click)="management(3)">
+    <div class="top left" (click)="management(1)">
     </div>
-    <div class="bottom left" (click)="management(2)">
+    <div class="bottom left" (click)="management(3)">
     </div>
     <div *ngIf="!man1 || !man2 || !man3" class="bottom right" (click)="management(4)">
     </div>

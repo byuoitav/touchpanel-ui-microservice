@@ -52,6 +52,7 @@ export class Configuration {
 export class Event {
   type: number;
   eventCause: number;
+  requestor: string;
   device: string;
   eventInfoKey: string;
   eventInfoValue: string;
@@ -90,6 +91,7 @@ export class OutputDevice {
 	oinputs: InputDevice[];
 	odefaultinput: InputDevice;
 	oinput: InputDevice;
+	DTADevice: DTADevice;
 
 	oaudiodevices: AudioOutDevice[];
 
@@ -106,6 +108,13 @@ export class InputDevice {
 	name: string;
 	displayname: string;
 	icon: string;
+}
+
+export class DTADevice {
+	name: string;
+	displayname: string;
+	icon: string;
+	hostname: string;
 }
 
 export class AudioOutDevice {

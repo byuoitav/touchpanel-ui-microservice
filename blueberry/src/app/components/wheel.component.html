@@ -1,0 +1,77 @@
+<div *ngIf="blur" class="background" [class.open]="circleOpen" (click)="toggle()">
+</div>
+
+<div class="circle" [ngStyle]="{'margin-top': top, 'margin-left': right, 'z-index': circleOpen ? 10 : 0, 'transform': circleOpen ? translate : 'translate(0,0)'}">
+	<!-- wheel -->
+	<ul #wheel class="wheel" [class.open]="circleOpen">
+		<li class="title-slice">
+            <div></div>
+		</li>
+	
+		<li *ngFor="let i of preset.inputs" class="input-slice" [class.selected-input]="getInput() === i" (click)="command.setInput(i, preset.displays)">
+			<div class="input" [style.top]="topoffset" [style.right]="rightoffset">
+				<i class="material-icons">{{i.icon}}</i>
+				<span class="name">{{i.displayname}}</span>
+			</div>
+		</li>
+
+		<li *ngFor="let i of preset.extraInputs" class="input-slice" [class.selected-input]="getInput() === i" (click)="i.click.emit()">
+			<div class="input" [style.top]="topoffset" [style.right]="rightoffset">
+				<i class="material-icons">{{i.icon}}</i>
+				<span class="name">{{i.displayname}}</span>
+			</div>
+		</li>
+	
+		<!-- lines -->
+		<li class="thin">
+			<div class="line">
+			</div>
+		</li>
+	
+		<li *ngFor="let i of preset.inputs" class="thin">
+			<div class="line">
+			</div>
+		</li>
+
+		<li *ngFor="let i of preset.extraInputs" class="thin">
+			<div class="line">
+			</div>
+		</li>
+	</ul>
+	
+	<div class="center" [class.open]="circleOpen" [class.on]="getPower() == 'on'">
+        <span class="center-item name" [class.open]="circleOpen">{{preset.name}}</span>
+        <i class="center-item material-icons icon" [class.open]="circleOpen">{{preset.icon}}</i>
+        <span *ngIf="!getBlank()" class="center-item picture" [class.open]="circleOpen">picture on</span>
+        <span *ngIf="getBlank()" class="center-item picture" [class.open]="circleOpen">picture off</span>
+        <div class="center-item switch" [class.open]="circleOpen" (click)="$event.stopPropagation()">
+            <ui-switch reverse size="medium" [checked]="getBlank()" defaultBgColor="#f44336" (change)="command.setBlank($event, preset.displays)"></ui-switch>
+        </div>
+	</div>
+</div>
+
+<div class="volume" [class.muted]="getMute()" *ngIf="circleOpen">
+    <mat-slider id="slider" vertical [class.notouch]="getMute()" [disabled]="getMute()" [value]="getVolume()" [step]="5" [thumbLabel]="thumbLabel" (change)="command.setVolume($event.value, preset.audioDevices); closeThumb()"></mat-slider>
+    <button mat-mini-fab class="mute" [class.muted]="getMute()" (click)="command.setMute(!getMute(), preset.audioDevices);">
+        <mat-icon *ngIf="getMute()">volume_off</mat-icon>
+        <mat-icon *ngIf="!getMute()">volume_up</mat-icon>
+    </button>
+</div>
+
+<!-- one 'slice' of wheel -->
+<svg id='svg-block' width="0" height="0" style="position: absolute;">
+  <defs>
+    <clipPath clipPathUnits="objectBoundingBox" id="sector">
+		<path fill="transparent" stroke="#111" stroke-width="1" id="sector" [attr.d]="arcpath"></path>
+    </clipPath>
+  </defs>
+</svg>
+
+<!-- title slice -->
+<svg id='svg-block' width="0" height="0" style="position: absolute;">
+  <defs>
+    <clipPath clipPathUnits="objectBoundingBox" id="title-sector">
+		<path fill="transparent" stroke="#111" stroke-width="1" id="sector" [attr.d]="titlearcpath"></path>
+    </clipPath>
+  </defs>
+</svg>

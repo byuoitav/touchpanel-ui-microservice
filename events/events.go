@@ -19,23 +19,16 @@ type Message struct {
 
 func WriteEventsToSocket(en *eventinfrastructure.EventNode, h *socket.Hub) {
 	for {
-		select {
-		case message, ok := <-en.Read:
-			if !ok {
-				color.Set(color.FgRed)
-				log.Fatalf("eventnode read channel closed.")
-				color.Unset()
-			}
 
-			var e eventinfrastructure.Event
-			err := json.Unmarshal(message.MessageBody, &e)
-			if err != nil {
-				color.Set(color.FgRed)
-				log.Printf("failed to unmarshal message into Event type: %s", message.MessageBody)
-				color.Unset()
-			} else {
-				h.WriteToSockets(e)
-			}
+		message := en.Read()
+		var e eventinfrastructure.Event
+		err := json.Unmarshal(message.MessageBody, &e)
+		if err != nil {
+			color.Set(color.FgRed)
+			log.Printf("failed to unmarshal message into Event type: %s", message.MessageBody)
+			color.Unset()
+		} else {
+			h.WriteToSockets(e)
 		}
 	}
 }
@@ -54,6 +47,15 @@ func SendRefresh(h *socket.Hub, delay *time.Timer) {
 	h.WriteToSockets(Message{Message: "refresh"})
 }
 
+func SendTest(h *socket.Hub) {
+	defer color.Unset()
+
+	color.Set(color.FgYellow)
+	log.Printf("Sending event test...")
+
+	h.WriteToSockets(Message{Message: "websocketTest"})
+}
+
 func Publish(en *eventinfrastructure.EventNode, event eventinfrastructure.EventInfo, eventType string) error {
 	var e eventinfrastructure.Event
 
@@ -70,6 +72,7 @@ func Publish(en *eventinfrastructure.EventNode, event eventinfrastructure.EventI
 	e.Event.EventCause = eventinfrastructure.USERINPUT
 	e.Event.EventInfoKey = event.EventInfoKey
 	e.Event.EventInfoValue = event.EventInfoValue
+	e.Event.Requestor = event.Requestor
 
 	if eventType == eventinfrastructure.Metrics {
 		e.Event.Device = e.Hostname
@@ -77,7 +80,7 @@ func Publish(en *eventinfrastructure.EventNode, event eventinfrastructure.EventI
 		e.Event.Device = event.Device
 	}
 
-	if len(e.Event.Device) == 0 || len(e.Event.EventInfoKey) == 0 || len(e.Event.EventInfoValue) == 0 {
+	if len(e.Event.EventInfoKey) == 0 || len(e.Event.EventInfoValue) == 0 {
 		return errors.New("Please fill in all the necessary fields")
 	}
 
