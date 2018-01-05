@@ -59,17 +59,19 @@ export class HomeComponent implements OnInit {
             showLoaderOnConfirm: true,
             preConfirm: () => {
                 return new Promise((resolve, reject) => {
-                    this.wheel.command.powerOffAll().subscribe(
-                        success => {
-                            if (success) {
-                                let event: Event = new Event(0, 0, APIService.piHostname, " ", POWER_OFF_ALL, " ");
-                                this.api.sendFeatureEvent(event);
+                    this.turnOff().subscribe(() => {
+                        this.wheel.command.powerOffAll().subscribe(
+                            success => {
+                                if (success) {
+                                    let event: Event = new Event(0, 0, APIService.piHostname, " ", POWER_OFF_ALL, " ");
+                                    this.api.sendFeatureEvent(event);
 
-                                resolve();
+                                    resolve();
+                                }
+                                reject();
                             }
-                            reject();
-                        }
-                    );
+                        );
+                    })
                 });
             },
         };
