@@ -260,7 +260,7 @@ export class HomeComponent implements OnInit {
 
                     let device: string = names.join(",");
 
-                    let event: Event = new Event(0, 0, " ", device, DTA, "true");
+                    let event: Event = new Event(0, 0, APIService.hostname, device, DTA, "true");
                     this.api.sendFeatureEvent(event);
 
                     ret.emit(true);
@@ -298,7 +298,7 @@ export class HomeComponent implements OnInit {
                     this.selectedDisplays.forEach(d => names.push(d.name));
                     let device: string = names.join(",");
 
-                    let event: Event = new Event(0, 0, " ", device, DTA, "false");
+                    let event: Event = new Event(0, 0, APIService.hostname, device, DTA, "false");
                     this.api.sendFeatureEvent(event);
 
                     this.wheel.preset = this.preset;
@@ -399,7 +399,7 @@ export class HomeComponent implements OnInit {
                         });
 
                         if (showPopup) {
-                            if (e.eventInfoValue === "true" && ew.hostname !== APIService.piHostname) {
+                            if (e.eventInfoValue === "true" && e.requestor !== APIService.piHostname) {
 
                                 if (this.wheel.preset == this.sharePreset) {
                                     let minions: string[] = [];
@@ -409,19 +409,20 @@ export class HomeComponent implements OnInit {
                                     });
                                     let device: string = minions.join(",");
 
-                                    let event = new Event(0, 0, " ", device, MIRROR, ew.hostname);
+                                    let event = new Event(0, 0, " ", device, MIRROR, e.requestor);
                                     this.api.sendFeatureEvent(event);
 
-                                    event = new Event(0, 0, ew.hostname, device, DTA, "true");
+                                    event = new Event(0, 0, e.requestor, device, DTA, "true");
                                     this.api.sendFeatureEvent(event);
 
                                     this.wheel.preset = this.preset;
                                     setTimeout(() => this.wheel.render(), 0);
                                 }
 
+                                this.mirrorNumber = this.numberFromHostname(e.requestor);
                                 this.mirrorDialog.show();
                             } else {
-                                if (this.mirrorNumber === this.numberFromHostname(ew.hostname)) {
+                                if (this.mirrorNumber === this.numberFromHostname(e.requestor)) {
                                     this.removeExtraInputs();
                                     swal.close();
                                 }
@@ -509,19 +510,19 @@ export class HomeComponent implements OnInit {
                                     // mute current audioDevice
                                     console.log("muting old audioDevices");
                                     this.wheel.command.setMute(true, this.sharePreset.audioDevices);
-                                    this.wheel.command.setVolume(0, this.sharePreset.audioDevices);
+                                    this.wheel.command.setVolume(0, this.sharePreset.audioDevices).subscribe(() => {
+                                        // change the audioDevices
+                                        this.sharePreset.audioDevices.length = 0;
 
-                                    // change the audioDevices
-                                    this.sharePreset.audioDevices.length = 0;
+                                        for (let config of audioConfigs) {
+                                            if (config.roomWide) 
+                                                this.sharePreset.audioDevices.push(...config.audioDevices);
+                                        }
+                                        console.log("share preset audio devices changed to: ", this.sharePreset);
 
-                                    for (let config of audioConfigs) {
-                                        if (config.roomWide) 
-                                            this.sharePreset.audioDevices.push(...config.audioDevices);
-                                    }
-                                    console.log("share preset audio devices changed to: ", this.sharePreset);
-
-                                    this.wheel.command.setVolume(30, this.sharePreset.audioDevices);
-                                    this.wheel.command.setMute(false, this.sharePreset.audioDevices);
+                                        this.wheel.command.setVolume(30, this.sharePreset.audioDevices);
+                                        this.wheel.command.setMute(false, this.sharePreset.audioDevices);
+                                    });
                                 } else
                                     console.log("no room wide audioDevice was added");
 
