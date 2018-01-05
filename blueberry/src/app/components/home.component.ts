@@ -352,9 +352,11 @@ export class HomeComponent implements OnInit {
                         if (e.eventInfoValue == "standby" && this.wheel.preset.displays.find(d => d.name === e.device) != null) {
                             this.removeExtraInputs();
                         }
+
+                        break;
                     }
                     case INPUT: {
-                        if (APIService.piHostname === ew.hostname || e.eventCause != 0) {
+                        if (APIService.piHostname === ew.hostname || e.eventCause !== 0) {
                             break;
                         }
 
@@ -364,7 +366,7 @@ export class HomeComponent implements OnInit {
 
                         let input = Input.getInput(e.eventInfoValue, this.data.inputs);
 
-                        if (input != null) {
+                        if (input !== null) {
                             console.log("Creating a new input on the wheel from event:", e);
 
                             input.displayname = "Station " + this.numberFromHostname(ew.hostname);
@@ -386,6 +388,7 @@ export class HomeComponent implements OnInit {
 
                             setTimeout(() => this.wheel.render(), 0);
                         }
+
                         break; 
                     }
                     case DTA: {
@@ -430,6 +433,7 @@ export class HomeComponent implements OnInit {
                                 }
                             }
                         }
+
                         break; 
                     }
                     case MIRROR: {
@@ -444,6 +448,8 @@ export class HomeComponent implements OnInit {
 
                             this.mirrorNumber = this.numberFromHostname(ew.hostname);
                         }
+
+                        break;
                     }
                     case SHARING: {
                         console.log("sharing event", e);
@@ -531,6 +537,7 @@ export class HomeComponent implements OnInit {
                                 console.log("added", displays, "to mirror list. now mirroring to", this.wheel.preset.displays);
                             }
                         } 
+
                         break;
                     }
                     case POWER_OFF_ALL: {
@@ -543,6 +550,8 @@ export class HomeComponent implements OnInit {
                                     this.wheel.command.powerOffAll();
                             });
                         }
+
+                        break;
                     }
                 }
             }
