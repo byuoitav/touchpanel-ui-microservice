@@ -1,7 +1,7 @@
 import { Injectable, EventEmitter } from '@angular/core';
 
 import { APIService } from './api.service';
-import { SocketService, MESSAGE } from './socket.service';
+import { SocketService, MESSAGE, EventWrapper, Event } from './socket.service';
 import { Preset, Panel, AudioConfig } from '../objects/objects';
 import { Device, Input, Output, Display, AudioDevice, POWER, INPUT, BLANKED, MUTED, VOLUME } from '../objects/status.objects';
 
@@ -133,8 +133,8 @@ export class DataService {
     private update() {
         this.socket.getEventListener().subscribe(event => {
             if (event.type == MESSAGE) {
-                let e = event.data;
-                console.log("recieved event", e);
+                let ew: EventWrapper = event.data;
+                let e = ew.event;
                 
                 switch (e.eventInfoKey) {
                     case POWER: {

@@ -38,6 +38,9 @@ export class GraphService {
         }
 
         this.data.loaded.subscribe(() => {
+            if (this.data.panel.preset.shareableDisplays == null) 
+                return;
+
             // the root node is the set of displays and shareableDisplays for the preset
             let displays: Set<string> = new Set();
             this.data.panel.preset.displays.forEach(d => displays.add(d.name));
