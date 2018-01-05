@@ -352,7 +352,7 @@ export class HomeComponent implements OnInit {
                         }
                     }
                     case INPUT: {
-                        if (APIService.piHostname !== ew.hostname) {
+                        if (APIService.piHostname === ew.hostname || e.eventCause != 0) {
                             break;
                         }
 
@@ -409,7 +409,7 @@ export class HomeComponent implements OnInit {
                                     });
                                     let device: string = minions.join(",");
 
-                                    let event = new Event(0, 0, "", device, MIRROR, ew.hostname);
+                                    let event = new Event(0, 0, " ", device, MIRROR, ew.hostname);
                                     this.api.sendFeatureEvent(event);
 
                                     event = new Event(0, 0, ew.hostname, device, DTA, "true");
