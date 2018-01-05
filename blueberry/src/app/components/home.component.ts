@@ -7,7 +7,7 @@ import { WheelComponent } from './wheel.component';
 import { DataService } from '../services/data.service';
 import { APIService } from '../services/api.service';
 import { GraphService } from '../services/graph.service';
-import { SocketService, MESSAGE, Event } from '../services/socket.service';
+import { SocketService, MESSAGE, EventWrapper, Event } from '../services/socket.service';
 import { HelpDialog } from '../dialogs/help.dialog';
 import { ChangedDialog } from '../dialogs/changed.dialog';
 
@@ -254,13 +254,13 @@ export class HomeComponent implements OnInit {
                     this.selectedDisplays.forEach(d => {
                         names.push(d.name);
 
-                        let event = new Event(0,0, APIService.piHostname, d.name, SHARING, "remove")
+                        let event = new Event(0,0, " ", d.name, SHARING, "remove")
                         this.api.sendFeatureEvent(event);
                     });
 
                     let device: string = names.join(",");
 
-                    let event: Event = new Event(0, 0, APIService.piHostname, device, DTA, "true");
+                    let event: Event = new Event(0, 0, " ", device, DTA, "true");
                     this.api.sendFeatureEvent(event);
 
                     ret.emit(true);
@@ -298,7 +298,7 @@ export class HomeComponent implements OnInit {
                     this.selectedDisplays.forEach(d => names.push(d.name));
                     let device: string = names.join(",");
 
-                    let event: Event = new Event(0, 0, APIService.piHostname, device, DTA, "false");
+                    let event: Event = new Event(0, 0, " ", device, DTA, "false");
                     this.api.sendFeatureEvent(event);
 
                     this.wheel.preset = this.preset;
@@ -323,7 +323,7 @@ export class HomeComponent implements OnInit {
         this.wheel.preset.displays.forEach(d => names.push(d.name));
         let device: string = names.join(",");
 
-        let event: Event = new Event(0, 0, APIService.piHostname, device, SHARING, "add");
+        let event: Event = new Event(0, 0, " ", device, SHARING, "add");
         this.api.sendFeatureEvent(event);
     }
 
@@ -332,7 +332,7 @@ export class HomeComponent implements OnInit {
         this.wheel.preset.displays.forEach(d => names.push(d.name));
         let device: string = names.join(",");
 
-        let event: Event = new Event(0, 0, APIService.piHostname, device, SHARING, "remove");
+        let event: Event = new Event(0, 0, " ", device, SHARING, "remove");
         this.api.sendFeatureEvent(event);
 
         // switch the input back to default
@@ -342,7 +342,8 @@ export class HomeComponent implements OnInit {
     private updateFromEvents() {
         this.socket.getEventListener().subscribe(event => {
             if (event.type == MESSAGE) {
-                let e: Event = event.data;
+                let ew: EventWrapper = event.data;
+                let e: Event = ew.event;
 
                 switch(e.eventInfoKey) {
                     case POWER: {
@@ -359,14 +360,31 @@ export class HomeComponent implements OnInit {
 
                         if (input != null && !this.preset.inputs.includes(input)) {
                             console.log("Creating a new input on the wheel from event:", e);
+
+                            if (this.preset.extraInputs.length > 0) {
+                                input.displayname = "Station " + this.numberFromHostname(ew.hostname);
+                                input.click.subscribe(() => {
+                                    let panel = this.data.panels.find(p => p.hostname === ew.hostname);
+
+                                    if (panel != null) {
+                                        this.mirror(panel.preset);
+
+                                        this.mirrorNumber = this.numberFromHostname(ew.hostname);
+                                        this.mirrorDialog.show();
+                                    } else {
+                                        console.error("failed to find panel with hostname", ew.hostname, ". panels: ", this.data.panels);
+                                    }
+                                });
+                            }
+
                             this.preset.extraInputs.length = 0;
                             this.preset.extraInputs.push(input); 
+
                             setTimeout(() => this.wheel.render(), 0);
                         }
                         break; 
                     }
                     case DTA: {
-                        console.log("DTA Event:", e);
                         // Device field on DTA determines what devices got changed. If one of mine did, then show the popup.
                         let names: string[] = e.device.split(",");
 
@@ -377,7 +395,7 @@ export class HomeComponent implements OnInit {
                         });
 
                         if (showPopup) {
-                            if (e.eventInfoValue === "true" && e.requestor !== APIService.piHostname) {
+                            if (e.eventInfoValue === "true" && ew.hostname !== APIService.piHostname) {
 
                                 if (this.wheel.preset == this.sharePreset) {
                                     let minions: string[] = [];
@@ -387,37 +405,18 @@ export class HomeComponent implements OnInit {
                                     });
                                     let device: string = minions.join(",");
 
-                                    let event = new Event(0, 0, APIService.hostname, device, MIRROR, e.requestor);
+                                    let event = new Event(0, 0, "", device, MIRROR, ew.hostname);
                                     this.api.sendFeatureEvent(event);
 
-                                    event = new Event(0, 0, e.requestor, device, DTA, "true");
+                                    event = new Event(0, 0, ew.hostname, device, DTA, "true");
                                     this.api.sendFeatureEvent(event);
 
                                     this.wheel.preset = this.preset;
                                     setTimeout(() => this.wheel.render(), 0);
                                 }
 
-                                if (this.wheel.preset.extraInputs.length > 0) {
-                                    this.wheel.preset.extraInputs[0].displayname = "Station " + this.numberFromHostname(e.requestor);
-                                    this.wheel.preset.extraInputs[0].click.subscribe(() => {
-                                        let panel = this.data.panels.find(p => p.hostname === e.requestor);
-
-                                        if (panel != null) {
-                                            this.mirror(panel.preset);
-
-                                            this.mirrorNumber = this.numberFromHostname(e.requestor);
-                                            this.mirrorDialog.show();
-                                        } else {
-                                            console.error("failed to find panel with hostname", e.requestor, ". panels: ", this.data.panels);
-                                        }
-                                    });
-                                    this.mirrorNumber = this.numberFromHostname(e.requestor);
-                                    this.mirrorDialog.show();
-                                } else
-                                    console.warn("No extra inputs have been created. Current preset", this.wheel.preset);
-
                             } else {
-                                if (this.mirrorNumber == this.numberFromHostname(e.requestor)) {
+                                if (this.mirrorNumber == this.numberFromHostname(ew.hostname)) {
                                     this.removeExtraInputs();
                                     swal.close();
                                 }
@@ -430,23 +429,58 @@ export class HomeComponent implements OnInit {
 
                         // if the mirror event applies to me
                         if(this.wheel.preset.displays.some(d => names.includes(d.name))) {
-                            let panelToMirror = this.data.panels.find(p => p.hostname === e.eventInfoValue);
+                            let panelToMirror = this.data.panels.find(p => p.hostname === ew.hostname);
                             console.log("mirroring preset:", panelToMirror.preset);
                             this.mirror(panelToMirror.preset);
 
-                            this.mirrorNumber = this.numberFromHostname(e.eventInfoValue);
+                            this.mirrorNumber = this.numberFromHostname(ew.hostname);
                         }
                     }
                     case SHARING: {
                         if (this.sharePreset == this.wheel.preset) {
+                            // TODO edit sharePreset.audioDevices based on add/remove events
+                            //      if a roomWideAudio is added, send a request to change audio over there.
+                            //      if a roomWideAudio is removed, send a request to change audio back to the me (the master)
                             let names = e.device.split(","); 
 
+                            // remove the name if it's on my default preset (those ones should never be added/removed - at least for now)
+                            names = names.filter(n => !this.preset.displays.some(d => d.name === n));
+
+                            if (names == null || names.length == 0)
+                                break;
+
                             if (e.eventInfoValue === "remove") {
+                                console.log("removing", names, "from", this.sharePreset.displays);
+                                // filter out the ones by the names that just came through, unless it's a name from my default preset
                                 this.sharePreset.displays = this.sharePreset.displays.filter(d => !names.includes(d.name));
-                                this.preset.displays.forEach(d => {
-                                    if (!this.sharePreset.displays.includes(d))
-                                        this.sharePreset.displays.push(d);
-                                });
+
+                                console.log("removed displays:", this.sharePreset.displays);
+
+                                // if a room-wide audio is removed, send a reuqest to change my audio to default.
+                                // also, edit sharePreset.audioDevices so that the correct device(s) is/are controlled. 
+                                
+                                // create an array of displays that were removed
+                                let displays: Display[] = [];
+                                this.data.displays.filter(d => names.includes(d.name))
+                                                  .forEach(d => displays.push(d));
+
+                                console.log("displays that were removed", displays);
+
+                                // get audioConfigs of removed displays
+                                let audioConfigs = this.data.getAudioConfigurations(displays);
+                                console.log("audioConfigs of removed displays", audioConfigs);
+                                let hasRoomWide = this.data.hasRoomWide(audioConfigs);
+
+                                if (hasRoomWide) {
+                                    console.log("removed room wide audio device. changing preset...");
+                                    // change the audioDevices
+                                    this.sharePreset.audioDevices = this.preset.audioDevices;
+                                    console.log("share preset audio devices changed to: ", this.sharePreset);
+
+                                    this.wheel.command.setVolume(30, this.sharePreset.audioDevices);
+                                    this.wheel.command.setMute(false, this.sharePreset.audioDevices);
+                                } else
+                                    console.log("no room wide audioDevice was removed");
 
                                 console.log("removed displays. now mirroring to", this.wheel.preset.displays);
                             } else if (e.eventInfoValue === "add") {
@@ -456,6 +490,33 @@ export class HomeComponent implements OnInit {
 
                                 this.sharePreset.displays.push(...displays);
                                 this.selectedDisplays.push(...displays);
+
+                                // get audioConfigs of added displays
+                                let audioConfigs = this.data.getAudioConfigurations(displays);
+                                console.log("audioConfigs of added displays", audioConfigs);
+                                let hasRoomWide = this.data.hasRoomWide(audioConfigs);
+
+                                if (hasRoomWide) {
+                                    console.log("added room wide audio device. changing preset...");
+
+                                    // mute current audioDevice
+                                    console.log("muting old audioDevices");
+                                    this.wheel.command.setMute(true, this.sharePreset.audioDevices);
+                                    this.wheel.command.setVolume(0, this.sharePreset.audioDevices);
+
+                                    // change the audioDevices
+                                    this.sharePreset.audioDevices.length = 0;
+
+                                    for (let config of audioConfigs) {
+                                        if (config.roomWide) 
+                                            this.sharePreset.audioDevices.push(...config.audioDevices);
+                                    }
+                                    console.log("share preset audio devices changed to: ", this.sharePreset);
+
+                                    this.wheel.command.setVolume(30, this.sharePreset.audioDevices);
+                                    this.wheel.command.setMute(false, this.sharePreset.audioDevices);
+                                } else
+                                    console.log("no room wide audioDevice was added");
 
                                 console.log("added", displays, "to mirror list. now mirroring to", this.wheel.preset.displays);
                             }
