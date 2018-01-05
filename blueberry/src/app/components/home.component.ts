@@ -352,13 +352,17 @@ export class HomeComponent implements OnInit {
                         }
                     }
                     case INPUT: {
+                        if (APIService.piHostname !== ew.hostname) {
+                            break;
+                        }
+
                         if (this.preset.displays.find(d => d.name === e.device) == null) {
                             break;
                         }
 
                         let input = Input.getInput(e.eventInfoValue, this.data.inputs);
 
-                        if (input != null && !this.preset.inputs.includes(input)) {
+                        if (input != null) {
                             console.log("Creating a new input on the wheel from event:", e);
 
                             input.displayname = "Station " + this.numberFromHostname(ew.hostname);
@@ -417,7 +421,7 @@ export class HomeComponent implements OnInit {
 
                                 this.mirrorDialog.show();
                             } else {
-                                if (this.mirrorNumber == this.numberFromHostname(ew.hostname)) {
+                                if (this.mirrorNumber === this.numberFromHostname(ew.hostname)) {
                                     this.removeExtraInputs();
                                     swal.close();
                                 }
@@ -457,7 +461,7 @@ export class HomeComponent implements OnInit {
                                 // filter out the ones by the names that just came through, unless it's a name from my default preset
                                 this.sharePreset.displays = this.sharePreset.displays.filter(d => !names.includes(d.name));
 
-                                console.log("removed displays:", this.sharePreset.displays);
+                                console.log("leftover displays in sharePreset:", this.sharePreset);
 
                                 // if a room-wide audio is removed, send a reuqest to change my audio to default.
                                 // also, edit sharePreset.audioDevices so that the correct device(s) is/are controlled. 
