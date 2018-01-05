@@ -361,21 +361,19 @@ export class HomeComponent implements OnInit {
                         if (input != null && !this.preset.inputs.includes(input)) {
                             console.log("Creating a new input on the wheel from event:", e);
 
-                            if (this.preset.extraInputs.length > 0) {
-                                input.displayname = "Station " + this.numberFromHostname(ew.hostname);
-                                input.click.subscribe(() => {
-                                    let panel = this.data.panels.find(p => p.hostname === ew.hostname);
+                            input.displayname = "Station " + this.numberFromHostname(ew.hostname);
+                            input.click.subscribe(() => {
+                                let panel = this.data.panels.find(p => p.hostname === ew.hostname);
 
-                                    if (panel != null) {
-                                        this.mirror(panel.preset);
+                                if (panel != null) {
+                                    this.mirror(panel.preset);
 
-                                        this.mirrorNumber = this.numberFromHostname(ew.hostname);
-                                        this.mirrorDialog.show();
-                                    } else {
-                                        console.error("failed to find panel with hostname", ew.hostname, ". panels: ", this.data.panels);
-                                    }
-                                });
-                            }
+                                    this.mirrorNumber = this.numberFromHostname(ew.hostname);
+                                    this.mirrorDialog.show();
+                                } else {
+                                    console.error("failed to find panel with hostname", ew.hostname, ". panels: ", this.data.panels);
+                                }
+                            });
 
                             this.preset.extraInputs.length = 0;
                             this.preset.extraInputs.push(input); 
@@ -385,6 +383,8 @@ export class HomeComponent implements OnInit {
                         break; 
                     }
                     case DTA: {
+                        console.log("dta event", e);
+
                         // Device field on DTA determines what devices got changed. If one of mine did, then show the popup.
                         let names: string[] = e.device.split(",");
 
@@ -415,6 +415,7 @@ export class HomeComponent implements OnInit {
                                     setTimeout(() => this.wheel.render(), 0);
                                 }
 
+                                this.mirrorDialog.show();
                             } else {
                                 if (this.mirrorNumber == this.numberFromHostname(ew.hostname)) {
                                     this.removeExtraInputs();
@@ -425,6 +426,7 @@ export class HomeComponent implements OnInit {
                         break; 
                     }
                     case MIRROR: {
+                        console.log("mirror event", e);
                         let names: string[] = e.device.split(",");
 
                         // if the mirror event applies to me
@@ -437,6 +439,7 @@ export class HomeComponent implements OnInit {
                         }
                     }
                     case SHARING: {
+                        console.log("sharing event", e);
                         if (this.sharePreset == this.wheel.preset) {
                             // TODO edit sharePreset.audioDevices based on add/remove events
                             //      if a roomWideAudio is added, send a request to change audio over there.
