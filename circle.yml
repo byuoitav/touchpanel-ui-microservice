@@ -11,22 +11,30 @@ machine:
 
 dependencies:
     pre:
+        - rm -rf ~/.go_workspace
         - go get -u github.com/FiloSottile/gvt
     override:
+        - mkdir -p ~/.go_project/src/github.com/${CIRCLE_PROJECT_USERNAME}
+        - ln -s ${HOME}/${CIRCLE_PROJECT_REPONAME} $BUILD_PATH
+        - cd $BUILD_PATH
+        - go get -d -v
         - make vendor 
 
 test:
     override:
+        - cd $BUILD_PATH
         - make test
 
 compile:
     override:
+        - cd $BUILD_PATH
         - make build
 
 deployment:
     development:
         branch: master
         commands:
+            - cd $BUILD_PATH
             - make docker
     testing:
         branch: testing
