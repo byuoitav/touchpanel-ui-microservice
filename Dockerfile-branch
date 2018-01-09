@@ -1,18 +1,9 @@
-FROM golang:alpine
+FROM amd64/alpine
+MAINTAINER Daniel Randall <danny_randall@byu.edu>
 
-ARG GITHUB_BRANCH
+ARG NAME
 
-RUN apk update && apk add git
-RUN go get -u github.com/FiloSottile/gvt
+COPY ${NAME}-bin ${NAME}-bin 
 
-RUN mkdir -p /go/src/github.com/byuoitav
-ADD . /go/src/github.com/byuoitav/touchpanel-ui-microservice
-
-WORKDIR /go/src/github.com/byuoitav/touchpanel-ui-microservice
-RUN gvt fetch -branch ${GITHUB_BRANCH} github.com/byuoitav/event-router-microservice
-RUN go get -d -v
-RUN go install -v
-
-CMD ["/go/bin/touchpanel-ui-microservice"]
-
+ENTRYPOINT ./${NAME}-bin
 EXPOSE 8888

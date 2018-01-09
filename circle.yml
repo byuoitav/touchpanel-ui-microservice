@@ -11,43 +11,23 @@ machine:
 
 dependencies:
     pre:
-        - rm -rf ~/.go_workspace
         - go get -u github.com/FiloSottile/gvt
     override:
-        - mkdir -p ~/.go_project/src/github.com/${CIRCLE_PROJECT_USERNAME}
-        - ln -s ${HOME}/${CIRCLE_PROJECT_REPONAME} ${HOME}/.go_project/src/github.com/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}
-        - cd ~/.go_project/src/github.com/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}
-        - go get -d -v
-        - >
-            if [ $CIRCLE_BRANCH = "testing" ]; then
-                gvt fetch -branch testing github.com/byuoitav/event-router-microservice
-            elif [ $CIRCLE_BRANCH = "stage" ]; then
-                gvt fetch -branch stage github.com/byuoitav/event-router-microservice
-            elif [ $CIRCLE_BRANCH = "production" ]; then 
-                gvt fetch -branch production github.com/byuoitav/event-router-microservice
-            fi
-
-compile:
-    override:
-        - cd $BUILD_PATH && go build -v
+        - make vendor 
 
 test:
     override:
-        - cd $BUILD_PATH && go test -v -race $(go list ./... | grep -v /vendor/)
-        - npm install -g @angular/cli
-        - cd blueberry && npm install && ng build --base-href="./blueberry/" --prod --aot --build-optimizer
-        - mv blueberry/dist/ blueberry-tmp && rm -r blueberry && mv blueberry-tmp blueberry
+        - make test
+
+compile:
+    override:
+        - make build
 
 deployment:
     development:
         branch: master
         commands:
-            - cd $BUILD_PATH && env GOOS=linux GOARCH=arm go build -v -o ${CIRCLE_PROJECT_REPONAME}-arm
-            - docker build -f Dockerfile-ARM -t byuoitav/rpi-${CIRCLE_PROJECT_REPONAME}:development .
-            - docker build -f Dockerfile-development -t byuoitav/${CIRCLE_PROJECT_REPONAME}:development .
-            - docker login -e $DOCKER_EMAIL -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
-            - docker push byuoitav/${CIRCLE_PROJECT_REPONAME}:development
-            - docker push byuoitav/rpi-${CIRCLE_PROJECT_REPONAME}:development
+            - make docker
     testing:
         branch: testing
         commands:
