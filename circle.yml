@@ -14,9 +14,9 @@ dependencies:
         - rm -rf ~/.go_workspace
         - go get -u github.com/FiloSottile/gvt
     override:
-        - echo "gopath ${GOPATH}"
-        - echo "path ${PATH}"
-        - echo "build path ${BUILD_PATH}"
+        - echo "gopath $GOPATH"
+        - echo "path $PATH"
+        - echo "build path $BUILD_PATH"
         - mkdir -p ~/.go_project/src/github.com/${CIRCLE_PROJECT_USERNAME}
         - ln -s ${HOME}/${CIRCLE_PROJECT_REPONAME} $HOME/.go_project/src/github.com/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}
         - cd ~/.go_project/src/github.com/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}
@@ -32,6 +32,8 @@ test:
 compile:
     override:
         - cd $BUILD_PATH
+        - ls -la
+        - go build -v
         - make build
 
 deployment:
