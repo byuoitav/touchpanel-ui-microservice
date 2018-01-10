@@ -79,7 +79,7 @@ ifeq "$(BRANCH)" "master"
 endif
 	$(DOCKER_BUILD) --build-arg NAME=$(NAME) -f $(DOCKER_FILE) -t $(ORG)/$(NAME):$(BRANCH) .
 	@echo logging in to dockerhub...
-	$(DOCKER_LOGIN)
+	@$(DOCKER_LOGIN)
 	$(DOCKER_PUSH) $(ORG)/$(NAME):$(BRANCH)
 ifeq "$(BRANCH)" "development"
 	$(eval BRANCH=master)

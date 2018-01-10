@@ -1,6 +1,6 @@
-node_modules/
-vendor/
-.git/
+*/node_modules
+vendor
+.git
 
 .dockerignore
 .gitignore
