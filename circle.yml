@@ -17,23 +17,16 @@ dependencies:
         - mkdir -p ~/.go_project/src/github.com/${CIRCLE_PROJECT_USERNAME}
         - ln -s ${HOME}/${CIRCLE_PROJECT_REPONAME} $HOME/.go_project/src/github.com/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}
         - cd ~/.go_project/src/github.com/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}
-        - ls -la
         - go get -d -v
         - make vendor 
 
 test:
     override:
-        - cd $BUILD_PATH
-        - make test
+        - cd $BUILD_PATH && make test
 
 compile:
     override:
-        - cd $BUILD_PATH
-        - echo "gopath $GOPATH"
-        - pwd
-        - ls -la
-        - go build -v
-        - make build
+        - cd $BUILD_PATH && pwd && make build
 
 deployment:
     development:
