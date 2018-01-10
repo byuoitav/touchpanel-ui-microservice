@@ -26,12 +26,13 @@ VENDOR=gvt fetch -branch $(BRANCH)
 # docker
 DOCKER=docker
 DOCKER_BUILD=$(DOCKER) build
-DOCKER_LOGIN=$(DOCKER) login
+DOCKER_LOGIN=$(DOCKER) login -e $(EMAIL) -u $(UNAME) -p $(PASS)
 DOCKER_PUSH=$(DOCKER) push
 DOCKER_FILE=dockerfile
 DOCKER_FILE_ARM=dockerfile-arm
 
 UNAME=$(shell echo $(DOCKER_USERNAME))
+EMAIL=$(shell echo $(DOCKER_EMAIL))
 PASS=$(shell echo $(DOCKER_PASSWORD))
 
 # angular
@@ -78,7 +79,7 @@ ifeq "$(BRANCH)" "master"
 endif
 	$(DOCKER_BUILD) --build-arg NAME=$(NAME) -f $(DOCKER_FILE) -t $(ORG)/$(NAME):$(BRANCH) .
 	@echo logging in to dockerhub...
-	$(DOCKER_LOGIN) -u $(UNAME) -p $(PASS)
+	$(DOCKER_LOGIN)
 	$(DOCKER_PUSH) $(ORG)/$(NAME):$(BRANCH)
 ifeq "$(BRANCH)" "development"
 	$(eval BRANCH=master)
@@ -90,7 +91,7 @@ ifeq "$(BRANCH)" "master"
 endif
 	$(DOCKER_BUILD) --build-arg NAME=$(NAME) -f $(DOCKER_FILE_ARM) -t $(ORG)/rpi-$(NAME):$(BRANCH) .
 	@echo logging in to dockerhub...
-	@$(DOCKER_LOGIN) -u $(UNAME) -p $(PASS)
+	@$(DOCKER_LOGIN)
 	$(DOCKER_PUSH) $(ORG)/rpi-$(NAME):$(BRANCH)
 ifeq "$(BRANCH)" "development"
 	$(eval BRANCH=master)
