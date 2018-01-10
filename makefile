@@ -1,6 +1,19 @@
+# vars
 ORG=$(shell echo $(CIRCLE_PROJECT_USERNAME))
 BRANCH=$(shell echo $(CIRCLE_BRANCH))
 NAME=$(shell echo $(CIRCLE_PROJECT_REPONAME))
+
+ifeq ($(NAME),)
+NAME := $(shell basename "$(PWD)")
+endif
+
+ifeq ($(ORG),)
+ORG=byuoitav
+endif
+
+ifeq ($(BRANCH),)
+BRANCH:= $(shell git rev-parse --abbrev-ref HEAD)
+endif
 
 # go
 GOCMD=go
@@ -16,7 +29,7 @@ DOCKER_BUILD=$(DOCKER) build
 DOCKER_LOGIN=$(DOCKER) login
 DOCKER_PUSH=$(DOCKER) push
 DOCKER_FILE=dockerfile
-DOCKER_FILE_ARM=Dockerfile-ARM
+DOCKER_FILE_ARM=dockerfile-arm
 
 UNAME=$(shell echo $(DOCKER_USERNAME))
 PASS=$(shell echo $(DOCKER_PASSWORD))
@@ -27,9 +40,6 @@ NPM_INSTALL=$(NPM) install
 NG_BUILD=ng build --prod --aot --build-optimizer
 NG1=blueberry
 
-# general
-NAME := $(shell basename "$(PWD)")
-
 build: vendor build-x86 build-arm build-web
 
 build-x86:
@@ -38,7 +48,7 @@ build-x86:
 build-arm: 
 	env GOOS=linux GOARCH=arm $(GOBUILD) -o $(NAME)-arm -v
 
-build-web:
+build-web: $(NG1)
 	cd $(NG1) && $(NPM_INSTALL) && $(NG_BUILD) --base-href="./$(NG1)-dist/"
 	mv $(NG1)/dist $(NG1)-dist
 
@@ -47,38 +57,49 @@ test:
 
 clean: 
 	$(GOCLEAN)
-	rm -r $(NAME)-bin
-	rm -r $(NG1)-dist
+	rm -f $(NAME)-bin
+	rm -f $(NAME)-arm
+	rm -rf $(NG1)-dist
 
 run: build-x86
 	./$(NAME)-bin
 
 vendor: 
-	ifneq "$(BRANCH)" "master"
+ifneq "$(BRANCH)" "master"
 		# put vendored packages in here
 		# e.g. $(VENDOR) github.com/byuoitav/event-router-microservice
-	endif
+endif
 
 docker: docker-x86 docker-arm
 
-docker-x86: test build
-	ifeq "$(BRANCH)" "master"
+docker-x86: $(NAME)-bin $(NG1)-dist
+ifeq "$(BRANCH)" "master"
 		$(BRANCH)="development"
-	endif
+endif
 	$(DOCKER_BUILD) --build-arg NAME=$(NAME) -f $(DOCKER_FILE) -t $(ORG)/$(NAME):$(BRANCH) .
 	$(DOCKER_LOGIN) -u $(UNAME) -p $(PASS)
 	$(DOCKER_PUSH) $(ORG)/$(NAME):$(BRANCH)
-	ifeq "$(BRANCH)" "development"
+ifeq "$(BRANCH)" "development"
 		$(BRANCH)="master"
-	endif
+endif
 
-docker-arm: test build-arm
-	ifeq "$(BRANCH)" "master"
+docker-arm: $(NAME)-arm $(NG1)-dist
+ifeq "$(BRANCH)" "master"
 		$(BRANCH)="development"
-	endif
+endif
 	$(DOCKER_BUILD) --build-arg NAME=$(NAME) -f $(DOCKER_FILE_ARM) -t $(GIT_ORG)/rpi-$(NAME):$(BRANCH) .
 	$(DOCKER_LOGIN) -u $(DOCKER_USERNAME) -p $(DOCKER_PASSWORD)
 	$(DOCKER_PUSH) $(GIT_ORG)/rpi-$(NAME):$(BRANCH)
-	ifeq "$(BRANCH)" "development"
+ifeq "$(BRANCH)" "development"
 		$(BRANCH)="master"
-	endif
+endif
+
+### deps
+$(NAME)-bin:
+	$(MAKE) build-x86
+
+$(NAME)-arm:
+	$(MAKE) build-arm
+
+$(NG1)-dist:
+	$(MAKE) build-web

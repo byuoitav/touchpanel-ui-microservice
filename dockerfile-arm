@@ -1,0 +1,9 @@
+FROM arm32v6/alpine
+MAINTAINER Daniel Randall <danny_randall@byu.edu>
+
+ARG NAME
+
+COPY ${NAME}-arm ${NAME}-arm 
+
+ENTRYPOINT ./${NAME}-arm
+EXPOSE 8888

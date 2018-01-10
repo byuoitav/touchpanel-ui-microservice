@@ -26,7 +26,7 @@ test:
 
 compile:
     override:
-        - cd $BUILD_PATH && pwd && make build
+        - cd $BUILD_PATH && make build
 
 deployment:
     development:
