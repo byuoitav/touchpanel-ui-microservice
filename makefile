@@ -74,24 +74,26 @@ docker: docker-x86 docker-arm
 
 docker-x86: $(NAME)-bin $(NG1)-dist
 ifeq "$(BRANCH)" "master"
-		$(BRANCH)="development"
+	$(eval BRANCH=development)
 endif
 	$(DOCKER_BUILD) --build-arg NAME=$(NAME) -f $(DOCKER_FILE) -t $(ORG)/$(NAME):$(BRANCH) .
-	$(DOCKER_LOGIN) -u $(UNAME) -p $(PASS)
+	@echo logging in to dockerhub...
+	@$(DOCKER_LOGIN) -u $(UNAME) -p $(PASS)
 	$(DOCKER_PUSH) $(ORG)/$(NAME):$(BRANCH)
 ifeq "$(BRANCH)" "development"
-		$(BRANCH)="master"
+	$(eval BRANCH=master)
 endif
 
 docker-arm: $(NAME)-arm $(NG1)-dist
 ifeq "$(BRANCH)" "master"
-		$(BRANCH)="development"
+	$(eval BRANCH=development)
 endif
-	$(DOCKER_BUILD) --build-arg NAME=$(NAME) -f $(DOCKER_FILE_ARM) -t $(GIT_ORG)/rpi-$(NAME):$(BRANCH) .
-	$(DOCKER_LOGIN) -u $(DOCKER_USERNAME) -p $(DOCKER_PASSWORD)
-	$(DOCKER_PUSH) $(GIT_ORG)/rpi-$(NAME):$(BRANCH)
+	$(DOCKER_BUILD) --build-arg NAME=$(NAME) -f $(DOCKER_FILE_ARM) -t $(ORG)/rpi-$(NAME):$(BRANCH) .
+	@echo logging in to dockerhub...
+	@$(DOCKER_LOGIN) -u $(UNAME) -p $(PASS)
+	$(DOCKER_PUSH) $(ORG)/rpi-$(NAME):$(BRANCH)
 ifeq "$(BRANCH)" "development"
-		$(BRANCH)="master"
+	$(eval BRANCH=master)
 endif
 
 ### deps
