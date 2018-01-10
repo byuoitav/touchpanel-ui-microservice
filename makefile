@@ -33,8 +33,6 @@ NAME := $(shell basename "$(PWD)")
 build: vendor build-x86 build-arm build-web
 
 build-x86:
-	echo "building x86..."
-	ls -la
 	env GOOS=linux CGO_ENABLED=0 $(GOBUILD) -o $(NAME)-bin -v
 
 build-arm: 

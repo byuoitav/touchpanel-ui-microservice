@@ -13,10 +13,10 @@ dependencies:
     pre:
         - rm -rf ~/.go_workspace
         - go get -u github.com/FiloSottile/gvt
+        - npm install -g @angular/cli
     override:
         - mkdir -p ~/.go_project/src/github.com/${CIRCLE_PROJECT_USERNAME}
         - ln -s ${HOME}/${CIRCLE_PROJECT_REPONAME} $HOME/.go_project/src/github.com/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}
-        - cd ~/.go_project/src/github.com/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}
         - go get -d -v
         - make vendor 
 
@@ -32,8 +32,7 @@ deployment:
     development:
         branch: master
         commands:
-            - cd $BUILD_PATH
-            - make docker
+            - cd $BUILD_PATH && make docker
     testing:
         branch: testing
         commands:
