@@ -19,13 +19,13 @@ dependencies:
         - ln -s ${HOME}/${CIRCLE_PROJECT_REPONAME} ${BUILD_PATH}
         - cd $BUILD_PATH && make deps
 
-test:
-    override:
-        - cd $BUILD_PATH && make test
-
 compile:
     override:
         - cd $BUILD_PATH && make build
+
+test:
+    override:
+        - cd $BUILD_PATH && make test
 
 deployment:
     deploy:
