@@ -4,10 +4,10 @@ MAINTAINER Daniel Randall <danny_randall@byu.edu>
 ARG NAME
 ENV name=${NAME}
 
-COPY ${name}-bin ${name}-bin 
+COPY ${name}-arm ${name}-arm 
 
 # add any required files/folders
 COPY blueberry-dist blueberry-dist
 
-ENTRYPOINT ./${name}-bin
+ENTRYPOINT ./${name}-arm
 EXPOSE 8888
