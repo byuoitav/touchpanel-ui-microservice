@@ -41,7 +41,7 @@ NPM_INSTALL=$(NPM) install
 NG_BUILD=ng build --prod --aot --build-optimizer
 NG1=blueberry
 
-build: vendor build-x86 build-arm build-web
+build: deps build-x86 build-arm build-web
 
 build-x86:
 	env GOOS=linux CGO_ENABLED=0 $(GOBUILD) -o $(NAME)-bin -v
@@ -65,7 +65,8 @@ clean:
 run: $(NAME)-bin $(NG1)-dist
 	./$(NAME)-bin
 
-vendor: 
+deps: 
+	$(GOGET) -d -v
 ifneq "$(BRANCH)" "master"
 		# put vendored packages in here
 		# e.g. $(VENDOR) github.com/byuoitav/event-router-microservice

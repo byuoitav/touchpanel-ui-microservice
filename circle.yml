@@ -17,8 +17,7 @@ dependencies:
     override:
         - mkdir -p ~/.go_project/src/github.com/${CIRCLE_PROJECT_USERNAME}
         - ln -s ${HOME}/${CIRCLE_PROJECT_REPONAME} ${BUILD_PATH}
-        - go get -d -v
-        - make vendor 
+        - cd $BUILD_PATH && make deps
 
 test:
     override:
