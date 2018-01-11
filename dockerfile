@@ -5,9 +5,11 @@ ARG NAME
 ENV name=${NAME}
 
 COPY ${name}-bin ${name}-bin 
+COPY version.txt version.txt
 
 # add any required files/folders
 COPY blueberry-dist blueberry-dist
+COPY redirect.html redirect.html
 
 ENTRYPOINT ./${name}-bin
 EXPOSE 8888
