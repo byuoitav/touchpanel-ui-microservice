@@ -28,19 +28,7 @@ compile:
         - cd $BUILD_PATH && make build
 
 deployment:
-    development:
-        branch: master
-        commands:
-            - cd $BUILD_PATH && make docker
-    testing:
-        branch: testing
-        commands:
-            - cd $BUILD_PATH && make docker
-    stage:
-        branch: stage
-        commands:
-            - cd $BUILD_PATH && make docker
-    production:
-        branch: production
+    deploy:
+        branch: [master, testing, stage, prod]
         commands:
             - cd $BUILD_PATH && make docker
