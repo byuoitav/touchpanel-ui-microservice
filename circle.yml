@@ -13,7 +13,6 @@ dependencies:
     pre:
         - rm -rf ~/.go_workspace
         - go get -u github.com/FiloSottile/gvt
-        - npm install -g @angular/cli
     override:
         - mkdir -p ~/.go_project/src/github.com/${CIRCLE_PROJECT_USERNAME}
         - ln -s ${HOME}/${CIRCLE_PROJECT_REPONAME} ${BUILD_PATH}
@@ -36,30 +35,12 @@ deployment:
     testing:
         branch: testing
         commands:
-            - cd $BUILD_PATH && env GOOS=linux GOARCH=arm go build -v -o ${CIRCLE_PROJECT_REPONAME}-arm
-            - docker build -f Dockerfile-ARM -t byuoitav/rpi-${CIRCLE_PROJECT_REPONAME}:testing .
-            - gvt delete github.com/byuoitav/event-router-microservice
-            - docker build --build-arg GITHUB_BRANCH=testing -f Dockerfile-branch -t byuoitav/${CIRCLE_PROJECT_REPONAME}:testing .
-            - docker login -e $DOCKER_EMAIL -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
-            - docker push byuoitav/${CIRCLE_PROJECT_REPONAME}:testing
-            - docker push byuoitav/rpi-${CIRCLE_PROJECT_REPONAME}:testing
+            - cd $BUILD_PATH && make docker
     stage:
         branch: stage
         commands:
-            - cd $BUILD_PATH && env GOOS=linux GOARCH=arm go build -v -o ${CIRCLE_PROJECT_REPONAME}-arm
-            - docker build -f Dockerfile-ARM -t byuoitav/rpi-${CIRCLE_PROJECT_REPONAME}:stage .
-            - gvt delete github.com/byuoitav/event-router-microservice
-            - docker build --build-arg GITHUB_BRANCH=stage -f Dockerfile-branch -t byuoitav/${CIRCLE_PROJECT_REPONAME}:stage .
-            - docker login -e $DOCKER_EMAIL -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
-            - docker push byuoitav/${CIRCLE_PROJECT_REPONAME}:stage
-            - docker push byuoitav/rpi-${CIRCLE_PROJECT_REPONAME}:stage
+            - cd $BUILD_PATH && make docker
     production:
         branch: production
         commands:
-            - cd $BUILD_PATH && env GOOS=linux GOARCH=arm go build -v -o ${CIRCLE_PROJECT_REPONAME}-arm
-            - docker build -f Dockerfile-ARM -t byuoitav/rpi-${CIRCLE_PROJECT_REPONAME}:latest .
-            - gvt delete github.com/byuoitav/event-router-microservice
-            - docker build --build-arg GITHUB_BRANCH=production -f Dockerfile-branch -t byuoitav/${CIRCLE_PROJECT_REPONAME}:latest .
-            - docker login -e $DOCKER_EMAIL -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
-            - docker push byuoitav/${CIRCLE_PROJECT_REPONAME}:latest
-            - docker push byuoitav/rpi-${CIRCLE_PROJECT_REPONAME}:latest
+            - cd $BUILD_PATH && make docker
