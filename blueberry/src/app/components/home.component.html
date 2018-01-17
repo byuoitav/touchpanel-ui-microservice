@@ -29,6 +29,13 @@
     </div>
 </div> 
 
+<div class="buttons top right">
+	<button mat-fab *ngIf="wheel?.preset?.independentAudioDevices?.length > 0" class="independentAudio" (click)="audioDialog.show()">
+        <mat-icon>equalizer</mat-icon>
+    </button>
+</div>
+
+
 <!-- modal windows -->
 <swal #poweroffall>
     <div *swalPartial="swalTargets.content">
@@ -79,5 +86,16 @@
 
     <div *swalPartial="swalTargets.title">
         <span>Mirroring Station {{mirrorNumber}}</span>
+    </div>
+</swal>
+
+<swal #audio>
+    <div *swalPartial="swalTargets.title">
+        <span>Audio Control</span>
+    </div>
+
+    <div *swalPartial="swalTargets.content">
+        <div *ngFor="let a of preset.independentAudioDevices">
+        </div>
     </div>
 </swal>

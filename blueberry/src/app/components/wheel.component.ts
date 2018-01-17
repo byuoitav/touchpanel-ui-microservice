@@ -33,18 +33,10 @@ export class WheelComponent implements AfterContentInit {
     thumbLabel: boolean = true;
 
 	@ViewChild("wheel") wheel: ElementRef;
-    @ViewChild("audio") audioDialog: SwalComponent;
 
 	constructor(public command: CommandService, private api: APIService, public readonly swalTargets: SwalPartialTargets) {}
 
 	ngAfterContentInit() {
-        this.audioDialog.options = {
-            confirmButtonText: "Done",
-            focusConfirm: false,
-            showCancelButton: false,
-            width: "80vw",
-        };
-
 		setTimeout(() => {
             this.render(); 
             this.init.emit(true)

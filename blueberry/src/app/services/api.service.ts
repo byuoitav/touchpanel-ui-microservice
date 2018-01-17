@@ -36,9 +36,11 @@ export class APIService {
 			APIService.options = new RequestOptions({ headers: headers})
 	
 			let base = location.origin.split(':');
-			APIService.localurl = base[0] + ":" + base[1];
+			// TODO 
+//			APIService.localurl = base[0] + ":" + base[1];
+			APIService.localurl = "http://teton.byu.edu";
 	
-			APIService.room = new Room();	
+			APIService.room = new Room();
 			
 			this.setupHostname();
 		} else {
@@ -85,10 +87,13 @@ export class APIService {
 
 		this.getAPIUrl().subscribe(
 			data => {
+				/* TODO
 				APIService.apihost = "http://" + location.hostname;
 				if (!data["hostname"].includes("localhost")) {
 					APIService.apihost = "http://" + data["hostname"];
 				}
+			   */
+			  	APIService.apihost = "http://teton.byu.edu"
 
 				APIService.apiurl = APIService.apihost + ":8000/buildings/" + APIService.building + "/rooms/" + APIService.roomName; 
 				console.info("API url:", APIService.apiurl);

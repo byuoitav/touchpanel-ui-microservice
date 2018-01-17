@@ -2,7 +2,6 @@
     position: absolute;
     margin-left: 3vw;
     color: white; 
-
     .button {
         margin-right: 1vw; 
         width: 10vw;
@@ -35,6 +34,11 @@
             background-color: #2c496f; 
         }
     }
+
+	&.right {
+		right: 0;
+		margin-right: 3vw;
+	}
 }
 
 .menu {
@@ -64,5 +68,17 @@
         margin-left: 5vw;
         margin-right: 5vw;
         margin-bottom: 2vh;
+    }
+}
+
+.independentAudio {
+    z-index: 1000;
+    height: 8vw;
+    width: 8vw;
+
+    .mat-icon {
+        font-size: 4vw; 
+        height: 4vw;
+        width: 4vw;
     }
 }

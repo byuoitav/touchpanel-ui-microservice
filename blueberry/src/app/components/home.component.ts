@@ -38,6 +38,7 @@ export class HomeComponent implements OnInit {
     @ViewChild("selectdisplays") selectDisplaysDialog: SwalComponent;
     @ViewChild("unshare") unShareDialog: SwalComponent;
     @ViewChild("mirror") mirrorDialog: SwalComponent;
+    @ViewChild("audio") audioDialog: SwalComponent;
 
     constructor(public data: DataService, private socket: SocketService, public api: APIService, public readonly swalTargets: SwalPartialTargets, private graph: GraphService) {
         this.graph.init();
@@ -153,6 +154,13 @@ export class HomeComponent implements OnInit {
                 });
             },
         }
+
+        this.audioDialog.options = {
+            confirmButtonText: "Done",
+            focusConfirm: false,
+            showCancelButton: false,
+            width: "80vw",
+        };
     }
 
     private onWheelInit() {
