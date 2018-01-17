@@ -243,7 +243,7 @@ export class HomeComponent implements OnInit {
         this.selectedDisplays.forEach(d => displays.push(d));
         this.wheel.preset.displays.forEach(d => displays.push(d));
         
-        this.sharePreset = new Preset("Sharing", "subscriptions", displays, audioDevices, this.wheel.preset.inputs, this.wheel.preset.shareableDisplays);
+        this.sharePreset = new Preset("Sharing", "subscriptions", displays, audioDevices, this.wheel.preset.inputs, this.wheel.preset.shareableDisplays, this.wheel.preset.independentAudioDevices);
         console.log("sharePreset", this.sharePreset);
 
         this.wheel.share(this.selectedDisplays).subscribe(

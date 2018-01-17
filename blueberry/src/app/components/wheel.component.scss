@@ -5,7 +5,7 @@ $owheelsize: 95vh;
 $cwheelsize: 25vh;
 $linewidth: .12vh;
 
-$volumesize: 80%;
+$volumesize: 95%;
 
 // reset automatic margins
 ul {
@@ -189,6 +189,10 @@ ul {
         pointer-events: none; 
     }
 
+    .buttons {
+        flex-direction: row;
+    }
+
     .mute {
         height: 8vw;
         width: 8vw;
@@ -198,6 +202,17 @@ ul {
         &.muted {
             background-color: #c62828; 
         }
+
+        .mat-icon {
+            font-size: 4vw; 
+            height: 4vw;
+            width: 4vw;
+        }
+    }
+
+    .independentAudio {
+        z-index: 1000;
+        height: 12vh;
 
         .mat-icon {
             font-size: 4vw; 

@@ -1,4 +1,6 @@
 import { Component, Input as AngularInput, Output as AngularOutput, AfterContentInit, ElementRef, ViewChild, EventEmitter } from '@angular/core';
+import swal, { SweetAlertOptions } from 'sweetalert2';
+import { SwalComponent, SwalPartialTargets } from '@toverux/ngx-sweetalert2';
 
 import { Preset } from '../objects/objects';
 import { Display, Input, AudioDevice, DTA } from '../objects/status.objects';
@@ -31,10 +33,18 @@ export class WheelComponent implements AfterContentInit {
     thumbLabel: boolean = true;
 
 	@ViewChild("wheel") wheel: ElementRef;
+    @ViewChild("audio") audioDialog: SwalComponent;
 
-	constructor(public command: CommandService, private api: APIService) {}
+	constructor(public command: CommandService, private api: APIService, public readonly swalTargets: SwalPartialTargets) {}
 
 	ngAfterContentInit() {
+        this.audioDialog.options = {
+            confirmButtonText: "Done",
+            focusConfirm: false,
+            showCancelButton: false,
+            width: "80vw",
+        };
+
 		setTimeout(() => {
             this.render(); 
             this.init.emit(true)

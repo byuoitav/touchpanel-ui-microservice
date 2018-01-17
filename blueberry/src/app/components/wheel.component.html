@@ -51,12 +51,28 @@
 </div>
 
 <div class="volume" [class.muted]="getMute()" *ngIf="circleOpen">
+    <button mat-raised-button class="independentAudio" (click)="audioDialog.show()">
+        <mat-icon>equalizer</mat-icon>
+    </button>
+
     <mat-slider id="slider" vertical [class.notouch]="getMute()" [disabled]="getMute()" [value]="getVolume()" [step]="5" [thumbLabel]="thumbLabel" (change)="command.setVolume($event.value, preset.audioDevices); closeThumb()"></mat-slider>
+
     <button mat-mini-fab class="mute" [class.muted]="getMute()" (click)="command.setMute(!getMute(), preset.audioDevices);">
         <mat-icon *ngIf="getMute()">volume_off</mat-icon>
         <mat-icon *ngIf="!getMute()">volume_up</mat-icon>
     </button>
 </div>
+
+<swal #audio>
+    <div *swalPartial="swalTargets.title">
+        <span>Audio Control</span>
+    </div>
+
+    <div *swalPartial="swalTargets.content">
+        <div *ngFor="let a of preset.independentAudioDevices">
+        </div>
+    </div>
+</swal>
 
 <!-- one 'slice' of wheel -->
 <svg id='svg-block' width="0" height="0" style="position: absolute;">
