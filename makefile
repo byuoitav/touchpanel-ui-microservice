@@ -68,8 +68,8 @@ run: $(NAME)-bin $(NG1)-dist
 deps: 
 	$(GOGET) -d -v
 ifneq "$(BRANCH)" "master"
-		# put vendored packages in here
-		# e.g. $(VENDOR) github.com/byuoitav/event-router-microservice
+	# put vendored packages in here
+	# e.g. $(VENDOR) github.com/byuoitav/event-router-microservice
 endif
 
 docker: docker-x86 docker-arm
