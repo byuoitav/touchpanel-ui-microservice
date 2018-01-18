@@ -59,7 +59,7 @@ export class Input extends Device implements SpringboardItem {
     }
 
     public static getInput(name: string, inputs: Input[]): Input {
-        return inputs.find(i => i.name == name);
+        return inputs.find(i => i.name === name);
     }
 
     public getColor(): string {

@@ -5,7 +5,8 @@ $owheelsize: 95vh;
 $cwheelsize: 25vh;
 $linewidth: .12vh;
 
-$volumesize: 80%;
+$volumesize: 90%;
+$independentVolumeSize: 80%;
 
 // reset automatic margins
 ul {
@@ -178,6 +179,11 @@ ul {
     margin-right: 3%;
     margin-top: (100% - $volumesize) / 3;
 
+	&.independentAudio {
+    	margin-top: (100% - $independentVolumeSize) / 2;
+		height: $independentVolumeSize;
+	}
+
     transition: background-color $duration ease-in-out;
     will-change: background-color;
 
@@ -187,6 +193,10 @@ ul {
 
     .notouch {
         pointer-events: none; 
+    }
+
+    .buttons {
+        flex-direction: row;
     }
 
     .mute {

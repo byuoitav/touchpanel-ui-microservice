@@ -27,10 +27,10 @@ export class DataService {
 			this.createPresets();
             this.createPanels();
 
+            this.update();
+
             this.loaded.emit(true);
         }); 
-
-        this.update();
     }
 
 	private createInputs() {
@@ -106,8 +106,9 @@ export class DataService {
             let displays = Device.filterDevices<Display>(preset.displays, this.displays);
             let audioDevices = Device.filterDevices<AudioDevice>(preset.audioDevices, this.audioDevices);
             let inputs = Device.filterDevices<Input>(preset.inputs, this.inputs);
+            let independentAudioDevices = Device.filterDevices<AudioDevice>(preset.independentAudioDevices, this.audioDevices);
 
-            let p = new Preset(preset.name, preset.icon, displays, audioDevices, inputs, preset.shareableDisplays);  
+            let p = new Preset(preset.name, preset.icon, displays, audioDevices, inputs, preset.shareableDisplays, independentAudioDevices);  
             this.presets.push(p);
         }
 
@@ -117,11 +118,10 @@ export class DataService {
     private createPanels() {
         for (let panel of APIService.room.uiconfig.panels) {
             let preset = this.presets.find(p => p.name === panel.preset);
-            let independentAudioDevices = Device.filterDevices<AudioDevice>(panel.independentAudioDevices, this.audioDevices);
 
-            this.panels.push(new Panel(panel.hostname, panel.uipath, preset, panel.features, independentAudioDevices));
-
+            this.panels.push(new Panel(panel.hostname, panel.uipath, preset, panel.features));
         }
+
         console.info("Panels", this.panels);
 
         this.panel = this.panels.find(p => p.hostname === APIService.piHostname);

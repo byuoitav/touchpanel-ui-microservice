@@ -23,7 +23,9 @@ export class SocketService {
   public screenoff: boolean;
 
     public constructor() {
-	this.url = "ws://" + location.hostname + ":8888/websocket";
+	// TODO		
+//	this.url = "ws://" + location.hostname + ":8888/websocket";
+	this.url = "ws://" + "teton.byu.edu" + ":8888/websocket";
 	this.socket = new $WebSocket(this.url, null, this.webSocketConfig); 
 	this.listener = new EventEmitter(); 
 	this.screenoff = false; 
