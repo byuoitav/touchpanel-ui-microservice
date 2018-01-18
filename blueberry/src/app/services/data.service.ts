@@ -27,10 +27,10 @@ export class DataService {
 			this.createPresets();
             this.createPanels();
 
+            this.update();
+
             this.loaded.emit(true);
         }); 
-
-        this.update();
     }
 
 	private createInputs() {
