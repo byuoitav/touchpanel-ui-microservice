@@ -156,6 +156,7 @@ export class HomeComponent implements OnInit {
         }
 
         this.audioDialog.options = {
+            text: "i should be hidden",
             confirmButtonText: "Done",
             focusConfirm: false,
             showCancelButton: false,

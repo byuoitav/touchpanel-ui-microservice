@@ -7,7 +7,7 @@ html {
     user-select: none;
 }
 
-.volume {
+.volume, .mic {
     .mat-slider-track-background {
         background-color: rgba(255,255,255,.8) !important;
     }
@@ -21,7 +21,7 @@ html {
     }
 }
 
-.volume.muted {
+.volume.muted, .mic.muted {
     .mat-slider-track-fill {
         background-color: #c62828; 
     }

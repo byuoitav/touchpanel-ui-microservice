@@ -6,6 +6,7 @@ $cwheelsize: 25vh;
 $linewidth: .12vh;
 
 $volumesize: 90%;
+$independentVolumeSize: 80%;
 
 // reset automatic margins
 ul {
@@ -179,8 +180,8 @@ ul {
     margin-top: (100% - $volumesize) / 3;
 
 	&.independentAudio {
-    	margin-top: (100% - $volumesize) / 2;
-		height: 80%;
+    	margin-top: (100% - $independentVolumeSize) / 2;
+		height: $independentVolumeSize;
 	}
 
     transition: background-color $duration ease-in-out;
