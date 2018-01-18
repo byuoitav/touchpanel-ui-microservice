@@ -38,7 +38,7 @@ PASS=$(shell echo $(DOCKER_PASSWORD))
 # angular
 NPM=npm
 NPM_INSTALL=$(NPM) install
-NG_BUILD=ng build --prod --aot --build-optimizer
+NG_BUILD=ng build # add back in prod in the next version
 NG1=blueberry
 
 build: deps build-x86 build-arm build-web
