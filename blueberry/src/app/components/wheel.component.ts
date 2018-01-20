@@ -203,10 +203,10 @@ export class WheelComponent implements AfterContentInit {
         return ret;
     }
 
-    public unShare(to: Display[], toAudio: AudioDevice[]): EventEmitter<boolean> {
+    public unShare(from: Display[]): EventEmitter<boolean> {
         let ret: EventEmitter<boolean> = new EventEmitter();
 
-        this.command.unShare(to, toAudio).subscribe(
+        this.command.unShare(from).subscribe(
             success => {
                 if (success) {
                     ret.emit(true);
