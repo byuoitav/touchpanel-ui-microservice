@@ -365,7 +365,7 @@ export class HomeComponent implements OnInit {
 
                         let input = Input.getInput(e.eventInfoValue, this.data.inputs);
 
-                        if (input !== null) {
+                        if (input !== null && !this.preset.inputs.includes(input)) {
                             console.log("Creating a new input on the wheel from event:", e);
 
                             input.displayname = "Station " + this.numberFromHostname(ew.hostname);
