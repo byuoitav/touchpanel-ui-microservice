@@ -286,23 +286,13 @@ export class HomeComponent implements OnInit {
         return ret;
     }
 
-    // TODO make unShare use audioConfigs instead 
-    // of using the same name for display/audio. see function for sharing.  
     public unShare(): EventEmitter<boolean> {
         swal.showLoading();
         let ret: EventEmitter<boolean> = new EventEmitter();
 
-        let audioDevices: AudioDevice[] = [];
-        for (let d of this.wheel.preset.displays) {
-            let a = this.data.audioDevices.find(a => a.name == d.name);
-            if (a != null) {
-                audioDevices.push(a);
-            }
-        }
-
         this.sharePreset.displays = this.sharePreset.displays.filter(d => !this.preset.displays.includes(d));
         
-        this.wheel.unShare(this.sharePreset.displays, audioDevices).subscribe(
+        this.wheel.unShare(this.sharePreset.displays).subscribe(
             success => {
                 if (success) {
                     let names: string[] = []; 
@@ -375,7 +365,7 @@ export class HomeComponent implements OnInit {
 
                         let input = Input.getInput(e.eventInfoValue, this.data.inputs);
 
-                        if (input !== null) {
+                        if (input !== null && !this.preset.inputs.includes(input)) {
                             console.log("Creating a new input on the wheel from event:", e);
 
                             input.displayname = "Station " + this.numberFromHostname(ew.hostname);
