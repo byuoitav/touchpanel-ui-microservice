@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 
 import { DataService } from './data.service';
-import { SocketService, MESSAGE } from './socket.service';
+import { SocketService, MESSAGE, EventWrapper, Event } from './socket.service';
 
 /*
  *
@@ -94,9 +94,10 @@ export class GraphService {
     private update() {
         this.socket.getEventListener().subscribe(event => {
             if (event.type == MESSAGE) {
-                let e = event.data; 
+                let ew: EventWrapper = event.data;
+                let e: Event = ew.event; 
 
-                let sides: string;
+                let sides: string[];
                 let left: Set<string>;
                 let right: Set<string>; 
 
