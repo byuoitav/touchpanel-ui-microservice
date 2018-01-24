@@ -10,7 +10,67 @@ import { HelpDialog } from '../dialogs/help.dialog';
 import { ChangedDialog } from '../dialogs/changed.dialog';
 
 import { Preset, AudioConfig } from '../objects/objects';
-import { Output, Display, AudioDevice, INPUT, Input, DTA, POWER, SHARING, POWER_OFF_ALL, MIRROR } from '../objects/status.objects';
+import { Output, Display, AudioDevice, INPUT, Input, POWER, POWER_OFF_ALL } from '../objects/status.objects';
+
+export const SHARE          = "start_share";
+export const STOP_SHARE     = "stop_share";
+export const LEAVE_SHARE    = "leave_share"
+export const JOIN_SHARE     = "join_share"
+
+/*
+ * This is where most of the logic in sharing lives. 
+ *
+ * To start sharing, send an event:
+ *      {
+ *          requestor: the name of the preset that is sharing,
+ *          device: list of displays you are sharing to,
+ *          eventInfoKey: SHARE,
+ *      }
+ * Actions a minion takes upon receiving a SHARE event that applies to them:
+ *      - show a modal window that blocks user from pressing anything other than stop
+ *          - when stop is pressed, a minion sends a STOP_MIRRORING event (described below) 
+ *      - save the name of the preset that is controlling you
+ *
+ *
+ * To stop sharing:
+ *      {
+ *          requestor: the name of the preset that is stopping sharing,
+ *          device: list of displays that you are still controlling (bc some may have left),
+ *          eventInfoKey: STOP_SHARE,
+ *      }
+ * Actions a minion takes upon receiving a STOP_SHARE event that applies to them:
+ *      - delete any extra inputs that have been created
+ *      - remove the modal window
+ *
+ *
+ * If you are a minion, and want the master to stop controlling your displays, send:
+ *      {
+ *          requestor: the name of the preset that is controlling you,
+ *          device: list of the displays you want removed from being controlled (i.e. your displays),
+ *          eventInfoKey: LEAVE_SHARE
+ *      }
+ *      also, unmute/unblank yourself. 
+ * Actions a master takes upon receiving a STOP_MIRRORING event:
+ *      -   remove each display in *device* field from current preset 
+ *          - if a roomWideAudio was removed:
+ *              - change sharePreset.audioDevices to be your default preset's audioDevices
+ *              - unmute your audioDevices
+ *
+ *
+ * If you are a minion who has left the group, and would like to rejoin, send:
+ *      {
+ *          requestor: the name of the preset that is the owner of the group,
+ *          device: list of displays you want to be controlled,
+ *          eventInfoKey: JOIN_SHARE
+ *      } 
+ *      also show the same modal window that appears when receiving a SHARE event
+ *      and lookup the status of the preset you would like to join, and mirror that.
+ * Actions a master takes upon receiving a JOIN_SHARE event:
+ *      - add each display from *device* into the current preset.
+ *          - if a roomWideAudio was added:
+ *              - change sharePreset.audioDevices to be the roomWideAudio.
+ *              - mute everything that isn't a roomWideAudio
+ */
 
 @Component({
     selector: 'home',
@@ -23,7 +83,7 @@ export class HomeComponent implements OnInit {
     public wheel: WheelComponent;
 
     sharePreset: Preset;
-    preset: Preset;
+    defaultPreset: Preset;
 
     selectedDisplays: Display[] = [];
     shareableDisplays: Display[] = [];
@@ -163,7 +223,7 @@ export class HomeComponent implements OnInit {
     }
 
     private onWheelInit() {
-        this.preset = this.wheel.preset;
+        this.defaultPreset = this.wheel.preset;
 
         if (this.wheel.getPower() == "on") {
             this.wheel.open(false, 500);
@@ -230,13 +290,19 @@ export class HomeComponent implements OnInit {
 
         this.removeExtraInputs();
 
-        // only control audio on the display that is sharing
-        // unless the group includes a roomWideAudio, then control 
-        // those audioDevices.
-        let audioDevices = this.wheel.preset.audioDevices.slice();
+        /* create a new preset based on selectedDisplays
+         */
+
+        let displays: Display[] = [];
+        this.selectedDisplays.forEach(d => displays.push(d)); // add all the selected displays
+        this.defaultPreset.displays.forEach(d => displays.push(d)); // add all of my default displays
+
+        let audioDevices = this.defaultPreset.audioDevices.slice(); // copy my default audioDevices
         let audioConfigs = this.data.getAudioConfigurations(this.selectedDisplays);
         let hasRoomWide = this.data.hasRoomWide(audioConfigs);
 
+        // if there is a display selected whoose audioConfig is tied to a roomWideAudio,
+        // then set audioDevices = the selected roomWideAudios.
         if (hasRoomWide) {
             audioDevices.length = 0;
 
@@ -245,36 +311,32 @@ export class HomeComponent implements OnInit {
                     audioDevices.push(...config.audioDevices);
             }
         }
-
-        let displays: Display[] = [];
-        this.selectedDisplays.forEach(d => displays.push(d));
-        this.wheel.preset.displays.forEach(d => displays.push(d));
         
-        this.sharePreset = new Preset("Sharing", "subscriptions", displays, audioDevices, this.wheel.preset.inputs, this.wheel.preset.shareableDisplays, this.wheel.preset.independentAudioDevices);
+        // take the displays & audioDevices generated above, copy the defaultPresets shareableDisplays, inputs, and independentAudioDevices, and create a new preset
+        this.sharePreset = new Preset("Sharing", "subscriptions", displays, audioDevices, this.defaultPreset.inputs, this.defaultPreset.shareableDisplays, this.defaultPreset.independentAudioDevices);
         console.log("sharePreset", this.sharePreset);
 
         this.wheel.share(this.selectedDisplays).subscribe(
             success => {
                 if (success) {
-                    this.wheel.preset = this.sharePreset;
-                    setTimeout(() => this.wheel.render(), 0);
+                    this.changePreset(this.sharePreset);
 
                     let names: string[] = []; 
                     this.selectedDisplays.forEach(d => {
                         names.push(d.name);
 
-                        let event = new Event(0,0, " ", d.name, SHARING, "remove")
+//                        let event = new Event(0,0, " ", d.name, SHARING, "remove")
                         this.api.sendFeatureEvent(event);
                     });
 
                     let device: string = names.join(",");
 
-                    let event: Event = new Event(0, 0, APIService.hostname, device, DTA, "true");
+                    let event: Event = new Event(0, 0, APIService.hostname, device, SHARE, "true");
                     this.api.sendFeatureEvent(event);
 
                     ret.emit(true);
                 } else {
-                    this.wheel.preset = this.preset;
+                    this.wheel.preset = this.defaultPreset;
                     setTimeout(() => this.wheel.render(), 0);
                     ret.emit(false);
                 } 
@@ -288,7 +350,7 @@ export class HomeComponent implements OnInit {
         swal.showLoading();
         let ret: EventEmitter<boolean> = new EventEmitter();
 
-        this.sharePreset.displays = this.sharePreset.displays.filter(d => !this.preset.displays.includes(d));
+        this.sharePreset.displays = this.sharePreset.displays.filter(d => !this.defaultPreset.displays.includes(d));
         
         this.wheel.unShare(this.sharePreset.displays).subscribe(
             success => {
@@ -297,10 +359,10 @@ export class HomeComponent implements OnInit {
                     this.selectedDisplays.forEach(d => names.push(d.name));
                     let device: string = names.join(",");
 
-                    let event: Event = new Event(0, 0, APIService.hostname, device, DTA, "false");
+                    let event: Event = new Event(0, 0, APIService.hostname, device, SHARE, "false");
                     this.api.sendFeatureEvent(event);
 
-                    this.wheel.preset = this.preset;
+                    this.wheel.preset = this.defaultPreset;
                     setTimeout(() => this.wheel.render(), 0);
 
                     this.swalStatus(true);
@@ -322,8 +384,8 @@ export class HomeComponent implements OnInit {
         this.wheel.preset.displays.forEach(d => names.push(d.name));
         let device: string = names.join(",");
 
-        let event: Event = new Event(0, 0, " ", device, SHARING, "add");
-        this.api.sendFeatureEvent(event);
+//        let event: Event = new Event(0, 0, " ", device, SHARING, "add");
+//        this.api.sendFeatureEvent(event);
     }
 
     public unMirror() {
@@ -331,8 +393,8 @@ export class HomeComponent implements OnInit {
         this.wheel.preset.displays.forEach(d => names.push(d.name));
         let device: string = names.join(",");
 
-        let event: Event = new Event(0, 0, " ", device, SHARING, "remove");
-        this.api.sendFeatureEvent(event);
+//        let event: Event = new Event(0, 0, " ", device, SHARING, "remove");
+//        this.api.sendFeatureEvent(event);
 
         // switch the input back to default
         this.wheel.command.powerOnDefault(this.data.panel.preset);
@@ -357,13 +419,13 @@ export class HomeComponent implements OnInit {
                             break;
                         }
 
-                        if (this.preset.displays.find(d => d.name === e.device) == null) {
+                        if (this.defaultPreset.displays.find(d => d.name === e.device) == null) {
                             break;
                         }
 
                         let input = Input.getInput(e.eventInfoValue, this.data.inputs);
 
-                        if (input !== null && !this.preset.inputs.includes(input)) {
+                        if (input !== null && !this.defaultPreset.inputs.includes(input)) {
                             console.log("Creating a new input on the wheel from event:", e);
 
                             input.displayname = "Station " + this.numberFromHostname(ew.hostname);
@@ -380,16 +442,16 @@ export class HomeComponent implements OnInit {
                                 }
                             });
 
-                            this.preset.extraInputs.length = 0;
-                            this.preset.extraInputs.push(input); 
+                            this.defaultPreset.extraInputs.length = 0;
+                            this.defaultPreset.extraInputs.push(input); 
 
                             setTimeout(() => this.wheel.render(), 0);
                         }
 
                         break; 
                     }
-                    case DTA: {
-                        console.log("dta event", e);
+                    case SHARE: {
+                        console.log("share event", e);
 
                         // Device field on DTA determines what devices got changed. If one of mine did, then show the popup.
                         let names: string[] = e.device.split(",");
@@ -406,18 +468,18 @@ export class HomeComponent implements OnInit {
                                 if (this.wheel.preset == this.sharePreset) {
                                     let minions: string[] = [];
                                     this.selectedDisplays.forEach(d => {
-                                        if (!this.preset.displays.includes(d))
+                                        if (!this.defaultPreset.displays.includes(d))
                                             minions.push(d.name);
                                     });
                                     let device: string = minions.join(",");
 
-                                    let event = new Event(0, 0, " ", device, MIRROR, e.requestor);
+//                                    let event = new Event(0, 0, " ", device, MIRROR, e.requestor);
                                     this.api.sendFeatureEvent(event);
 
-                                    event = new Event(0, 0, e.requestor, device, DTA, "true");
+                                    event = new Event(0, 0, e.requestor, device, SHARE, "true");
                                     this.api.sendFeatureEvent(event);
 
-                                    this.wheel.preset = this.preset;
+                                    this.wheel.preset = this.defaultPreset;
                                     setTimeout(() => this.wheel.render(), 0);
                                 }
 
@@ -433,6 +495,7 @@ export class HomeComponent implements OnInit {
 
                         break; 
                     }
+                    /*
                     case MIRROR: {
                         console.log("mirror event", e);
                         let names: string[] = e.device.split(",");
@@ -457,7 +520,7 @@ export class HomeComponent implements OnInit {
                             let names = e.device.split(","); 
 
                             // remove the name if it's on my default preset (those ones should never be added/removed - at least for now)
-                            names = names.filter(n => !this.preset.displays.some(d => d.name === n));
+                            names = names.filter(n => !this.defaultPreset.displays.some(d => d.name === n));
 
                             if (names == null || names.length == 0)
                                 break;
@@ -487,7 +550,7 @@ export class HomeComponent implements OnInit {
                                 if (hasRoomWide) {
                                     console.log("removed room wide audio device. changing preset...");
                                     // change the audioDevices
-                                    this.sharePreset.audioDevices = this.preset.audioDevices;
+                                    this.sharePreset.audioDevices = this.defaultPreset.audioDevices;
                                     console.log("share preset audio devices changed to: ", this.sharePreset);
 
                                     this.wheel.command.setVolume(30, this.sharePreset.audioDevices);
@@ -537,6 +600,7 @@ export class HomeComponent implements OnInit {
 
                         break;
                     }
+                   */
                     case POWER_OFF_ALL: {
                         this.removeExtraInputs();
                         swal.close();
@@ -562,6 +626,11 @@ export class HomeComponent implements OnInit {
 
     private removeExtraInputs() {
         this.wheel.preset.extraInputs.length = 0; 
+        setTimeout(() => this.wheel.render(), 0);
+    }
+
+    private changePreset(newPreset: Preset) {
+        this.wheel.preset = newPreset;
         setTimeout(() => this.wheel.render(), 0);
     }
 
