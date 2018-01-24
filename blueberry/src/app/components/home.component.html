@@ -76,7 +76,18 @@
 </swal>
 
 <swal #mirror
-    (confirm)="unMirror()">
+    (confirm)="unMirror()"
+    (cancel)="showAudioControl(mirrorDialog)"
+    [showCancelButton]="wheel?.preset?.independentAudioDevices?.length > 0">
+
+    <div *swalPartial="swalTargets.confirmButton" class="swal-button">
+        <span>Stop</span>
+    </div>
+
+    <div *swalPartial="swalTargets.cancelButton" class="swal-button">
+        <span>Audio Control</span>
+        <mat-icon>equalizer</mat-icon>
+    </div>
 
     <div *swalPartial="swalTargets.title">
         <span>Mirroring Station {{mirrorNumber}}</span>

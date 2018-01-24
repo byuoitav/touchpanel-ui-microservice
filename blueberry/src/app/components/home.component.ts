@@ -2,9 +2,7 @@ import { Component, ViewChild,  EventEmitter, Output as AngularOutput, OnInit } 
 import { deserialize } from 'serializer.ts/Serializer';
 import swal, { SweetAlertOptions } from 'sweetalert2';
 import { SwalComponent, SwalPartialTargets } from '@toverux/ngx-sweetalert2';
-
-import { WheelComponent } from './wheel.component';
-import { DataService } from '../services/data.service';
+import { WheelComponent } from './wheel.component'; import { DataService } from '../services/data.service';
 import { APIService } from '../services/api.service';
 import { GraphService } from '../services/graph.service';
 import { SocketService, MESSAGE, EventWrapper, Event } from '../services/socket.service';
@@ -128,7 +126,6 @@ export class HomeComponent implements OnInit {
             type: "info",
             focusConfirm: false,
             confirmButtonText: "Stop",
-            showCancelButton: false,
             allowOutsideClick: false,
             width: "85vw",
         }
@@ -598,5 +595,11 @@ export class HomeComponent implements OnInit {
 
     public isSelected(d: Display) {
         return this.selectedDisplays.includes(d);
+    }
+
+    public showAudioControl(from: SwalComponent) {
+        this.audioDialog.show().then(result => {
+            from.show();
+        });
     }
 }
