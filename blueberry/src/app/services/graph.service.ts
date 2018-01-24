@@ -35,35 +35,37 @@ export class GraphService {
 
     private dividerSensor: DeviceConfiguration;
 
-    constructor(private data: DataService, private socket: SocketService, private http: Http) { }
+    constructor(private data: DataService, private socket: SocketService, private http: Http) {
+        this.data.loaded.subscribe(() => {
+            this.init();
+        });
+    }
 
     public init() {
         if (this.exists) {
             return; 
         }
 
-        this.data.loaded.subscribe(() => {
-            if (this.data.panel.preset.shareableDisplays == null) 
-                return;
+        if (this.data.panel.preset.shareableDisplays == null) 
+            return;
 
-            // the root node is the set of displays and shareableDisplays for the preset
-            let displays: Set<string> = new Set();
-            this.data.panel.preset.displays.forEach(d => displays.add(d.name));
-            this.data.panel.preset.shareableDisplays.forEach(d => displays.add(d));
+        // the root node is the set of displays and shareableDisplays for the preset
+        let displays: Set<string> = new Set();
+        this.data.panel.preset.displays.forEach(d => displays.add(d.name));
+        this.data.panel.preset.shareableDisplays.forEach(d => displays.add(d));
 
-            this.root = new Node(displays);
-            this.exists = true;
+        this.root = new Node(displays);
+        this.exists = true;
 
-            // get the current connected/disconnected state
-            this.dividerSensor = APIService.room.config.devices.find(d => d.hasRole("DividerSensor"))
-            console.log("dividerSensor", this.dividerSensor)
+        // get the current connected/disconnected state
+        this.dividerSensor = APIService.room.config.devices.find(d => d.hasRole("DividerSensor"))
+        console.log("dividerSensor", this.dividerSensor)
 
-            this.getDividerSensorStatus();
+        this.getDividerSensorStatus();
 
-            this.update();
+        this.update();
 
-            console.log("root", this.root);
-        });
+        console.log("root", this.root);
     }
 
     public getDisplayList(): Set<string> {

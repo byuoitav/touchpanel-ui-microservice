@@ -39,8 +39,9 @@ export class HomeComponent implements OnInit {
     @ViewChild("audio") audioDialog: SwalComponent;
 
     constructor(public data: DataService, private socket: SocketService, public api: APIService, public readonly swalTargets: SwalPartialTargets, private graph: GraphService) {
-        this.graph.init();
-        this.updateFromEvents();
+        this.data.loaded.subscribe(() => {
+            this.updateFromEvents();
+        })
     }
 
     public ngOnInit() {
