@@ -12,6 +12,7 @@
 </div>
 
 <div class="buttons bottom">
+    <!--TODO make share button dissappear if shareableDisplays.length = 0 -->
     <div *ngIf="data?.panel?.features.includes('share')">
         <button mat-fab *ngIf="wheel?.preset == preset" class="dta button" (click)="selectdisplays.show()">
             <mat-icon>screen_share</mat-icon>
