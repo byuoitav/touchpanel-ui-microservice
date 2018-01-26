@@ -112,6 +112,18 @@ export class WheelComponent implements AfterContentInit {
 		let right: number;
 
 		switch (this.preset.inputs.length + this.preset.extraInputs.length) {
+			case 7:
+				top = -0.6;
+				right = 25.4;
+				break;
+			case 6:
+				top = 0.8;
+				right = 24;
+				break;
+			case 5:
+				top = 2;
+				right = 20.4;
+				break;
 			case 4:
 				top = 4;
 				right = 17.5;
@@ -129,6 +141,7 @@ export class WheelComponent implements AfterContentInit {
 				right = 7;
 				break;	
 			default:
+                console.warn("no configuration for", this.preset.inputs.length + this.preset.extraInputs.length, "displays");
 				break;
 		}
 
