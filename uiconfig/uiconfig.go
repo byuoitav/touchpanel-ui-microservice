@@ -29,7 +29,7 @@ type Preset struct {
 	ShareableDisplays       []string `json:"shareableDisplays"`
 	AudioDevices            []string `json:"audioDevices"`
 	Inputs                  []string `json:"inputs"`
-	IndependentAudioDevices []string `json:"indpendentAudioDevices"`
+	IndependentAudioDevices []string `json:"independentAudioDevices"`
 }
 
 type Panel struct {

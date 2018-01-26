@@ -38,7 +38,7 @@ export class APIService {
 			let base = location.origin.split(':');
 			APIService.localurl = base[0] + ":" + base[1];
 	
-			APIService.room = new Room();	
+			APIService.room = new Room();
 			
 			this.setupHostname();
 		} else {

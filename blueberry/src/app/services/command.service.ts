@@ -288,11 +288,13 @@ export class CommandService {
         return ret;
     }
 
-    public unShare(to: Display[], toAudio: AudioDevice[]): EventEmitter<boolean> {
+    public unShare(from: Display[]): EventEmitter<boolean> {
         let ret: EventEmitter<boolean> = new EventEmitter<boolean>();
         let body = { displays: [], audioDevices: [] }; 
 
-        for (let d of to) {
+        let audioConfigs = this.data.getAudioConfigurations(from);
+
+        for (let d of from) {
             let preset: Preset = this.data.presets.find(p => p.displays.includes(d));
 
             if (preset != null) {
@@ -305,15 +307,15 @@ export class CommandService {
             }
         }
 
-        for (let a of toAudio) {
-//            let preset: Preset = this.data.presets.find(p => p.audioDevices.includes(a));
-            
-            body.audioDevices.push({
-                "name": a.name,
-                "power": "on",
-                "volume": 30,
-                "muted": false
-            });
+        for (let ac of audioConfigs) {
+            for (let a of ac.audioDevices) {
+                body.audioDevices.push({
+                    "name": a.name,
+                    "power": "on",
+                    "volume": 30,
+                    "muted": false
+                });
+            }
         }
 
         console.log("unshare body", body);

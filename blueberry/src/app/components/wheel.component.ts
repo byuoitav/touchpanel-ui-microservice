@@ -1,4 +1,6 @@
 import { Component, Input as AngularInput, Output as AngularOutput, AfterContentInit, ElementRef, ViewChild, EventEmitter } from '@angular/core';
+import swal, { SweetAlertOptions } from 'sweetalert2';
+import { SwalComponent, SwalPartialTargets } from '@toverux/ngx-sweetalert2';
 
 import { Preset } from '../objects/objects';
 import { Display, Input, AudioDevice, DTA } from '../objects/status.objects';
@@ -32,7 +34,7 @@ export class WheelComponent implements AfterContentInit {
 
 	@ViewChild("wheel") wheel: ElementRef;
 
-	constructor(public command: CommandService, private api: APIService) {}
+	constructor(public command: CommandService, private api: APIService, public readonly swalTargets: SwalPartialTargets) {}
 
 	ngAfterContentInit() {
 		setTimeout(() => {
@@ -201,10 +203,10 @@ export class WheelComponent implements AfterContentInit {
         return ret;
     }
 
-    public unShare(to: Display[], toAudio: AudioDevice[]): EventEmitter<boolean> {
+    public unShare(from: Display[]): EventEmitter<boolean> {
         let ret: EventEmitter<boolean> = new EventEmitter();
 
-        this.command.unShare(to, toAudio).subscribe(
+        this.command.unShare(from).subscribe(
             success => {
                 if (success) {
                     ret.emit(true);

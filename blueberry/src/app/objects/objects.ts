@@ -49,7 +49,6 @@ export class PanelConfiguration {
     uipath: string;
     features: string[];
     preset: string;
-    independentAudioDevices: string[];
 }
 
 export class PresetConfiguration {
@@ -59,6 +58,7 @@ export class PresetConfiguration {
     shareableDisplays: string[];
     audioDevices: string[];
     inputs: string[];
+    independentAudioDevices: string[];
 }
 
 export class AudioConfiguration {
@@ -127,14 +127,16 @@ export class Preset {
     extraInputs: Input[] = [];
 
     shareableDisplays: string[];
+    independentAudioDevices: AudioDevice[] = [];
 
-    constructor(name: string, icon: string, displays: Display[], audioDevices: AudioDevice[], inputs: Input[], shareableDisplays: string[]) {
+    constructor(name: string, icon: string, displays: Display[], audioDevices: AudioDevice[], inputs: Input[], shareableDisplays: string[], independentAudioDevices: AudioDevice[]) {
         this.name = name;
         this.icon = icon;
         this.displays = displays;
         this.audioDevices = audioDevices;
         this.inputs = inputs;
         this.shareableDisplays = shareableDisplays;
+        this.independentAudioDevices = independentAudioDevices;
     }
 }
 
@@ -143,15 +145,13 @@ export class Panel {
     uipath: string;
     preset: Preset;
     features: string[] = [];
-    independentAudioDevices: AudioDevice[] = [];
 
     render: boolean = false;
 
-    constructor(hostname: string, uipath: string, preset: Preset, features: string[], independentAudioDevices: AudioDevice[]) {
+    constructor(hostname: string, uipath: string, preset: Preset, features: string[]) {
         this.hostname = hostname;
         this.uipath = uipath;
         this.preset = preset;
         this.features = features;
-        this.independentAudioDevices = independentAudioDevices;
     }
 }
