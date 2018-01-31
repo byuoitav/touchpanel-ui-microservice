@@ -6,6 +6,7 @@ import (
 	"os"
 	"time"
 
+	"github.com/byuoitav/authmiddleware"
 	"github.com/byuoitav/device-monitoring-microservice/statusinfrastructure"
 	"github.com/byuoitav/event-router-microservice/eventinfrastructure"
 	"github.com/byuoitav/touchpanel-ui-microservice/events"
@@ -30,6 +31,7 @@ func main() {
 	router := echo.New()
 	router.Pre(middleware.RemoveTrailingSlash())
 	router.Use(middleware.CORS())
+	router.Use(echo.WrapMiddleware(authmiddleware.CAS))
 
 	router.GET("/health", echo.WrapHandler(http.HandlerFunc(health.Check)))
 	router.GET("/mstatus", GetStatus)
