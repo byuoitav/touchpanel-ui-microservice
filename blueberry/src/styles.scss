@@ -7,6 +7,7 @@ html {
     user-select: none;
 }
 
+// TODO add a background fill to the mic sliders
 .volume, .mic {
     .mat-slider-track-background {
         background-color: rgba(255,255,255,.8) !important;
