@@ -89,15 +89,15 @@ $duration: .4s;
     display: flex;
     flex-direction: row;
     align-items: center;
-    justify-content: space-around;
+    justify-content: space-evenly;
 
     .mic {
         height: 60vh;
 
         display: flex;
         flex-direction: column;
+        justify-content: space-evenly;
         align-items: center;
-        margin-right: 5vw;
 
         transition: background-color $duration ease-in-out;
         will-change: background-color;
