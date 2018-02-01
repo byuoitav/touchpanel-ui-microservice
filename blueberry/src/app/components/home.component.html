@@ -82,11 +82,11 @@
 </swal>
 
 <swal #unshare
-    (open)="unShare()">
+    (open)="unShare(true)">
 </swal>
 
 <swal #mirror
-    (confirm)="unMirror()"
+    (confirm)="unMirror(true)"
     (cancel)="showAudioControl(mirrorDialog)"
     [showCancelButton]="wheel?.preset?.independentAudioDevices?.length > 0">
 
