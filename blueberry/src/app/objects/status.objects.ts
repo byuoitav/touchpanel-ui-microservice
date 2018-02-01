@@ -145,6 +145,10 @@ export class Display extends Output {
     public getAudioConfiguration(): AudioConfiguration {
         return APIService.room.uiconfig.audioConfiguration.find(a => a.display === this.name);
     }
+
+    public static getDisplayListFromNames(names: string[], displaysSource: Display[]): Display[] {
+        return displaysSource.filter(d => names.includes(d.name));
+    }
 }
 
 export class AudioDevice extends Output {

@@ -18,7 +18,7 @@ export const LEAVE_SHARE    = "leave_share";
 export const JOIN_SHARE     = "join_share";
 
 /*
- * This is where most of the logic in sharing lives. 
+ * This is where the logic for sharing lives. 
  *
  * To start sharing, send an event:
  *      {
@@ -50,6 +50,7 @@ export const JOIN_SHARE     = "join_share";
  *          eventInfoKey: LEAVE_SHARE
  *      }
  *      also, unmute/unblank yourself. 
+ * TODO does this event apply to a minion?
  * Actions a minion takes upon receiving a LEAVE_SHARE event:
  *      - if the displays in *device* match its displays
  *          - unmute/unblank
@@ -97,7 +98,6 @@ export class HomeComponent implements OnInit {
     shareableDisplays: Display[] = [];
 
     mirrorPresetName: string;
-//    mirrorNumber: string;
 
     @ViewChild("poweroffall") powerOffAllDialog: SwalComponent;
     @ViewChild("help") helpDialog: SwalComponent;
@@ -209,7 +209,7 @@ export class HomeComponent implements OnInit {
             showLoaderOnConfirm: true,
             preConfirm: () => {
                 return new Promise((resolve, reject) => {
-                    this.share().subscribe(success => {
+                    this.share(this.selectedDisplays, true).subscribe(success => {
                         if (success) {
                             this.swalStatus(true);
                             resolve(); 
@@ -253,7 +253,7 @@ export class HomeComponent implements OnInit {
 
     public turnOff(): EventEmitter<boolean> {
         if (this.wheel.preset === this.sharePreset) {
-            this.unShare().subscribe(success => {
+            this.unShare(true).subscribe(success => {
                 let ret: EventEmitter<boolean> = this.wheel.command.setPower('standby', this.wheel.preset.displays); 
                 ret.subscribe(success => {
                     if (success) {
@@ -294,7 +294,7 @@ export class HomeComponent implements OnInit {
         });
     }
 
-    public share(): EventEmitter<boolean> {
+    public share(displayList: Display[], sendCommand: boolean): EventEmitter<boolean> {
         let ret: EventEmitter<boolean> = new EventEmitter();
 
         this.removeExtraInputs(); // if you share, you can't go back to an old group anymore.
@@ -303,11 +303,11 @@ export class HomeComponent implements OnInit {
          */
 
         let displays: Display[] = [];
-        this.selectedDisplays.forEach(d => displays.push(d)); // add all the selected displays
+        displayList.forEach(d => displays.push(d)); // add all the selected displays
         this.defaultPreset.displays.forEach(d => displays.push(d)); // add all of my default displays
 
         let audioDevices = this.defaultPreset.audioDevices.slice(); // copy my default audioDevices
-        let audioConfigs = this.data.getAudioConfigurations(this.selectedDisplays);
+        let audioConfigs = this.data.getAudioConfigurations(displayList);
         let hasRoomWide = this.data.hasRoomWide(audioConfigs);
 
         // if there is a display selected whoose audioConfig is tied to a roomWideAudio,
@@ -325,66 +325,67 @@ export class HomeComponent implements OnInit {
         this.sharePreset = new Preset("Sharing", "subscriptions", displays, audioDevices, this.defaultPreset.inputs, this.defaultPreset.shareableDisplays, this.defaultPreset.independentAudioDevices);
         console.log("sharePreset", this.sharePreset);
 
-        this.wheel.share(this.selectedDisplays).subscribe(
-            success => {
-                if (success) {
-                    this.changePreset(this.sharePreset);
+        if (sendCommand) {
+            this.wheel.share(displayList).subscribe(
+                success => {
+                    if (success) {
+                        this.changePreset(this.sharePreset);
 
-                    let names: string[] = []; 
-                    this.selectedDisplays.forEach(d => {
-                        names.push(d.name);
+                        let names: string[] = []; 
+                        displayList.forEach(d => {
+                            names.push(d.name);
+                        });
 
-                        /* TODO does this need to be in? 
-                        let event = new Event(0,0, " ", d.name, SHARING, "remove")
-                        this.api.sendFeatureEvent(event);
-                       */
-                    });
-
-                    let displays: string = names.join(",");
+                        let displays: string = names.join(",");
 
                         let event = new Event(0, 0, this.defaultPreset.name, displays, SHARE, " ");
-//                    let event: Event = new Event(0, 0, APIService.hostname, device, SHARE, "true");
-                    this.api.sendFeatureEvent(event);
+                        this.api.sendFeatureEvent(event);
 
-                    ret.emit(true);
-                } else {
-                    this.changePreset(this.defaultPreset);
-                    ret.emit(false);
-                } 
-            }
-        );
+                        ret.emit(true);
+                    } else {
+                        this.changePreset(this.defaultPreset);
+                        ret.emit(false);
+                    } 
+                }
+            );
+        } else {
+            this.changePreset(this.sharePreset);
+        }
 
         return ret;
     }
 
-    public unShare(): EventEmitter<boolean> {
+    public unShare(sendCommand: boolean): EventEmitter<boolean> {
         swal.showLoading();
         let ret: EventEmitter<boolean> = new EventEmitter();
 
-        // filter out my defaultPreset's displays, so that my displays aren't changed
-        this.sharePreset.displays = this.sharePreset.displays.filter(d => !this.defaultPreset.displays.includes(d));
-        
-        this.wheel.unShare(this.sharePreset.displays).subscribe(
-            success => {
-                if (success) {
-                    let names: string[] = []; 
-                    this.selectedDisplays.forEach(d => names.push(d.name));
-                    let device: string = names.join(",");
-                    
-                    let event = new Event(0,0, "requestor", device, STOP_SHARE, " ");
-//                    let event: Event = new Event(0, 0, APIService.hostname, device, SHARE, "false");
-                    this.api.sendFeatureEvent(event);
+        if (sendCommand) {
+            // filter out my defaultPreset's displays, so that my displays aren't changed
+            this.sharePreset.displays = this.sharePreset.displays.filter(d => !this.defaultPreset.displays.includes(d));
+            
+            this.wheel.unShare(this.sharePreset.displays).subscribe(
+                success => {
+                    if (success) {
+                        let names: string[] = []; 
+                        this.selectedDisplays.forEach(d => names.push(d.name));
+                        let device: string = names.join(",");
+                        
+                        let event = new Event(0,0, "requestor", device, STOP_SHARE, " ");
+                        this.api.sendFeatureEvent(event);
 
-                    this.changePreset(this.defaultPreset);
+                        this.changePreset(this.defaultPreset);
 
-                    this.swalStatus(true);
-                    ret.emit(true);
-                } else {
-                    this.swalStatus(false);
-                    ret.emit(false);
+                        this.swalStatus(true);
+                        ret.emit(true);
+                    } else {
+                        this.swalStatus(false);
+                        ret.emit(false);
+                    }
                 }
-            }
-        );
+            );
+        } else {
+            this.changePreset(this.defaultPreset);
+        }
 
         return ret;
     }
@@ -392,31 +393,93 @@ export class HomeComponent implements OnInit {
     /*
      * Tell the minion to mirror a specific preset.
      */
-    public mirror(preset: Preset) {
-        this.wheel.command.mirror(preset, this.wheel.preset).subscribe(
-            success => {
-                if (success) {
-                    let names: string[] = [];
-                    this.wheel.preset.displays.forEach(d => names.push(d.name));
-                    let displays: string = names.join(",");
+    public mirror(preset: Preset, sendCommand: boolean) {
+        // show the popup
+        this.mirrorDialog.show();
 
-                    let event = new Event(0, 0, preset.name, displays, JOIN_SHARE, " ");
-                    this.api.sendFeatureEvent(event);
+        if (sendCommand) {
+            this.wheel.command.mirror(preset, this.defaultPreset).subscribe(
+                success => {
+                    if (success) {
+                        let names: string[] = [];
+                        this.wheel.preset.displays.forEach(d => names.push(d.name));
+                        let displays: string = names.join(",");
+
+                        let event = new Event(0, 0, preset.name, displays, JOIN_SHARE, " ");
+                        this.api.sendFeatureEvent(event);
+                    }
                 }
-            }
-        );
+            );
+        } 
+
+        // TODO create an input from the current input shown?
     }
 
-    public unMirror() {
-        let names: string[] = [];
-        this.wheel.preset.displays.forEach(d => names.push(d.name));
-        let displays: string = names.join(",");
+    public unMirror(sendCommand: boolean) {
+        if (sendCommand) {
+            let names: string[] = [];
+            this.wheel.preset.displays.forEach(d => names.push(d.name));
+            let displays: string = names.join(",");
 
-        let event = new Event(0, 0, /*TODO */this.mirrorPresetName, displays, LEAVE_SHARE, " ");
-        this.api.sendFeatureEvent(event);
+            let event = new Event(0, 0, /*TODO */this.mirrorPresetName, displays, LEAVE_SHARE, " ");
+            this.api.sendFeatureEvent(event);
 
-        // switch the input back to default
-        this.wheel.command.powerOnDefault(this.defaultPreset);
+            // switch the input back to default
+            this.wheel.command.powerOnDefault(this.defaultPreset);
+        }
+
+        this.swalStatus(true);
+    }
+
+    private removeFromShare(displays: Display[]) {
+        // remove displays from list of current displays
+        this.sharePreset.displays.filter(d => displays.includes(d));
+        console.log("removed", displays ," from my share group");
+
+        let audioConfigs = this.data.getAudioConfigurations(displays);
+        let hasRoomWide = this.data.hasRoomWide(audioConfigs);
+
+        if (hasRoomWide) {
+            console.log("removed room wide audio device. changing preset...");
+
+            // switch back to default presets audio devices
+            this.sharePreset.audioDevices = this.defaultPreset.audioDevices;
+
+            // set volume to 30 on my audio devices
+            this.wheel.command.setMuteAndVolume(false, 30, this.sharePreset.audioDevices);
+        } else
+            console.log("no room wide audioDevices removed.")
+
+        console.log("share preset after removing displays:", this.sharePreset);
+    }
+
+    private addToShare(displays: Display[]) {
+        this.sharePreset.displays.push(...displays);
+        console.log("added", displays, "to my share group");
+
+        let audioConfigs = this.data.getAudioConfigurations(displays);
+        let hasRoomWide = this.data.hasRoomWide(audioConfigs);
+
+        if (hasRoomWide) {
+            console.log("added room wide audio device. changing preset...");
+
+            // mute current audio device before switching
+            this.wheel.command.setMuteAndVolume(true, 0, this.sharePreset.audioDevices).subscribe(() => {
+                this.sharePreset.audioDevices.length = 0;
+
+                // add all room wide audios to the sharePreset
+                for (let config of audioConfigs) {
+                    if (config.roomWide)
+                        this.sharePreset.audioDevices.push(...config.audioDevices);
+                }
+
+                // unmute and set volume to 30 for the room wide audios
+                this.wheel.command.setMuteAndVolume(false, 30, this.sharePreset.audioDevices);
+            });
+        } else 
+            console.log("no room wide audioDevices added");
+
+        console.log("share preset after adding displays:", this.sharePreset);
     }
 
     private updateFromEvents() {
@@ -433,6 +496,7 @@ export class HomeComponent implements OnInit {
 
                         break;
                     }
+                    /*
                     case INPUT: {
                         if (APIService.piHostname === ew.hostname || e.eventCause !== 0) {
                             break;
@@ -447,15 +511,15 @@ export class HomeComponent implements OnInit {
                         if (input !== null && !this.defaultPreset.inputs.includes(input)) {
                             console.log("Creating a new input on the wheel from event:", e);
 
-                            input.displayname = "Station " + this.numberFromHostname(ew.hostname);
+//                            input.displayname = "Station " + this.numberFromHostname(ew.hostname);
                             input.click.subscribe(() => {
                                 let panel = this.data.panels.find(p => p.hostname === ew.hostname);
 
                                 if (panel != null) {
-                                    this.mirror(panel.preset);
+                                    this.mirror(panel.preset, true);
 
 //                                    this.mirrorNumber = this.numberFromHostname(ew.hostname);
-                                    this.mirrorDialog.show();
+//                                    this.mirrorDialog.show();
                                 } else {
                                     console.error("failed to find panel with hostname", ew.hostname, ". panels: ", this.data.panels);
                                 }
@@ -469,47 +533,64 @@ export class HomeComponent implements OnInit {
 
                         break; 
                     }
+                    */
                     case SHARE: 
-                        if (this.appliesToMe(e.device.split(","))) {
-                            console.log(SHARE, "event that applies to me", e);
-                            if (e.requestor == this.defaultPreset.name) {
-                                // someone who's panel i'm supposed to mirror just shared.
-                                // i should look like i'm sharing too!
-                                // e.device has the displays i should be sharing to.
-                            } else {
-                                // someone shared to me. i should look like a minion.
-                            }
-                        }
+                        if (e.requestor == this.defaultPreset.name) {
+                            // someone who's panel i'm supposed to mirror just shared.
+                            // so i should look like i'm sharing too!
+                            // e.device has the displays i should be sharing to.   
+                            
+                            let names = e.device.split(',');
+                            let displays = Display.getDisplayListFromNames(names, this.data.displays);
+                            this.share(displays, false);
 
+                        } else if (this.appliesToMe(e.device.split(","))) {
+                            if (this.wheel.preset == this.sharePreset) {
+                                // TODO someone just shared to me, but I'm already sharing to a group.
+                                // the preset who just shared to me should absorb my group.
+                                //
+                                // what to do? 
+                                // send the new master a list of my sharePreset.displays    
+                                // TODO TODO TODO THIS IS WHERE I AM
+                            }
+
+                            // someone shared to me. i should look like a minion.
+                            let preset = this.data.presets.find(p => p.name === e.requestor);
+                            this.mirror(preset, false);
+                        }
                         break;
                     case STOP_SHARE: 
-                        if (this.appliesToMe(e.device.split(","))) {
-                            if (e.requestor == this.defaultPreset.name) {
-                                // someone who's panel i'm supposed to mirror just unshared.
-                                // i should switch back to my default preset.
-                            } else {
-                                // someone stopped sharing to me.
-                            }
+                        if (this.wheel.preset == this.sharePreset && e.requestor == this.defaultPreset.name) {
+                            // someone who's panel i'm mirroring just unshared.
+                            // all i need to do is switch back to my default preset
+                            
+                            this.unShare(false);
+                        } else if (this.appliesToMe(e.device.split(","))) {
+                            // someone stopped sharing to me.
+                            this.unMirror(false);
                         }
                         break;
                     case LEAVE_SHARE: 
                         if (e.requestor == this.defaultPreset.name) {
-                            // someone wants to leave the group i created
+                            let names = e.device.split(',');
+                            let displays = Display.getDisplayListFromNames(names, this.data.displays);
+                            this.removeFromShare(displays);
+                        }
+                        break;
+                    case JOIN_SHARE:
+                        if (this.wheel.preset == this.sharePreset && e.requestor == this.defaultPreset.name) {
+                            // someone wants to join my share group
+
+                            let names = e.device.split(',');
+                            let displays = Display.getDisplayListFromNames(names, this.data.displays);
+                            this.addToShare(displays);
+                        } else if (this.appliesToMe(e.device.split(","))) {
+                            // TODO someone wants me to join a group
+                            // should the master just handle people joining/leaving the group?
                         }
                         break;
                     /*
                     case SHARE: {
-                        console.log("share event", e);
-
-                        // Device field on DTA determines what devices got changed. If one of mine did, then show the popup.
-                        let names: string[] = e.device.split(",");
-
-                        let showPopup: boolean = false;
-                        this.wheel.preset.displays.forEach(d => {
-                            if (names.includes(d.name))
-                                showPopup = true;
-                        });
-
                         if (showPopup) {
                             if (e.eventInfoValue === "true" && e.requestor !== APIService.piHostname) {
 
@@ -558,102 +639,13 @@ export class HomeComponent implements OnInit {
 
                         break;
                     }
-                    case SHARING: {
-                        console.log("sharing event", e);
-                        if (this.sharePreset == this.wheel.preset) {
-                            // TODO edit sharePreset.audioDevices based on add/remove events
-                            //      if a roomWideAudio is added, send a request to change audio over there.
-                            //      if a roomWideAudio is removed, send a request to change audio back to the me (the master)
-                            let names = e.device.split(","); 
-
-                            // remove the name if it's on my default preset (those ones should never be added/removed - at least for now)
-                            names = names.filter(n => !this.defaultPreset.displays.some(d => d.name === n));
-
-                            if (names == null || names.length == 0)
-                                break;
-
-                            if (e.eventInfoValue === "remove") {
-                                console.log("removing", names, "from", this.sharePreset.displays);
-                                // filter out the ones by the names that just came through, unless it's a name from my default preset
-                                this.sharePreset.displays = this.sharePreset.displays.filter(d => !names.includes(d.name));
-
-                                console.log("leftover displays in sharePreset:", this.sharePreset);
-
-                                // if a room-wide audio is removed, send a reuqest to change my audio to default.
-                                // also, edit sharePreset.audioDevices so that the correct device(s) is/are controlled. 
-                                
-                                // create an array of displays that were removed
-                                let displays: Display[] = [];
-                                this.data.displays.filter(d => names.includes(d.name))
-                                                  .forEach(d => displays.push(d));
-
-                                console.log("displays that were removed", displays);
-
-                                // get audioConfigs of removed displays
-                                let audioConfigs = this.data.getAudioConfigurations(displays);
-                                console.log("audioConfigs of removed displays", audioConfigs);
-                                let hasRoomWide = this.data.hasRoomWide(audioConfigs);
-
-                                if (hasRoomWide) {
-                                    console.log("removed room wide audio device. changing preset...");
-                                    // change the audioDevices
-                                    this.sharePreset.audioDevices = this.defaultPreset.audioDevices;
-                                    console.log("share preset audio devices changed to: ", this.sharePreset);
-
-                                    this.wheel.command.setVolume(30, this.sharePreset.audioDevices);
-                                    this.wheel.command.setMute(false, this.sharePreset.audioDevices);
-                                } else
-                                    console.log("no room wide audioDevice was removed");
-
-                                console.log("removed displays. now mirroring to", this.wheel.preset.displays);
-                            } else if (e.eventInfoValue === "add") {
-                                let displays: Display[] = [];
-                                this.data.displays.filter(d => names.includes(d.name))
-                                                  .forEach(d => displays.push(d));
-
-                                this.sharePreset.displays.push(...displays);
-                                this.selectedDisplays.push(...displays);
-
-                                // get audioConfigs of added displays
-                                let audioConfigs = this.data.getAudioConfigurations(displays);
-                                console.log("audioConfigs of added displays", audioConfigs);
-                                let hasRoomWide = this.data.hasRoomWide(audioConfigs);
-
-                                if (hasRoomWide) {
-                                    console.log("added room wide audio device. changing preset...");
-
-                                    // mute current audioDevice
-                                    console.log("muting old audioDevices");
-                                    this.wheel.command.setMute(true, this.sharePreset.audioDevices);
-                                    this.wheel.command.setVolume(0, this.sharePreset.audioDevices).subscribe(() => {
-                                        // change the audioDevices
-                                        this.sharePreset.audioDevices.length = 0;
-
-                                        for (let config of audioConfigs) {
-                                            if (config.roomWide) 
-                                                this.sharePreset.audioDevices.push(...config.audioDevices);
-                                        }
-                                        console.log("share preset audio devices changed to: ", this.sharePreset);
-
-                                        this.wheel.command.setVolume(30, this.sharePreset.audioDevices);
-                                        this.wheel.command.setMute(false, this.sharePreset.audioDevices);
-                                    });
-                                } else
-                                    console.log("no room wide audioDevice was added");
-
-                                console.log("added", displays, "to mirror list. now mirroring to", this.wheel.preset.displays);
-                            }
-                        } 
-
-                        break;
-                    }
                    */
                     case POWER_OFF_ALL: 
                         this.removeExtraInputs();
                         swal.close();
 
                         if (this.sharePreset == this.wheel.preset) {
-                            this.unShare().subscribe(success => {
+                            this.unShare(true).subscribe(success => {
                                 if (success)
                                     this.wheel.command.powerOffAll();
                             });
@@ -672,11 +664,6 @@ export class HomeComponent implements OnInit {
             }
         }
         return false;
-    }
-
-    private numberFromHostname(requestor: string): string {
-        let num = requestor.split("-")[2][2];
-        return num; 
     }
 
     private removeExtraInputs() {
