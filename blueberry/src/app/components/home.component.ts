@@ -294,6 +294,7 @@ export class HomeComponent implements OnInit {
     }
 
     public share(displayList: Display[], sendCommand: boolean): EventEmitter<boolean> {
+        console.log("sharing to", displayList)
         let ret: EventEmitter<boolean> = new EventEmitter();
 
         this.removeExtraInputs(); // if you share, you can't go back to an old group anymore.
@@ -325,6 +326,7 @@ export class HomeComponent implements OnInit {
         console.log("sharePreset", this.sharePreset);
 
         if (sendCommand) {
+            console.log("sending share event");
             this.wheel.share(displayList).subscribe(
                 success => {
                     if (success) {
@@ -355,10 +357,12 @@ export class HomeComponent implements OnInit {
     }
 
     public unShare(sendCommand: boolean): EventEmitter<boolean> {
+        console.log("unsharing my display");
         swal.showLoading();
         let ret: EventEmitter<boolean> = new EventEmitter();
 
         if (sendCommand) {
+            console.log("sending unshare command");
             // filter out my defaultPreset's displays, so that my displays aren't changed
             this.sharePreset.displays = this.sharePreset.displays.filter(d => !this.defaultPreset.displays.includes(d));
             
@@ -369,7 +373,7 @@ export class HomeComponent implements OnInit {
                         this.selectedDisplays.forEach(d => names.push(d.name));
                         let device: string = names.join(",");
                         
-                        let event = new Event(0,0, "requestor", device, STOP_SHARE, " ");
+                        let event = new Event(0,0, this.defaultPreset.name, device, STOP_SHARE, " ");
                         this.api.sendFeatureEvent(event);
 
                         this.changePreset(this.defaultPreset);
@@ -395,8 +399,10 @@ export class HomeComponent implements OnInit {
     public mirror(preset: Preset, sendCommand: boolean, sendEvent: boolean) {
         // show the popup
         this.mirrorDialog.show();
+        console.log("mirroring", preset.name);
 
         if (sendCommand) {
+            console.log("sending mirror command");
             this.wheel.command.mirror(preset, this.defaultPreset).subscribe(
                 success => {
                     if (success) {
@@ -405,6 +411,7 @@ export class HomeComponent implements OnInit {
                         let displays: string = names.join(",");
 
                         if (sendEvent) {
+                            console.log("sending JOIN_SHARE event as part of mirror");
                             let event = new Event(0, 0, preset.name, displays, JOIN_SHARE, " ");
                             this.api.sendFeatureEvent(event);
                         }
@@ -432,7 +439,9 @@ export class HomeComponent implements OnInit {
     }
 
     public unMirror(sendCommand: boolean) {
+        console.log("unmirroring");
         if (sendCommand) {
+            console.log("sending unmirror command");
             let names: string[] = [];
             this.wheel.preset.displays.forEach(d => names.push(d.name));
             let displays: string = names.join(",");
