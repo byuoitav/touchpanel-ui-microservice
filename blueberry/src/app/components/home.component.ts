@@ -63,9 +63,10 @@ export const JOIN_SHARE     = "join_share";
  *
  * If you are a minion who has left the group, and would like to rejoin, send:
  *      {
- *          requestor: the name of the preset that that started the group,
+ *          requestor: the name of the preset who is requesting me to join the group
  *          device: list of displays you want to be controlled,
  *          eventInfoKey: JOIN_SHARE
+ *          eventInfoValue: the name of the preset that that started the group,
  *      } 
  *      also show the same modal window that appears when receiving a SHARE event
  *      and lookup the status of the preset you would like to join, and mirror that.
@@ -388,6 +389,7 @@ export class HomeComponent implements OnInit {
             );
         } else {
             this.changePreset(this.defaultPreset);
+            this.swalStatus(true);
         }
 
         return ret;
@@ -412,7 +414,7 @@ export class HomeComponent implements OnInit {
 
                         if (sendEvent) {
                             console.log("sending JOIN_SHARE event as part of mirror");
-                            let event = new Event(0, 0, preset.name, displays, JOIN_SHARE, " ");
+                            let event = new Event(0, 0, this.defaultPreset.name, displays, JOIN_SHARE, preset.name);
                             this.api.sendFeatureEvent(event);
                         }
                     }
@@ -548,7 +550,7 @@ export class HomeComponent implements OnInit {
                                 });
                                 let displays = names.join(",");
 
-                                let event = new Event(0, 0, e.requestor, displays, JOIN_SHARE, " ");
+                                let event = new Event(0, 0, this.defaultPreset.name, displays, JOIN_SHARE, e.requestor);
                                 this.api.sendFeatureEvent(event);
                             }
 
@@ -572,7 +574,12 @@ export class HomeComponent implements OnInit {
                         }
                         break;
                     case LEAVE_SHARE: 
-                        if (e.requestor == this.defaultPreset.name) {
+                        if (this.appliesToMe(e.device.split(","))) {
+                            console.log("a panel i'm mirroring ("+ ew.hostname +") just left", e.requestor + "'s group.");
+                            // someone who's panel i'm mirroring just left a group
+
+                            this.unMirror(false);
+                        } else if (e.requestor == this.defaultPreset.name) {
                             console.log(e.device, "has left my group");
 
                             let names = e.device.split(',');
@@ -581,16 +588,22 @@ export class HomeComponent implements OnInit {
                         }
                         break;
                     case JOIN_SHARE:
-                        if (this.wheel.preset == this.sharePreset && e.requestor == this.defaultPreset.name) {
-                            // someone wants to join my share group
-                            console.log(e.device, "is joining my group");
+                        if (this.wheel.preset == this.sharePreset && e.eventInfoValue == this.defaultPreset.name) {
+                            // someone wants to join *my* group
+                            console.log(e.device, "is joining my group at the request of", e.requestor);
 
                             let names = e.device.split(',');
                             let displays = Display.getDisplayListFromNames(names, this.data.displays);
                             this.addToShare(displays);
+                        } else if (e.requestor == this.defaultPreset.name) {
+                            // a panel i'm mirroring just rejoined a group
+                            
+                            let preset = this.data.presets.find(p => p.name === e.requestor);
+                            this.mirror(preset, false, false)
                         } else if (this.appliesToMe(e.device.split(","))) {
                             console.log("someone wants me to join a new group from preset:", e.requestor);
                             // someone wants me to join a group
+                            
                             let preset = this.data.presets.find(p => p.name === e.requestor);
                             this.mirror(preset, true, true);
                         }
