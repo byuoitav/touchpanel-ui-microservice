@@ -598,13 +598,13 @@ export class HomeComponent implements OnInit {
                         } else if (e.requestor == this.defaultPreset.name) {
                             // a panel i'm mirroring just rejoined a group
                             
-                            let preset = this.data.presets.find(p => p.name === e.requestor);
+                            let preset = this.data.presets.find(p => p.name === e.eventInfoValue);
                             this.mirror(preset, false, false)
                         } else if (this.appliesToMe(e.device.split(","))) {
-                            console.log("someone wants me to join a new group from preset:", e.requestor);
+                            console.log(e.requestor, "wants me to join a new group from preset:", e.eventInfoValue);
                             // someone wants me to join a group
                             
-                            let preset = this.data.presets.find(p => p.name === e.requestor);
+                            let preset = this.data.presets.find(p => p.name === e.eventInfoValue);
                             this.mirror(preset, true, true);
                         }
                         break;
