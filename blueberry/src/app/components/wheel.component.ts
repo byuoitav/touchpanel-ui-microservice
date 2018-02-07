@@ -3,7 +3,7 @@ import swal, { SweetAlertOptions } from 'sweetalert2';
 import { SwalComponent, SwalPartialTargets } from '@toverux/ngx-sweetalert2';
 
 import { Preset } from '../objects/objects';
-import { Display, Input, AudioDevice, DTA } from '../objects/status.objects';
+import { Display, Input, AudioDevice } from '../objects/status.objects';
 import { CommandService } from '../services/command.service';
 import { Event } from '../services/socket.service';
 import { APIService } from '../services/api.service';
