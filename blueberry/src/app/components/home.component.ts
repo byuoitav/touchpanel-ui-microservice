@@ -515,6 +515,7 @@ export class HomeComponent implements OnInit {
                 let ew: EventWrapper = event.data;
                 let e: Event = ew.event;
 
+                if (e.eventInfoValue.length > 0) {
                 switch(e.eventInfoKey) {
                     case POWER:
                         if (e.eventInfoValue == "standby" && this.wheel.preset.displays.find(d => d.name === e.device) != null) {
@@ -629,6 +630,7 @@ export class HomeComponent implements OnInit {
                         }
 
                         break;
+                }
                 }
             }
         }); 

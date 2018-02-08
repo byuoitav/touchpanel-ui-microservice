@@ -135,7 +135,8 @@ export class DataService {
             if (event.type == MESSAGE) {
                 let ew: EventWrapper = event.data;
                 let e = ew.event;
-                
+
+                if (e.eventInfoValue.length > 0) {
                 switch (e.eventInfoKey) {
                     case POWER: {
                         let output: Output;
@@ -188,6 +189,7 @@ export class DataService {
                     }
                     default: 
                         break; 
+                }
                 }
             }
         });
