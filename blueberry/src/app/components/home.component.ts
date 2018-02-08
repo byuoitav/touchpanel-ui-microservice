@@ -458,7 +458,7 @@ export class HomeComponent implements OnInit {
 
     private removeFromShare(displays: Display[]) {
         // remove displays from list of current displays
-        this.sharePreset.displays.filter(d => displays.includes(d));
+        this.sharePreset.displays = this.sharePreset.displays.filter(d => !displays.includes(d));
         console.log("removed", displays ," from my share group");
 
         let audioConfigs = this.data.getAudioConfigurations(displays);
@@ -514,13 +514,22 @@ export class HomeComponent implements OnInit {
                 let e: Event = ew.event;
 
                 switch(e.eventInfoKey) {
-                    case POWER: {
+                    case POWER:
                         if (e.eventInfoValue == "standby" && this.wheel.preset.displays.find(d => d.name === e.device) != null) {
                             this.removeExtraInputs();
                         }
 
                         break;
-                    }
+                    case INPUT:
+                        if (this.defaultPreset.extraInputs.length > 0) {
+                            let input = Input.getInput(e.eventInfoValue, this.data.inputs);
+                            if (!this.defaultPreset.inputs.includes(input)) {
+                                console.log("updating extra input name/icon with: ", input);
+                                this.defaultPreset.extraInputs[0].name = input.name;
+                                this.defaultPreset.extraInputs[0].icon = input.icon;
+                            }
+                        }
+                        break;
                     case SHARE: 
                         if (e.requestor == this.defaultPreset.name) {
                             console.log("a panel i'm mirroring ("+ ew.hostname +") just shared");
