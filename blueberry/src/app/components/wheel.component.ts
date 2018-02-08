@@ -2,7 +2,7 @@ import { Component, Input as AngularInput, Output as AngularOutput, AfterContent
 import swal, { SweetAlertOptions } from 'sweetalert2';
 import { SwalComponent, SwalPartialTargets } from '@toverux/ngx-sweetalert2';
 
-import { Preset } from '../objects/objects';
+import { Preset, AudioConfig } from '../objects/objects';
 import { Display, Input, AudioDevice } from '../objects/status.objects';
 import { CommandService } from '../services/command.service';
 import { Event } from '../services/socket.service';
@@ -216,10 +216,10 @@ export class WheelComponent implements AfterContentInit {
         return ret;
     }
 
-    public unShare(from: Display[]): EventEmitter<boolean> {
+    public unShare(from: Display[], fromAudio: AudioConfig[]): EventEmitter<boolean> {
         let ret: EventEmitter<boolean> = new EventEmitter();
 
-        this.command.unShare(from).subscribe(
+        this.command.unShare(from, fromAudio).subscribe(
             success => {
                 if (success) {
                     ret.emit(true);
