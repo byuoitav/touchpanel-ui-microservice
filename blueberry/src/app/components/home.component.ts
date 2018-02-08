@@ -365,7 +365,7 @@ export class HomeComponent implements OnInit {
         if (sendCommand) {
             console.log("sending unshare command");
 
-            // filter out my defaultPreset's displays, so that my displays aren't changed
+            // filter out my defaultPreset's displays, so that my input isn't changed
             let audioConfigs = this.data.getAudioConfigurations(this.sharePreset.displays);
             let displays = this.sharePreset.displays.filter(d => !this.defaultPreset.displays.includes(d));
 
@@ -649,6 +649,7 @@ export class HomeComponent implements OnInit {
     }
 
     private changePreset(newPreset: Preset) {
+        console.log("changing preset to", newPreset);
         this.wheel.preset = newPreset;
         setTimeout(() => this.wheel.render(), 0);
     }
