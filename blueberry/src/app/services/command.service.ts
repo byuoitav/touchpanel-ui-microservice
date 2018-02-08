@@ -319,11 +319,9 @@ export class CommandService {
         return ret;
     }
 
-    public unShare(from: Display[]): EventEmitter<boolean> {
+    public unShare(from: Display[], fromAudio: AudioConfig[]): EventEmitter<boolean> {
         let ret: EventEmitter<boolean> = new EventEmitter<boolean>();
         let body = { displays: [], audioDevices: [] }; 
-
-        let audioConfigs = this.data.getAudioConfigurations(from);
 
         for (let d of from) {
             let preset: Preset = this.data.presets.find(p => p.displays.includes(d));
@@ -338,7 +336,7 @@ export class CommandService {
             }
         }
 
-        for (let ac of audioConfigs) {
+        for (let ac of fromAudio) {
             for (let a of ac.audioDevices) {
                 body.audioDevices.push({
                     "name": a.name,
