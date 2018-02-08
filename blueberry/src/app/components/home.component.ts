@@ -515,6 +515,7 @@ export class HomeComponent implements OnInit {
                 let ew: EventWrapper = event.data;
                 let e: Event = ew.event;
 
+                if (e.eventInfoValue.length > 0) {
                 switch(e.eventInfoKey) {
                     case POWER:
                         if (e.eventInfoValue == "standby" && this.wheel.preset.displays.find(d => d.name === e.device) != null) {
@@ -523,7 +524,7 @@ export class HomeComponent implements OnInit {
 
                         break;
                     case INPUT:
-                        if (this.defaultPreset.extraInputs.length > 0) {
+                        if (this.defaultPreset.extraInputs.length > 0 && e.eventInfoValue.length > 0) {
                             let input = Input.getInput(e.eventInfoValue, this.data.inputs);
                             if (!this.defaultPreset.inputs.includes(input)) {
                                 console.log("updating extra input name/icon with: ", input);
@@ -629,6 +630,7 @@ export class HomeComponent implements OnInit {
                         }
 
                         break;
+                }
                 }
             }
         }); 
