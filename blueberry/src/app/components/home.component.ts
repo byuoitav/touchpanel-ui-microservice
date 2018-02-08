@@ -427,15 +427,13 @@ export class HomeComponent implements OnInit {
 
         let currInput = this.wheel.getInput();
         if (currInput != null) {
-            console.log("creating a new input on the wheel for input:", currInput);
-
-            currInput.displayname = preset.name;
-            currInput.click.subscribe(() => {
-                this.mirror(preset, true, true);
+            let input = new Input(currInput.name, preset.name, currInput.icon);
+            input.click.subscribe(() => {
+                this.mirror(preset, true, true)
             });
 
             this.removeExtraInputs();
-            this.defaultPreset.extraInputs.push(currInput);
+            this.defaultPreset.extraInputs.push(input);
         } else
             console.warn("failed to find a current input for preset:", preset);
     }
