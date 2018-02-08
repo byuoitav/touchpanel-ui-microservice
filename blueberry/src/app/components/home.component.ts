@@ -524,7 +524,7 @@ export class HomeComponent implements OnInit {
 
                         break;
                     case INPUT:
-                        if (this.defaultPreset.extraInputs.length > 0 && e.eventInfoValue.length > 0) {
+                        if (this.defaultPreset.extraInputs.length > 0) {
                             let input = Input.getInput(e.eventInfoValue, this.data.inputs);
                             if (!this.defaultPreset.inputs.includes(input)) {
                                 console.log("updating extra input name/icon with: ", input);
