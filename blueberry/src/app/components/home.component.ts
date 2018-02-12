@@ -569,6 +569,22 @@ export class HomeComponent implements OnInit {
                             // someone shared to me. i should look like a minion.
                             let preset = this.data.presets.find(p => p.name === e.requestor);
                             this.mirror(preset, false, false);
+                        } else if (this.appliesToMySelectedDisplays(e.device.split(","))) {
+                            // display(s) that i previously shared to have been shared to by a new station.
+                            // they should be removed from my selectedDisplays group so that
+                            // i can't send an unshare event to them.
+                            console.log(e.requestor, "just shared to display(s) that i was sharing to");
+                            let displaysThatWereSharedTo = Display.getDisplayListFromNames(e.device.split(","), this.data.displays);
+
+                            // remove displays that were shared from the selectedDisplays
+                            this.selectedDisplays = this.selectedDisplays.filter(d => !displaysThatWereSharedTo.includes(d))
+
+                            if (this.selectedDisplays.length == 0) {
+                                console.log("i'm no longer sharing to any displays. :(")
+                                this.unShare(false);
+                            }
+                            else
+                                console.log("selected displays (displays that will receive an unshare event) after removing them: ", this.selectedDisplays);
                         }
                         break;
                     case STOP_SHARE: 
@@ -640,6 +656,15 @@ export class HomeComponent implements OnInit {
 
     private appliesToMe(listOfDisplayNames: string[]): boolean {
         for (let d of this.defaultPreset.displays) {
+            if (listOfDisplayNames.includes(d.name)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private appliesToMySelectedDisplays(listOfDisplayNames: string[]): boolean {
+        for (let d of this.selectedDisplays) {
             if (listOfDisplayNames.includes(d.name)) {
                 return true;
             }
