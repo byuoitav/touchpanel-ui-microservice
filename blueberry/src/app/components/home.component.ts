@@ -332,6 +332,7 @@ export class HomeComponent implements OnInit {
                 success => {
                     if (success) {
                         this.changePreset(this.sharePreset);
+                        this.selectedDisplays = displayList;
 
                         let names: string[] = []; 
                         displayList.forEach(d => {
@@ -351,6 +352,7 @@ export class HomeComponent implements OnInit {
                 }
             );
         } else {
+            this.selectedDisplays = displayList;
             this.changePreset(this.sharePreset);
         }
 
