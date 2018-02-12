@@ -407,6 +407,11 @@ export class HomeComponent implements OnInit {
         this.mirrorDialog.show();
         console.log("mirroring", preset.name);
 
+        if (this.wheel.preset == this.sharePreset) {
+            console.log("switching to default preset");
+            this.changePreset(this.defaultPreset);
+        }
+
         if (sendCommand) {
             console.log("sending mirror command");
             this.wheel.command.mirror(preset, this.defaultPreset).subscribe(
@@ -560,10 +565,13 @@ export class HomeComponent implements OnInit {
                                     if (!displaysThatWereSharedTo.includes(d))
                                         names.push(d.name);
                                 });
-                                let displays = names.join(",");
 
-                                let event = new Event(0, 0, this.defaultPreset.name, displays, JOIN_SHARE, e.requestor);
-                                this.api.sendFeatureEvent(event);
+                                if (names.length > 0) {
+                                    let displays = names.join(",");
+
+                                    let event = new Event(0, 0, this.defaultPreset.name, displays, JOIN_SHARE, e.requestor);
+                                    this.api.sendFeatureEvent(event);
+                                }
                             }
 
                             // someone shared to me. i should look like a minion.
@@ -674,6 +682,7 @@ export class HomeComponent implements OnInit {
 
     private removeExtraInputs() {
         this.wheel.preset.extraInputs.length = 0; 
+        this.defaultPreset.extraInputs.length - 0;
         setTimeout(() => this.wheel.render(), 0);
     }
 
