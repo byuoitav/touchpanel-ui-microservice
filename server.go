@@ -6,6 +6,7 @@ import (
 	"os"
 	"time"
 
+	"github.com/byuoitav/authmiddleware"
 	"github.com/byuoitav/device-monitoring-microservice/statusinfrastructure"
 	"github.com/byuoitav/event-router-microservice/eventinfrastructure"
 	"github.com/byuoitav/touchpanel-ui-microservice/events"

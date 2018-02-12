@@ -470,7 +470,7 @@ export class HomeComponent implements OnInit {
             console.log("removed room wide audio device. changing preset...");
 
             // switch back to default presets audio devices
-            this.sharePreset.audioDevices = this.defaultPreset.audioDevices;
+            this.sharePreset.audioDevices = this.defaultPreset.audioDevices.slice();
 
             // set volume to 30 on my audio devices
             this.wheel.command.setMuteAndVolume(false, 30, this.sharePreset.audioDevices);
