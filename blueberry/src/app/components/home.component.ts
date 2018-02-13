@@ -560,7 +560,7 @@ export class HomeComponent implements OnInit {
                                 let displaysThatWereSharedTo = Display.getDisplayListFromNames(e.device.split(","), this.data.displays);
 
                                 let names: string[] = [];
-                                this.sharePreset.displays.forEach(d => {
+                                this.selectedDisplays.forEach(d => {
                                     // only force my displays that weren't shared to, but are in my group, to join the new group.
                                     if (!displaysThatWereSharedTo.includes(d))
                                         names.push(d.name);
