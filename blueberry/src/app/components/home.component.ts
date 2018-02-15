@@ -376,12 +376,17 @@ export class HomeComponent implements OnInit {
                     if (success) {
                         let names: string[] = []; 
                         this.selectedDisplays.forEach(d => names.push(d.name));
+                        this.sharePreset.displays.forEach(d => names.push(d.name));
+                        names = Array.from(new Set(names)); // only use unique values
+                        names = names.filter(n => !this.defaultPreset.displays.some(d => d.name === n)); // filter out ones from my default preset
+
                         let device: string = names.join(",");
                         
                         let event = new Event(0,0, this.defaultPreset.name, device, STOP_SHARE, " ");
                         this.api.sendFeatureEvent(event);
 
                         this.changePreset(this.defaultPreset);
+                        this.selectedDisplays = [];
 
                         this.swalStatus(true);
                         ret.emit(true);
@@ -626,11 +631,16 @@ export class HomeComponent implements OnInit {
                     case JOIN_SHARE:
                         if (this.wheel.preset == this.sharePreset && e.eventInfoValue == this.defaultPreset.name) {
                             // someone wants to join *my* group
-                            console.log(e.device, "is joining my group at the request of", e.requestor);
-
                             let names = e.device.split(',');
                             let displays = Display.getDisplayListFromNames(names, this.data.displays);
-                            this.addToShare(displays);
+
+                            // remove displays that are already part of my sharePreset
+                            displays = displays.filter(d => !this.sharePreset.displays.includes(d));
+
+                            if (displays.length > 0) {
+                                console.log(displays, "are joining my group at the request of", e.requestor);
+                                this.addToShare(displays);
+                            }
                         } else if (e.requestor == this.defaultPreset.name) {
                             console.log("a panel i'm mirroring (" + ew.hostname + ") just rejoined", e.eventInfoValue + "'s group.")
                             // a panel i'm mirroring just rejoined a group
