@@ -632,16 +632,17 @@ export class HomeComponent implements OnInit {
                             let displays = Display.getDisplayListFromNames(names, this.data.displays);
                             this.addToShare(displays);
                         } else if (e.requestor == this.defaultPreset.name) {
+                            console.log("a panel i'm mirroring (" + ew.hostname + ") just rejoined", e.eventInfoValue + "'s group.")
                             // a panel i'm mirroring just rejoined a group
                             
                             let preset = this.data.presets.find(p => p.name === e.eventInfoValue);
-                            this.mirror(preset, false, false)
+                            this.mirror(preset, false, false);
                         } else if (this.appliesToMe(e.device.split(","))) {
-                            console.log(e.requestor, "wants me to join a new group from preset:", e.eventInfoValue);
+                            console.log(e.requestor, "wants me to join a ", e.eventInfoValue + "'s group.");
                             // someone wants me to join a group
                             
                             let preset = this.data.presets.find(p => p.name === e.eventInfoValue);
-                            this.mirror(preset, true, true);
+                            this.mirror(preset, true, false);
                         }
                         break;
                     case POWER_OFF_ALL: 
