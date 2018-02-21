@@ -6,7 +6,7 @@ $cwheelsize: 25vh;
 $linewidth: .12vh;
 
 $volumesize: 90%;
-$independentVolumeSize: 80%;
+$independentVolumeSize: 81%;
 
 // reset automatic margins
 ul {
@@ -180,7 +180,7 @@ ul {
     align-items: center;
 
     margin-right: 3%;
-    margin-top: (100% - $volumesize) / 3;
+    margin-top: (100% - $volumesize) / 3 - 1;
 
 	&.independentAudio {
     	margin-top: (100% - $independentVolumeSize) / 2;
