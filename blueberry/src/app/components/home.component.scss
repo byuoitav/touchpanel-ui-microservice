@@ -40,7 +40,7 @@ $duration: .4s;
 
 	&.right {
 		right: 0;
-		margin-right: 3vw;
+		margin-right: -.05vw;
 	}
 }
 
@@ -76,6 +76,7 @@ $duration: .4s;
 
 .independentAudio {
     z-index: 1000;
+    margin-right: 0;
 }
 
 .independentAudioContent {
