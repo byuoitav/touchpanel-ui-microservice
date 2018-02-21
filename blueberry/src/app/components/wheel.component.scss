@@ -85,7 +85,7 @@ ul {
 
             .name {
                 transform: scale(.65, .65);
-                font-size: 1vh;
+                font-size: 1.2vh;
                 white-space: nowrap;
             }
 		}
@@ -134,8 +134,11 @@ ul {
         margin-top: 20%;
         
         &.open {
-            transform: translateY(-390%);
+            transform: translateY(-265%);
         }
+
+        white-space: nowrap;
+        font-size: 4.8vh;
     }
 
     .icon {
@@ -148,9 +151,9 @@ ul {
     }
 
     .picture {
-        margin-top: 60%;
+        margin-top: 57%;
         opacity: 0;
-        font-size: 80%;
+        font-size: 90%;
 
         &.open {
             opacity: 1;
@@ -158,7 +161,7 @@ ul {
     }
 
     .switch {
-        margin-top: 75%;
+        margin-top: 71%;
         opacity: 0;
 
         &.open {
@@ -210,9 +213,10 @@ ul {
         }
 
         .mat-icon {
-            font-size: 4vw; 
-            height: 4vw;
-            width: 4vw;
+            margin-top: -1.1vh;
+            font-size: 5vw;
+            height: 5vw;
+            width: 5vw;
         }
     }
 }

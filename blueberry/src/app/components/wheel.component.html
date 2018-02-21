@@ -53,7 +53,7 @@
 <div class="volume" [class.muted]="getMute()" *ngIf="circleOpen" [class.independentAudio]="preset?.independentAudioDevices?.length > 0">
     <mat-slider id="slider" vertical [class.notouch]="getMute()" [disabled]="getMute()" [value]="getVolume()" [step]="5" [thumbLabel]="thumbLabel" (change)="command.setVolume($event.value, preset.audioDevices); closeThumb()"></mat-slider>
 
-	<button mat-mini-fab class="mute" [class.muted]="getMute()" (click)="command.setMute(!getMute(), preset.audioDevices);">
+	<button mat-fab class="mute" [class.muted]="getMute()" (click)="command.setMute(!getMute(), preset.audioDevices);">
         <mat-icon *ngIf="getMute()">volume_off</mat-icon>
         <mat-icon *ngIf="!getMute()">volume_up</mat-icon>
     </button>
