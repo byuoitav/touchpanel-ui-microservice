@@ -9,10 +9,9 @@ export const INPUT: string = "input";
 export const BLANKED: string = "blanked";
 export const MUTED: string = "muted";
 export const VOLUME: string = "volume";
-export const DTA: string = "dta";
-export const SHARING: string = "sharing";
+//export const SHARING: string = "sharing";
 export const POWER_OFF_ALL: string = "power_off_all";
-export const MIRROR: string = "mirror";
+//export const MIRROR: string = "mirror";
 
 export class Device {
 	name: string;
@@ -145,6 +144,10 @@ export class Display extends Output {
 
     public getAudioConfiguration(): AudioConfiguration {
         return APIService.room.uiconfig.audioConfiguration.find(a => a.display === this.name);
+    }
+
+    public static getDisplayListFromNames(names: string[], displaysSource: Display[]): Display[] {
+        return displaysSource.filter(d => names.includes(d.name));
     }
 }
 

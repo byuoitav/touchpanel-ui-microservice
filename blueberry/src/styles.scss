@@ -1,12 +1,17 @@
 /* You can add global styles to this file, and also import other style files */
 @import '~material-design-icons/iconfont/material-icons.css'; 
 @import '~@angular/material/prebuilt-themes/indigo-pink.css';
+@import url('https://fonts.googleapis.com/css?family=Source+Sans+Pro:600');
 
 html {
     overflow: hidden;
     user-select: none;
+
+    font-family: 'Source Sans Pro', sans-serif;
+    letter-spacing: .1px;
 }
 
+// TODO add a background fill to the mic sliders
 .volume, .mic {
     .mat-slider-track-background {
         background-color: rgba(255,255,255,.8) !important;

@@ -172,6 +172,37 @@ export class CommandService {
         return ret;
     }
 
+    public setMuteAndVolume(m: boolean, v: number, audioDevices: AudioDevice[]): EventEmitter<boolean> {
+        let ret: EventEmitter<boolean> = new EventEmitter<boolean>();
+        console.log("changing volume to", v, "and mute to", m, "on", audioDevices);
+        let prevMute = AudioDevice.getMute(audioDevices);
+        AudioDevice.setMute(m, audioDevices);
+
+        let prevVol = AudioDevice.getVolume(audioDevices);
+        AudioDevice.setVolume(v, audioDevices);
+
+        let body = { audioDevices: [] };
+        for (let a of audioDevices) {
+            body.audioDevices.push({
+                "name": a.name,
+                "volume": v,
+                "muted": m
+            });
+        }
+
+		this.put(body).subscribe(
+			data => {
+                ret.emit(true);
+			}, err => {
+                AudioDevice.setMute(prevMute, audioDevices);
+                AudioDevice.setVolume(prevVol, audioDevices);
+                ret.emit(false);
+			}
+		);
+
+        return ret;
+    }
+
     public powerOnDefault(preset: Preset): EventEmitter<boolean> {
         let ret: EventEmitter<boolean> = new EventEmitter<boolean>();
         
@@ -288,11 +319,9 @@ export class CommandService {
         return ret;
     }
 
-    public unShare(from: Display[]): EventEmitter<boolean> {
+    public unShare(from: Display[], fromAudio: AudioConfig[]): EventEmitter<boolean> {
         let ret: EventEmitter<boolean> = new EventEmitter<boolean>();
         let body = { displays: [], audioDevices: [] }; 
-
-        let audioConfigs = this.data.getAudioConfigurations(from);
 
         for (let d of from) {
             let preset: Preset = this.data.presets.find(p => p.displays.includes(d));
@@ -307,7 +336,7 @@ export class CommandService {
             }
         }
 
-        for (let ac of audioConfigs) {
+        for (let ac of fromAudio) {
             for (let a of ac.audioDevices) {
                 body.audioDevices.push({
                     "name": a.name,

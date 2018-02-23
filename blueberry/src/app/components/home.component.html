@@ -12,20 +12,21 @@
 </div>
 
 <div class="buttons bottom">
+    <!--TODO make share button dissappear if shareableDisplays.length = 0 -->
     <div *ngIf="data?.panel?.features.includes('share')">
-        <button mat-fab *ngIf="wheel?.preset == preset" class="dta button" (click)="selectdisplays.show()">
+        <button mat-fab *ngIf="wheel?.preset == defaultPreset" class="dta button" (click)="selectdisplays.show()">
             <mat-icon>screen_share</mat-icon>
         </button>
 
-        <button mat-fab *ngIf="wheel?.preset != preset" class="dta button" (click)="unShareDialog.show()">
+        <button mat-fab *ngIf="wheel?.preset != defaultPreset" class="dta button" (click)="unShareDialog.show()">
             <mat-icon>stop_screen_share</mat-icon>
         </button>
     </div>
 </div> 
 
 <div class="buttons top right">
-	<button mat-fab *ngIf="wheel?.preset?.independentAudioDevices?.length > 0" class="independentAudio" (click)="audioDialog.show()">
-        <mat-icon>equalizer</mat-icon>
+	<button mat-fab *ngIf="defaultPreset?.independentAudioDevices?.length > 0" class="independentAudio button" (click)="audioDialog.show()">
+        <mat-icon>mic</mat-icon>
     </button>
 </div>
 
@@ -72,11 +73,11 @@
 </swal>
 
 <swal #unshare
-    (open)="unShare()">
+    (open)="unShare(true)">
 </swal>
 
 <swal #mirror
-    (confirm)="unMirror()"
+    (confirm)="unMirror(true)"
     (cancel)="showAudioControl(mirrorDialog)"
     [showCancelButton]="wheel?.preset?.independentAudioDevices?.length > 0">
 
@@ -86,11 +87,11 @@
 
     <div *swalPartial="swalTargets.cancelButton" class="swal-button">
         <span>Audio Control</span>
-        <mat-icon>equalizer</mat-icon>
+        <mat-icon>mic</mat-icon>
     </div>
 
     <div *swalPartial="swalTargets.title">
-        <span>Mirroring Station {{mirrorNumber}}</span>
+        <span>Mirroring {{mirrorPresetName}}</span>
     </div>
 </swal>
 
@@ -100,7 +101,7 @@
     </div>
 
     <div *swalPartial="swalTargets.content" class="independentAudioContent">
-        <div *ngFor="let a of preset.independentAudioDevices" class="mic" [class.muted]="a.muted">
+        <div *ngFor="let a of defaultPreset?.independentAudioDevices" class="mic" [class.muted]="a.muted">
             <span>{{a.displayname}}</span>
             <mat-slider vertical [class.notouch]="a.muted" [disabled]="a.muted" [value]="a.volume" [step]="5" [thumbLabel]="true" (change)="wheel.command.setVolume($event.value, [a]);"></mat-slider>
             <button mat-mini-fab class="mute" [class.muted]="a.muted" (click)="wheel.command.setMute(!a.muted, [a]);">
