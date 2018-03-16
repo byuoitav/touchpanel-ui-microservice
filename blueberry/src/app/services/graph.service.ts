@@ -66,6 +66,17 @@ export class GraphService {
         this.update();
 
         console.log("root", this.root);
+
+        // emulate the issue
+        setTimeout(() => {
+            console.log("sending disconnect between D3/D2")
+            this.disconnect("D2/D3")
+
+            setTimeout(() => {
+                console.log("sending connect between D3/D2")
+                this.connect("D2/D3")
+            }, 10000)
+        }, 5000)
     }
 
     public getDisplayList(): Set<string> {
@@ -142,32 +153,35 @@ export class GraphService {
         return null;
     }
 
-    private connect(s: String): boolean {
+    private connect(s: string): boolean {
         console.info("*connected* event:", s);
         let sides = s.split(LEFT_RIGHT_DELIMITER);
         let left = new Set(sides[0].split(DISPLAY_DELIMITER));
         let right = new Set(sides[1].split(DISPLAY_DELIMITER));
 
-        let changed = false;
+        let lnode: Node = this.findMatchingNode(left);
+        let rnode: Node = this.findMatchingNode(right);
+        let node: Node;
 
-        let node: Node = this.findMatchingNode(left);
-        if (node != null) {
-            node.children.push(new Node(right));
+        if (lnode != null && rnode != null) {
+            console.log("both left and right nodes have already been added. ignoring connected event...");
+            return false;
+        } else if (lnode != null) {
+            node = new Node(right);
+            lnode.children.push(node);
+        } else if (rnode != null) {
+            node = new Node(left);
+            rnode.children.push(node);
         } else {
-            node = this.findMatchingNode(right);
-
-            if (node != null) {
-                console.log("adding node:", node);
-                node.children.push(new Node(left));
-                changed = true;
-            }
+            console.log("i'm not connected to either of these nodes. ignoring connected event...");
+            return false;
         }
 
-        console.log("updated root node:", this.root, ". updated display list:", this.getDisplayList());
-        return changed;
+        console.log("added", node, "to root node:", this.root, " updated display list:", this.getDisplayList());
+        return true;
     }
 
-    private disconnect(s: String): boolean {
+    private disconnect(s: string): boolean {
         console.info("*disconnected* event:", s);
         let sides = s.split(LEFT_RIGHT_DELIMITER);
         let left = new Set(sides[0].split(DISPLAY_DELIMITER));
@@ -218,8 +232,8 @@ export class GraphService {
                         this.disconnect(e.eventInfoValue);
                         break;
                 }
-            } 
-        }); 
+            }
+        });
     }
 }
 
