@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, EventEmitter } from '@angular/core';
 import { Http } from '@angular/http';
 
 import { DeviceConfiguration } from '../objects/objects';
@@ -30,12 +30,17 @@ const DISPLAY_DELIMITER: string = ",";
 @Injectable()
 export class GraphService {
 
+    public displayList: EventEmitter<Set<string>>;
+
     private root: Node;
     private exists: boolean = false;
+    private nodes: Node[] = [];
 
     private dividerSensor: DeviceConfiguration;
 
     constructor(private data: DataService, private socket: SocketService, private http: Http) {
+        this.displayList = new EventEmitter<Set<string>>();
+
         this.data.loaded.subscribe(() => {
             this.init();
         });
@@ -55,6 +60,7 @@ export class GraphService {
         this.data.panel.preset.shareableDisplays.forEach(d => displays.add(d));
 
         this.root = new Node(displays);
+        this.nodes.push(this.root)
         this.exists = true;
 
         // get the current connected/disconnected state
@@ -74,6 +80,26 @@ export class GraphService {
         this.getdisplaylist(this.root, ret);
         return ret;
     }
+
+    /*
+     * recursivly descends through nodes and adds their displays to the list
+     */
+    private getdisplaylist(node: Node, list: Set<string>): Set<string> {
+        let displays = Array.from(node.displays)
+
+        displays = displays.filter(d => !list.has(d))
+
+        if (displays.length > 0) {
+            displays.forEach(d => list.add(d));
+
+            for (let child of node.children) {
+                this.getdisplaylist(child, list); 
+            }
+        }
+
+        return list; 
+    }
+
 
     /*
      * gets the status of the room from the divider sensor.
@@ -113,98 +139,82 @@ export class GraphService {
         }
     }
 
-    /*
-     * recursivly descends through nodes and adds their displays to the list
-     */
-    private getdisplaylist(node: Node, list: Set<string>): Set<string> {
-        node.displays.forEach(d => list.add(d));
-
-        for (let child of node.children) {
-            this.getdisplaylist(child, list); 
-        }
-
-        return list; 
+    private getNodeByDisplays(list: Set<string>): Node {
+        let l = JSON.stringify(Array.from(list))
+        return this.nodes.find(n => JSON.stringify(Array.from(n.displays)) === l)
     }
 
-    public findMatchingNode(list: Set<string>): Node {
-        return this.findmatchingnode(this.root, list);
-    }
-
-    private findmatchingnode(node: Node, list: Set<string>): Node {
-        if (node.matches(list)) return node;
-
-        for (let child of node.children) {
-            let ret: Node = this.findmatchingnode(child, list);
-            if (ret != null)
-                return ret;
-        }
-
-        return null;
-    }
-
-    private connect(s: String): boolean {
+    private connect(s: string): boolean {
         console.info("*connected* event:", s);
         let sides = s.split(LEFT_RIGHT_DELIMITER);
         let left = new Set(sides[0].split(DISPLAY_DELIMITER));
         let right = new Set(sides[1].split(DISPLAY_DELIMITER));
 
-        let changed = false;
+        let changed = false
 
-        let node: Node = this.findMatchingNode(left);
-        if (node != null) {
-            node.children.push(new Node(right));
-        } else {
-            node = this.findMatchingNode(right);
+        let lnode = this.getNodeByDisplays(left);
+        let rnode = this.getNodeByDisplays(right);
 
-            if (node != null) {
-                console.log("adding node:", node);
-                node.children.push(new Node(left));
-                changed = true;
-            }
+        if (lnode == null) {
+            lnode = new Node(left)
+            this.nodes.push(lnode)
+
+            console.log("created a new node", lnode, ". nodes:", this.nodes)
         }
 
-        console.log("updated root node:", this.root, ". updated display list:", this.getDisplayList());
-        return changed;
+        if (rnode == null) {
+            rnode = new Node(right)
+            this.nodes.push(rnode)
+
+            console.log("created a new node", rnode, ". nodes:", this.nodes)
+        }
+
+        if (!lnode.children.includes(rnode)) {
+            lnode.children.push(rnode)
+            changed = true
+        }
+
+        if (!rnode.children.includes(lnode)) {
+            rnode.children.push(lnode)
+            changed = true
+        }
+
+        if (changed)
+            this.displayList.emit(this.getDisplayList())
+
+        return changed
     }
 
-    private disconnect(s: String): boolean {
+    private disconnect(s: string): boolean {
         console.info("*disconnected* event:", s);
         let sides = s.split(LEFT_RIGHT_DELIMITER);
         let left = new Set(sides[0].split(DISPLAY_DELIMITER));
         let right = new Set(sides[1].split(DISPLAY_DELIMITER));
+
         let changed = false;
 
-        let leftNode: Node = this.findMatchingNode(left);
-        let rightNode: Node = this.findMatchingNode(right);
+        let lnode = this.getNodeByDisplays(left);
+        let rnode = this.getNodeByDisplays(right);
 
-        if (leftNode != null && rightNode != null) {
+        if (lnode == null || rnode == null)
+            return false
 
-            for (let i = 0; i < leftNode.children.length; ++i) {
-                if (leftNode.children[i] === rightNode) {
-                    console.log("removing", leftNode);
-                    leftNode.children.splice(i);
-                    changed = true;
-                    break;
-                }
-            }
+        if (lnode.children.includes(rnode) || rnode.children.includes(lnode)) {
+            changed = true
 
-            if (!changed) {
-                for (let i = 0; i < rightNode.children.length; ++i) {
-                    if (rightNode.children[i] === leftNode) {
-                        console.log("removing", rightNode);
-                        rightNode.children.splice(i);
-                        changed = true;
-                        break;
-                    }
-                }
-            }
+            lnode.children = lnode.children.filter(n => n !== rnode)
+            rnode.children = rnode.children.filter(n => n !== lnode)
         }
 
-        console.log("updated root node:", this.root, ". updated display list:", this.getDisplayList());
-        return changed;
+        if (changed)
+            this.displayList.emit(this.getDisplayList())
+
+        return changed
     }
 
     private update() {
+        this.displayList.emit(this.getDisplayList())
+
         this.socket.getEventListener().subscribe(event => {
             if (event.type == MESSAGE) {
                 let ew: EventWrapper = event.data;
@@ -218,8 +228,8 @@ export class GraphService {
                         this.disconnect(e.eventInfoValue);
                         break;
                 }
-            } 
-        }); 
+            }
+        });
     }
 }
 
