@@ -87,6 +87,7 @@ func main() {
 	router.Start(port)
 }
 
+// BindEventNode ...
 func BindEventNode(en *eventinfrastructure.EventNode) echo.MiddlewareFunc {
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
@@ -96,6 +97,7 @@ func BindEventNode(en *eventinfrastructure.EventNode) echo.MiddlewareFunc {
 	}
 }
 
+// GetStatus ...
 func GetStatus(context echo.Context) error {
 	var s statusinfrastructure.Status
 	var err error
