@@ -1,0 +1,70 @@
+$max-width: 90vw;
+$outputs-height: 35vh;
+$inputs-height: 40vh;
+
+%align {
+    display: flex;
+    align-content: center;
+    justify-content: center;
+}
+
+%align-vert {
+    @extend %align;
+    flex-direction: column;
+}
+
+%align-horiz {
+    @extend %align;
+    flex-direction: row;
+}
+
+%io-row {
+    @extend %align-horiz;
+
+    position: relative;
+    max-width: $max-width;
+    margin-left: (100vw - $max-width) / 2;
+}
+
+@mixin io-icon($width, $height, $iconsize) {
+    @extend %align-vert;
+
+    text-align: center;
+
+    width: $width / 5;
+    max-height: $height / 1.5;
+
+    .material-icons {
+        font-size: $iconsize;
+    }
+}
+
+.outputs {
+    @extend %io-row;
+
+    height: $outputs-height;
+    margin-top: $outputs-height / 8;
+    margin-bottom: $outputs-height / 8;
+
+    flex-wrap: nowrap;
+    text-align: center;
+
+    .output {
+        .icon {
+            @include io-icon($max-width, $outputs-height, 400%);
+        }
+    }
+}
+
+.inputs {
+    @extend %io-row;
+
+    height: $inputs-height;
+    margin-bottom: $inputs-height / 8;
+
+    .input {
+        .icon {
+            @include io-icon($max-width, $inputs-height, 200%);
+        }
+    }
+}

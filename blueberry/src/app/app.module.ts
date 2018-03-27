@@ -46,7 +46,6 @@ import { GraphService } from './services/graph.service';
     MatChipsModule,
     UiSwitchModule,
     SweetAlert2Module.forRoot(),
-//    SimpleNotificationsModule.forRoot(),
   ],
   providers: [
 	  APIService,

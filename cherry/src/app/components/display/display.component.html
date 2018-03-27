@@ -1,0 +1,34 @@
+<!-- presets -->
+<div class="outputs">
+    <!-- 
+        As outputs get closer to the sides of the screen,
+        lets make the fade?
+        
+        And then users can swipe left/right to access more displays if there are more
+    -->
+    <div *ngFor="let display of preset?.displays" class="output">
+        <span>{{display.displayname}}</span>
+
+        <div class="icon">
+            <i class="material-icons">{{display.icon}}</i>
+
+            <div *ngIf="display.power != 'standby'; else powerOff">
+                <span>{{display?.input.displayname}}</span>
+
+            </div>
+            <ng-template #powerOff>
+                <span>off</span>
+            </ng-template>
+
+        </div>
+    </div>
+</div>
+
+<div class="inputs">
+    <div *ngFor="let input of preset?.inputs" class="input">
+        <div class="icon">
+            <i class="material-icons">{{input.icon}}</i>
+            <span>{{input.name}}</span>
+        </div>
+    </div>
+</div>
