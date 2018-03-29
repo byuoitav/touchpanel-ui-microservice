@@ -132,7 +132,9 @@ export class Preset {
     shareableDisplays: string[];
     independentAudioDevices: AudioDevice[] = [];
 
-    constructor(name: string, icon: string, displays: Display[], audioDevices: AudioDevice[], inputs: Input[], shareableDisplays: string[], independentAudioDevices: AudioDevice[]) {
+    audioTypes: Map<string, AudioDevice[]> = new Map();
+
+    constructor(name: string, icon: string, displays: Display[], audioDevices: AudioDevice[], inputs: Input[], shareableDisplays: string[], independentAudioDevices: AudioDevice[], audioTypes: Map<string, AudioDevice[]>) {
         this.name = name;
         this.icon = icon;
         this.displays = displays;
@@ -140,6 +142,7 @@ export class Preset {
         this.inputs = inputs;
         this.shareableDisplays = shareableDisplays;
         this.independentAudioDevices = independentAudioDevices;
+        this.audioTypes = audioTypes;
     }
 }
 

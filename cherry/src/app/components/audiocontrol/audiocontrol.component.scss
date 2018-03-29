@@ -1,0 +1,40 @@
+$devices-width: 80vw;
+$devices-height: 70vh;
+$volume-height: 80%;
+
+%align {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+%align-vert {
+    @extend %align;
+    flex-direction: column;
+}
+
+%align-horiz {
+    @extend %align;
+    flex-direction: row;
+}
+
+.devices {
+    @extend %align-horiz;
+    justify-content: space-around;
+
+    max-width: $devices-width;
+    margin-left: (100vw - $devices-width) / 2;
+
+    height: $devices-height;
+    
+    margin-top: 2%;
+
+    .device {
+        @extend %align-vert;
+        height: 100%;
+    }
+}
+
+.volume {
+    height: $volume-height;
+}

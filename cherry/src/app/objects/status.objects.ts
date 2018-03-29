@@ -77,6 +77,12 @@ export class Output extends Device {
         this.powerEmitter = new EventEmitter();
     }
 
+    public getInputIcon(): string {
+        if (this.input == null)
+            return this.icon;
+        return this.input.icon;
+    }
+
     public static getPower(outputs: Output[]): string {
         for (let o of outputs) {
             if (o.power == 'on') {
@@ -147,11 +153,13 @@ export class Display extends Output {
 export class AudioDevice extends Output {
 	muted: boolean;
 	volume: number;
+    type: string;
 
-    constructor(name: string, displayname: string, power: string, input: Input, muted: boolean, volume: number, icon: string) {
+    constructor(name: string, displayname: string, power: string, input: Input, muted: boolean, volume: number, icon: string, type: string) {
         super(name, displayname, power, input, icon);
         this.muted = muted;
         this.volume = volume;
+        this.type = type;
     }
 
     // return average of all volumes

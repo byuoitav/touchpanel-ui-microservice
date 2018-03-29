@@ -1,0 +1,23 @@
+<mat-tab-group #tabGroup>
+    <mat-tab label="Displays">
+        <div class="devices">
+            <!-- TODO the data service needs to fill in audioDevices for each preset -->
+            <div *ngFor="let a of preset?.displays" class="device">
+                <span>{{a.displayname}}</span>
+                <i class="material-icons">{{a.icon}}</i>
+                <volume class="volume"></volume>
+            </div>
+        </div>
+    </mat-tab>
+
+    <!-- List of all the extra audio types included.          This makes sure the first char is uppercase -->
+    <mat-tab *ngFor="let type of audioTypes" [label]="type?.charAt(0).toUpperCase() + type.slice(1)">
+        <div class="devices">
+            <div *ngFor="let a of preset?.audioTypes?.get(type)" class="device">
+                <span>{{a.displayname}}</span>
+                <i class="material-icons">{{a.icon}}</i>
+                <volume class="volume"></volume>
+            </div>
+        </div>
+    </mat-tab>
+</mat-tab-group>

@@ -6,29 +6,35 @@
         
         And then users can swipe left/right to access more displays if there are more
     -->
-    <div *ngFor="let display of preset?.displays" class="output">
-        <span>{{display.displayname}}</span>
+    <div *ngFor="let d of preset?.displays" class="output">
+        <button mat-button (click)="toggleDisplay(d)" [class.selected]="selectedDisplays.has(d)">
+            <span>{{d.displayname}}</span>
 
-        <div class="icon">
-            <i class="material-icons">{{display.icon}}</i>
+            <div class="icon">
+                <i class="material-icons">{{d.getInputIcon()}}</i>
+            </div>
 
-            <div *ngIf="display.power != 'standby'; else powerOff">
-                <span>{{display?.input.displayname}}</span>
-
+            <div *ngIf="d.power != 'standby'; else powerOff">
+                <span>{{d?.input.displayname}}</span>
             </div>
             <ng-template #powerOff>
                 <span>off</span>
             </ng-template>
-
-        </div>
+        </button>
     </div>
 </div>
 
 <div class="inputs">
-    <div *ngFor="let input of preset?.inputs" class="input">
-        <div class="icon">
-            <i class="material-icons">{{input.icon}}</i>
-            <span>{{input.name}}</span>
-        </div>
+    <div *ngFor="let i of preset?.inputs" class="input">
+        <button mat-button>
+            <div class="icon">
+                <i class="material-icons">{{i.icon}}</i>
+                <span>{{i.name}}</span>
+            </div>
+        </button>
     </div>
+</div>
+
+<div class="volume">
+    <volume></volume>
 </div>

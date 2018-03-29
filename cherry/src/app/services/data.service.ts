@@ -71,8 +71,9 @@ export class DataService {
 
             if (config != null) {
                 if (deviceConfig != null) {
-                    let a = new AudioDevice(status.name, config.display_name, status.power, Input.getInput(status.input, this.inputs), status.muted, status.volume, deviceConfig.icon);
+                    let a = new AudioDevice(status.name, config.display_name, status.power, Input.getInput(status.input, this.inputs), status.muted, status.volume, deviceConfig.icon, config.type);
                     this.audioDevices.push(a);
+                    //this.audioTypes.add(config.type);
                 } else 
                     console.warn("No device configuration for this audio device: ", status.name)
             } else 
@@ -88,11 +89,16 @@ export class DataService {
                 let display = this.displays.find(d => d.name === config.display);
                 let audioDevices = this.audioDevices.filter(a => config.audioDevices.includes(a.name));
 
-                this.audioConfig.set(display, new AudioConfig(display, audioDevices, config.roomWide));
+                this.audioConfig.set(display new AudioConfig(display, audioDevices, config.roomWide);
             }
 
             // fill out rest of audio config
             for (let preset of APIService.room.uiconfig.presets) {
+                if (preset.audioDevices == null) {
+                    console.warn("no audio devices found for preset", preset.name)
+                    continue;
+                }
+
                 let audioDevices = this.audioDevices.filter(a => preset.audioDevices.includes(a.name));
 
                 for (let display of preset.displays) {
@@ -115,8 +121,13 @@ export class DataService {
             let audioDevices = Device.filterDevices<AudioDevice>(preset.audioDevices, this.audioDevices);
             let inputs = Device.filterDevices<Input>(preset.inputs, this.inputs);
             let independentAudioDevices = Device.filterDevices<AudioDevice>(preset.independentAudioDevices, this.audioDevices);
+            let audioTypes = new Map<string, AudioDevice[]>(); 
+            independentAudioDevices.forEach(a => {
+                audioTypes.set(a.type, audioTypes.get(a.type) || []);
+                audioTypes.get(a.type).push(a);
+            });
 
-            let p = new Preset(preset.name, preset.icon, displays, audioDevices, inputs, preset.shareableDisplays, independentAudioDevices);  
+            let p = new Preset(preset.name, preset.icon, displays, audioDevices, inputs, preset.shareableDisplays, independentAudioDevices, audioTypes);  
             this.presets.push(p);
         }
 
