@@ -39,4 +39,13 @@ export class DisplayComponent {
                 console.warn("failed to blank")
         });
     }
+
+    public setMasterMute(muted) {
+        if (muted) {
+            this.preset.beforeMuteLevel = this.preset.masterVolume;
+            this.command.setMasterVolume(0, this.preset);
+        } else {
+            this.command.setMasterVolume(this.preset.beforeMuteLevel, this.preset);
+        }
+    }
 }

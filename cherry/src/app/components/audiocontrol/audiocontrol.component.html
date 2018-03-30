@@ -21,7 +21,7 @@
                     [level]="preset?.masterVolume"
                     [mute]="preset?.masterVolume == 0"
                     (levelChange)="command.setMasterVolume($event, preset)"
-                    (muteChange)="command.setMasterVolume($event.level, preset)">
+                    (muteChange)="setMasterMute($event.muted)">
                 </volume>
             </div>
         </div>

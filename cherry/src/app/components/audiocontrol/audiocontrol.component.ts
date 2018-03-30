@@ -41,4 +41,13 @@ export class AudiocontrolComponent implements AfterViewInit, OnChanges {
             this.audioTypes = Array.from(this.preset.audioTypes.keys());
         }
     }
+
+    public setMasterMute(muted: boolean) {
+        if (muted) {
+            this.preset.beforeMuteLevel = this.preset.masterVolume;
+            this.command.setMasterVolume(0, this.preset);
+        } else {
+            this.command.setMasterVolume(this.preset.beforeMuteLevel, this.preset);
+        }
+    }
 }

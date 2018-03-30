@@ -15,29 +15,22 @@ export class VolumeComponent {
     @Input() mute: boolean;
 
     @Output() levelChange: EventEmitter<int> = new EventEmitter();
-    @Output() muteChange: EventEmitter<MuteStatus> = new EventEmitter();
+    @Output() muteChange: EventEmitter<boolean> = new EventEmitter();
 
     beforeMuteLevel: number;
 
     constructor(private command: CommandService) {}
 
     public muteClick() {
-        let level: number;
+        let emit: MuteStatus;
         if (this.mute) {
-            // was muted before, emitting false, returning vol to prev level
-            this.level = this.beforeMuteLevel;
-            level = this.beforeMuteLevel;
+            emit = new MuteStatus(this.beforeMuteLevel, false);
         } else {
-            // wasn't muted before, emitting true 
             this.beforeMuteLevel = this.level;
-            level = 0;
+            emit = new MuteStatus(0, true);
         }
 
-        let emit = new MuteStatus(level, !this.mute);
-        console.log("emitting", emit)
-
-        //this.muteChange.emit(new MuteStatus(level, !this.mute));
-        this.muteChange.emit(emit);
+        this.muteChange.emit(emit)
     }
 }
 
