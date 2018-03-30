@@ -134,7 +134,10 @@ export class Preset {
 
     audioTypes: Map<string, AudioDevice[]> = new Map();
 
-    constructor(name: string, icon: string, displays: Display[], audioDevices: AudioDevice[], inputs: Input[], shareableDisplays: string[], independentAudioDevices: AudioDevice[], audioTypes: Map<string, AudioDevice[]>) {
+    masterVolume: number;
+    beforeMuteLevel: number;
+
+    constructor(name: string, icon: string, displays: Display[], audioDevices: AudioDevice[], inputs: Input[], shareableDisplays: string[], independentAudioDevices: AudioDevice[], audioTypes: Map<string, AudioDevice[]>, masterVolume: number, beforeMuteLevel: number) {
         this.name = name;
         this.icon = icon;
         this.displays = displays;
@@ -143,6 +146,8 @@ export class Preset {
         this.shareableDisplays = shareableDisplays;
         this.independentAudioDevices = independentAudioDevices;
         this.audioTypes = audioTypes;
+        this.masterVolume = masterVolume;
+        this.beforeMuteLevel = beforeMuteLevel;
     }
 }
 

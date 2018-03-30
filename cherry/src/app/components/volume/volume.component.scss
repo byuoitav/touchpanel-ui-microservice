@@ -11,6 +11,11 @@ $slider-height: 80%;
 }
 
 .button { 
+    background-color: white;
+
+    &.muted {
+        background-color: blue;
+    }
 }
 
 .slider {

@@ -155,15 +155,21 @@ export class AudioDevice extends Output {
 	volume: number;
     type: string;
 
-    constructor(name: string, displayname: string, power: string, input: Input, muted: boolean, volume: number, icon: string, type: string) {
+    mixlevel: number;
+
+    constructor(name: string, displayname: string, power: string, input: Input, muted: boolean, volume: number, icon: string, type: string, mixlevel: number) {
         super(name, displayname, power, input, icon);
         this.muted = muted;
         this.volume = volume;
         this.type = type;
+        this.mixlevel = mixlevel;
     }
 
     // return average of all volumes
     public static getVolume(audioDevices: AudioDevice[]): number {
+        if (audioDevices == null)
+            return 0;
+
         let volume: number = 0;
 
         audioDevices.forEach(a => volume += a.volume);
@@ -173,6 +179,9 @@ export class AudioDevice extends Output {
 
     // returns true iff both are muted
     public static getMute(audioDevices: AudioDevice[]): boolean {
+        if (audioDevices == null)
+            return false;
+
         for (let a of audioDevices) {
             if (!a.muted) {
                 return false;

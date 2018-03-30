@@ -1,4 +1,3 @@
-<!-- presets -->
 <div class="outputs">
     <!-- 
         As outputs get closer to the sides of the screen,
@@ -11,7 +10,7 @@
             <span>{{d.displayname}}</span>
 
             <div class="icon">
-                <i class="material-icons">{{d.getInputIcon()}}</i>
+                <i *ngIf="!d.blanked; else blankicon" class="material-icons">{{d.getInputIcon()}}</i>
             </div>
 
             <div *ngIf="d.power != 'standby'; else powerOff">
@@ -25,16 +24,37 @@
 </div>
 
 <div class="inputs">
+    <!-- blank button -->
+    <div class="input">
+        <button mat-button (click)="blank()">
+            <div class="icon">
+                <ng-container *ngTemplateOutlet="blankicon"></ng-container>
+                <span>Blank</span>
+            </div>
+        </button>
+    </div>
+
+    <!-- inputs -->
     <div *ngFor="let i of preset?.inputs" class="input">
-        <button mat-button>
+        <button mat-button (click)="changeInput(i)">
             <div class="icon">
                 <i class="material-icons">{{i.icon}}</i>
-                <span>{{i.name}}</span>
+                <span>{{i.displayname}}</span>
             </div>
         </button>
     </div>
 </div>
 
+<!-- Display component only controls the audioDevices in the "audioDevices" array of the UIConfig -->
 <div class="volume">
-    <volume></volume>
+    <volume
+    [level]="preset?.masterVolume"
+    [mute]="preset?.masterVolume == 0"
+    (levelChange)="command.setMasterVolume($event, preset)"
+    (muteChange)="toggleMasterMute($event)">
+    </volume>
 </div>
+
+<ng-template #blankicon>
+    <i class="material-icons">crop_landscape</i>
+</ng-template>

@@ -1,7 +1,10 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, Input } from '@angular/core';
+
+import { DataService } from '../../services/data.service';
+import { CommandService } from '../../services/command.service';
 
 import { Preset } from '../../objects/objects';
-import { Display } from '../../objects/status.objects';
+import { Display, AudioDevice } from '../../objects/status.objects';
 
 @Component({
   selector: 'display',
@@ -11,14 +14,29 @@ import { Display } from '../../objects/status.objects';
 export class DisplayComponent {
 
     @Input() preset: Preset; 
+
     selectedDisplays: Set<Display> = new Set();
 
-    constructor() {}
+    constructor(private data: DataService, private command: CommandService) {}
 
     public toggleDisplay(d: Display) {
         if (this.selectedDisplays.has(d))
             this.selectedDisplays.delete(d);
         else 
             this.selectedDisplays.add(d);
+    }
+
+    public changeInput(i: Input) {
+        this.command.setInput(i, Array.from(this.selectedDisplays)).subscribe(success => {
+            if (!success) 
+                console.warn("failed to change input")
+        });
+    }
+
+    public blank() {
+        this.command.setBlank(true, Array.from(this.selectedDisplays)).subscribe(success => {
+            if (!success)
+                console.warn("failed to blank")
+        });
     }
 }

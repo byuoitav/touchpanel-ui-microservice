@@ -71,9 +71,8 @@ export class DataService {
 
             if (config != null) {
                 if (deviceConfig != null) {
-                    let a = new AudioDevice(status.name, config.display_name, status.power, Input.getInput(status.input, this.inputs), status.muted, status.volume, deviceConfig.icon, config.type);
+                    let a = new AudioDevice(status.name, config.display_name, status.power, Input.getInput(status.input, this.inputs), status.muted, status.volume, deviceConfig.icon, config.type, 100);
                     this.audioDevices.push(a);
-                    //this.audioTypes.add(config.type);
                 } else 
                     console.warn("No device configuration for this audio device: ", status.name)
             } else 
@@ -127,7 +126,7 @@ export class DataService {
                 audioTypes.get(a.type).push(a);
             });
 
-            let p = new Preset(preset.name, preset.icon, displays, audioDevices, inputs, preset.shareableDisplays, independentAudioDevices, audioTypes);  
+            let p = new Preset(preset.name, preset.icon, displays, audioDevices, inputs, preset.shareableDisplays, independentAudioDevices, audioTypes, 30, 30);
             this.presets.push(p);
         }
 

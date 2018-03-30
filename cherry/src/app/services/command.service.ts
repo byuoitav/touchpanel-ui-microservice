@@ -71,11 +71,16 @@ export class CommandService {
         let prev = Display.getInput(displays);
         Display.setInput(i, displays);
 
+        // because we also want to unblank for this ui
+        let prevBlank = Display.getBlank(displays);
+        Display.setBlank(false, displays);
+
 		let body = { displays: [] }
 		for (let d of displays) {
 			body.displays.push({
 				"name": d.name,
 				"input": i.name,
+                "blanked": false,
 			});
 		}
 
@@ -84,6 +89,7 @@ export class CommandService {
                 ret.emit(true);
 			}, err => {
                 Display.setInput(prev, displays);
+                Display.setBlank(prevBlank, displays);
                 ret.emit(false);
 			}
 		);
@@ -195,6 +201,64 @@ export class CommandService {
 			}, err => {
                 AudioDevice.setMute(prevMute, audioDevices);
                 AudioDevice.setVolume(prevVol, audioDevices);
+                ret.emit(false);
+			}
+		);
+
+        return ret;
+    }
+
+    public setMasterVolume(v: number, preset: Preset): EventEmitter<boolean> {
+        let ret: EventEmitter<boolean> = new EventEmitter<boolean>();
+        console.log("changing master volume to", v, "for preset", preset);
+        let prev = preset.masterVolume;
+        preset.masterVolume = v;
+
+        let body = { audioDevices: [] };
+        for (let a of preset.audioDevices) {
+            let vol = a.mixlevel * (v / 100);
+            body.audioDevices.push({
+                "name": a.name,
+                "volume": Math.round(vol),
+                "muted": vol == 0 
+            });
+        }
+
+        console.log("volume body", body);
+
+		this.put(body).subscribe(
+			data => {
+                ret.emit(true);
+			}, err => {
+                preset.masterVolume = prev;
+                ret.emit(false);
+			}
+		);
+
+        return ret;
+    }
+
+    public setMixLevel(v: number, a: AudioDevice, preset: Preset): EventEmitter<boolean> {
+        let ret: EventEmitter<boolean> = new EventEmitter<boolean>();
+        console.log("changing mix level to", v, "for audioDevice", a);
+        let prev = a.mixlevel;
+        a.mixlevel = v;
+
+        let body = { audioDevices: [] };
+        let vol = v * (preset.masterVolume / 100);
+        body.audioDevices.push({
+            "name": a.name,
+            "volume": Math.round(vol),
+            "muted": vol == 0 
+        });
+
+        console.log("volume body", body);
+
+		this.put(body).subscribe(
+			data => {
+                ret.emit(true);
+			}, err => {
+                a.mixlevel = prev;
                 ret.emit(false);
 			}
 		);

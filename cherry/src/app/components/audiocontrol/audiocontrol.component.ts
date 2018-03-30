@@ -5,7 +5,10 @@ import {
     ViewChild,
     OnChanges } from '@angular/core';
 
+import { CommandService } from '../../services/command.service';
+
 import { Preset } from '../../objects/objects';
+import { AudioDevice } from '../../objects/status.objects';
 
 @Component({
   selector: 'audiocontrol',
@@ -19,7 +22,7 @@ export class AudiocontrolComponent implements AfterViewInit, OnChanges {
 
     audioTypes: string[]; // used to do optimize change detection (mostly at the beginning)
 
-    constructor() {}
+    constructor(private command: CommandService) {}
 
     ngAfterViewInit() {
         // this is disgusting. :(
