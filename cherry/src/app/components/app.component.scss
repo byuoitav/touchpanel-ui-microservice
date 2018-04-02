@@ -15,20 +15,43 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: space-around;
-}
+    justify-content: center;
 
-/* make overflowing the tab possible
-.mat-tab-body-wrapper {
-    overflow: visible !important;
-}
+    background-color: white;
 
-.mat-tab-body {
-    overflow: visible !important;
+    * {
+        pointer-events: none;
+    }
 
-    &.mat-tab-body-active {
-        overflow-y: visible !important;
-        overflow-x: visible !important;
+    .progress {
+        position: absolute;
+        top: 0;
+        width: 100%;
+    }
+
+    .logo {
+        height: 70%;
+        width: 70%;
+    }
+
+    .text {
+        margin-top: 3%;
+        font-size: 150%;
     }
 }
-*/
+
+.power {
+    z-index: 1000;
+    position: absolute !important;
+}
+
+.loading {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-evenly;
+}

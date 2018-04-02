@@ -300,6 +300,35 @@ export class CommandService {
         return ret;
     }
 
+    public powerOff(preset: Preset): EventEmitter<boolean> {
+        let ret: EventEmitter<boolean> = new EventEmitter<boolean>();
+
+        let body = { displays: [], audioDevices: [] }
+        for (let d of preset.displays) {
+            body.displays.push({
+                "name": d.name,
+                "power": "standby"
+            }); 
+        }
+
+        for (let a of preset.audioDevices) {
+            body.audioDevices.push({
+                "name": a.name,
+                "power": "standby",
+            }); 
+        }
+
+        this.putWithCustomTimeout(body, 20*1000).subscribe(
+			data => {
+                ret.emit(true);
+			}, err => {
+                ret.emit(false);
+			}
+        );
+         
+        return ret;
+    }
+
     public powerOffAll(): EventEmitter<boolean> {
         let ret: EventEmitter<boolean> = new EventEmitter<boolean>();
 

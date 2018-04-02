@@ -6,6 +6,8 @@ import {
     MatTabsModule,
     MatSliderModule,
     MatButtonModule,
+    MatProgressBarModule,
+    MatProgressSpinnerModule,
 } from '@angular/material'
 import 'hammerjs'
 
@@ -33,6 +35,8 @@ import { AudiocontrolComponent } from './components/audiocontrol/audiocontrol.co
     MatTabsModule,
     MatSliderModule,
     MatButtonModule,
+    MatProgressBarModule,
+    MatProgressSpinnerModule,
   ],
   providers: [
       APIService,
