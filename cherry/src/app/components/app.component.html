@@ -1,0 +1,47 @@
+<ng-container *ngIf="loaded; else loading">
+    <div *ngIf="isPoweredOff(); else home" class="lock" (click)="unlock()">
+        <!-- progress bar -->
+        <mat-progress-bar class="progress" 
+           *ngIf="unlocking"
+            [mode]="progressMode">
+        </mat-progress-bar>
+    
+        <!-- byu logo -->
+        <object *ngIf="loaded; else loading"
+            type="image/svg+xml"
+            data="../../assets/byu_medallion_black_white.svg"
+            class="logo">
+        </object>
+    
+        <!-- unlock text -->
+        <span class="text">Touch anywhere to start</span>
+    </div>
+</ng-container>
+
+
+<ng-template #home>
+    <button mat-raised-button
+        class="power"
+        (click)="powerOff()">
+        Power Off
+    </button>
+
+    <mat-tab-group>
+        <mat-tab label="Display">
+            <!-- display component -->
+            <display [preset]="data?.panel?.preset"></display>
+        </mat-tab>
+    
+        <mat-tab label="Audio Control">
+            <!-- audio control -->
+            <audiocontrol [preset]="data?.panel?.preset"></audiocontrol>
+        </mat-tab>
+    </mat-tab-group>
+</ng-template>
+
+<ng-template #loading>
+    <div class="loading">
+        <mat-spinner></mat-spinner>
+        <span>loading, please wait</span>
+    </div>
+</ng-template>

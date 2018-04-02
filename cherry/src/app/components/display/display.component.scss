@@ -1,0 +1,96 @@
+$max-width: 90vw;
+$volume-width: $max-width / 8;
+$outputs-height: 35vh;
+$inputs-height: 40vh;
+
+%align {
+    display: flex;
+    align-content: center;
+    justify-content: center;
+    align-items: center;
+}
+
+%align-vert {
+    @extend %align;
+    flex-direction: column;
+}
+
+%align-horiz {
+    @extend %align;
+    flex-direction: row;
+}
+
+%io-row {
+    @extend %align-horiz;
+
+    position: relative;
+    max-width: $max-width;
+    margin-left: (100vw - $max-width - $volume-width) / 2;
+}
+
+%io-button {
+    .mat-button {
+        padding-top: 1vh;
+        min-width: 0 !important;
+    }
+}
+
+@mixin io-icon($width, $height, $iconsize) {
+    @extend %align-vert;
+
+    text-align: center;
+    max-height: $height / 1.5;
+    width: $width / 10;
+    min-width: 0 !important;
+
+    .material-icons {
+        font-size: $iconsize;
+    }
+}
+
+.outputs {
+    @extend %io-row;
+
+    height: $outputs-height;
+    margin-top: $outputs-height / 8;
+    margin-bottom: $outputs-height / 8;
+
+    flex-wrap: nowrap;
+    text-align: center;
+
+    .output {
+        @extend %io-button;
+        .icon {
+            @include io-icon($max-width, $outputs-height, 400%);
+        }
+    }
+
+    .selected {
+        background-color: blue;
+    }
+}
+
+.inputs {
+    @extend %io-row;
+
+    height: $inputs-height;
+    margin-bottom: $inputs-height / 8;
+    margin-top: $inputs-height/10;
+
+    .input {
+        @extend %io-button;
+        .icon {
+            @include io-icon($max-width/1.5, $inputs-height, 200%);
+        }
+    }
+}
+
+.volume {
+    position: absolute;
+    overflow: none;
+    top: 0;
+    right: 0;
+
+    height: 100%;
+    width: $volume-width;
+}
