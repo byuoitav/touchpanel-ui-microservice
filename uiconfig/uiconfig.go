@@ -15,11 +15,12 @@ import (
 const UI_CONFIG_FILE = "ui-config.json"
 
 type UIConfig struct {
-	Api                []string             `json:"api"`
-	Panels             []Panel              `json:"panels"`
-	Presets            []Preset             `json:"presets"`
-	InputConfiguration []InputConfiguration `json:"inputConfiguration"`
-	AudioConfiguration []AudioConfiguration `json:"audioConfiguration"`
+	Api                 []string             `json:"api"`
+	Panels              []Panel              `json:"panels"`
+	Presets             []Preset             `json:"presets"`
+	InputConfiguration  []IOConfiguration    `json:"inputConfiguration"`
+	OutputConfiguration []IOConfiguration    `json:"outputConfiguration"`
+	AudioConfiguration  []AudioConfiguration `json:"audioConfiguration"`
 }
 
 type Preset struct {
@@ -45,7 +46,7 @@ type AudioConfiguration struct {
 	RoomWide     bool     `json:"roomWide"`
 }
 
-type InputConfiguration struct {
+type IOConfiguration struct {
 	Name string `json:"name"`
 	Icon string `json:"icon"`
 }

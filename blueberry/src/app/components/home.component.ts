@@ -110,6 +110,7 @@ export class HomeComponent implements OnInit {
     constructor(public data: DataService, private socket: SocketService, public api: APIService, public readonly swalTargets: SwalPartialTargets, private graph: GraphService) {
         this.data.loaded.subscribe(() => {
             this.updateFromEvents();
+            this.updateShareableDisplays();
         })
     }
 
@@ -273,20 +274,29 @@ export class HomeComponent implements OnInit {
         }
     }
 
+    public updateShareableDisplays() {
+        this.graph.displayList.subscribe(list => {
+            let newList: Display[] = [];
+
+            list.forEach(name => {
+                if (!this.wheel.preset.displays.some(d => d.name === name)) {
+                    let display = this.data.displays.find(d => d.name === name)
+                    if (display != null)
+                        newList.push(display)
+                }
+            })
+
+            this.shareableDisplays = newList;
+
+            console.log("updated shareableDisplays to:", this.shareableDisplays)
+        })
+    }
+
     public openedSelectDisplaysDialog() {
         if (this.wheel.getInput() == null) 
             this.swalStatus(false); 
 
-        this.shareableDisplays.length = 0;
         this.selectedDisplays.length = 0;
-
-        this.graph.getDisplayList().forEach(name => {
-            if (!this.wheel.preset.displays.some(d => d.name === name)) {
-                let display = this.data.displays.find(d => d.name === name); 
-                if (display != null)
-                    this.shareableDisplays.push(display);
-            }
-        });
 
         // check all displays
         this.shareableDisplays.forEach(name => {

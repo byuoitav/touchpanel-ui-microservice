@@ -83,6 +83,7 @@ func main() {
 	router.Static("/", "redirect.html")
 	router.Any("/404", redirect)
 	router.Static("/blueberry", "blueberry-dist")
+	router.Static("/cherry", "cherry-dist")
 
 	router.Start(port)
 }
