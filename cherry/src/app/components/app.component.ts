@@ -15,10 +15,9 @@ const LOADING = "indeterminate";
     encapsulation: ViewEncapsulation.None,
 })
 export class AppComponent {
+    public loaded: boolean; 
     public unlocking: boolean = false;
     public progressMode: string = QUERY;
-
-    private loaded: boolean; 
 
     constructor(private data: DataService, private command: CommandService) {
         this.loaded = false;

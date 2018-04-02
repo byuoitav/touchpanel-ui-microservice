@@ -1,10 +1,10 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input as AngularInput } from '@angular/core';
 
 import { DataService } from '../../services/data.service';
 import { CommandService } from '../../services/command.service';
 
 import { Preset } from '../../objects/objects';
-import { Display, AudioDevice } from '../../objects/status.objects';
+import { Display, AudioDevice, Input } from '../../objects/status.objects';
 
 @Component({
   selector: 'display',
@@ -13,11 +13,11 @@ import { Display, AudioDevice } from '../../objects/status.objects';
 })
 export class DisplayComponent {
 
-    @Input() preset: Preset; 
+    @AngularInput() preset: Preset; 
 
     selectedDisplays: Set<Display> = new Set();
 
-    constructor(private data: DataService, private command: CommandService) {}
+    constructor(private data: DataService, public command: CommandService) {}
 
     public toggleDisplay(d: Display) {
         if (this.selectedDisplays.has(d))

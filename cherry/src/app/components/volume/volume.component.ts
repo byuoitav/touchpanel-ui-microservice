@@ -14,10 +14,10 @@ export class VolumeComponent {
     @Input() level: number;
     @Input() mute: boolean;
 
-    @Output() levelChange: EventEmitter<int> = new EventEmitter();
-    @Output() muteChange: EventEmitter<boolean> = new EventEmitter();
+    @Output() levelChange: EventEmitter<number> = new EventEmitter();
+    @Output() muteChange: EventEmitter<MuteStatus> = new EventEmitter();
 
-    beforeMuteLevel: number;
+    public beforeMuteLevel: number;
 
     constructor(private command: CommandService) {}
 

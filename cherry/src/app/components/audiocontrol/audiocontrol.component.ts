@@ -22,7 +22,7 @@ export class AudiocontrolComponent implements AfterViewInit, OnChanges {
 
     audioTypes: string[]; // used to do optimize change detection (mostly at the beginning)
 
-    constructor(private command: CommandService) {}
+    constructor(public command: CommandService) {}
 
     ngAfterViewInit() {
         // this is disgusting. :(
