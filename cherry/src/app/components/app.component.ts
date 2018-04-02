@@ -1,6 +1,7 @@
 import { Component, ViewEncapsulation } from '@angular/core';
 
 import { DataService } from '../services/data.service';
+import { Output } from '../objects/status.objects';
 
 @Component({
     selector: 'cherry',
@@ -9,7 +10,18 @@ import { DataService } from '../services/data.service';
     encapsulation: ViewEncapsulation.None,
 })
 export class AppComponent {
+    private loaded: boolean; 
+
     constructor(private data: DataService) {
-        this.data.loaded.subscribe(() => {})
+        this.loaded = false;
+        this.data.loaded.subscribe(() => {
+            this.loaded = true;
+        })
+    }
+
+    powerOff(): boolean {
+        if (!this.loaded)
+            return true;
+        return Output.getPower(this.data.panel.preset.displays) == 'standby';
     }
 }

@@ -88,7 +88,7 @@ export class DataService {
                 let display = this.displays.find(d => d.name === config.display);
                 let audioDevices = this.audioDevices.filter(a => config.audioDevices.includes(a.name));
 
-                this.audioConfig.set(display new AudioConfig(display, audioDevices, config.roomWide);
+                this.audioConfig.set(display, new AudioConfig(display, audioDevices, config.roomWide);
             }
 
             // fill out rest of audio config
