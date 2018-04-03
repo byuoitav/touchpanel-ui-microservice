@@ -6,6 +6,7 @@ import (
 	"os"
 	"time"
 
+	"github.com/byuoitav/authmiddleware"
 	"github.com/byuoitav/device-monitoring-microservice/statusinfrastructure"
 	"github.com/byuoitav/event-router-microservice/eventinfrastructure"
 	"github.com/byuoitav/touchpanel-ui-microservice/events"
@@ -30,7 +31,7 @@ func main() {
 	router := echo.New()
 	router.Pre(middleware.RemoveTrailingSlash())
 	router.Use(middleware.CORS())
-	//	router.Use(echo.WrapMiddleware(authmiddleware.AuthenticateUser))
+	router.Use(echo.WrapMiddleware(authmiddleware.AuthenticateUser))
 
 	router.GET("/health", echo.WrapHandler(http.HandlerFunc(health.Check)))
 	router.GET("/mstatus", GetStatus)
@@ -87,6 +88,7 @@ func main() {
 	router.Start(port)
 }
 
+// BindEventNode ...
 func BindEventNode(en *eventinfrastructure.EventNode) echo.MiddlewareFunc {
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
@@ -96,6 +98,7 @@ func BindEventNode(en *eventinfrastructure.EventNode) echo.MiddlewareFunc {
 	}
 }
 
+// GetStatus ...
 func GetStatus(context echo.Context) error {
 	var s statusinfrastructure.Status
 	var err error
