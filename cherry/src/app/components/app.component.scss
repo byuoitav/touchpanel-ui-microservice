@@ -3,6 +3,19 @@
     justify-content: center;
 }
 
+// make sure no sliders show up
+.mat-tab-body-content {
+    overflow: hidden !important;
+}
+
+.base {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
 .lock {
     z-index: 1000;
 
@@ -16,8 +29,6 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-
-    background-color: white;
 
     * {
         pointer-events: none;
@@ -43,6 +54,8 @@
 .power {
     z-index: 1000;
     position: absolute !important;
+    top: 1%;
+    left: 1%;
 }
 
 .loading {

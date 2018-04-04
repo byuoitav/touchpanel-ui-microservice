@@ -1,4 +1,5 @@
-import { Component, ViewEncapsulation } from '@angular/core';
+import { Component, ViewEncapsulation, ViewChild } from '@angular/core';
+import { MatTabChangeEvent } from '@angular/material';
 
 import { DataService } from '../services/data.service';
 import { CommandService } from '../services/command.service';
@@ -7,6 +8,7 @@ import { Output } from '../objects/status.objects';
 const HIDDEN = "hidden";
 const QUERY = "query";
 const LOADING = "indeterminate";
+const BUFFER = "buffer";
 
 @Component({
     selector: 'cherry',
@@ -29,7 +31,7 @@ export class AppComponent {
     public isPoweredOff(): boolean {
         if (!this.loaded)
             return true;
-        return Output.getPower(this.data.panel.preset.displays) == 'standby';
+        return !Output.isPoweredOn(this.data.panel.preset.displays);
     }
 
     public unlock() {

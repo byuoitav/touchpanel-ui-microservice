@@ -1,17 +1,20 @@
 <div class="volume">
     <!-- volume slider -->
     <mat-slider class="slider"
+        color="accent"
         (change)="levelChange.emit($event.value)"
         [max]="100"
         [min]="0"
         [step]="5"
         [thumb-label]="true"
         [vertical]="true"
+        [disabled]="mute"
         [value]="mute ? beforeMuteLevel : level">
     </mat-slider>
 
     <!-- mute button -->
     <button mat-raised-button 
+        [color]="mute ? 'warn' : 'accent'"
         (click)="muteClick()"
         class="button"
         [class.muted]="mute">
