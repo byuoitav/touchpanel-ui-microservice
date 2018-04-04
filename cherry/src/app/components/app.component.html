@@ -26,7 +26,7 @@
         Power Off
     </button>
 
-    <mat-tab-group>
+    <mat-tab-group [(selectedIndex)]="selectedTabIndex">
         <mat-tab label="Display">
             <!-- display component -->
             <display [preset]="data?.panel?.preset"></display>
@@ -34,7 +34,10 @@
     
         <mat-tab label="Audio Control">
             <!-- audio control -->
-            <audiocontrol [preset]="data?.panel?.preset"></audiocontrol>
+            <audiocontrol #audiocontrol 
+                *ngIf="selectedTabIndex == 1"
+                [preset]="data?.panel?.preset"></audiocontrol>
+
         </mat-tab>
     </mat-tab-group>
 </ng-template>

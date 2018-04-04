@@ -1,5 +1,7 @@
-import { Component, ViewEncapsulation } from '@angular/core';
+import { Component, ViewEncapsulation, ViewChild } from '@angular/core';
+import { MatTabChangeEvent } from '@angular/material';
 
+import { AudiocontrolComponent } from './audiocontrol/audiocontrol.component';
 import { DataService } from '../services/data.service';
 import { CommandService } from '../services/command.service';
 import { Output } from '../objects/status.objects';
@@ -18,6 +20,8 @@ export class AppComponent {
     public loaded: boolean; 
     public unlocking: boolean = false;
     public progressMode: string = QUERY;
+
+    @ViewChild("audiocontrol") audioControl: AudioControlComponent;
 
     constructor(private data: DataService, private command: CommandService) {
         this.loaded = false;
@@ -56,5 +60,11 @@ export class AppComponent {
                 this.unlocking = false;
             }
         });
+    }
+
+    public tabChange(event: MatTabChangeEvent) {
+        if event.index == 1 {
+            console.log("changed to audio tab");
+        }
     }
 }

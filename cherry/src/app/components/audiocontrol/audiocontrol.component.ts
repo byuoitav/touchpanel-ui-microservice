@@ -3,10 +3,11 @@ import {
     AfterViewInit, 
     Input, 
     ViewChild,
-    OnChanges } from '@angular/core';
+    OnChanges
+    ChangeDetectorRef } from '@angular/core';
+import { MatTabsModule } from '@angular/material/tabs';
 
 import { CommandService } from '../../services/command.service';
-
 import { Preset } from '../../objects/objects';
 import { AudioDevice } from '../../objects/status.objects';
 
@@ -17,17 +18,17 @@ import { AudioDevice } from '../../objects/status.objects';
 })
 export class AudiocontrolComponent implements AfterViewInit, OnChanges {
 
-    @ViewChild('tabGroup') tabGroup;
+    @ViewChild('tabs') tabs: MatTabsModule.MatTabGroup;
     @Input() preset: Preset;
 
     audioTypes: string[]; // used to do optimize change detection (mostly at the beginning)
 
-    constructor(public command: CommandService) {}
+    constructor(public command: CommandService, private ref: ChangeDetectorRef) {}
 
     ngAfterViewInit() {
         // this is disgusting. :(
         // but, it moves the second line of tabs to be left aligned
-        this.tabGroup._elementRef.nativeElement.getElementsByClassName("mat-tab-labels")[0].style.justifyContent = "flex-start";
+        this.tabs._elementRef.nativeElement.getElementsByClassName("mat-tab-labels")[0].style.justifyContent = "flex-start";
     }
 
     ngOnChanges(changes) {

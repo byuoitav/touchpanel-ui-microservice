@@ -1,5 +1,5 @@
-<mat-tab-group #tabGroup>
-    <mat-tab label="Displays">
+<mat-tab-group #tabs>
+    <mat-tab #tab1 label="Displays">
         <div class="devices">
             <!-- preset.audioDevices mixLevel sliders -->
             <div *ngFor="let a of preset?.audioDevices" class="device">
