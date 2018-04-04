@@ -1,7 +1,9 @@
+<div class="base mat-app-background">
 <ng-container *ngIf="loaded; else loading">
     <div *ngIf="isPoweredOff(); else home" class="lock" (click)="unlock()">
         <!-- progress bar -->
         <mat-progress-bar class="progress" 
+           color="accent"
            *ngIf="unlocking"
             [mode]="progressMode">
         </mat-progress-bar>
@@ -9,7 +11,7 @@
         <!-- byu logo -->
         <object *ngIf="loaded; else loading"
             type="image/svg+xml"
-            data="./assets/byu_medallion_black_white.svg"
+            data="./assets/byu_medallion_white.svg"
             class="logo">
         </object>
     
@@ -21,12 +23,13 @@
 
 <ng-template #home>
     <button mat-raised-button
+        color="warn"
         class="power"
         (click)="powerOff()">
         Power Off
     </button>
 
-    <mat-tab-group [(selectedIndex)]="selectedTabIndex">
+    <mat-tab-group color="accent" [(selectedIndex)]="selectedTabIndex">
         <mat-tab label="Display">
             <!-- display component -->
             <display [preset]="data?.panel?.preset"></display>
@@ -34,9 +37,11 @@
     
         <mat-tab label="Audio Control">
             <!-- audio control -->
-            <audiocontrol #audiocontrol 
-                *ngIf="selectedTabIndex == 1"
-                [preset]="data?.panel?.preset"></audiocontrol>
+            <!-- requires weird trick (*ngIf) to make animations work when the tab is opened -->
+            <audiocontrol
+                *ngIf="selectedTabIndex == 1 || selectedTabIndex == 0"
+                [preset]="data?.panel?.preset">
+            </audiocontrol>
 
         </mat-tab>
     </mat-tab-group>
@@ -44,7 +49,8 @@
 
 <ng-template #loading>
     <div class="loading">
-        <mat-spinner></mat-spinner>
+        <mat-spinner color="accent"></mat-spinner>
         <span>loading, please wait</span>
     </div>
 </ng-template>
+</div>

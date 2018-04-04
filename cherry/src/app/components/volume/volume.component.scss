@@ -10,14 +10,6 @@ $slider-height: 80%;
     justify-content: space-around;
 }
 
-.button { 
-    background-color: white;
-
-    &.muted {
-        background-color: blue;
-    }
-}
-
 .slider {
     min-height: $slider-height;
 }

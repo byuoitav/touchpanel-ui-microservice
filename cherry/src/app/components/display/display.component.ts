@@ -48,4 +48,30 @@ export class DisplayComponent {
             this.command.setMasterVolume(this.preset.beforeMuteLevel, this.preset);
         }
     }
+
+    public inputUsed(i: Input): boolean {
+        const selected = Array.from(this.selectedDisplays)
+
+        for (let d of selected) {
+            // because blank is treated like an input
+            if (d.blanked)
+                continue
+
+            if (d.input.name == i.name) 
+                return true;
+        }
+
+        return false;
+    }
+
+    public isOneBlanked(): boolean {
+        const selected = Array.from(this.selectedDisplays)
+
+        for (let d of selected) {
+            if (d.blanked) 
+                return true;
+        }
+
+        return false;
+    }
 }

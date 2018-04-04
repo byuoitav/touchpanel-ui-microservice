@@ -60,13 +60,15 @@ $inputs-height: 40vh;
 
     .output {
         @extend %io-button;
+        margin-right: $max-width / 100;
+
         .icon {
             @include io-icon($max-width, $outputs-height, 400%);
         }
     }
 
     .selected {
-        background-color: blue;
+        //background-color: blue;
     }
 }
 
@@ -75,10 +77,12 @@ $inputs-height: 40vh;
 
     height: $inputs-height;
     margin-bottom: $inputs-height / 8;
-    margin-top: $inputs-height/10;
+    margin-top: $inputs-height / 10;
 
     .input {
         @extend %io-button;
+        margin-right: $max-width / 200;
+
         .icon {
             @include io-icon($max-width/1.5, $inputs-height, 200%);
         }
@@ -87,9 +91,9 @@ $inputs-height: 40vh;
 
 .volume {
     position: absolute;
-    overflow: none;
+    overflow: hidden;
     top: 0;
-    right: 0;
+    right: 1%;
 
     height: 100%;
     width: $volume-width;
