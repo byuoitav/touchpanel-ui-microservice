@@ -3,9 +3,10 @@ import {
     AfterViewInit, 
     Input, 
     ViewChild,
-    OnChanges
+    OnChanges,
     ChangeDetectorRef } from '@angular/core';
-import { MatTabsModule } from '@angular/material/tabs';
+
+import { MatTabGroup } from '@angular/material/tabs';
 
 import { CommandService } from '../../services/command.service';
 import { Preset } from '../../objects/objects';
@@ -18,7 +19,7 @@ import { AudioDevice } from '../../objects/status.objects';
 })
 export class AudiocontrolComponent implements AfterViewInit, OnChanges {
 
-    @ViewChild('tabs') tabs: MatTabsModule.MatTabGroup;
+    @ViewChild('tabs') tabs: MatTabGroup;
     @Input() preset: Preset;
 
     audioTypes: string[]; // used to do optimize change detection (mostly at the beginning)

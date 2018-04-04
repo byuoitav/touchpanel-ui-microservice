@@ -83,6 +83,15 @@ export class Output extends Device {
         return this.input.icon;
     }
 
+    public static getPower(outputs: Output[]): string {
+        for (let o of outputs) {
+            if (o.power == 'on')
+                return o.power;
+        }
+
+        return 'standby';
+    }
+
     public static isPoweredOn(outputs: Output[]): boolean {
         for (let o of outputs) {
             if (o.power != 'on') {
