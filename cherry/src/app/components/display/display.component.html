@@ -6,7 +6,11 @@
         And then users can swipe left/right to access more displays if there are more
     -->
     <div *ngFor="let d of preset?.displays" class="output">
-        <button mat-button (click)="toggleDisplay(d)" [class.selected]="selectedDisplays.has(d)">
+        <button mat-button 
+            [color]="selectedDisplays.has(d) ? 'accent' : ''" 
+            (click)="toggleDisplay(d)" 
+            [class.mat-raised-button]="selectedDisplays.has(d)">
+
             <span>{{d.displayname}}</span>
 
             <div class="icon">
@@ -26,7 +30,11 @@
 <div class="inputs">
     <!-- blank button -->
     <div class="input">
-        <button mat-button (click)="blank()">
+        <button mat-button 
+            [color]="isOneBlanked() ? 'accent' : ''"
+            (click)="blank()"
+            [class.mat-raised-button]="isOneBlanked()">
+
             <div class="icon">
                 <ng-container *ngTemplateOutlet="blankicon"></ng-container>
                 <span>Blank</span>
@@ -36,7 +44,11 @@
 
     <!-- inputs -->
     <div *ngFor="let i of preset?.inputs" class="input">
-        <button mat-button (click)="changeInput(i)">
+        <button mat-button 
+            [color]="inputUsed(i) ? 'accent' : ''"
+            (click)="changeInput(i)"
+            [class.mat-raised-button]="inputUsed(i)">
+
             <div class="icon">
                 <i class="material-icons">{{i.icon}}</i>
                 <span>{{i.displayname}}</span>

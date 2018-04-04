@@ -85,12 +85,21 @@ export class Output extends Device {
 
     public static getPower(outputs: Output[]): string {
         for (let o of outputs) {
-            if (o.power == 'on') {
+            if (o.power == 'on')
                 return o.power;
+        }
+
+        return 'standby';
+    }
+
+    public static isPoweredOn(outputs: Output[]): boolean {
+        for (let o of outputs) {
+            if (o.power != 'on') {
+                return false;
             }
         }
 
-        return 'standby'; 
+        return true; 
     }
 
     public static getInput(outputs: Output[]): Input {
@@ -126,7 +135,7 @@ export class Display extends Output {
         this.blanked = blanked;
     }
 
-    // returns true iff both are blanked
+    // returns true iff all are blanked
     public static getBlank(displays: Display[]): boolean {
         for (let d of displays) {
             if (!d.blanked) {
