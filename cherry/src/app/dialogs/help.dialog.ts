@@ -18,7 +18,7 @@ import {ConfirmHelpDialog} from './confirmhelp.dialog';
             <button mat-raised-button (click)="requestHelp()" cdkFocusInitial>Request Help</button>
         </div>
     `,
-    styles [`
+    styles: [`
         .text {
             text-align: center;
             font-family: Roboto, "Helvetica Neue", sans-serif;
@@ -30,7 +30,7 @@ import {ConfirmHelpDialog} from './confirmhelp.dialog';
             justify-content: center;
             align-items: center;
         }
-    `]
+    `],
 })
 
 export class HelpDialog {

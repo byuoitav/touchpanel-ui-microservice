@@ -17,7 +17,7 @@ import {APIService} from '../services/api.service';
             <button mat-raised-button (click)="confirmHelp()" cdkFocusInitial>Confirm</button>
         </div>
     `,
-    styles [`
+    styles: [`
         .text {
             text-align: center;
             font-family: Roboto, "Helvetica Neue", sans-serif;
