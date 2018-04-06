@@ -2,10 +2,20 @@
 
 @include mat-core();
 
-$primary: mat-palette($mat-blue-grey, 900); 
-$accent: mat-palette($mat-light-blue, A400, A200, A700);
+$primary: mat-palette($mat-blue-grey, 700, 500, 900); 
+$accent: mat-palette($mat-light-blue, A700, 200, A700);
 $warn: mat-palette($mat-red, 600, 800, 400);
 
 $cherry: mat-dark-theme($primary, $accent, $warn);
 
 @include angular-material-theme($cherry);
+
+.mat-app-background {
+    background-color: mat-color($primary, darker);
+}
+
+.mat-tab-label-darker {
+    .mat-tab-label-container {
+        background-color: mat-color($mat-blue-grey, 800) 
+    }
+}

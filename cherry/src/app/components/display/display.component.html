@@ -7,6 +7,7 @@
     -->
     <div *ngFor="let d of preset?.displays" class="output">
         <button mat-button 
+            class="mat-elevation-z3"
             [color]="selectedDisplays.has(d) ? 'accent' : ''" 
             (click)="toggleDisplay(d)" 
             [class.mat-raised-button]="selectedDisplays.has(d)">
@@ -31,6 +32,7 @@
     <!-- blank button -->
     <div class="input">
         <button mat-button 
+            class="mat-elevation-z1"
             [color]="isOneBlanked() ? 'accent' : ''"
             (click)="blank()"
             [class.mat-raised-button]="isOneBlanked()">
@@ -45,6 +47,7 @@
     <!-- inputs -->
     <div *ngFor="let i of preset?.inputs" class="input">
         <button mat-button 
+            class="mat-elevation-z1"
             [color]="inputUsed(i) ? 'accent' : ''"
             (click)="changeInput(i)"
             [class.mat-raised-button]="inputUsed(i)">

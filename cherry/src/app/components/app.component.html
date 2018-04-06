@@ -36,10 +36,13 @@
         Help
     </button>
 
-    <mat-tab-group color="accent" [(selectedIndex)]="selectedTabIndex">
+    <mat-tab-group
+        backgroundColor="primary"
+        color="accent"
+        [(selectedIndex)]="selectedTabIndex">
         <mat-tab label="Display">
             <!-- display component -->
-            <display 
+            <display
                 [preset]="data?.panel?.preset">
             </display>
         </mat-tab>
