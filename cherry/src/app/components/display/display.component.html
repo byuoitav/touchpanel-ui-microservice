@@ -11,14 +11,14 @@
             (click)="toggleDisplay(d)" 
             [class.mat-raised-button]="selectedDisplays.has(d)">
 
-            <span>{{d.displayname}}</span>
+            <span>{{d?.displayname}}</span>
 
             <div class="icon">
-                <i *ngIf="!d.blanked; else blankicon" class="material-icons">{{d.getInputIcon()}}</i>
+                <i *ngIf="!d.blanked; else blankicon" class="material-icons">{{d?.getInputIcon()}}</i>
             </div>
 
             <div *ngIf="d.power != 'standby'; else powerOff">
-                <span>{{d?.input.displayname}}</span>
+                <span>{{d?.input?.displayname}}</span>
             </div>
             <ng-template #powerOff>
                 <span>off</span>

@@ -5,7 +5,7 @@
         <mat-progress-bar class="progress" 
            color="accent"
            *ngIf="unlocking"
-            [mode]="progressMode">
+           [mode]="progressMode">
         </mat-progress-bar>
     
         <!-- byu logo -->
@@ -29,10 +29,19 @@
         Power Off
     </button>
 
+    <button mat-raised-button
+        color="warn"
+        class="help"
+        (click)="openHelpDialog()">
+        Help
+    </button>
+
     <mat-tab-group color="accent" [(selectedIndex)]="selectedTabIndex">
         <mat-tab label="Display">
             <!-- display component -->
-            <display [preset]="data?.panel?.preset"></display>
+            <display 
+                [preset]="data?.panel?.preset">
+            </display>
         </mat-tab>
     
         <mat-tab label="Audio Control">
@@ -42,7 +51,6 @@
                 *ngIf="selectedTabIndex == 1 || selectedTabIndex == 0"
                 [preset]="data?.panel?.preset">
             </audiocontrol>
-
         </mat-tab>
     </mat-tab-group>
 </ng-template>
