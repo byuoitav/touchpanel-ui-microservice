@@ -1,8 +1,9 @@
 import { Component, ViewEncapsulation, ViewChild } from '@angular/core';
-import { MatTabChangeEvent } from '@angular/material';
+import { MatTabChangeEvent, MatDialog } from '@angular/material';
 
 import { DataService } from '../services/data.service';
 import { CommandService } from '../services/command.service';
+import { HelpDialog } from '../dialogs/help.dialog';
 import { Output } from '../objects/status.objects';
 
 const HIDDEN = "hidden";
@@ -21,7 +22,7 @@ export class AppComponent {
     public unlocking: boolean = false;
     public progressMode: string = QUERY;
 
-    constructor(private data: DataService, private command: CommandService) {
+    constructor(private data: DataService, private command: CommandService, private dialog: MatDialog) {
         this.loaded = false;
         this.data.loaded.subscribe(() => {
             this.loaded = true;
@@ -57,6 +58,12 @@ export class AppComponent {
             else {
                 this.unlocking = false;
             }
+        });
+    }
+
+    public openHelpDialog() {
+        let dialogRef = this.dialog.open(HelpDialog, {
+            width: '70vw'
         });
     }
 }

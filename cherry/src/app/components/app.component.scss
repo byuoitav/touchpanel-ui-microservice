@@ -8,6 +8,13 @@
     overflow: hidden !important;
 }
 
+.mat-tab-group {
+    height: 100%;
+}
+
+.main-tabs {
+}
+
 .base {
     position: absolute;
     top: 0;
@@ -51,11 +58,21 @@
     }
 }
 
-.power {
+%button {
     z-index: 1000;
     position: absolute !important;
+}
+
+.power {
+    @extend %button;
     top: 1%;
     left: 1%;
+}
+
+.help {
+    @extend %button;
+    top: 1%;
+    right: 1%;
 }
 
 .loading {

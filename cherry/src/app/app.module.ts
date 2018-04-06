@@ -8,18 +8,23 @@ import {
     MatButtonModule,
     MatProgressBarModule,
     MatProgressSpinnerModule,
+    MatDialogModule,
 } from '@angular/material'
 import 'hammerjs'
 
 import { AppComponent } from './components/app.component'
 import { DisplayComponent } from './components/display/display.component'
+import { VolumeComponent } from './components/volume/volume.component';
+import { AudiocontrolComponent } from './components/audiocontrol/audiocontrol.component';
+
+import { HelpDialog } from './dialogs/help.dialog';
+import { ConfirmHelpDialog } from './dialogs/confirmhelp.dialog';
+
 import { APIService } from './services/api.service'
 import { CommandService } from './services/command.service'
 import { DataService } from './services/data.service'
 import { GraphService } from './services/graph.service'
 import { SocketService } from './services/socket.service';
-import { VolumeComponent } from './components/volume/volume.component';
-import { AudiocontrolComponent } from './components/audiocontrol/audiocontrol.component';
 
 @NgModule({
   declarations: [
@@ -27,6 +32,9 @@ import { AudiocontrolComponent } from './components/audiocontrol/audiocontrol.co
     DisplayComponent,
     VolumeComponent,
     AudiocontrolComponent,
+
+    HelpDialog,
+    ConfirmHelpDialog,
   ],
   imports: [
     BrowserModule,
@@ -37,13 +45,18 @@ import { AudiocontrolComponent } from './components/audiocontrol/audiocontrol.co
     MatButtonModule,
     MatProgressBarModule,
     MatProgressSpinnerModule,
+    MatDialogModule,
   ],
   providers: [
-      APIService,
-      CommandService,
-      DataService,
-      GraphService,
-      SocketService,
+    APIService,
+    CommandService,
+    DataService,
+    GraphService,
+    SocketService,
+  ],
+  entryComponents: [
+    HelpDialog,
+    ConfirmHelpDialog,
   ],
   bootstrap: [AppComponent]
 })
