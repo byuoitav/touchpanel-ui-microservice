@@ -13,9 +13,15 @@ import {ConfirmHelpDialog} from './confirmhelp.dialog';
             <p>Please call AV Support at 801-422-7671 for help, or request help by pressing <i>Request Help</i> to send support staff to you.</p>
         </div>
 
-        <div mat-dialog-actions class="items">
-            <button mat-raised-button (click)="cancel()">Cancel</button>
-            <button mat-raised-button (click)="requestHelp()" cdkFocusInitial>Request Help</button>
+        <div mat-dialog-actions class="items secondary-theme">
+            <button mat-raised-button
+                color="warn"
+                (click)="cancel()">Cancel
+            </button>
+            <button mat-raised-button
+                color="primary"
+                (click)="requestHelp()">Request Help
+                </button>
         </div>
     `,
     styles: [`

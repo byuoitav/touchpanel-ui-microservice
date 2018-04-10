@@ -1,8 +1,8 @@
-<div class="volume">
+<div class="volume secondary-theme">
     <!-- volume slider -->
-    <mat-slider class="slider"
-        color="accent"
-        (change)="levelChange.emit($event.value)"
+    <mat-slider #slider class="slider"
+        color="primary"
+        (change)="levelChange.emit($event.value); closeThumb();"
         [max]="100"
         [min]="0"
         [step]="5"
@@ -14,7 +14,7 @@
 
     <!-- mute button -->
     <button mat-raised-button 
-        [color]="mute ? 'warn' : 'accent'"
+        [color]="mute ? 'accent' : 'primary'"
         (click)="muteClick()"
         class="button"
         [class.muted]="mute">

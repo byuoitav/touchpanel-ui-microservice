@@ -91,7 +91,10 @@ $inputs-height: 40vh;
 
 .volume {
     position: absolute;
-    overflow: hidden;
+
+    //overflow-y: hidden;
+    //overflow-x: visible;
+
     top: 0;
     right: 1%;
 

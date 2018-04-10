@@ -19,3 +19,16 @@ $cherry: mat-dark-theme($primary, $accent, $warn);
         background-color: mat-color($mat-blue-grey, 800) 
     }
 }
+
+
+// secondary theme.
+// colors for help button, sliders, and other small visual elements.
+$s-primary: mat-palette($mat-light-blue, A700, 200, 900);
+$s-accent: mat-palette($mat-teal, 100);
+$s-warn: mat-palette($mat-lime);
+
+$secondary: mat-dark-theme($s-primary, $s-accent, $s-warn);
+
+.secondary-theme {
+    @include angular-material-theme($secondary);
+}

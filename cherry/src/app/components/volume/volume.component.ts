@@ -1,13 +1,19 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component,
+         Input,
+         Output,
+         EventEmitter,
+         ViewEncapsulation,
+         ElementRef,
+         ViewChild, } from '@angular/core';
 
 import { CommandService } from '../../services/command.service';
-
 import { AudioDevice } from '../../objects/status.objects';
 
 @Component({
   selector: 'volume',
   templateUrl: './volume.component.html',
-  styleUrls: ['./volume.component.scss']
+  styleUrls: ['./volume.component.scss'],
+  encapsulation: ViewEncapsulation.Emulated,
 })
 export class VolumeComponent {
 
@@ -19,7 +25,9 @@ export class VolumeComponent {
 
     public beforeMuteLevel: number;
 
-    constructor(private command: CommandService) {}
+    private @ViewChild('slider') slider: ElementRef;
+
+    constructor() {}
 
     public muteClick() {
         let emit: MuteStatus;
@@ -31,6 +39,12 @@ export class VolumeComponent {
         }
 
         this.muteChange.emit(emit)
+    }
+
+    public closeThumb() {
+        setTimeout(() => {
+            this.slider._elementRef.nativeElement.blur()
+        }, 1000);
     }
 }
 

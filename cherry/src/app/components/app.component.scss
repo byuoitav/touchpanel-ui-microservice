@@ -12,7 +12,23 @@
     height: 100%;
 }
 
-.main-tabs {
+.mat-slider {
+    .mat-slider-thumb {
+        // default size of thumb
+        $size: 30px;
+
+        width: $size;
+        height: $size;
+        right: $size / -2;
+        bottom: $size / -2;
+    }
+
+    &.cdk-focused {
+        .mat-slider-thumb-label {
+            // how much thumb grows on click
+            transform: rotate(-45deg) scale(2) translate(-7.5px, -7.5px) !important;
+        }
+    }
 }
 
 .base {
