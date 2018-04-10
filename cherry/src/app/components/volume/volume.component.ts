@@ -5,6 +5,7 @@ import { Component,
          ViewEncapsulation,
          ElementRef,
          ViewChild, } from '@angular/core';
+import { MatSlider } from '@angular/material';
 
 import { CommandService } from '../../services/command.service';
 import { AudioDevice } from '../../objects/status.objects';
@@ -25,7 +26,7 @@ export class VolumeComponent {
 
     public beforeMuteLevel: number;
 
-    private @ViewChild('slider') slider: ElementRef;
+    @ViewChild('slider') slider: MatSlider;
 
     constructor() {}
 
@@ -43,6 +44,7 @@ export class VolumeComponent {
 
     public closeThumb() {
         setTimeout(() => {
+            //console.log(this.slider);
             this.slider._elementRef.nativeElement.blur()
         }, 1000);
     }
