@@ -12,9 +12,15 @@ import {APIService} from '../services/api.service';
             <p>Your help request has been recieved; A member of our support staff is on their way.</p>
         </div>
 
-        <div mat-dialog-actions class="items">
-            <button mat-raised-button (click)="cancel()">Cancel</button>
-            <button mat-raised-button (click)="confirmHelp()" cdkFocusInitial>Confirm</button>
+        <div mat-dialog-actions class="items secondary-theme">
+            <button mat-raised-button
+                color="warn"
+                (click)="cancel()">Cancel
+                </button>
+            <button mat-raised-button
+                color="primary"
+                (click)="confirmHelp()">Confirm
+                </button>
         </div>
     `,
     styles: [`
