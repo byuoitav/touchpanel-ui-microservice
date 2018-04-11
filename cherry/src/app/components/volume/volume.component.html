@@ -14,10 +14,11 @@
 
     <!-- mute button -->
     <button mat-raised-button 
-        [color]="mute ? 'accent' : 'primary'"
+        [color]="mute ? 'warn' : 'primary'"
         (click)="muteClick()"
         class="button"
         [class.muted]="mute">
-        Mute
+        <ng-container *ngIf="!mute">Mute</ng-container>
+        <ng-container *ngIf="mute">Unmute</ng-container>
     </button>
 </div>
