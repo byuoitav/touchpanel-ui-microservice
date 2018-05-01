@@ -289,6 +289,8 @@ export class CommandService {
             }); 
         }
 
+        console.log("sending power on default body", body);
+
         this.putWithCustomTimeout(body, 20*1000).subscribe(
 			data => {
                 ret.emit(true);
@@ -317,6 +319,8 @@ export class CommandService {
                 "power": "standby",
             }); 
         }
+
+        console.log("sending power off body", body);
 
         this.putWithCustomTimeout(body, 20*1000).subscribe(
 			data => {

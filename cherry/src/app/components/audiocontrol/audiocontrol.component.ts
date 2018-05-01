@@ -35,13 +35,12 @@ export class AudiocontrolComponent implements AfterViewInit, OnChanges {
     ngOnChanges(changes) {
         setTimeout(() => {
             this.updateAudioTypes();
-        })
+        });
     }
 
     private updateAudioTypes() {
-        if (this.preset != null) {
+        if (this.preset != null)
             this.audioTypes = Array.from(this.preset.audioTypes.keys());
-        }
     }
 
     public setMasterMute(muted: boolean) {

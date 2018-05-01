@@ -1,5 +1,6 @@
 import { Component, ViewEncapsulation, ViewChild } from '@angular/core';
 import { MatTabChangeEvent, MatDialog } from '@angular/material';
+import { trigger, style, animate, transition } from '@angular/animations';
 
 import { DataService } from '../services/data.service';
 import { CommandService } from '../services/command.service';
@@ -16,11 +17,24 @@ const BUFFER = "buffer";
     templateUrl: './app.component.html',
     styleUrls: ['./app.component.scss'],
     encapsulation: ViewEncapsulation.None,
+    animations: [
+        trigger('delay', [
+            transition(':enter', [
+                animate(500)
+            ]),
+            transition(':leave', [
+                animate(500)
+            ])
+        ]
+        )
+    ],
 })
 export class AppComponent {
     public loaded: boolean; 
     public unlocking: boolean = false;
     public progressMode: string = QUERY;
+
+    public selectedTabIndex: number;
 
     constructor(private data: DataService, private command: CommandService, private dialog: MatDialog) {
         this.loaded = false;
@@ -43,8 +57,10 @@ export class AppComponent {
             if (!success)
                 console.warn("failed to turn on");
             else {
-                this.unlocking = false;
+                // switch direction of loading bar
                 this.progressMode = LOADING;
+
+                this.reset();
             }
         });
     }
@@ -56,9 +72,23 @@ export class AppComponent {
             if (!success)
                 console.warn("failed to turn off");
             else {
-                this.unlocking = false;
+                this.reset();
             }
         });
+    }
+
+    private reset() {
+        // select displays tab
+        this.selectedTabIndex = 0;
+
+        // reset mix levels to 100
+        this.data.panel.preset.audioDevices.forEach(a => a.mixlevel = 100);
+
+        // reset masterVolume level
+        this.data.panel.preset.masterVolume = 30;
+
+        // stop showing progress bar
+        this.unlocking = false;
     }
 
     public openHelpDialog() {
