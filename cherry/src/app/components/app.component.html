@@ -2,7 +2,7 @@
 <ng-container *ngIf="loaded; else loading">
     <div *ngIf="isPoweredOff(); else home" class="lock" (click)="unlock()">
         <!-- progress bar -->
-        <mat-progress-bar class="progress" 
+        <mat-progress-bar class="progress"
            color="accent"
            *ngIf="unlocking"
            [mode]="progressMode">
@@ -30,12 +30,12 @@
     </button>
 
     <div class="secondary-theme">
-    <button mat-raised-button
-        class="help"
-        color="accent"
-        (click)="openHelpDialog()">
-        Help
-    </button>
+        <button mat-raised-button
+            class="help"
+            color="accent"
+            (click)="openHelpDialog()">
+            Help
+        </button>
     </div>
 
     <mat-tab-group
@@ -53,7 +53,7 @@
             <!-- audio control -->
             <!-- requires weird trick (*ngIf) to make animations work when the tab is opened -->
             <audiocontrol
-                *ngIf="selectedTabIndex == 1 || selectedTabIndex == 0"
+                *ngIf="selectedTabIndex == 1" [@delay]
                 [preset]="data?.panel?.preset">
             </audiocontrol>
         </mat-tab>

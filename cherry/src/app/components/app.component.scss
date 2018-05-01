@@ -8,6 +8,8 @@
     overflow: hidden !important;
 }
 
+$buttonXOffset: .55rem;
+
 .mat-tab-group {
     height: 100%;
 }
@@ -79,16 +81,22 @@
     position: absolute !important;
 }
 
+%top-button {
+    top: .35rem;
+}
+
 .power {
     @extend %button;
-    top: 1%;
-    left: 1%;
+    @extend %top-button;
+
+    left: $buttonXOffset;
 }
 
 .help {
     @extend %button;
-    top: 1%;
-    right: 1%;
+    @extend %top-button;
+
+    right: $buttonXOffset;
 }
 
 .loading {

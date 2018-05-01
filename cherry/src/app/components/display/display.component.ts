@@ -20,10 +20,14 @@ export class DisplayComponent {
     constructor(private data: DataService, public command: CommandService) {}
 
     public toggleDisplay(d: Display) {
+        this.selectedDisplays.clear();
+        this.selectedDisplays.add(d);
+        /*
         if (this.selectedDisplays.has(d))
             this.selectedDisplays.delete(d);
         else 
             this.selectedDisplays.add(d);
+        */
     }
 
     public changeInput(i: Input) {

@@ -18,9 +18,15 @@
                 <i *ngIf="!d.blanked; else blankicon" class="material-icons">{{d?.getInputIcon()}}</i>
             </div>
 
-            <div *ngIf="d.power != 'standby'; else powerOff">
-                <span>{{d?.input?.displayname}}</span>
-            </div>
+            <ng-container *ngIf="d.power != 'standby'; else powerOff">
+                <ng-container *ngIf="!d.blanked; else blanked">
+                    <span>{{d?.input?.displayname}}</span>
+                </ng-container>
+
+                <ng-template #blanked>
+                    <span>Blank</span>
+                </ng-template>
+            </ng-container>
             <ng-template #powerOff>
                 <span>off</span>
             </ng-template>
