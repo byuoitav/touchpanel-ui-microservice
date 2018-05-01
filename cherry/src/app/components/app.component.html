@@ -2,7 +2,7 @@
 <ng-container *ngIf="loaded; else loading">
     <div *ngIf="isPoweredOff(); else home" class="lock" (click)="unlock()">
         <!-- progress bar -->
-        <mat-progress-bar class="progress" 
+        <mat-progress-bar class="progress"
            color="accent"
            *ngIf="unlocking"
            [mode]="progressMode">
