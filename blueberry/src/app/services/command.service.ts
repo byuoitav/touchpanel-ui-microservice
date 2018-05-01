@@ -172,6 +172,37 @@ export class CommandService {
         return ret;
     }
 
+    public setMuteAndVolume(m: boolean, v: number, audioDevices: AudioDevice[]): EventEmitter<boolean> {
+        let ret: EventEmitter<boolean> = new EventEmitter<boolean>();
+        console.log("changing volume to", v, "and mute to", m, "on", audioDevices);
+        let prevMute = AudioDevice.getMute(audioDevices);
+        AudioDevice.setMute(m, audioDevices);
+
+        let prevVol = AudioDevice.getVolume(audioDevices);
+        AudioDevice.setVolume(v, audioDevices);
+
+        let body = { audioDevices: [] };
+        for (let a of audioDevices) {
+            body.audioDevices.push({
+                "name": a.name,
+                "volume": v,
+                "muted": m
+            });
+        }
+
+		this.put(body).subscribe(
+			data => {
+                ret.emit(true);
+			}, err => {
+                AudioDevice.setMute(prevMute, audioDevices);
+                AudioDevice.setVolume(prevVol, audioDevices);
+                ret.emit(false);
+			}
+		);
+
+        return ret;
+    }
+
     public powerOnDefault(preset: Preset): EventEmitter<boolean> {
         let ret: EventEmitter<boolean> = new EventEmitter<boolean>();
         
@@ -288,11 +319,11 @@ export class CommandService {
         return ret;
     }
 
-    public unShare(to: Display[], toAudio: AudioDevice[]): EventEmitter<boolean> {
+    public unShare(from: Display[], fromAudio: AudioConfig[]): EventEmitter<boolean> {
         let ret: EventEmitter<boolean> = new EventEmitter<boolean>();
         let body = { displays: [], audioDevices: [] }; 
 
-        for (let d of to) {
+        for (let d of from) {
             let preset: Preset = this.data.presets.find(p => p.displays.includes(d));
 
             if (preset != null) {
@@ -305,15 +336,15 @@ export class CommandService {
             }
         }
 
-        for (let a of toAudio) {
-//            let preset: Preset = this.data.presets.find(p => p.audioDevices.includes(a));
-            
-            body.audioDevices.push({
-                "name": a.name,
-                "power": "on",
-                "volume": 30,
-                "muted": false
-            });
+        for (let ac of fromAudio) {
+            for (let a of ac.audioDevices) {
+                body.audioDevices.push({
+                    "name": a.name,
+                    "power": "on",
+                    "volume": 30,
+                    "muted": false
+                });
+            }
         }
 
         console.log("unshare body", body);

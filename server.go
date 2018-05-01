@@ -30,6 +30,7 @@ func main() {
 	router := echo.New()
 	router.Pre(middleware.RemoveTrailingSlash())
 	router.Use(middleware.CORS())
+	//	router.Use(echo.WrapMiddleware(authmiddleware.AuthenticateUser))
 
 	router.GET("/health", echo.WrapHandler(http.HandlerFunc(health.Check)))
 	router.GET("/mstatus", GetStatus)
@@ -80,8 +81,7 @@ func main() {
 	// all the different ui's
 	router.Static("/", "redirect.html")
 	router.Any("/404", redirect)
-	router.Static("/circle-default", "circle-default")
-	router.Static("/blueberry", "blueberry")
+	router.Static("/blueberry", "blueberry-dist")
 
 	router.Start(port)
 }

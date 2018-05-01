@@ -1,7 +1,9 @@
 import { Component, Input as AngularInput, Output as AngularOutput, AfterContentInit, ElementRef, ViewChild, EventEmitter } from '@angular/core';
+import swal, { SweetAlertOptions } from 'sweetalert2';
+import { SwalComponent, SwalPartialTargets } from '@toverux/ngx-sweetalert2';
 
-import { Preset } from '../objects/objects';
-import { Display, Input, AudioDevice, DTA } from '../objects/status.objects';
+import { Preset, AudioConfig } from '../objects/objects';
+import { Display, Input, AudioDevice } from '../objects/status.objects';
 import { CommandService } from '../services/command.service';
 import { Event } from '../services/socket.service';
 import { APIService } from '../services/api.service';
@@ -32,7 +34,7 @@ export class WheelComponent implements AfterContentInit {
 
 	@ViewChild("wheel") wheel: ElementRef;
 
-	constructor(public command: CommandService, private api: APIService) {}
+	constructor(public command: CommandService, private api: APIService, public readonly swalTargets: SwalPartialTargets) {}
 
 	ngAfterContentInit() {
 		setTimeout(() => {
@@ -110,6 +112,18 @@ export class WheelComponent implements AfterContentInit {
 		let right: number;
 
 		switch (this.preset.inputs.length + this.preset.extraInputs.length) {
+			case 7:
+				top = -0.6;
+				right = 25.4;
+				break;
+			case 6:
+				top = 0.8;
+				right = 24;
+				break;
+			case 5:
+				top = 2;
+				right = 20.4;
+				break;
 			case 4:
 				top = 4;
 				right = 17.5;
@@ -127,6 +141,7 @@ export class WheelComponent implements AfterContentInit {
 				right = 7;
 				break;	
 			default:
+                console.warn("no configuration for", this.preset.inputs.length + this.preset.extraInputs.length, "displays");
 				break;
 		}
 
@@ -201,10 +216,10 @@ export class WheelComponent implements AfterContentInit {
         return ret;
     }
 
-    public unShare(to: Display[], toAudio: AudioDevice[]): EventEmitter<boolean> {
+    public unShare(from: Display[], fromAudio: AudioConfig[]): EventEmitter<boolean> {
         let ret: EventEmitter<boolean> = new EventEmitter();
 
-        this.command.unShare(to, toAudio).subscribe(
+        this.command.unShare(from, fromAudio).subscribe(
             success => {
                 if (success) {
                     ret.emit(true);

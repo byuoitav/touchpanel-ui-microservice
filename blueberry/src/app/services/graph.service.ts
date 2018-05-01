@@ -1,7 +1,10 @@
 import { Injectable } from '@angular/core';
+import { Http } from '@angular/http';
 
+import { DeviceConfiguration } from '../objects/objects';
+import { APIService } from './api.service';
 import { DataService } from './data.service';
-import { SocketService, MESSAGE } from './socket.service';
+import { SocketService, MESSAGE, EventWrapper, Event } from './socket.service';
 
 /*
  *
@@ -30,26 +33,39 @@ export class GraphService {
     private root: Node;
     private exists: boolean = false;
 
-    constructor(private data: DataService, private socket: SocketService) { }
+    private dividerSensor: DeviceConfiguration;
+
+    constructor(private data: DataService, private socket: SocketService, private http: Http) {
+        this.data.loaded.subscribe(() => {
+            this.init();
+        });
+    }
 
     public init() {
         if (this.exists) {
             return; 
         }
 
-        this.data.loaded.subscribe(() => {
-            // the root node is the set of displays and shareableDisplays for the preset
-            let displays: Set<string> = new Set();
-            this.data.panel.preset.displays.forEach(d => displays.add(d.name));
-            this.data.panel.preset.shareableDisplays.forEach(d => displays.add(d));
+        if (this.data.panel.preset.shareableDisplays == null) 
+            return;
 
-            this.root = new Node(displays);
-            this.exists = true;
+        // the root node is the set of displays and shareableDisplays for the preset
+        let displays: Set<string> = new Set();
+        this.data.panel.preset.displays.forEach(d => displays.add(d.name));
+        this.data.panel.preset.shareableDisplays.forEach(d => displays.add(d));
 
-            this.update();
+        this.root = new Node(displays);
+        this.exists = true;
 
-            console.log("root", this.root);
-        });
+        // get the current connected/disconnected state
+        this.dividerSensor = APIService.room.config.devices.find(d => d.hasRole("DividerSensor"))
+        console.log("dividerSensor", this.dividerSensor)
+
+        this.getDividerSensorStatus();
+
+        this.update();
+
+        console.log("root", this.root);
     }
 
     public getDisplayList(): Set<string> {
@@ -57,6 +73,44 @@ export class GraphService {
 
         this.getdisplaylist(this.root, ret);
         return ret;
+    }
+
+    /*
+     * gets the status of the room from the divider sensor.
+     * loops through the connected events and adds connected nodes until
+     * there isnt' a change in my displays.
+     *
+     * loops through the disconnected events and disconnects displays that may be disconnected.
+     *      TODO (?) is this necessary? or should i just assume they are disconnected.
+     */
+    private getDividerSensorStatus() {
+        if (this.dividerSensor != null) {
+            this.http.get("http://" + this.dividerSensor.address + ":8200/status")
+                .map(res => res.json())
+                .subscribe(
+                    data => {
+                        if (data["connected"] != null) {
+                            let numChanged: number;
+                            do {
+                                numChanged = 0;
+
+                                for (let connected of data["connected"]) {
+                                    if (this.connect(connected))
+                                        ++numChanged;
+                                }
+                            } while(numChanged > 0);
+                        }
+
+                        if (data["disconnected"] != null) {
+                            for (let disconnected of data["disconnected"]) {
+                                this.disconnect(disconnected);
+                            }
+                        }
+                    }, err => {
+                        setTimeout(this.getDividerSensorStatus, 5000);
+                    }
+                );
+        }
     }
 
     /*
@@ -88,63 +142,81 @@ export class GraphService {
         return null;
     }
 
+    private connect(s: String): boolean {
+        console.info("*connected* event:", s);
+        let sides = s.split(LEFT_RIGHT_DELIMITER);
+        let left = new Set(sides[0].split(DISPLAY_DELIMITER));
+        let right = new Set(sides[1].split(DISPLAY_DELIMITER));
+
+        let changed = false;
+
+        let node: Node = this.findMatchingNode(left);
+        if (node != null) {
+            node.children.push(new Node(right));
+        } else {
+            node = this.findMatchingNode(right);
+
+            if (node != null) {
+                console.log("adding node:", node);
+                node.children.push(new Node(left));
+                changed = true;
+            }
+        }
+
+        console.log("updated root node:", this.root, ". updated display list:", this.getDisplayList());
+        return changed;
+    }
+
+    private disconnect(s: String): boolean {
+        console.info("*disconnected* event:", s);
+        let sides = s.split(LEFT_RIGHT_DELIMITER);
+        let left = new Set(sides[0].split(DISPLAY_DELIMITER));
+        let right = new Set(sides[1].split(DISPLAY_DELIMITER));
+        let changed = false;
+
+        let leftNode: Node = this.findMatchingNode(left);
+        let rightNode: Node = this.findMatchingNode(right);
+
+        if (leftNode != null && rightNode != null) {
+
+            for (let i = 0; i < leftNode.children.length; ++i) {
+                if (leftNode.children[i] === rightNode) {
+                    console.log("removing", leftNode);
+                    leftNode.children.splice(i);
+                    changed = true;
+                    break;
+                }
+            }
+
+            if (!changed) {
+                for (let i = 0; i < rightNode.children.length; ++i) {
+                    if (rightNode.children[i] === leftNode) {
+                        console.log("removing", rightNode);
+                        rightNode.children.splice(i);
+                        changed = true;
+                        break;
+                    }
+                }
+            }
+        }
+
+        console.log("updated root node:", this.root, ". updated display list:", this.getDisplayList());
+        return changed;
+    }
+
     private update() {
         this.socket.getEventListener().subscribe(event => {
             if (event.type == MESSAGE) {
-                let e = event.data; 
-
-                let sides: string;
-                let left: Set<string>;
-                let right: Set<string>; 
+                let ew: EventWrapper = event.data;
+                let e: Event = ew.event; 
 
                 switch (e.eventInfoKey) {
                     case CONNECT: 
-                        sides = e.eventInfoValue.split(LEFT_RIGHT_DELIMITER); 
-                        left = new Set(sides[0].split(DISPLAY_DELIMITER)); 
-                        right = new Set(sides[1].split(DISPLAY_DELIMITER));
-
-                        let node: Node = this.findMatchingNode(left);
-                        if (node != null) {
-                            node.children.push(new Node(right));
-                        } else {
-                            node = this.findMatchingNode(right);
-                            
-                            if (node != null) {
-                                console.log("adding node:", node, ". root node:", this.root);
-                                node.children.push(new Node(left));
-                            }
-                        }
+                        this.connect(e.eventInfoValue);
                         break;
-                    case DISCONNECT: {
-                        sides = e.eventInfoValue.split(LEFT_RIGHT_DELIMITER); 
-                        left = new Set(sides[0].split(DISPLAY_DELIMITER)); 
-                        right = new Set(sides[1].split(DISPLAY_DELIMITER));
-
-                        let leftNode: Node = this.findMatchingNode(left);
-                        let rightNode: Node = this.findMatchingNode(right);
-
-                        if (leftNode != null && rightNode != null) {
-
-                            let found = false;
-                            for (let i = 0; i < leftNode.children.length; ++i) {
-                                if (leftNode.children[i] === rightNode) {
-                                    leftNode.children.splice(i);
-                                    found = true;
-                                    break;
-                                }
-                            }
-
-                            if (!found) {
-                                for (let i = 0; i < rightNode.children.length; ++i) {
-                                    if (rightNode.children[i] === leftNode) {
-                                        rightNode.children.splice(i);
-                                        found = true;
-                                        break;
-                                    }
-                                }
-                            }
-                        }
-                    }
+                    case DISCONNECT:
+                        this.disconnect(e.eventInfoValue);
+                        break;
                 }
             } 
         }); 
