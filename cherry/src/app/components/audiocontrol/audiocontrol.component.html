@@ -1,6 +1,20 @@
 <mat-tab-group #tabs color="accent" class="mat-tab-label-darker">
     <mat-tab label="Displays">
-        <div class="devices">
+        <!-- master slider -->
+        <div class="master">
+            <div class="device">
+                <span>Master Volume</span>
+                <i class="material-icons">speaker_group</i>
+                <volume class="volume"
+                    [level]="preset?.masterVolume"
+                    [mute]="preset?.masterVolume == 0"
+                    (levelChange)="command.setMasterVolume($event, preset)"
+                    (muteChange)="setMasterMute($event.muted)">
+                </volume>
+            </div>
+        </div>
+
+        <div class="devices displays">
             <!-- preset.audioDevices mixLevel sliders -->
             <div *ngFor="let a of preset?.audioDevices" class="device">
                 <span>{{a.displayname}}</span>
@@ -10,18 +24,6 @@
                     [mute]="a?.mixlevel == 0"
                     (levelChange)="command.setMixLevel($event, a, preset)"
                     (muteChange)="command.setMixLevel($event.level, a, preset)">
-                </volume>
-            </div>
-
-            <!-- master slider -->
-            <div class="device">
-                <span>Master Volume</span>
-                <i class="material-icons">speaker_group</i>
-                <volume class="volume"
-                    [level]="preset?.masterVolume"
-                    [mute]="preset?.masterVolume == 0"
-                    (levelChange)="command.setMasterVolume($event, preset)"
-                    (muteChange)="setMasterMute($event.muted)">
                 </volume>
             </div>
         </div>
