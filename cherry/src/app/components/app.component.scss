@@ -66,13 +66,21 @@ $buttonXOffset: .55rem;
     }
 
     .logo {
-        height: 70%;
-        width: 70%;
+        height: 70vh;
+        width: 70vh;
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
     }
 
     .text {
         margin-top: 3%;
         font-size: 150%;
+
+        &.smaller {
+            transform: scale(.75);
+        }
     }
 }
 

@@ -1,22 +1,30 @@
 <div class="base mat-app-background">
+
+<!-- management pattern -->
+<management [enabled]="isPoweredOff()"></management>
+
 <ng-container *ngIf="loaded; else loading">
-    <div *ngIf="isPoweredOff(); else home" class="lock" (click)="unlock()">
-        <!-- progress bar -->
-        <mat-progress-bar class="progress"
-           color="accent"
-           *ngIf="unlocking"
-           [mode]="progressMode">
-        </mat-progress-bar>
-    
-        <!-- byu logo -->
-        <object *ngIf="loaded; else loading"
-            type="image/svg+xml"
-            data="./assets/byu_medallion_white.svg"
-            class="logo">
-        </object>
-    
-        <!-- unlock text -->
-        <span class="text">Touch anywhere to start</span>
+    <div *ngIf="isPoweredOff(); else home"
+        class="lock"
+        (click)="unlock()">
+
+        <ng-container *ngIf="!unlocking; else poweringOn">
+            <!-- byu logo -->
+            <object type="image/svg+xml"
+                data="./assets/byu_medallion_white.svg"
+                class="logo">
+            </object>
+
+            <!-- unlock text -->
+            <span class="text">Touch anywhere to start</span>
+        </ng-container>
+
+        <ng-template #poweringOn>
+            <div class="logo">
+                <mat-spinner color="accent"></mat-spinner>
+            </div>
+            <span class="text smaller">powering on, please wait...</span>
+        </ng-template>
     </div>
 </ng-container>
 
@@ -61,9 +69,12 @@
 </ng-template>
 
 <ng-template #loading>
+    <management></management>
+
     <div class="loading">
         <mat-spinner color="accent"></mat-spinner>
         <span>loading, please wait</span>
     </div>
 </ng-template>
+
 </div>
