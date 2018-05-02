@@ -15,6 +15,8 @@ import (
 const UI_CONFIG_FILE = "ui-config.json"
 
 type UIConfig struct {
+	ID                  string               `json:"_id"`
+	Revision            string               `json:"_rev"`
 	Api                 []string             `json:"api"`
 	Panels              []Panel              `json:"panels"`
 	Presets             []Preset             `json:"presets"`
