@@ -25,6 +25,7 @@ import { CommandService } from './services/command.service'
 import { DataService } from './services/data.service'
 import { GraphService } from './services/graph.service'
 import { SocketService } from './services/socket.service';
+import { ManagementComponent } from './components/management/management.component';
 
 @NgModule({
   declarations: [
@@ -35,6 +36,7 @@ import { SocketService } from './services/socket.service';
 
     HelpDialog,
     ConfirmHelpDialog,
+    ManagementComponent,
   ],
   imports: [
     BrowserModule,
