@@ -91,11 +91,11 @@ func getUIConfigFromWeb(address string) (UIConfig, error) {
 	DB_USERNAME := os.Getenv("DB_USERNAME")
 	DB_PASSWORD := os.Getenv("DB_PASSWORD")
 
-	log.Printf("%v -- %v", DB_USERNAME, DB_PASSWORD)
-
 	if len(DB_USERNAME) > 0 && len(DB_PASSWORD) > 0 {
 		req.SetBasicAuth(DB_USERNAME, DB_PASSWORD)
 	}
+
+	req.Header.Set("Content-Type", "application/json")
 
 	client := http.Client{}
 
