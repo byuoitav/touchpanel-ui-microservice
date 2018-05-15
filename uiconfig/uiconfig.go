@@ -1,6 +1,7 @@
 package uiconfig
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -80,7 +81,7 @@ func getUIConfig() (UIConfig, error) {
 }
 
 func getUIConfigFromWeb(address string) (UIConfig, error) {
-	req, err := http.NewRequest("GET", address, nil)
+	req, err := http.NewRequest("GET", address, bytes.NewReader(make([]byte, 256)))
 	if err != nil {
 		logError(fmt.Sprintf("Failed to make GET request to %s: %s", address, err))
 		return getUIConfigFromFile()
