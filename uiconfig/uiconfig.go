@@ -80,9 +80,24 @@ func getUIConfig() (UIConfig, error) {
 }
 
 func getUIConfigFromWeb(address string) (UIConfig, error) {
-	resp, err := http.Get(address)
+	req, err := http.NewRequest("GET", address, nil)
 	if err != nil {
 		logError(fmt.Sprintf("Failed to make GET request to %s: %s", address, err))
+		return getUIConfigFromFile()
+	}
+
+	// add auth
+	DB_USERNAME := os.Getenv("DB_USERNAME")
+	DB_PASSWORD := os.Getenv("DB_PASSWORD")
+	if len(DB_USERNAME) > 0 && len(DB_PASSWORD) > 0 {
+		req.SetBasicAuth(DB_USERNAME, DB_PASSWORD)
+	}
+
+	client := http.Client{}
+
+	resp, err := client.Do(req)
+	if err != nil {
+		logError(fmt.Sprintf("Failed to send GET request to %s: %s", address, err))
 		return getUIConfigFromFile()
 	}
 	defer resp.Body.Close()
