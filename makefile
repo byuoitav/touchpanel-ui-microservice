@@ -23,10 +23,10 @@ GOTEST=$(GOCMD) test
 GOGET=$(GOCMD) get
 VENDOR=gvt fetch -branch $(BRANCH)
 
-# docker
+# docker 
 DOCKER=docker
 DOCKER_BUILD=$(DOCKER) build
-DOCKER_LOGIN=$(DOCKER) login -e $(EMAIL) -u $(UNAME) -p $(PASS)
+DOCKER_LOGIN=$(DOCKER) login -u $(UNAME) -p $(PASS)
 DOCKER_PUSH=$(DOCKER) push
 DOCKER_FILE=dockerfile
 DOCKER_FILE_ARM=dockerfile-arm
@@ -72,6 +72,7 @@ run: $(NAME)-bin $(NG1)-dist $(NG2)-dist
 	./$(NAME)-bin
 
 deps: 
+	$(NPM_INSTALL) -g @angular/cli
 	$(GOGET) -d -v
 ifneq "$(BRANCH)" "master"
 	# put vendored packages in here
