@@ -8,7 +8,7 @@ export class Room {
 }
 
 export class RoomConfiguration {
-	id: number;
+	_id: string;
 	name: string;
 	description: string;
 
@@ -18,6 +18,40 @@ export class RoomConfiguration {
 	match(n: string) {
 		return n == this.name;	
 	}
+}
+
+export class DeviceConfiguration {
+	_id: string;
+	name: string;
+	display_name: string;
+	address: string;
+
+    @Type(() => DeviceTypeConfiguration)
+	type: DeviceTypeConfiguration;
+
+    @Type(() => RoleConfiguration)
+	roles: RoleConfiguration[];
+
+	public hasRole(role: string): boolean {
+		for (let r of this.roles) {
+			if (r._id == role) {
+				return true;
+			}
+		}
+		return false;
+	}
+}
+
+export class DeviceTypeConfiguration {
+    _id: string;
+    description: string;
+    tags: string[];
+}
+
+export class RoleConfiguration {
+    _id: string;
+    description: string;
+    tags: string[];
 }
 
 export class RoomStatus {
@@ -94,26 +128,6 @@ export class DeviceStatus {
 
 	match(n: string) {
 		return n == this.name;	
-	}
-}
-
-export class DeviceConfiguration {
-	id: number;
-	name: string;
-	display_name: string;
-	address: string;
-	input: boolean;
-	output: boolean;
-	type: string;
-	roles: string;
-
-	public hasRole(role: string): boolean {
-		for (let r of this.roles) {
-			if (r == role) {
-				return true;
-			}
-		}
-		return false;
 	}
 }
 

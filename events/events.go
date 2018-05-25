@@ -7,7 +7,7 @@ import (
 	"os"
 	"time"
 
-	"github.com/byuoitav/event-router-microservice/eventinfrastructure"
+	"github.com/byuoitav/common/events"
 	"github.com/byuoitav/touchpanel-ui-microservice/socket"
 	"github.com/fatih/color"
 	"github.com/xuther/go-message-router/common"
@@ -17,15 +17,13 @@ type Message struct {
 	Message string `json:"message"`
 }
 
-func WriteEventsToSocket(en *eventinfrastructure.EventNode, h *socket.Hub) {
+func WriteEventsToSocket(en *events.EventNode, h *socket.Hub) {
 	for {
-
-		message := en.Read()
-		var e eventinfrastructure.Event
-		err := json.Unmarshal(message.MessageBody, &e)
+		var e events.Event
+		e, err := en.Read()
 		if err != nil {
 			color.Set(color.FgRed)
-			log.Printf("failed to unmarshal message into Event type: %s", message.MessageBody)
+			log.Printf("failed to read into Event type: %s", err.Error())
 			color.Unset()
 		} else {
 			h.WriteToSockets(e)
@@ -56,25 +54,25 @@ func SendTest(h *socket.Hub) {
 	h.WriteToSockets(Message{Message: "websocketTest"})
 }
 
-func Publish(en *eventinfrastructure.EventNode, event eventinfrastructure.EventInfo, eventType string) error {
-	var e eventinfrastructure.Event
+func Publish(en *events.EventNode, event events.EventInfo, eventType string) error {
+	var e events.Event
 
 	// create the event
 	e.Hostname = os.Getenv("PI_HOSTNAME")
-	if len(eventinfrastructure.GetDevHostname()) > 0 {
-		e.Hostname = eventinfrastructure.GetDevHostname()
+	if len(events.GetDevHostname()) > 0 {
+		e.Hostname = events.GetDevHostname()
 	}
 	e.Timestamp = time.Now().Format(time.RFC3339)
 	e.LocalEnvironment = len(os.Getenv("LOCAL_ENVIRONMENT")) > 0
-	e.Building = eventinfrastructure.GetBuildingFromHostname()
-	e.Room = eventinfrastructure.GetRoomFromHostname()
-	e.Event.Type = eventinfrastructure.USERACTION
-	e.Event.EventCause = eventinfrastructure.USERINPUT
+	e.Building = events.GetBuildingFromHostname()
+	e.Room = events.GetRoomFromHostname()
+	e.Event.Type = events.USERACTION
+	e.Event.EventCause = events.USERINPUT
 	e.Event.EventInfoKey = event.EventInfoKey
 	e.Event.EventInfoValue = event.EventInfoValue
 	e.Event.Requestor = event.Requestor
 
-	if eventType == eventinfrastructure.Metrics {
+	if eventType == events.Metrics {
 		e.Event.Device = e.Hostname
 	} else {
 		e.Event.Device = event.Device
@@ -84,18 +82,18 @@ func Publish(en *eventinfrastructure.EventNode, event eventinfrastructure.EventI
 		return errors.New("Please fill in all the necessary fields")
 	}
 
-	en.PublishEvent(e, eventType)
+	en.PublishEvent(eventType, e)
 	return nil
 }
 
-func UIFilter(event common.Message) eventinfrastructure.EventInfo {
-	var e eventinfrastructure.Event
+func UIFilter(event common.Message) events.EventInfo {
+	var e events.Event
 	err := json.Unmarshal(event.MessageBody, &e)
 	if err != nil {
 		color.Set(color.FgRed)
 		log.Printf("error: %v", err.Error())
 		color.Unset()
-		return eventinfrastructure.EventInfo{}
+		return events.EventInfo{}
 	}
 
 	return e.Event

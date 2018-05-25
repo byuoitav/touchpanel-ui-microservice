@@ -6,8 +6,8 @@ import (
 	"os"
 	"time"
 
+	ce "github.com/byuoitav/common/events"
 	"github.com/byuoitav/device-monitoring-microservice/statusinfrastructure"
-	"github.com/byuoitav/event-router-microservice/eventinfrastructure"
 	"github.com/byuoitav/touchpanel-ui-microservice/events"
 	"github.com/byuoitav/touchpanel-ui-microservice/handlers"
 	"github.com/byuoitav/touchpanel-ui-microservice/socket"
@@ -18,8 +18,8 @@ import (
 )
 
 func main() {
-	filters := []string{eventinfrastructure.UI, eventinfrastructure.UIFeature}
-	en := eventinfrastructure.NewEventNode("Touchpanel UI", filters, os.Getenv("EVENT_ROUTER_ADDRESS"))
+	filters := []string{ce.UI, ce.UIFeature}
+	en := ce.NewEventNode("Touchpanel UI", os.Getenv("EVENT_ROUTER_ADDRESS"), filters)
 
 	// websocket hub
 	hub := socket.NewHub()
@@ -88,10 +88,10 @@ func main() {
 }
 
 // BindEventNode ...
-func BindEventNode(en *eventinfrastructure.EventNode) echo.MiddlewareFunc {
+func BindEventNode(en *ce.EventNode) echo.MiddlewareFunc {
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
-			c.Set(eventinfrastructure.ContextEventNode, en)
+			c.Set(ce.ContextEventNode, en)
 			return next(c)
 		}
 	}

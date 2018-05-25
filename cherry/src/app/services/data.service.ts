@@ -71,7 +71,7 @@ export class DataService {
 
             if (config != null) {
                 if (deviceConfig != null) {
-                    let a = new AudioDevice(status.name, config.display_name, status.power, Input.getInput(status.input, this.inputs), status.muted, status.volume, deviceConfig.icon, config.type, 100);
+                    let a = new AudioDevice(status.name, config.display_name, status.power, Input.getInput(status.input, this.inputs), status.muted, status.volume, deviceConfig.icon, config.type._id, 100);
                     this.audioDevices.push(a);
                 } else 
                     console.warn("No device configuration for this audio device: ", status.name)
