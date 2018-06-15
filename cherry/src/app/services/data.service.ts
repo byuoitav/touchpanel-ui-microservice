@@ -23,6 +23,7 @@ export class DataService {
         this.api.loaded.subscribe(() => {
             this.createInputs();
             this.createOutputs();
+            this.createPseudoInputs();
 
 			this.createPresets();
             this.createPanels();
@@ -34,6 +35,7 @@ export class DataService {
     }
 
 	private createInputs() {
+        // create real inputs
         APIService.room.config.devices.filter(device => device.hasRole("VideoIn") || device.hasRole("AudioIn")).forEach(input => {
             let inputConfiguration = APIService.room.uiconfig.inputConfiguration.find(i => i.name == input.name);
             if (inputConfiguration != null) {
@@ -114,6 +116,16 @@ export class DataService {
             console.warn("No AudioConfig present.");
     }
 
+    private createPseudoInputs() {
+        // create pseudo inputs
+        if (APIService.room.uiconfig.pseudoInputs == null)
+            return;
+
+        for (let pi of APIService.room.uiconfig.pseudoInputs) {
+            console.log("pseudo input:", pi);
+        }
+    }
+
 	private createPresets() {
         for (let preset of APIService.room.uiconfig.presets) {
             let displays = Device.filterDevices<Display>(preset.displays, this.displays);
@@ -126,7 +138,7 @@ export class DataService {
                 audioTypes.get(a.type).push(a);
             });
 
-            let p = new Preset(preset.name, preset.icon, displays, audioDevices, inputs, preset.shareableDisplays, independentAudioDevices, audioTypes, 30, 30);
+            let p = new Preset(preset.name, preset.icon, displays, audioDevices, inputs, preset.shareableDisplays, independentAudioDevices, audioTypes, 30, 30, preset.commands);
             this.presets.push(p);
         }
 

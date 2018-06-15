@@ -23,7 +23,7 @@ export class APIService {
 
 	public static room: Room;
 
-	private static apihost: string;
+	public static apihost: string;
 	private static localurl: string;
 	private static options: RequestOptions;
 
