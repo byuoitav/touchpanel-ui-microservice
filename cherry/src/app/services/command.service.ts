@@ -1,12 +1,12 @@
 import { Injectable, EventEmitter, ViewChild, ElementRef } from '@angular/core';
-import { Http, Response, Headers, RequestOptions } from '@angular/http';
+import { Http, Response, Headers, RequestOptions, Request } from '@angular/http';
 import { Observable } from 'rxjs/Rx';
 import { MatSliderChange } from '@angular/material';
 
 import { APIService } from './api.service';
 import { DataService } from './data.service';
 import { Input, Display, AudioDevice } from '../objects/status.objects';
-import { Preset, AudioConfig } from '../objects/objects';
+import { Preset, AudioConfig, ConfigCommand } from '../objects/objects';
 
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/timeout';
@@ -268,7 +268,7 @@ export class CommandService {
 
     public powerOnDefault(preset: Preset): EventEmitter<boolean> {
         let ret: EventEmitter<boolean> = new EventEmitter<boolean>();
-        
+
         let body = { displays: [], audioDevices: [] }
 
         for (let d of preset.displays) {
@@ -299,7 +299,30 @@ export class CommandService {
 			}
         );
 
+        // make power on calls
+        for (let cmd of preset.commands.powerOn) {
+            let req = this.buildRequest(cmd);
+            console.info("executing power on command:", req);
+
+            // TODO should this retry until successful?
+            this.http.request(req).subscribe(
+               data => {
+                   console.log("request successful. response:", data)
+               }, err => {
+                   console.warn("request failed: error:", err)
+               }
+            );
+        }
+
         return ret;
+    }
+
+    private buildRequest(cmd: ConfigCommand): Request {
+        return new Request({
+            method: cmd.method,
+            url: APIService.apihost + ":" + cmd.port + "/" + cmd.endpoint,
+            body: cmd.body,
+        });
     }
 
     public powerOff(preset: Preset): EventEmitter<boolean> {
@@ -329,6 +352,21 @@ export class CommandService {
                 ret.emit(false);
 			}
         );
+
+        // make power off calls
+        for (let cmd of preset.commands.powerOff) {
+            let req = this.buildRequest(cmd);
+            console.info("executing power off command:", req);
+
+            // TODO should this retry until successful?
+            this.http.request(req).subscribe(
+               data => {
+                   console.log("request successful. response:", data)
+               }, err => {
+                   console.warn("request failed: error:", err)
+               }
+            );
+        }
          
         return ret;
     }

@@ -37,6 +37,19 @@ export class Device {
         return ret;
     }
 
+    public static getDeviceByName<T extends Device>(name: string, devices: T[]): T {
+        if (name == null || devices == null) {
+            return null;
+        }
+
+        for (let d of devices) {
+            if (d.name == name)
+                return d;
+        }
+
+        return null;
+    }
+
     public getName(): string {
         return this.name; 
     }

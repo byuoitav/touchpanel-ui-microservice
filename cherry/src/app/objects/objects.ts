@@ -79,7 +79,32 @@ export class UIConfiguration {
     @Type(() => AudioConfiguration)
     audioConfiguration: AudioConfiguration[];
 
+    @Type(() => PseudoInput)
+    pseudoInputs: PseudoInput[];
+
     Api: string[];
+}
+
+export class ConfigCommands {
+    powerOn: ConfigCommand[];
+    powerOff: ConfigCommand[];
+}
+
+export class ConfigCommand {
+    method: string;
+    port: number;
+    endpoint: string;
+    body: Object;
+}
+
+export class PseudoInput {
+    displayname: string;
+    config: PseudoInputConfig[];
+}
+
+export class PseudoInputConfig {
+    input: string;
+    outputs: string[];
 }
 
 export class PanelConfiguration {
@@ -97,6 +122,7 @@ export class PresetConfiguration {
     audioDevices: string[];
     inputs: string[];
     independentAudioDevices: string[];
+    commands: ConfigCommands;
 }
 
 export class AudioConfiguration {
@@ -152,7 +178,9 @@ export class Preset {
     masterVolume: number;
     beforeMuteLevel: number;
 
-    constructor(name: string, icon: string, displays: Display[], audioDevices: AudioDevice[], inputs: Input[], shareableDisplays: string[], independentAudioDevices: AudioDevice[], audioTypes: Map<string, AudioDevice[]>, masterVolume: number, beforeMuteLevel: number) {
+    commands: ConfigCommands;
+
+    constructor(name: string, icon: string, displays: Display[], audioDevices: AudioDevice[], inputs: Input[], shareableDisplays: string[], independentAudioDevices: AudioDevice[], audioTypes: Map<string, AudioDevice[]>, masterVolume: number, beforeMuteLevel: number, commands: ConfigCommands) {
         this.name = name;
         this.icon = icon;
         this.displays = displays;
@@ -163,6 +191,7 @@ export class Preset {
         this.audioTypes = audioTypes;
         this.masterVolume = masterVolume;
         this.beforeMuteLevel = beforeMuteLevel;
+        this.commands = commands;
     }
 }
 
