@@ -291,28 +291,85 @@ export class CommandService {
 
         console.log("sending power on default body", body);
 
-        this.putWithCustomTimeout(body, 20*1000).subscribe(
-			data => {
-                ret.emit(true);
-			}, err => {
-                ret.emit(false);
-			}
-        );
+        let powerOnReq = new Request({
+            method: "PUT",
+            url: APIService.apiurl,
+            body: body,
+        });
+        let requests: Request[] = [powerOnReq];
 
-        // make power on calls
-        for (let cmd of preset.commands.powerOn) {
-            let req = this.buildRequest(cmd);
-            console.info("executing power on command:", req);
-
-            // TODO should this retry until successful?
-            this.http.request(req).subscribe(
-               data => {
-                   console.log("request successful. response:", data)
-               }, err => {
-                   console.warn("request failed: error:", err)
-               }
-            );
+        if (preset.commands.powerOn != null) {
+            for (let cmd of preset.commands.powerOn) {
+                requests.push(this.buildRequest(cmd));
+            }
         }
+
+        this.executeRequests(requests, 1, 20*1000).subscribe(success => {
+            ret.emit(success);
+        })
+
+        return ret;
+    }
+
+    private executeRequests(requests: Request[], maxTries: number, timeout: number): EventEmitter<boolean> {
+        let ret: EventEmitter<boolean> = new EventEmitter<boolean>();
+        if (requests.length < 1) {
+            setTimeout(() => ret.emit(false), 250);
+            return ret;
+        }
+
+        console.info("executing requests: ", requests)
+        let numRequests = requests.length;
+        let mapToStatus: Map<Request, boolean> = new Map();
+
+        for (let req of requests) {
+            this.executeRequest(req, maxTries, timeout).subscribe(success => {
+                mapToStatus.set(req, success);
+
+                if (mapToStatus.size == numRequests) {
+                    console.info("finished all requests, requests => success:", mapToStatus)
+
+                    let allsuccessful = true;
+                    mapToStatus.forEach((v, k) => {
+                        if (!v)
+                            allsuccessful = false;
+                    });
+
+                    ret.emit(allsuccessful);
+                    return;
+                }
+            });
+        }
+
+        console.log("waiting for", requests.length, "responses...")
+
+        return ret;
+    }
+
+    private executeRequest(req: Request, maxTries: number, timeout: number): EventEmitter<boolean> {
+        let ret: EventEmitter<boolean> = new EventEmitter<boolean>();
+        console.log("executing request", req)
+
+        this.http.request(req)
+            .timeout(timeout)
+            .subscribe(
+            data => {
+                console.log("successfully executed request", req)
+                ret.emit(true);
+                return;
+            }, err => {
+                maxTries--;
+
+                if (maxTries == 0) {
+                    ret.emit(false);
+                    return;
+                }
+
+                // retry request
+                console.error("request (" +  req + ") failed. error:", err ,". There are", maxTries, " remaining, retrying in 3 seconds...");
+                setTimeout(() => this.executeRequest(req, maxTries, timeout), 3000);
+            }
+        );
 
         return ret;
     }
@@ -345,29 +402,23 @@ export class CommandService {
 
         console.log("sending power off body", body);
 
-        this.putWithCustomTimeout(body, 20*1000).subscribe(
-			data => {
-                ret.emit(true);
-			}, err => {
-                ret.emit(false);
-			}
-        );
+        let powerOffReq = new Request({
+            method: "PUT",
+            url: APIService.apiurl,
+            body: body,
+        });
+        let requests: Request[] = [powerOffReq];
 
-        // make power off calls
-        for (let cmd of preset.commands.powerOff) {
-            let req = this.buildRequest(cmd);
-            console.info("executing power off command:", req);
-
-            // TODO should this retry until successful?
-            this.http.request(req).subscribe(
-               data => {
-                   console.log("request successful. response:", data)
-               }, err => {
-                   console.warn("request failed: error:", err)
-               }
-            );
+        if (preset.commands.powerOff != null) {
+            for (let cmd of preset.commands.powerOff) {
+                requests.push(this.buildRequest(cmd));
+            }
         }
-         
+
+        this.executeRequests(requests, 1, 20*1000).subscribe(success => {
+            ret.emit(success);
+        })
+
         return ret;
     }
 
