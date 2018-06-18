@@ -307,7 +307,6 @@ export class CommandService {
         this.executeRequests(requests, 1, 20*1000).subscribe(success => {
             ret.emit(success);
         })
-
         return ret;
     }
 
@@ -417,7 +416,7 @@ export class CommandService {
 
         this.executeRequests(requests, 1, 20*1000).subscribe(success => {
             ret.emit(success);
-        })
+        });
 
         return ret;
     }

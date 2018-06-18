@@ -108,7 +108,7 @@ export class DataService {
             let inputs = Device.filterDevices<Input>(preset.inputs, this.inputs);
             let independentAudioDevices = Device.filterDevices<AudioDevice>(preset.independentAudioDevices, this.audioDevices);
 
-            let p = new Preset(preset.name, preset.icon, displays, audioDevices, inputs, preset.shareableDisplays, independentAudioDevices);  
+            let p = new Preset(preset.name, preset.icon, displays, audioDevices, inputs, preset.shareableDisplays, independentAudioDevices, preset.commands);
             this.presets.push(p);
         }
 
