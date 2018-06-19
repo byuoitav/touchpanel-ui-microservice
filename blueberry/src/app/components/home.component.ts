@@ -111,7 +111,7 @@ export class HomeComponent implements OnInit {
         this.data.loaded.subscribe(() => {
             this.updateFromEvents();
             this.updateShareableDisplays();
-        })
+        });
     }
 
     public ngOnInit() {
