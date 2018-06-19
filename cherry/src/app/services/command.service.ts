@@ -307,7 +307,6 @@ export class CommandService {
         this.executeRequests(requests, 1, 20*1000).subscribe(success => {
             ret.emit(success);
         })
-
         return ret;
     }
 
@@ -417,7 +416,7 @@ export class CommandService {
 
         this.executeRequests(requests, 1, 20*1000).subscribe(success => {
             ret.emit(success);
-        })
+        });
 
         return ret;
     }
@@ -570,6 +569,31 @@ export class CommandService {
         }
 
         this.put(body).subscribe(
+            data => {
+                ret.emit(true);
+            }, err => {
+                ret.emit(false);
+            }
+        );
+
+        return ret;
+    }
+
+    public viaControl(via: Input, endpoint: string): EventEmitter<boolean> {
+        let ret: EventEmitter<boolean> = new EventEmitter<boolean>();
+
+        // get the address of the via
+        let config = this.data.getInputConfiguration(via);
+
+        // build the request
+        let req = new Request({
+            method: "GET",
+            url: APIService.apihost + ":8014/via/" + config.address + "/" + endpoint,
+        });
+
+        // execute request
+        console.log("executing via control request:", req);
+        this.http.request(req).subscribe(
             data => {
                 ret.emit(true);
             }, err => {

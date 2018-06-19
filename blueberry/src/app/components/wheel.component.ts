@@ -32,7 +32,11 @@ export class WheelComponent implements AfterContentInit {
 	circleOpen: boolean = false;
     thumbLabel: boolean = true;
 
-	@ViewChild("wheel") wheel: ElementRef;
+    @ViewChild("wheel") wheel: ElementRef;
+
+    // for via control
+    @ViewChild("via") viaDialog: SwalComponent;
+    openInput: Input;
 
 	constructor(public command: CommandService, private api: APIService, public readonly swalTargets: SwalPartialTargets) {}
 
@@ -200,6 +204,14 @@ export class WheelComponent implements AfterContentInit {
         return AudioDevice.getMute(this.preset.audioDevices); 
     }
 
+    private openInputModal(i: Input) {
+        if (i.getName().includes("VIA")) {
+            this.openInput = i;
+            console.log("opening via modal for input:", this.openInput);
+            this.viaDialog.show();
+        }
+    }
+
     public share(displays: Display[]): EventEmitter<boolean> {
         let ret: EventEmitter<boolean> = new EventEmitter();
 
@@ -230,5 +242,19 @@ export class WheelComponent implements AfterContentInit {
         ); 
 
         return ret;
+    }
+
+    private viaControl(endpoint: string) {
+        this.viaDialog.nativeSwal.showLoading();
+
+        this.command.viaControl(this.openInput, endpoint).subscribe(success => {
+            if (swal.isVisible()) {
+                swal({
+                    type: success ? "success" : "error",
+                    timer: 1500,
+                    showConfirmButton: false
+                });
+            }
+        });
     }
 }

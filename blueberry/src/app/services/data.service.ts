@@ -2,7 +2,7 @@ import { Injectable, EventEmitter } from '@angular/core';
 
 import { APIService } from './api.service';
 import { SocketService, MESSAGE, EventWrapper, Event } from './socket.service';
-import { Preset, Panel, AudioConfig } from '../objects/objects';
+import { Preset, Panel, AudioConfig, DeviceConfiguration } from '../objects/objects';
 import { Device, Input, Output, Display, AudioDevice, POWER, INPUT, BLANKED, MUTED, VOLUME } from '../objects/status.objects';
 
 @Injectable()
@@ -108,7 +108,7 @@ export class DataService {
             let inputs = Device.filterDevices<Input>(preset.inputs, this.inputs);
             let independentAudioDevices = Device.filterDevices<AudioDevice>(preset.independentAudioDevices, this.audioDevices);
 
-            let p = new Preset(preset.name, preset.icon, displays, audioDevices, inputs, preset.shareableDisplays, independentAudioDevices);  
+            let p = new Preset(preset.name, preset.icon, displays, audioDevices, inputs, preset.shareableDisplays, independentAudioDevices, preset.commands);
             this.presets.push(p);
         }
 
@@ -216,5 +216,12 @@ export class DataService {
         }
 
         return false;
+    }
+
+    public getInputConfiguration(input: Input): DeviceConfiguration {
+        for (let device of APIService.room.config.devices) {
+            if (device.name === input.name)
+                return device;
+        }
     }
 }

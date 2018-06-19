@@ -111,7 +111,7 @@ export class HomeComponent implements OnInit {
         this.data.loaded.subscribe(() => {
             this.updateFromEvents();
             this.updateShareableDisplays();
-        })
+        });
     }
 
     public ngOnInit() {
@@ -255,7 +255,7 @@ export class HomeComponent implements OnInit {
     public turnOff(): EventEmitter<boolean> {
         if (this.wheel.preset === this.sharePreset) {
             this.unShare(true).subscribe(success => {
-                let ret: EventEmitter<boolean> = this.wheel.command.setPower('standby', this.wheel.preset.displays); 
+                let ret: EventEmitter<boolean> = this.wheel.command.powerOff(this.wheel.preset);
                 ret.subscribe(success => {
                     if (success) {
                         this.wheel.close();
@@ -264,7 +264,7 @@ export class HomeComponent implements OnInit {
                 return ret;
             });
         } else {
-            let ret: EventEmitter<boolean> = this.wheel.command.setPower('standby', this.wheel.preset.displays); 
+            let ret: EventEmitter<boolean> = this.wheel.command.powerOff(this.wheel.preset);
             ret.subscribe(success => {
                 if (success) {
                     this.wheel.close();
@@ -333,7 +333,7 @@ export class HomeComponent implements OnInit {
         }
         
         // take the displays & audioDevices generated above, copy the defaultPresets shareableDisplays, inputs, and independentAudioDevices, and create a new preset
-        this.sharePreset = new Preset("Sharing", "subscriptions", displays, audioDevices, this.defaultPreset.inputs, this.defaultPreset.shareableDisplays, this.defaultPreset.independentAudioDevices);
+        this.sharePreset = new Preset("Sharing", "subscriptions", displays, audioDevices, this.defaultPreset.inputs, this.defaultPreset.shareableDisplays, this.defaultPreset.independentAudioDevices, this.defaultPreset.commands);
         console.log("sharePreset", this.sharePreset);
 
         if (sendCommand) {

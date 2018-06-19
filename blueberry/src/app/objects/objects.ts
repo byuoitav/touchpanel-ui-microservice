@@ -78,6 +78,18 @@ export class UIConfiguration {
     Api: string[];
 }
 
+export class ConfigCommands {
+    powerOn: ConfigCommand[];
+    powerOff: ConfigCommand[];
+}
+
+export class ConfigCommand {
+    method: string;
+    port: number;
+    endpoint: string;
+    body: Object;
+}
+
 export class PanelConfiguration {
     hostname: string;
     uipath: string;
@@ -93,6 +105,7 @@ export class PresetConfiguration {
     audioDevices: string[];
     inputs: string[];
     independentAudioDevices: string[];
+    commands: ConfigCommands;
 }
 
 export class AudioConfiguration {
@@ -143,7 +156,9 @@ export class Preset {
     shareableDisplays: string[];
     independentAudioDevices: AudioDevice[] = [];
 
-    constructor(name: string, icon: string, displays: Display[], audioDevices: AudioDevice[], inputs: Input[], shareableDisplays: string[], independentAudioDevices: AudioDevice[]) {
+    commands: ConfigCommands;
+
+    constructor(name: string, icon: string, displays: Display[], audioDevices: AudioDevice[], inputs: Input[], shareableDisplays: string[], independentAudioDevices: AudioDevice[], commands: ConfigCommands) {
         this.name = name;
         this.icon = icon;
         this.displays = displays;
@@ -151,6 +166,7 @@ export class Preset {
         this.inputs = inputs;
         this.shareableDisplays = shareableDisplays;
         this.independentAudioDevices = independentAudioDevices;
+        this.commands = commands;
     }
 }
 

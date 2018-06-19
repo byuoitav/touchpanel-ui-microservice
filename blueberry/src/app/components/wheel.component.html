@@ -8,14 +8,14 @@
             <div></div>
 		</li>
 	
-		<li *ngFor="let i of preset.inputs" class="input-slice" [class.selected-input]="getInput() === i" (click)="command.setInput(i, preset.displays)">
+		<li *ngFor="let i of preset.inputs" class="input-slice" [class.selected-input]="getInput() === i" (click)="command.setInput(i, preset.displays)" (press)="openInputModal(i)">
 			<div class="input" [style.top]="topoffset" [style.right]="rightoffset">
 				<i class="material-icons">{{i.icon}}</i>
 				<span class="name">{{i.displayname}}</span>
 			</div>
 		</li>
 
-		<li *ngFor="let i of preset.extraInputs" class="input-slice" [class.selected-input]="getInput() === i" (click)="i.click.emit()">
+		<li *ngFor="let i of preset.extraInputs" class="input-slice" [class.selected-input]="getInput() === i" (click)="i.click.emit()" (press)="openInputModal(i)">
 			<div class="input" [style.top]="topoffset" [style.right]="rightoffset">
 				<i class="material-icons">{{i.icon}}</i>
 				<span class="name">{{i.displayname}}</span>
@@ -76,3 +76,17 @@
     </clipPath>
   </defs>
 </svg>
+
+<!-- via reset/reboot modal -->
+<swal #via
+    title="VIA Control"
+    type="info"
+    text="i should be hidden"
+    [showConfirmButton]="false"
+    [showCancelButton]="false">
+
+    <div *swalPartial="swalTargets.content">
+        <button type="button" class="btn-neutral swal2-styled" (click)="via.nativeSwal.clickCancel()">Cancel</button>
+        <button type="button" class="btn-warn swal2-styled" (click)="viaControl('reset')">Reset</button>
+        <button type="button" class="btn-danger swal2-styled" (click)="viaControl('reboot')">Reboot</button>
+    </div>

@@ -54,11 +54,6 @@ export class HelpDialog {
                 });
 
                 this.dialogRef.close();
-                /*
-                dialogRef.afterClosed().subscribe(() => {
-                    this.dialogRef.close();
-                });
-               */
             }
             else
                 console.error("failed to request help");
