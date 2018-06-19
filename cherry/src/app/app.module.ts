@@ -19,6 +19,7 @@ import { AudiocontrolComponent } from './components/audiocontrol/audiocontrol.co
 
 import { HelpDialog } from './dialogs/help.dialog';
 import { ConfirmHelpDialog } from './dialogs/confirmhelp.dialog';
+import { ViaDialog } from './dialogs/via.dialog';
 
 import { APIService } from './services/api.service'
 import { CommandService } from './services/command.service'
@@ -33,10 +34,11 @@ import { ManagementComponent } from './components/management/management.componen
     DisplayComponent,
     VolumeComponent,
     AudiocontrolComponent,
+    ManagementComponent,
 
     HelpDialog,
     ConfirmHelpDialog,
-    ManagementComponent,
+    ViaDialog,
   ],
   imports: [
     BrowserModule,
@@ -59,6 +61,7 @@ import { ManagementComponent } from './components/management/management.componen
   entryComponents: [
     HelpDialog,
     ConfirmHelpDialog,
+    ViaDialog,
   ],
   bootstrap: [AppComponent]
 })

@@ -578,4 +578,29 @@ export class CommandService {
 
         return ret;
     }
+
+    public viaControl(via: Input, endpoint: string): EventEmitter<boolean> {
+        let ret: EventEmitter<boolean> = new EventEmitter<boolean>();
+
+        // get the address of the via
+        let config = this.data.getInputConfiguration(via);
+
+        // build the request
+        let req = new Request({
+            method: "GET",
+            url: APIService.apihost + ":8014/via/" + config.address + "/" + endpoint,
+        });
+
+        // execute request
+        console.log("executing via control request:", req);
+        this.http.request(req).subscribe(
+            data => {
+                ret.emit(true);
+            }, err => {
+                ret.emit(false);
+            }
+        );
+
+        return ret;
+    }
 }

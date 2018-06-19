@@ -1,7 +1,9 @@
 import { Component, Input as AngularInput } from '@angular/core';
+import { MatDialog } from '@angular/material';
 
 import { DataService } from '../../services/data.service';
 import { CommandService } from '../../services/command.service';
+import { ViaDialog } from '../../dialogs/via.dialog';
 
 import { Preset } from '../../objects/objects';
 import { Display, AudioDevice, Input } from '../../objects/status.objects';
@@ -17,7 +19,13 @@ export class DisplayComponent {
 
     selectedDisplays: Set<Display> = new Set();
 
-    constructor(private data: DataService, public command: CommandService) {}
+    constructor(private data: DataService, public command: CommandService, private dialog: MatDialog) {
+        // default to the first display being selected
+        setTimeout(() => {
+            if (this.preset.displays.length > 0)
+                this.selectedDisplays.add(this.preset.displays[0]);
+        }, 0)
+    }
 
     public toggleDisplay(d: Display) {
         this.selectedDisplays.clear();
@@ -25,7 +33,7 @@ export class DisplayComponent {
         /*
         if (this.selectedDisplays.has(d))
             this.selectedDisplays.delete(d);
-        else 
+        else
             this.selectedDisplays.add(d);
         */
     }
@@ -77,5 +85,22 @@ export class DisplayComponent {
         }
 
         return false;
+    }
+
+    public openInputDialog(i: Input) {
+        let config = this.data.getInputConfiguration(i);
+
+        switch(config.type._id) {
+        case "via-connect-pro":
+            console.log("opening via control dialog for", i);
+            let dialogRef = this.dialog.open(ViaDialog, {
+                width: '50vw',
+                data: { via: i },
+            });
+            break;
+        default:
+            console.log("nothing to do for type", config.type._id)
+            break;
+        }
     }
 }
