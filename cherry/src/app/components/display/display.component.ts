@@ -15,22 +15,24 @@ import { Display, AudioDevice, Input } from '../../objects/status.objects';
 })
 export class DisplayComponent {
 
-    @AngularInput() preset: Preset; 
+    @AngularInput() preset: Preset;
 
     selectedDisplays: Set<Display> = new Set();
 
     constructor(private data: DataService, public command: CommandService, private dialog: MatDialog) {
         // default to the first display being selected
         setTimeout(() => {
-            if (this.preset.displays.length > 0)
+            if (this.preset.displays.length > 0) {
                 this.selectedDisplays.add(this.preset.displays[0]);
-        }, 0)
+            }
+        }, 0);
     }
 
     public toggleDisplay(d: Display) {
         this.selectedDisplays.clear();
         this.selectedDisplays.add(d);
-        /*
+
+        /* This code makes it so that the displays toggle
         if (this.selectedDisplays.has(d))
             this.selectedDisplays.delete(d);
         else
@@ -40,15 +42,17 @@ export class DisplayComponent {
 
     public changeInput(i: Input) {
         this.command.setInput(i, Array.from(this.selectedDisplays)).subscribe(success => {
-            if (!success) 
-                console.warn("failed to change input")
+            if (!success) {
+                console.warn('failed to change input');
+            }
         });
     }
 
     public blank() {
         this.command.setBlank(true, Array.from(this.selectedDisplays)).subscribe(success => {
-            if (!success)
-                console.warn("failed to blank")
+            if (!success) {
+                console.warn('failed to blank');
+            }
         });
     }
 
@@ -62,44 +66,47 @@ export class DisplayComponent {
     }
 
     public inputUsed(i: Input): boolean {
-        const selected = Array.from(this.selectedDisplays)
+        const selected = Array.from(this.selectedDisplays);
 
-        for (let d of selected) {
+        for (const d of selected) {
             // because blank is treated like an input
-            if (d.blanked)
-                continue
+            if (d.blanked || d.input == null) {
+                continue;
+            }
 
-            if (d.input.name == i.name) 
+            if (d.input.name === i.name) {
                 return true;
+            }
         }
 
         return false;
     }
 
     public isOneBlanked(): boolean {
-        const selected = Array.from(this.selectedDisplays)
+        const selected = Array.from(this.selectedDisplays);
 
-        for (let d of selected) {
-            if (d.blanked) 
+        for (const d of selected) {
+            if (d.blanked) {
                 return true;
+            }
         }
 
         return false;
     }
 
     public openInputDialog(i: Input) {
-        let config = this.data.getInputConfiguration(i);
+        const config = this.data.getInputConfiguration(i);
 
-        switch(config.type._id) {
-        case "via-connect-pro":
-            console.log("opening via control dialog for", i);
-            let dialogRef = this.dialog.open(ViaDialog, {
+        switch (config.type._id) {
+        case 'via-connect-pro':
+            console.log('opening via control dialog for', i);
+            const dialogRef = this.dialog.open(ViaDialog, {
                 width: '50vw',
                 data: { via: i },
             });
             break;
         default:
-            console.log("nothing to do for type", config.type._id)
+            console.log('nothing to do for type', config.type._id);
             break;
         }
     }
