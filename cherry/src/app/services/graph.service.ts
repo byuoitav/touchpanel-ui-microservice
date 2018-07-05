@@ -235,6 +235,10 @@ export class GraphService {
                         break;
                     case PRESET_SWITCH:
                         // switch presets
+                        if (APIService.piHostname.toLowerCase() !== e.device.toLowerCase()) {
+                            break;
+                        }
+
                         const presetName = e.eventInfoValue.toLowerCase();
                         const preset = this.data.presets.find(p => p.name.toLowerCase() === presetName);
 
