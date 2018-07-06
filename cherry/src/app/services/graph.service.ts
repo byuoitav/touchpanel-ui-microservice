@@ -1,10 +1,10 @@
-import { Injectable, EventEmitter } from '@angular/core';
-import { Http } from '@angular/http';
+import { Injectable, EventEmitter } from "@angular/core";
+import { Http } from "@angular/http";
 
-import { DeviceConfiguration } from '../objects/objects';
-import { APIService } from './api.service';
-import { DataService } from './data.service';
-import { SocketService, MESSAGE, EventWrapper, Event } from './socket.service';
+import { DeviceConfiguration } from "../objects/objects";
+import { APIService } from "./api.service";
+import { DataService } from "./data.service";
+import { SocketService, MESSAGE, EventWrapper, Event } from "./socket.service";
 
 /*
  *
@@ -22,88 +22,97 @@ import { SocketService, MESSAGE, EventWrapper, Event } from './socket.service';
  *  }
  */
 
-const CONNECT = 'connect';
-const DISCONNECT = 'disconnect';
-const PRESET_SWITCH = 'preset-switch';
-const LEFT_RIGHT_DELIMITER = '/';
-const DISPLAY_DELIMITER = ',';
+const CONNECT = "connect";
+const DISCONNECT = "disconnect";
+const PRESET_SWITCH = "preset-switch";
+const LEFT_RIGHT_DELIMITER = "/";
+const DISPLAY_DELIMITER = ",";
 
 @Injectable()
 export class GraphService {
+  public displayList: EventEmitter<Set<string>>;
 
-    public displayList: EventEmitter<Set<string>>;
+  private root: Node;
+  private exists = false;
+  private nodes: Node[] = [];
 
-    private root: Node;
-    private exists = false;
-    private nodes: Node[] = [];
+  private dividerSensor: DeviceConfiguration;
 
-    private dividerSensor: DeviceConfiguration;
+  constructor(
+    private data: DataService,
+    private socket: SocketService,
+    private http: Http
+  ) {
+    this.displayList = new EventEmitter<Set<string>>();
 
-    constructor(private data: DataService, private socket: SocketService, private http: Http) {
-        this.displayList = new EventEmitter<Set<string>>();
+    this.data.loaded.subscribe(() => {
+      this.init();
+    });
+  }
 
-        this.data.loaded.subscribe(() => {
-            this.init();
-        });
+  public init() {
+    if (this.exists) {
+      return;
     }
 
-    public init() {
-        if (this.exists) {
-            return;
-        }
-
-        if (this.data.panel.preset.shareableDisplays == null) {
-            return;
-        }
-
-        // the root node is the set of displays and shareableDisplays for the preset
-        const displays: Set<string> = new Set();
-        this.data.panel.preset.displays.forEach(d => displays.add(d.name));
-        this.data.panel.preset.shareableDisplays.forEach(d => displays.add(d));
-
-        this.root = new Node(displays);
-        this.nodes.push(this.root);
-        this.exists = true;
-
-        // get the current connected/disconnected state
-        this.dividerSensor = APIService.room.config.devices.find(d => d.hasRole('DividerSensor'));
-        console.log('dividerSensor', this.dividerSensor);
-
-        this.getDividerSensorStatus();
-
-        this.update();
-
-        console.log('root', this.root);
+    if (this.data.panel.preset.shareableDisplays == null) {
+      return;
     }
 
-    public getDisplayList(): Set<string> {
-        const ret: Set<string> = new Set();
+    // the root node is the set of displays and shareableDisplays for the preset
+    const displays: Set<string> = new Set();
+    this.data.panel.preset.displays.forEach(d => displays.add(d.name));
+    this.data.panel.preset.shareableDisplays.forEach(d => displays.add(d));
 
-        this.getdisplaylist(this.root, ret);
-        return ret;
+    this.root = new Node(displays);
+    this.nodes.push(this.root);
+    this.exists = true;
+
+    // get the current connected/disconnected state
+    this.dividerSensor = APIService.room.config.devices.find(d =>
+      d.hasRole("DividerSensor")
+    );
+
+    console.log("dividerSensor", this.dividerSensor);
+    if (this.dividerSensor != null) {
+      this.getDividerSensorStatus();
+      this.update();
+
+      console.log("root", this.root);
+    } else {
+      console.warn(
+        "no divider sensor found. not listening for division events."
+      );
     }
+  }
 
-    /*
+  public getDisplayList(): Set<string> {
+    const ret: Set<string> = new Set();
+
+    this.getdisplaylist(this.root, ret);
+    return ret;
+  }
+
+  /*
      * recursivly descends through nodes and adds their displays to the list
      */
-    private getdisplaylist(node: Node, list: Set<string>): Set<string> {
-        let displays = Array.from(node.displays);
+  private getdisplaylist(node: Node, list: Set<string>): Set<string> {
+    let displays = Array.from(node.displays);
 
-        displays = displays.filter(d => !list.has(d));
+    displays = displays.filter(d => !list.has(d));
 
-        if (displays.length > 0) {
-            displays.forEach(d => list.add(d));
+    if (displays.length > 0) {
+      displays.forEach(d => list.add(d));
 
-            for (const child of node.children) {
-                this.getdisplaylist(child, list);
-            }
-        }
-
-        return list;
+      for (const child of node.children) {
+        this.getdisplaylist(child, list);
+      }
     }
 
+    return list;
+  }
 
-    /*
+  /*
      * gets the status of the room from the divider sensor.
      * loops through the connected events and adds connected nodes until
      * there isnt' a change in my displays.
@@ -111,169 +120,176 @@ export class GraphService {
      * loops through the disconnected events and disconnects displays that may be disconnected.
      *      TODO (?) is this necessary? or should i just assume they are disconnected.
      */
-    private getDividerSensorStatus() {
-        if (this.dividerSensor != null) {
-            this.http.get('http://' + this.dividerSensor.address + ':8200/status')
-                .map(res => res.json())
-                .subscribe(
-                    data => {
-                        if (data['connected'] != null) {
-                            let numChanged: number;
-                            do {
-                                numChanged = 0;
+  private getDividerSensorStatus() {
+    if (this.dividerSensor != null) {
+      this.http
+        .get("http://" + this.dividerSensor.address + ":8200/status")
+        .map(res => res.json())
+        .subscribe(
+          data => {
+            if (data["connected"] != null) {
+              let numChanged: number;
+              do {
+                numChanged = 0;
 
-                                for (const connected of data['connected']) {
-                                    if (this.connect(connected)) {
-                                        ++numChanged;
-                                    }
-                                }
-                            } while (numChanged > 0);
-                        }
-
-                        if (data['disconnected'] != null) {
-                            for (const disconnected of data['disconnected']) {
-                                this.disconnect(disconnected);
-                            }
-                        }
-                    }, err => {
-                        setTimeout(this.getDividerSensorStatus, 5000);
-                    }
-                );
-        }
-    }
-
-    private getNodeByDisplays(list: Set<string>): Node {
-        const l = JSON.stringify(Array.from(list));
-        return this.nodes.find(n => JSON.stringify(Array.from(n.displays)) === l);
-    }
-
-    private connect(s: string): boolean {
-        console.info('*connected* event:', s);
-        const sides = s.split(LEFT_RIGHT_DELIMITER);
-        const left = new Set(sides[0].split(DISPLAY_DELIMITER));
-        const right = new Set(sides[1].split(DISPLAY_DELIMITER));
-
-        let changed = false;
-
-        let lnode = this.getNodeByDisplays(left);
-        let rnode = this.getNodeByDisplays(right);
-
-        if (lnode == null) {
-            lnode = new Node(left);
-            this.nodes.push(lnode);
-
-            console.log('created a new node', lnode, '. nodes:', this.nodes);
-        }
-
-        if (rnode == null) {
-            rnode = new Node(right);
-            this.nodes.push(rnode);
-
-            console.log('created a new node', rnode, '. nodes:', this.nodes);
-        }
-
-        if (!lnode.children.includes(rnode)) {
-            lnode.children.push(rnode);
-            changed = true;
-        }
-
-        if (!rnode.children.includes(lnode)) {
-            rnode.children.push(lnode);
-            changed = true;
-        }
-
-        if (changed) {
-            this.displayList.emit(this.getDisplayList());
-        }
-
-        return changed;
-    }
-
-    private disconnect(s: string): boolean {
-        console.info('*disconnected* event:', s);
-        const sides = s.split(LEFT_RIGHT_DELIMITER);
-        const left = new Set(sides[0].split(DISPLAY_DELIMITER));
-        const right = new Set(sides[1].split(DISPLAY_DELIMITER));
-
-        let changed = false;
-
-        const lnode = this.getNodeByDisplays(left);
-        const rnode = this.getNodeByDisplays(right);
-
-        if (lnode == null || rnode == null) {
-            return false;
-        }
-
-        if (lnode.children.includes(rnode) || rnode.children.includes(lnode)) {
-            changed = true;
-
-            lnode.children = lnode.children.filter(n => n !== rnode);
-            rnode.children = rnode.children.filter(n => n !== lnode);
-        }
-
-        if (changed) {
-            this.displayList.emit(this.getDisplayList());
-        }
-
-        return changed;
-    }
-
-    private update() {
-        this.displayList.emit(this.getDisplayList());
-
-        this.socket.getEventListener().subscribe(event => {
-            if (event.type === MESSAGE) {
-                const ew: EventWrapper = event.data;
-                const e: Event = ew.event;
-
-                switch (e.eventInfoKey) {
-                    case CONNECT:
-                        this.connect(e.eventInfoValue);
-                        break;
-                    case DISCONNECT:
-                        this.disconnect(e.eventInfoValue);
-                        break;
-                    case PRESET_SWITCH:
-                        // switch presets
-                        if (APIService.piHostname.toLowerCase() !== e.device.toLowerCase()) {
-                            break;
-                        }
-
-                        const presetName = e.eventInfoValue.toLowerCase();
-                        const preset = this.data.presets.find(p => p.name.toLowerCase() === presetName);
-
-                        if (preset != null) {
-                            this.data.panel.preset = preset;
-                        }
-                        break;
+                for (const connected of data["connected"]) {
+                  if (this.connect(connected)) {
+                    ++numChanged;
+                  }
                 }
+              } while (numChanged > 0);
             }
-        });
+
+            if (data["disconnected"] != null) {
+              for (const disconnected of data["disconnected"]) {
+                this.disconnect(disconnected);
+              }
+            }
+          },
+          err => {
+            setTimeout(this.getDividerSensorStatus, 5000);
+          }
+        );
     }
+  }
+
+  private getNodeByDisplays(list: Set<string>): Node {
+    const l = JSON.stringify(Array.from(list));
+    return this.nodes.find(n => JSON.stringify(Array.from(n.displays)) === l);
+  }
+
+  private connect(s: string): boolean {
+    console.info("*connected* event:", s);
+    const sides = s.split(LEFT_RIGHT_DELIMITER);
+    const left = new Set(sides[0].split(DISPLAY_DELIMITER));
+    const right = new Set(sides[1].split(DISPLAY_DELIMITER));
+
+    let changed = false;
+
+    let lnode = this.getNodeByDisplays(left);
+    let rnode = this.getNodeByDisplays(right);
+
+    if (lnode == null) {
+      lnode = new Node(left);
+      this.nodes.push(lnode);
+
+      console.log("created a new node", lnode, ". nodes:", this.nodes);
+    }
+
+    if (rnode == null) {
+      rnode = new Node(right);
+      this.nodes.push(rnode);
+
+      console.log("created a new node", rnode, ". nodes:", this.nodes);
+    }
+
+    if (!lnode.children.includes(rnode)) {
+      lnode.children.push(rnode);
+      changed = true;
+    }
+
+    if (!rnode.children.includes(lnode)) {
+      rnode.children.push(lnode);
+      changed = true;
+    }
+
+    if (changed) {
+      this.displayList.emit(this.getDisplayList());
+    }
+
+    return changed;
+  }
+
+  private disconnect(s: string): boolean {
+    console.info("*disconnected* event:", s);
+    const sides = s.split(LEFT_RIGHT_DELIMITER);
+    const left = new Set(sides[0].split(DISPLAY_DELIMITER));
+    const right = new Set(sides[1].split(DISPLAY_DELIMITER));
+
+    let changed = false;
+
+    const lnode = this.getNodeByDisplays(left);
+    const rnode = this.getNodeByDisplays(right);
+
+    if (lnode == null || rnode == null) {
+      return false;
+    }
+
+    if (lnode.children.includes(rnode) || rnode.children.includes(lnode)) {
+      changed = true;
+
+      lnode.children = lnode.children.filter(n => n !== rnode);
+      rnode.children = rnode.children.filter(n => n !== lnode);
+    }
+
+    if (changed) {
+      this.displayList.emit(this.getDisplayList());
+    }
+
+    return changed;
+  }
+
+  private update() {
+    this.displayList.emit(this.getDisplayList());
+
+    this.socket.getEventListener().subscribe(event => {
+      if (event.type === MESSAGE) {
+        const ew: EventWrapper = event.data;
+        const e: Event = ew.event;
+
+        switch (e.eventInfoKey) {
+          case CONNECT:
+            this.connect(e.eventInfoValue);
+            break;
+          case DISCONNECT:
+            this.disconnect(e.eventInfoValue);
+            break;
+          case PRESET_SWITCH:
+            // switch presets
+            if (
+              APIService.piHostname.toLowerCase() !== e.device.toLowerCase()
+            ) {
+              break;
+            }
+
+            const presetName = e.eventInfoValue.toLowerCase();
+            const preset = this.data.presets.find(
+              p => p.name.toLowerCase() === presetName
+            );
+
+            if (preset != null) {
+              console.log("switching preset to: ", preset);
+              this.data.panel.preset = preset;
+            }
+            break;
+        }
+      }
+    });
+  }
 }
 
 /*
  *  Represents an array of displays that a preset can share to.
  */
 class Node {
-    displays: Set<string>;
-    children: Node[] = [];
+  displays: Set<string>;
+  children: Node[] = [];
 
-    constructor(displays: Set<string>) {
-        this.displays = displays;
+  constructor(displays: Set<string>) {
+    this.displays = displays;
+  }
+
+  public matches(list: Set<string>): boolean {
+    if (this.displays.size !== list.size) {
+      return false;
     }
 
-    public matches(list: Set<string>): boolean {
-        if (this.displays.size !== list.size) {
-            return false;
-        }
-
-        for (const d of Array.from(this.displays)) {
-            if (!list.has(d)) {
-                return false;
-            }
-        }
-
-        return true;
+    for (const d of Array.from(this.displays)) {
+      if (!list.has(d)) {
+        return false;
+      }
     }
+
+    return true;
+  }
 }
