@@ -35,8 +35,7 @@ export class AppComponent {
   constructor(
     private data: DataService,
     private command: CommandService,
-    private dialog: MatDialog,
-    private graph: GraphService
+    private dialog: MatDialog
   ) {
     this.loaded = false;
     this.data.loaded.subscribe(() => {

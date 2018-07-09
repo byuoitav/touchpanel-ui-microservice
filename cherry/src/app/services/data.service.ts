@@ -1,4 +1,5 @@
 import { Injectable, EventEmitter } from "@angular/core";
+import { Http } from "@angular/http";
 
 import { APIService } from "./api.service";
 import { SocketService, MESSAGE, EventWrapper, Event } from "./socket.service";
@@ -21,6 +22,8 @@ import {
   MUTED
 } from "../objects/status.objects";
 
+const PRESET_SWITCH = "preset-switch";
+
 @Injectable()
 export class DataService {
   public loaded: EventEmitter<boolean>;
@@ -33,7 +36,13 @@ export class DataService {
   public presets: Preset[] = [];
   public panels: Panel[] = [];
 
-  constructor(private api: APIService, private socket: SocketService) {
+  public dividerSensor: DeviceConfiguration;
+
+  constructor(
+    private api: APIService,
+    private socket: SocketService,
+    private http: Http
+  ) {
     this.loaded = new EventEmitter<boolean>();
 
     this.api.loaded.subscribe(() => {
@@ -44,8 +53,16 @@ export class DataService {
       this.createPresets();
       this.createPanels();
 
-      this.update();
+      // set divider sensor
+      this.dividerSensor = APIService.room.config.devices.find(d =>
+        d.hasRole("DividerSensor")
+      );
+      if (this.dividerSensor != null) {
+        console.log("dividerSensor: ", this.dividerSensor);
+        this.setCurrentPreset();
+      }
 
+      this.update();
       this.loaded.emit(true);
     });
   }
@@ -258,6 +275,44 @@ export class DataService {
     console.info("Panel", this.panel);
   }
 
+  private setCurrentPreset() {
+    if (!this.panel.features.includes(PRESET_SWITCH)) {
+      return;
+    }
+
+    this.http
+      .get(
+        "http://" +
+          this.dividerSensor.address +
+          ":8200/preset/" +
+          APIService.piHostname
+      )
+      .map(res => res.json())
+      .subscribe(
+        data => {
+          const preset = this.presets.find(
+            p => p.name.toLowerCase() === data.toLowerCase()
+          );
+
+          if (preset != null) {
+            console.log("setting initial preset to", preset);
+            this.panel.preset = preset;
+          } else {
+            console.error(
+              "current preset response doesn't exist. response: ",
+              data
+            );
+          }
+        },
+        err => {
+          console.log(
+            "failed to get intial preset from divider sensor, trying again..."
+          );
+          setTimeout(this.setCurrentPreset, 5000);
+        }
+      );
+  }
+
   private update() {
     this.socket.getEventListener().subscribe(event => {
       if (event.type === MESSAGE) {
@@ -315,6 +370,24 @@ export class DataService {
               audioDevice.volume = parseInt(e.eventInfoValue, 10);
               break;
             }
+            case PRESET_SWITCH:
+              // switch presets
+              if (
+                APIService.piHostname.toLowerCase() !== e.device.toLowerCase()
+              ) {
+                break;
+              }
+
+              const presetName = e.eventInfoValue.toLowerCase();
+              const preset = this.presets.find(
+                p => p.name.toLowerCase() === presetName
+              );
+
+              if (preset != null) {
+                console.log("switching preset to: ", preset);
+                this.panel.preset = preset;
+              }
+              break;
             default:
               break;
           }
