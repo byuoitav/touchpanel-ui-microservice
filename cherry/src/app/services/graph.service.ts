@@ -24,7 +24,6 @@ import { SocketService, MESSAGE, EventWrapper, Event } from "./socket.service";
 
 const CONNECT = "connect";
 const DISCONNECT = "disconnect";
-const PRESET_SWITCH = "preset-switch";
 const LEFT_RIGHT_DELIMITER = "/";
 const DISPLAY_DELIMITER = ",";
 
@@ -75,10 +74,16 @@ export class GraphService {
 
     console.log("dividerSensor", this.dividerSensor);
     if (this.dividerSensor != null) {
-      this.getDividerSensorStatus();
+      // cherry doesn't need to do this? it doesn't do sharing
+      //      this.getDividerSensorStatus();
       this.update();
 
-      console.log("root", this.root);
+      // set the current preset if necessary
+      if (this.data.panel.features.includes(PRESET_SWITCH)) {
+        this.setCurrentPreset();
+      }
+
+      //      console.log("root", this.root);
     } else {
       console.warn(
         "no divider sensor found. not listening for division events."
@@ -151,6 +156,40 @@ export class GraphService {
           }
         );
     }
+  }
+
+  private setCurrentPreset() {
+    this.http
+      .get(
+        "http://" +
+          this.dividerSensor.address +
+          ":8200/preset/" +
+          APIService.piHostname
+      )
+      .map(res => res.json())
+      .subscribe(
+        data => {
+          const preset = this.data.presets.find(
+            p => p.name.toLowerCase() === data.toLowerCase()
+          );
+
+          if (preset != null) {
+            console.log("setting initial preset to", preset);
+            this.data.panel.preset = preset;
+          } else {
+            console.error(
+              "current preset response doesn't exist. response: ",
+              data
+            );
+          }
+        },
+        err => {
+          console.log(
+            "failed to get intial preset from divider sensor, trying again..."
+          );
+          setTimeout(this.setCurrentPreset, 5000);
+        }
+      );
   }
 
   private getNodeByDisplays(list: Set<string>): Node {
