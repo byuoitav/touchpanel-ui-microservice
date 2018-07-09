@@ -74,8 +74,8 @@ export class GraphService {
 
     console.log("dividerSensor", this.dividerSensor);
     if (this.dividerSensor != null) {
-      // cherry doesn't need to do this? it doesn't do sharing
-      //      this.getDividerSensorStatus();
+      /* cherry doesn't need to do this? it doesn't do sharing
+      this.getDividerSensorStatus();
       this.update();
 
       // set the current preset if necessary
@@ -83,7 +83,8 @@ export class GraphService {
         this.setCurrentPreset();
       }
 
-      //      console.log("root", this.root);
+      console.log("root", this.root);
+      */
     } else {
       console.warn(
         "no divider sensor found. not listening for division events."
@@ -282,24 +283,6 @@ export class GraphService {
             break;
           case DISCONNECT:
             this.disconnect(e.eventInfoValue);
-            break;
-          case PRESET_SWITCH:
-            // switch presets
-            if (
-              APIService.piHostname.toLowerCase() !== e.device.toLowerCase()
-            ) {
-              break;
-            }
-
-            const presetName = e.eventInfoValue.toLowerCase();
-            const preset = this.data.presets.find(
-              p => p.name.toLowerCase() === presetName
-            );
-
-            if (preset != null) {
-              console.log("switching preset to: ", preset);
-              this.data.panel.preset = preset;
-            }
             break;
         }
       }
