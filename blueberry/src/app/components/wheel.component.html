@@ -8,15 +8,15 @@
             <div></div>
 		</li>
 	
-		<li *ngFor="let i of preset.inputs" class="input-slice" [class.selected-input]="getInput() === i" (click)="command.setInput(i, preset.displays)" (press)="openInputModal(i)">
-			<div class="input" [style.top]="topoffset" [style.right]="rightoffset">
+		<li *ngFor="let i of preset.inputs" class="input-slice" [class.selected-input]="getInput() === i" [class.grey]="sharing && i.reachableDisplays.length === 1"(click)="i.click.emit()" (press)="openInputModal(i)">
+            <div class="input" [style.top]="topoffset" [style.right]="rightoffset">
 				<i class="material-icons">{{i.icon}}</i>
 				<span class="name">{{i.displayname}}</span>
 			</div>
 		</li>
 
 		<li *ngFor="let i of preset.extraInputs" class="input-slice" [class.selected-input]="getInput() === i" (click)="i.click.emit()" (press)="openInputModal(i)">
-			<div class="input" [style.top]="topoffset" [style.right]="rightoffset">
+			<div class="input" [class.grey]="sharing && i.reachableDisplays.length === 1" [style.top]="topoffset" [style.right]="rightoffset">
 				<i class="material-icons">{{i.icon}}</i>
 				<span class="name">{{i.displayname}}</span>
 			</div>
