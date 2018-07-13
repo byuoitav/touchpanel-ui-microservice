@@ -241,15 +241,10 @@ export class APIService {
   }
 
   private getRoomConfig(): Observable<Object> {
-    return (
-      this.http
-        //      .get(APIService.apiurl + "/configuration")
-        .get(
-          "http://linux-knight.byu.edu:8000/buildings/ITB/rooms/1108/configuration"
-        )
-        .map(response => response.json())
-        .map(res => deserialize<RoomConfiguration>(RoomConfiguration, res))
-    );
+    return this.http
+      .get(APIService.apiurl + "/configuration")
+      .map(response => response.json())
+      .map(res => deserialize<RoomConfiguration>(RoomConfiguration, res));
   }
 
   private getRoomStatus(): Observable<Object> {
