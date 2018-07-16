@@ -8,20 +8,19 @@
 </div> 
 
 <div *ngIf="data.panel?.render">
-    <wheel top="50vh" right="50vw" [openControlledByPower]="true" [blur]="false" [preset]="data.panel.preset" (init)="onWheelInit()"></wheel>
+    <wheel top="50vh" right="50vw" [sharing]="wheel?.preset === sharePreset" [openControlledByPower]="true" [blur]="false" [preset]="data.panel.preset" (init)="onWheelInit()"></wheel>
 </div>
 
 <div class="buttons bottom">
-    <!--TODO make share button dissappear if shareableDisplays.length = 0 -->
-    <div *ngIf="data?.panel?.features.includes('share') && shareableDisplays.length > 0">
-        <button mat-fab *ngIf="wheel?.preset == defaultPreset" class="dta button" (click)="selectdisplays.show()">
+    <ng-container *ngIf="data?.panel?.features.includes('share')">
+        <button mat-fab *ngIf="wheel?.preset == defaultPreset" class="dta button" [class.grey]="wheel?.getInput()?.reachableDisplays?.length <= 1" (click)="selectdisplays.show()">
             <mat-icon>screen_share</mat-icon>
         </button>
 
         <button mat-fab *ngIf="wheel?.preset != defaultPreset" class="dta button" (click)="unShareDialog.show()">
             <mat-icon>stop_screen_share</mat-icon>
         </button>
-    </div>
+    </ng-container>
 </div> 
 
 <div class="buttons top right">
@@ -58,17 +57,19 @@
     (open)="openedSelectDisplaysDialog()">
 
     <div *swalPartial="swalTargets.title">
-        <span>Select displays to share {{wheel.getInput()?.displayname}} with</span>
+        <span *ngIf="wheel.getInput()?.reachableDisplays?.length > 1">Select displays to share {{wheel.getInput()?.displayname}} with</span>
     </div>
 
     <div *swalPartial="swalTargets.content" class="grid">
-        <div *ngFor="let d of shareableDisplays" class="item">
-            <button mat-fab color="primary" (click)="toggleSelected(d)">{{d.name}}
-                <div *ngIf="isSelected(d)" class="badge">
-                    <mat-icon>check</mat-icon>
-                </div>
-            </button>
-        </div>
+        <ng-container *ngIf="wheel.getInput()?.reachableDisplays?.length > 1">
+            <div *ngFor="let d of shareableDisplays" class="item">
+                <button mat-fab color="primary" (click)="toggleSelected(d)">{{d.name}}
+                    <div *ngIf="isSelected(d)" class="badge">
+                        <mat-icon>check</mat-icon>
+                    </div>
+                </button>
+            </div>
+        </ng-container>
     </div>
 </swal>
 
@@ -109,5 +110,17 @@
                 <mat-icon *ngIf="!a.muted">volume_up</mat-icon>
             </button>
         </div>
+    </div>
+</swal>
+
+<swal #notRoutable>
+    <div *swalPartial="swalTargets.content">
+        <span>You must unshare before you can select this input.</span>
+    </div>
+</swal>
+
+<swal #notShareable>
+    <div *swalPartial="swalTargets.content">
+        <span>{{wheel.getInput()?.displayname}} can't be shared with any displays.</span>
     </div>
 </swal>
