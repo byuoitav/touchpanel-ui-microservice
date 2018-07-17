@@ -1,157 +1,207 @@
-import { Type } from 'serializer.ts/Decorators';
-import { Device, Display, AudioDevice, Input } from './status.objects';
+import { Type } from "serializer.ts/Decorators";
+import { Device, Display, AudioDevice, Input } from "./status.objects";
 
 export class Room {
-	config: RoomConfiguration;
-	status: RoomStatus;
-    uiconfig: UIConfiguration;
+  config: RoomConfiguration;
+  status: RoomStatus;
+  uiconfig: UIConfiguration;
 }
 
 export class RoomConfiguration {
-	id: number;
-	name: string;
-	description: string;
+  _id: string;
+  name: string;
+  description: string;
 
-	@Type(() => DeviceConfiguration)
-	devices: DeviceConfiguration[];
+  @Type(() => DeviceConfiguration)
+  devices: DeviceConfiguration[];
 
-	match(n: string) {
-		return n == this.name;	
-	}
-}
+  input_reachability: Map<string, string[]> = new Map<string, string[]>();
 
-export class RoomStatus {
-	@Type(() => DeviceStatus)
-	displays: DeviceStatus[];
-
-	@Type(() => DeviceStatus)
-	audioDevices: DeviceStatus[];
-}
-
-export class UIConfiguration {
-    @Type(() => PanelConfiguration)
-    panels: PanelConfiguration[];
-
-    @Type(() => PresetConfiguration)
-    presets: PresetConfiguration[];
-
-    @Type(() => InputConfiguration)
-    inputConfiguration: InputConfiguration[];
-
-    @Type(() => AudioConfiguration)
-    audioConfiguration: AudioConfiguration[];
-
-    Api: string[];
-}
-
-export class PanelConfiguration {
-    hostname: string;
-    uipath: string;
-    features: string[];
-    preset: string;
-}
-
-export class PresetConfiguration {
-    name: string;
-    icon: string;
-    displays: string[];
-    shareableDisplays: string[];
-    audioDevices: string[];
-    inputs: string[];
-    independentAudioDevices: string[];
-}
-
-export class AudioConfiguration {
-    display: string;
-    audioDevices: string[];
-    roomWide: boolean;
-}
-
-export class AudioConfig {
-    display: Display;
-    audioDevices: AudioDevice[];
-    roomWide: boolean;
-
-    constructor(display: Display, audioDevices: AudioDevice[], roomWide: boolean) {
-        this.display = display;
-        this.audioDevices = audioDevices;
-        this.roomWide = roomWide;
-    }
-}
-
-export class InputConfiguration {
-    name: string;
-    icon: string;
-}
-
-export class DeviceStatus {
-	name: string;
-	power: string;
-	input: string;
-	blanked: boolean;
-	muted: boolean;
-	volume: number;
-
-	match(n: string) {
-		return n == this.name;	
-	}
+  match(n: string) {
+    return n === this.name;
+  }
 }
 
 export class DeviceConfiguration {
-	id: number;
-	name: string;
-	display_name: string;
-	address: string;
-	input: boolean;
-	output: boolean;
-	type: string;
-	roles: string;
+  _id: string;
+  name: string;
+  display_name: string;
+  address: string;
 
-	public hasRole(role: string): boolean {
-		for (let r of this.roles) {
-			if (r == role) {
-				return true;
-			}
-		}
-		return false;
-	}
+  @Type(() => DeviceTypeConfiguration)
+  type: DeviceTypeConfiguration;
+
+  @Type(() => RoleConfiguration)
+  roles: RoleConfiguration[];
+
+  public hasRole(role: string): boolean {
+    for (const r of this.roles) {
+      if (r._id === role) {
+        return true;
+      }
+    }
+    return false;
+  }
+}
+
+export class DeviceTypeConfiguration {
+  _id: string;
+  description: string;
+  tags: string[];
+}
+
+export class RoleConfiguration {
+  _id: string;
+  description: string;
+  tags: string[];
+}
+
+export class RoomStatus {
+  @Type(() => DeviceStatus)
+  displays: DeviceStatus[];
+
+  @Type(() => DeviceStatus)
+  audioDevices: DeviceStatus[];
+}
+
+export class UIConfiguration {
+  @Type(() => PanelConfiguration)
+  panels: PanelConfiguration[];
+
+  @Type(() => PresetConfiguration)
+  presets: PresetConfiguration[];
+
+  @Type(() => InputConfiguration)
+  inputConfiguration: InputConfiguration[];
+
+  @Type(() => AudioConfiguration)
+  audioConfiguration: AudioConfiguration[];
+
+  Api: string[];
+}
+
+export class ConfigCommands {
+  powerOn: ConfigCommand[];
+  powerOff: ConfigCommand[];
+}
+
+export class ConfigCommand {
+  method: string;
+  port: number;
+  endpoint: string;
+  body: Object;
+}
+
+export class PanelConfiguration {
+  hostname: string;
+  uipath: string;
+  features: string[];
+  preset: string;
+}
+
+export class PresetConfiguration {
+  name: string;
+  icon: string;
+  displays: string[];
+  shareableDisplays: string[];
+  audioDevices: string[];
+  inputs: string[];
+  independentAudioDevices: string[];
+  commands: ConfigCommands;
+}
+
+export class AudioConfiguration {
+  display: string;
+  audioDevices: string[];
+  roomWide: boolean;
+}
+
+export class AudioConfig {
+  display: Display;
+  audioDevices: AudioDevice[];
+  roomWide: boolean;
+
+  constructor(
+    display: Display,
+    audioDevices: AudioDevice[],
+    roomWide: boolean
+  ) {
+    this.display = display;
+    this.audioDevices = audioDevices;
+    this.roomWide = roomWide;
+  }
+}
+
+export class InputConfiguration {
+  name: string;
+  icon: string;
+}
+
+export class DeviceStatus {
+  name: string;
+  power: string;
+  input: string;
+  blanked: boolean;
+  muted: boolean;
+  volume: number;
+
+  match(n: string) {
+    return n === this.name;
+  }
 }
 
 export class Preset {
-    name: string;
-    icon: string;
+  name: string;
+  icon: string;
 
-    displays: Display[] = [];
-    audioDevices: AudioDevice[] = [];
-    inputs: Input[] = [];
-    extraInputs: Input[] = [];
+  displays: Display[] = [];
+  audioDevices: AudioDevice[] = [];
+  inputs: Input[] = [];
+  extraInputs: Input[] = [];
 
-    shareableDisplays: string[];
-    independentAudioDevices: AudioDevice[] = [];
+  shareableDisplays: string[];
+  independentAudioDevices: AudioDevice[] = [];
 
-    constructor(name: string, icon: string, displays: Display[], audioDevices: AudioDevice[], inputs: Input[], shareableDisplays: string[], independentAudioDevices: AudioDevice[]) {
-        this.name = name;
-        this.icon = icon;
-        this.displays = displays;
-        this.audioDevices = audioDevices;
-        this.inputs = inputs;
-        this.shareableDisplays = shareableDisplays;
-        this.independentAudioDevices = independentAudioDevices;
-    }
+  commands: ConfigCommands;
+
+  constructor(
+    name: string,
+    icon: string,
+    displays: Display[],
+    audioDevices: AudioDevice[],
+    inputs: Input[],
+    shareableDisplays: string[],
+    independentAudioDevices: AudioDevice[],
+    commands: ConfigCommands
+  ) {
+    this.name = name;
+    this.icon = icon;
+    this.displays = displays;
+    this.audioDevices = audioDevices;
+    this.inputs = inputs;
+    this.shareableDisplays = shareableDisplays;
+    this.independentAudioDevices = independentAudioDevices;
+    this.commands = commands;
+  }
 }
 
 export class Panel {
-    hostname: string;
-    uipath: string;
-    preset: Preset;
-    features: string[] = [];
+  hostname: string;
+  uipath: string;
+  preset: Preset;
+  features: string[] = [];
 
-    render: boolean = false;
+  render = false;
 
-    constructor(hostname: string, uipath: string, preset: Preset, features: string[]) {
-        this.hostname = hostname;
-        this.uipath = uipath;
-        this.preset = preset;
-        this.features = features;
-    }
+  constructor(
+    hostname: string,
+    uipath: string,
+    preset: Preset,
+    features: string[]
+  ) {
+    this.hostname = hostname;
+    this.uipath = uipath;
+    this.preset = preset;
+    this.features = features;
+  }
 }

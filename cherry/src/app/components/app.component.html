@@ -1,0 +1,80 @@
+<div class="base mat-app-background">
+
+<!-- management pattern -->
+<management [enabled]="isPoweredOff()"></management>
+
+<ng-container *ngIf="loaded; else loading">
+    <div *ngIf="isPoweredOff(); else home"
+        class="lock"
+        (click)="unlock()">
+
+        <ng-container *ngIf="!unlocking; else poweringOn">
+            <!-- byu logo -->
+            <object type="image/svg+xml"
+                data="./assets/byu_medallion_white.svg"
+                class="logo">
+            </object>
+
+            <!-- unlock text -->
+            <span class="text">Touch anywhere to start</span>
+        </ng-container>
+
+        <ng-template #poweringOn>
+            <div class="logo">
+                <mat-spinner color="accent"></mat-spinner>
+            </div>
+            <span class="text smaller">powering on, please wait...</span>
+        </ng-template>
+    </div>
+</ng-container>
+
+
+<ng-template #home>
+    <button mat-raised-button
+        color="warn"
+        class="power"
+        (click)="powerOff()">
+        Power Off
+    </button>
+
+    <div class="secondary-theme">
+        <button mat-raised-button
+            class="help"
+            color="accent"
+            (click)="openHelpDialog()">
+            Help
+        </button>
+    </div>
+
+    <mat-tab-group
+        backgroundColor="primary"
+        color="accent"
+        [(selectedIndex)]="selectedTabIndex">
+        <mat-tab label="Display">
+            <!-- display component -->
+            <display
+                [preset]="data?.panel?.preset">
+            </display>
+        </mat-tab>
+    
+        <mat-tab label="Audio Control">
+            <!-- audio control -->
+            <!-- requires weird trick (*ngIf) to make animations work when the tab is opened -->
+            <audiocontrol
+                *ngIf="selectedTabIndex == 1" [@delay]
+                [preset]="data?.panel?.preset">
+            </audiocontrol>
+        </mat-tab>
+    </mat-tab-group>
+</ng-template>
+
+<ng-template #loading>
+    <management></management>
+
+    <div class="loading">
+        <mat-spinner color="accent"></mat-spinner>
+        <span>loading, please wait</span>
+    </div>
+</ng-template>
+
+</div>

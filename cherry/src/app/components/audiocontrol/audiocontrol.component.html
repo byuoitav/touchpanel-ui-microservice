@@ -1,0 +1,49 @@
+<mat-tab-group #tabs
+    color="accent"
+    class="mat-tab-label-darker">
+    <mat-tab label="Displays">
+        <!-- master slider -->
+        <div class="master">
+            <div class="device">
+                <span>Master Volume</span>
+                <i class="material-icons">speaker_group</i>
+                <volume class="volume"
+                    [level]="preset?.masterVolume"
+                    [mute]="preset?.masterVolume == 0"
+                    (levelChange)="command.setMasterVolume($event, preset)"
+                    (muteChange)="setMasterMute($event.muted)">
+                </volume>
+            </div>
+        </div>
+
+        <div class="devices displays">
+            <!-- preset.audioDevices mixLevel sliders -->
+            <div *ngFor="let a of preset?.audioDevices" class="device">
+                <span>{{a.displayname}}</span>
+                <i class="material-icons">{{a.icon}}</i>
+                <volume class="volume"
+                    [level]="a?.mixlevel"
+                    [mute]="a?.mixlevel == 0"
+                    (levelChange)="command.setMixLevel($event, a, preset)"
+                    (muteChange)="command.setMixLevel($event.level, a, preset)">
+                </volume>
+            </div>
+        </div>
+    </mat-tab>
+
+    <!-- List of all the extra audio types included. This makes sure the first char is uppercase -->
+    <mat-tab *ngFor="let type of audioTypes" [label]="type?.charAt(0).toUpperCase() + type.slice(1) + 's'">
+        <div class="devices">
+            <div *ngFor="let a of preset?.audioTypes?.get(type)" class="device">
+                <span>{{a.displayname}}</span>
+                <i class="material-icons">{{a.icon}}</i>
+                <volume class="volume"
+                    [level]="!a?.muted ? a?.volume : 0"
+                    [mute]="a?.muted" 
+                    (levelChange)="command.setVolume($event, [a])"
+                    (muteChange)="command.setMute($event.muted, [a])">
+                </volume>
+            </div>
+        </div>
+    </mat-tab>
+</mat-tab-group>

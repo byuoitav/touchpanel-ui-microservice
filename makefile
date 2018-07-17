@@ -23,10 +23,10 @@ GOTEST=$(GOCMD) test
 GOGET=$(GOCMD) get
 VENDOR=gvt fetch -branch $(BRANCH)
 
-# docker
+# docker 
 DOCKER=docker
 DOCKER_BUILD=$(DOCKER) build
-DOCKER_LOGIN=$(DOCKER) login -e $(EMAIL) -u $(UNAME) -p $(PASS)
+DOCKER_LOGIN=$(DOCKER) login -u $(UNAME) -p $(PASS)
 DOCKER_PUSH=$(DOCKER) push
 DOCKER_FILE=dockerfile
 DOCKER_FILE_ARM=dockerfile-arm
@@ -40,6 +40,7 @@ NPM=npm
 NPM_INSTALL=$(NPM) install
 NG_BUILD=ng build --prod --aot --build-optimizer 
 NG1=blueberry
+NG2=cherry
 
 build: build-x86 build-arm build-web
 
@@ -49,9 +50,13 @@ build-x86:
 build-arm: 
 	env GOOS=linux GOARCH=arm $(GOBUILD) -o $(NAME)-arm -v
 
-build-web: $(NG1)
+build-web: $(NG1) $(NG2)
+	# ng1
 	cd $(NG1) && $(NPM_INSTALL) && $(NG_BUILD) --base-href="./$(NG1)/"
 	mv $(NG1)/dist $(NG1)-dist
+	# ng2
+	cd $(NG2) && $(NPM_INSTALL) && $(NG_BUILD) --base-href="./$(NG2)/"
+	mv $(NG2)/dist $(NG2)-dist
 
 test: 
 	$(GOTEST) -v -race $(go list ./... | grep -v /vendor/) 
@@ -61,11 +66,13 @@ clean:
 	rm -f $(NAME)-bin
 	rm -f $(NAME)-arm
 	rm -rf $(NG1)-dist
+	rm -rf $(NG2)-dist
 
-run: $(NAME)-bin $(NG1)-dist
+run: $(NAME)-bin $(NG1)-dist $(NG2)-dist
 	./$(NAME)-bin
 
 deps: 
+	$(NPM_INSTALL) -g @angular/cli
 	$(GOGET) -d -v
 ifneq "$(BRANCH)" "master"
 	# put vendored packages in here
@@ -75,7 +82,7 @@ endif
 
 docker: docker-x86 docker-arm
 
-docker-x86: $(NAME)-bin $(NG1)-dist
+docker-x86: $(NAME)-bin $(NG1)-dist $(NG2)-dist
 ifeq "$(BRANCH)" "master"
 	$(eval BRANCH=development)
 endif
@@ -93,7 +100,7 @@ ifeq "$(BRANCH)" "development"
 	$(eval BRANCH=master)
 endif
 
-docker-arm: $(NAME)-arm $(NG1)-dist
+docker-arm: $(NAME)-arm $(NG1)-dist $(NG2)-dist
 ifeq "$(BRANCH)" "master"
 	$(eval BRANCH=development)
 endif
@@ -118,5 +125,5 @@ $(NAME)-bin:
 $(NAME)-arm:
 	$(MAKE) build-arm
 
-$(NG1)-dist:
+$(NG1)-dist $(NG2)-dist:
 	$(MAKE) build-web
