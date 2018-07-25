@@ -5,52 +5,18 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
-	"net/http"
 	"os"
 	"strings"
 
+	"github.com/byuoitav/common/db"
+	"github.com/byuoitav/common/structs"
 	"github.com/fatih/color"
 )
 
+// UI_CONFIG_FILE is the name for the local file on the touchpanel
 const UI_CONFIG_FILE = "ui-config.json"
 
-type UIConfig struct {
-	Api                []string             `json:"api"`
-	Panels             []Panel              `json:"panels"`
-	Presets            []Preset             `json:"presets"`
-	InputConfiguration []InputConfiguration `json:"inputConfiguration"`
-	AudioConfiguration []AudioConfiguration `json:"audioConfiguration"`
-}
-
-type Preset struct {
-	Name                    string   `json:"name"`
-	Icon                    string   `json:"icon"`
-	Displays                []string `json:"displays"`
-	ShareableDisplays       []string `json:"shareableDisplays"`
-	AudioDevices            []string `json:"audioDevices"`
-	Inputs                  []string `json:"inputs"`
-	IndependentAudioDevices []string `json:"independentAudioDevices"`
-}
-
-type Panel struct {
-	Hostname string   `json:"hostname"`
-	UIPath   string   `json:"uipath"`
-	Preset   string   `json:"preset"`
-	Features []string `json:"features"`
-}
-
-type AudioConfiguration struct {
-	Display      string   `json:"display"`
-	AudioDevices []string `json:"audioDevices"`
-	RoomWide     bool     `json:"roomWide"`
-}
-
-type InputConfiguration struct {
-	Name string `json:"name"`
-	Icon string `json:"icon"`
-}
-
-func getUIConfig() (UIConfig, error) {
+func getUIConfig() (structs.UIConfig, error) {
 	address := os.Getenv("UI_CONFIGURATION_ADDRESS")
 	hn := os.Getenv("PI_HOSTNAME")
 
@@ -66,47 +32,22 @@ func getUIConfig() (UIConfig, error) {
 		return getUIConfigFromFile()
 	}
 
-	address = strings.Replace(address, "BUILDING", building, 1)
-	address = strings.Replace(address, "ROOM", room, 1)
-
 	color.Set(color.FgYellow)
 	log.Printf("Getting UI Config for %s-%s from %s", building, room, address)
 	color.Unset()
 
-	return getUIConfigFromWeb(address)
-}
-
-func getUIConfigFromWeb(address string) (UIConfig, error) {
-	resp, err := http.Get(address)
+	config, err := db.GetDB().GetUIConfig(fmt.Sprintf("%s-%s", building, room))
 	if err != nil {
-		logError(fmt.Sprintf("Failed to make GET request to %s: %s", address, err))
-		return getUIConfigFromFile()
-	}
-	defer resp.Body.Close()
-
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		logError(fmt.Sprintf("Failed to read body from %s: %s", address, err))
-		return getUIConfigFromFile()
-	}
-
-	var config UIConfig
-	err = json.Unmarshal(body, &config)
-	if err != nil {
-		logError(fmt.Sprintf("Failed to unmarshal body from %s: %s", address, err))
+		logError(fmt.Sprintf("Failed to get UI Config for %s-%s from %s", building, room, address))
 		return getUIConfigFromFile()
 	}
 
 	writeUIConfigToFile(config)
 
-	color.Set(color.FgHiGreen, color.Bold)
-	log.Printf("Returning config from %s", address)
-	color.Unset()
-
 	return config, nil
 }
 
-func getUIConfigFromFile() (UIConfig, error) {
+func getUIConfigFromFile() (structs.UIConfig, error) {
 	color.Set(color.FgCyan)
 	log.Printf("Getting UI Config from file: %s", UI_CONFIG_FILE)
 	color.Unset()
@@ -114,14 +55,14 @@ func getUIConfigFromFile() (UIConfig, error) {
 	body, err := ioutil.ReadFile(UI_CONFIG_FILE)
 	if err != nil {
 		logError(fmt.Sprintf("Failed to read body from file %s: %s", UI_CONFIG_FILE, err))
-		return UIConfig{}, err
+		return structs.UIConfig{}, err
 	}
 
-	var config UIConfig
+	var config structs.UIConfig
 	err = json.Unmarshal(body, &config)
 	if err != nil {
 		logError(fmt.Sprintf("Failed to unmarshal body from file %s: %s", UI_CONFIG_FILE, err))
-		return UIConfig{}, err
+		return structs.UIConfig{}, err
 	}
 
 	color.Set(color.FgHiGreen, color.Bold)
@@ -131,7 +72,7 @@ func getUIConfigFromFile() (UIConfig, error) {
 	return config, nil
 }
 
-func writeUIConfigToFile(config UIConfig) {
+func writeUIConfigToFile(config structs.UIConfig) {
 	color.Set(color.FgCyan)
 	log.Printf("Writing UI Config to file: %s", UI_CONFIG_FILE)
 	color.Unset()

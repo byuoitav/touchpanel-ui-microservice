@@ -1,0 +1,73 @@
+$devices-width: 80vw;
+$devices-height: 70vh;
+$volume-height: 80%;
+
+$master-width: 15vw;
+
+%align {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+%align-vert {
+    @extend %align;
+    flex-direction: column;
+}
+
+%align-horiz {
+    @extend %align;
+    flex-direction: row;
+}
+
+.devices {
+    @extend %align-horiz;
+    justify-content: space-around;
+
+    max-width: $devices-width;
+    margin-left: (100vw - $devices-width) / 2;
+
+    height: $devices-height;
+    margin-top: 2%;
+
+    .device {
+        @extend %align-vert;
+        height: 100%;
+    }
+
+    &.displays {
+        max-width: 75.5vw;
+        margin-left: (100vw - $devices-width - $master-width) / 2;
+    }
+}
+
+.master {
+    float: right;
+
+    margin-right: 3%;
+    margin-top: 2%;
+
+    height: $devices-height;
+
+    .device {
+        @extend %align-vert;
+        height: 100%;
+    }
+
+    &::before {
+        position: absolute;
+        background: linear-gradient(180deg, rgba(0,0,0,0), rgba(0,0,0,.7) 20%, rgba(0,0,0,.7) 80%, rgba(0,0,0,0));
+
+        width: .1%;
+        height: 70%;
+
+        right: $master-width + 4.5vw;
+        top: 18%;
+
+        content: '';
+    }
+}
+
+.volume {
+    height: $volume-height;
+}

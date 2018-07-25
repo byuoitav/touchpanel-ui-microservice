@@ -93,3 +93,8 @@ $icon: white;
         background-color: $centerOn;
     }
 }
+
+.grey {
+    filter: grayscale(100%) brightness(70%);
+}
+

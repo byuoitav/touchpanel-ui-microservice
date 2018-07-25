@@ -6,8 +6,8 @@ import (
 	"os"
 	"time"
 
+	ce "github.com/byuoitav/common/events"
 	"github.com/byuoitav/device-monitoring-microservice/statusinfrastructure"
-	"github.com/byuoitav/event-router-microservice/eventinfrastructure"
 	"github.com/byuoitav/touchpanel-ui-microservice/events"
 	"github.com/byuoitav/touchpanel-ui-microservice/handlers"
 	"github.com/byuoitav/touchpanel-ui-microservice/socket"
@@ -18,8 +18,8 @@ import (
 )
 
 func main() {
-	filters := []string{eventinfrastructure.UI, eventinfrastructure.UIFeature}
-	en := eventinfrastructure.NewEventNode("Touchpanel UI", filters, os.Getenv("EVENT_ROUTER_ADDRESS"))
+	filters := []string{ce.UI, ce.UIFeature}
+	en := ce.NewEventNode("Touchpanel UI", os.Getenv("EVENT_ROUTER_ADDRESS"), filters)
 
 	// websocket hub
 	hub := socket.NewHub()
@@ -30,7 +30,7 @@ func main() {
 	router := echo.New()
 	router.Pre(middleware.RemoveTrailingSlash())
 	router.Use(middleware.CORS())
-	//	router.Use(echo.WrapMiddleware(authmiddleware.AuthenticateUser))
+	// router.Use(echo.WrapMiddleware(authmiddleware.AuthenticateUser))
 
 	router.GET("/health", echo.WrapHandler(http.HandlerFunc(health.Check)))
 	router.GET("/mstatus", GetStatus)
@@ -82,19 +82,22 @@ func main() {
 	router.Static("/", "redirect.html")
 	router.Any("/404", redirect)
 	router.Static("/blueberry", "blueberry-dist")
+	router.Static("/cherry", "cherry-dist")
 
 	router.Start(port)
 }
 
-func BindEventNode(en *eventinfrastructure.EventNode) echo.MiddlewareFunc {
+// BindEventNode ...
+func BindEventNode(en *ce.EventNode) echo.MiddlewareFunc {
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
-			c.Set(eventinfrastructure.ContextEventNode, en)
+			c.Set(ce.ContextEventNode, en)
 			return next(c)
 		}
 	}
 }
 
+// GetStatus ...
 func GetStatus(context echo.Context) error {
 	var s statusinfrastructure.Status
 	var err error
