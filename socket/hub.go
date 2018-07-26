@@ -94,6 +94,7 @@ func (h *Hub) GetStatus(context echo.Context) error {
 
 func (h *Hub) run() {
 	hostname := events.GetPiHostname()
+	device := events.GetDeviceNameFromHostname()
 	building := events.GetBuildingFromHostname()
 	room := events.GetRoomFromHostname()
 
@@ -114,9 +115,25 @@ func (h *Hub) run() {
 					Type:           events.DETAILSTATE,
 					Requestor:      client.conn.LocalAddr().String(),
 					EventCause:     events.INTERNAL,
-					Device:         "touchpanel-ui-microservice",
+					Device:         device,
 					EventInfoKey:   "websocket",
 					EventInfoValue: fmt.Sprintf("opened with %s", remoteAddr),
+				},
+				Building: building,
+				Room:     room,
+			}
+
+			countEvent := events.Event{
+				Hostname:         hostname,
+				Timestamp:        time.Now().Format(time.RFC3339),
+				LocalEnvironment: true,
+				Event: events.EventInfo{
+					Type:           events.DETAILSTATE,
+					Requestor:      client.conn.RemoteAddr().String(),
+					EventCause:     events.INTERNAL,
+					Device:         device,
+					EventInfoKey:   "websocket-count",
+					EventInfoValue: fmt.Sprintf("%v", len(h.clients)),
 				},
 				Building: building,
 				Room:     room,
@@ -125,9 +142,10 @@ func (h *Hub) run() {
 			resolvedRemote, err := net.LookupAddr(strings.Split(remoteAddr.String(), ":")[0])
 			if err == nil {
 				event.Event.EventInfoValue = fmt.Sprintf("opened with %s", resolvedRemote)
+				countEvent.Event.Requestor = fmt.Sprintf("%s", resolvedRemote)
 			}
-			log.Printf("sending event: %+v", event)
 			h.eventNode.PublishEvent(events.Metrics, event)
+			h.eventNode.PublishEvent(events.Metrics, countEvent)
 
 			h.clients[client] = true
 		case client := <-h.unregister:
@@ -135,7 +153,6 @@ func (h *Hub) run() {
 				color.Set(color.FgYellow, color.Bold)
 				log.Printf("Removing socket connection: %s", client.conn.RemoteAddr())
 				color.Unset()
-
 				remoteAddr := client.conn.RemoteAddr()
 
 				event := events.Event{
@@ -146,9 +163,25 @@ func (h *Hub) run() {
 						Type:           events.DETAILSTATE,
 						Requestor:      client.conn.LocalAddr().String(),
 						EventCause:     events.INTERNAL,
-						Device:         "touchpanel-ui-microservice",
+						Device:         device,
 						EventInfoKey:   "websocket",
 						EventInfoValue: fmt.Sprintf("closed with %s", remoteAddr),
+					},
+					Building: building,
+					Room:     room,
+				}
+
+				countEvent := events.Event{
+					Hostname:         hostname,
+					Timestamp:        time.Now().Format(time.RFC3339),
+					LocalEnvironment: true,
+					Event: events.EventInfo{
+						Type:           events.DETAILSTATE,
+						Requestor:      client.conn.RemoteAddr().String(),
+						EventCause:     events.INTERNAL,
+						Device:         device,
+						EventInfoKey:   "websocket-count",
+						EventInfoValue: fmt.Sprintf("%v", len(h.clients)),
 					},
 					Building: building,
 					Room:     room,
@@ -157,8 +190,10 @@ func (h *Hub) run() {
 				resolvedRemote, err := net.LookupAddr(strings.Split(remoteAddr.String(), ":")[0])
 				if err == nil {
 					event.Event.EventInfoValue = fmt.Sprintf("closed with %s", resolvedRemote)
+					countEvent.Event.Requestor = fmt.Sprintf("%s", resolvedRemote)
 				}
 				h.eventNode.PublishEvent(events.Metrics, event)
+				h.eventNode.PublishEvent(events.Metrics, countEvent)
 
 				delete(h.clients, client)
 				close(client.send)
