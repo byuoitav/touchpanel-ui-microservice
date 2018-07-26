@@ -20,7 +20,7 @@ func main() {
 	en := ce.NewEventNode("Touchpanel UI", os.Getenv("EVENT_ROUTER_ADDRESS"), filters)
 
 	// websocket hub
-	hub := socket.NewHub()
+	hub := socket.NewHub(en)
 	go events.WriteEventsToSocket(en, hub)
 	go events.SendRefresh(hub, time.NewTimer(time.Second*10))
 
