@@ -1,13 +1,11 @@
 package main
 
 import (
-	"fmt"
 	"net/http"
 	"os"
 	"time"
 
 	ce "github.com/byuoitav/common/events"
-	"github.com/byuoitav/device-monitoring-microservice/statusinfrastructure"
 	"github.com/byuoitav/touchpanel-ui-microservice/events"
 	"github.com/byuoitav/touchpanel-ui-microservice/handlers"
 	"github.com/byuoitav/touchpanel-ui-microservice/socket"
@@ -33,7 +31,9 @@ func main() {
 	// router.Use(echo.WrapMiddleware(authmiddleware.AuthenticateUser))
 
 	router.GET("/health", echo.WrapHandler(http.HandlerFunc(health.Check)))
-	router.GET("/mstatus", GetStatus)
+	router.GET("/mstatus", func(context echo.Context) error {
+		return hub.GetStatus(context)
+	})
 
 	// event endpoints
 	router.POST("/publish", handlers.PublishEvent, BindEventNode(en))
@@ -53,10 +53,6 @@ func main() {
 	router.PUT("/refresh", func(context echo.Context) error {
 		events.SendRefresh(hub, time.NewTimer(0))
 		return nil
-	})
-	router.GET("/wsinfo", func(context echo.Context) error {
-		si, _ := socket.GetSocketInfo(hub)
-		return context.JSON(http.StatusOK, si)
 	})
 	router.PUT("/socketTest", func(context echo.Context) error {
 		events.SendTest(hub)
@@ -95,24 +91,6 @@ func BindEventNode(en *ce.EventNode) echo.MiddlewareFunc {
 			return next(c)
 		}
 	}
-}
-
-// GetStatus ...
-func GetStatus(context echo.Context) error {
-	var s statusinfrastructure.Status
-	var err error
-
-	s.Version, err = statusinfrastructure.GetVersion("version.txt")
-	if err != nil {
-		s.Version = "missing"
-		s.Status = statusinfrastructure.StatusSick
-		s.StatusInfo = fmt.Sprintf("Error: %s", err.Error())
-	} else {
-		s.Status = statusinfrastructure.StatusOK
-		s.StatusInfo = ""
-	}
-
-	return context.JSON(http.StatusOK, s)
 }
 
 func redirect(context echo.Context) error {

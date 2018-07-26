@@ -1,9 +1,15 @@
 package socket
 
 import (
+	"fmt"
 	"log"
+	"net"
+	"net/http"
+	"strings"
 
+	"github.com/byuoitav/device-monitoring-microservice/statusinfrastructure"
 	"github.com/fatih/color"
+	"github.com/labstack/echo"
 )
 
 type Hub struct {
@@ -34,6 +40,52 @@ func NewHub() *Hub {
 
 func (h *Hub) WriteToSockets(message interface{}) {
 	h.broadcast <- message
+}
+
+func (h *Hub) GetStatus(context echo.Context) error {
+	ret := make(map[string]interface{})
+
+	statusInfo := make(map[string]interface{})
+
+	version, err := statusinfrastructure.GetVersion("version.txt")
+	if err != nil {
+		ret["version"] = "missing"
+		ret["statuscode"] = statusinfrastructure.StatusSick
+		statusInfo["version-error"] = err.Error()
+	} else {
+		ret["version"] = version
+		ret["statuscode"] = statusinfrastructure.StatusOK
+		statusInfo["version-error"] = ""
+	}
+
+	statusInfo["websocket-connections"] = len(h.clients)
+	var wsInfo []map[string]interface{}
+
+	for client := range h.clients {
+		info := make(map[string]interface{})
+		localAddr := client.conn.LocalAddr()
+		remoteAddr := client.conn.RemoteAddr()
+		info["raw-connection"] = fmt.Sprintf("%s => %s", remoteAddr, localAddr)
+
+		resolvedLocal, err := net.LookupAddr(strings.Split(localAddr.String(), ":")[0])
+		if err != nil {
+			info["resolve-local-error"] = err.Error()
+		}
+
+		resolvedRemote, err := net.LookupAddr(strings.Split(remoteAddr.String(), ":")[0])
+		if err != nil {
+			info["resolve-remote-error"] = err.Error()
+		}
+
+		info["resolved-connection"] = fmt.Sprintf("%s => %s", resolvedRemote, resolvedLocal)
+
+		wsInfo = append(wsInfo, info)
+	}
+
+	statusInfo["websocket-info"] = wsInfo
+	ret["statusinfo"] = statusInfo
+
+	return context.JSON(http.StatusOK, ret)
 }
 
 func (h *Hub) run() {
