@@ -101,11 +101,14 @@ func (h *Hub) run() {
 	for {
 		select {
 		case client := <-h.register:
-			color.Set(color.FgYellow, color.Bold)
-			log.Printf("New socket connection: %s", client.conn.RemoteAddr())
-			color.Unset()
-
 			remoteAddr := client.conn.RemoteAddr()
+			localAddr := client.conn.LocalAddr()
+
+			h.clients[client] = true
+
+			color.Set(color.FgYellow, color.Bold)
+			log.Printf("New socket connection: %s", remoteAddr)
+			color.Unset()
 
 			event := events.Event{
 				Hostname:         hostname,
@@ -113,7 +116,7 @@ func (h *Hub) run() {
 				LocalEnvironment: true,
 				Event: events.EventInfo{
 					Type:           events.DETAILSTATE,
-					Requestor:      client.conn.LocalAddr().String(),
+					Requestor:      localAddr.String(),
 					EventCause:     events.INTERNAL,
 					Device:         device,
 					EventInfoKey:   "websocket",
@@ -129,7 +132,7 @@ func (h *Hub) run() {
 				LocalEnvironment: true,
 				Event: events.EventInfo{
 					Type:           events.DETAILSTATE,
-					Requestor:      client.conn.RemoteAddr().String(),
+					Requestor:      remoteAddr.String(),
 					EventCause:     events.INTERNAL,
 					Device:         device,
 					EventInfoKey:   "websocket-count",
@@ -146,14 +149,17 @@ func (h *Hub) run() {
 			}
 			h.eventNode.PublishEvent(events.Metrics, event)
 			h.eventNode.PublishEvent(events.Metrics, countEvent)
-
-			h.clients[client] = true
 		case client := <-h.unregister:
 			if _, ok := h.clients[client]; ok {
-				color.Set(color.FgYellow, color.Bold)
-				log.Printf("Removing socket connection: %s", client.conn.RemoteAddr())
-				color.Unset()
 				remoteAddr := client.conn.RemoteAddr()
+				localAddr := client.conn.LocalAddr()
+
+				delete(h.clients, client)
+				close(client.send)
+
+				color.Set(color.FgYellow, color.Bold)
+				log.Printf("Removed socket connection: %s", remoteAddr)
+				color.Unset()
 
 				event := events.Event{
 					Hostname:         hostname,
@@ -161,7 +167,7 @@ func (h *Hub) run() {
 					LocalEnvironment: true,
 					Event: events.EventInfo{
 						Type:           events.DETAILSTATE,
-						Requestor:      client.conn.LocalAddr().String(),
+						Requestor:      localAddr.String(),
 						EventCause:     events.INTERNAL,
 						Device:         device,
 						EventInfoKey:   "websocket",
@@ -177,7 +183,7 @@ func (h *Hub) run() {
 					LocalEnvironment: true,
 					Event: events.EventInfo{
 						Type:           events.DETAILSTATE,
-						Requestor:      client.conn.RemoteAddr().String(),
+						Requestor:      remoteAddr.String(),
 						EventCause:     events.INTERNAL,
 						Device:         device,
 						EventInfoKey:   "websocket-count",
@@ -194,9 +200,6 @@ func (h *Hub) run() {
 				}
 				h.eventNode.PublishEvent(events.Metrics, event)
 				h.eventNode.PublishEvent(events.Metrics, countEvent)
-
-				delete(h.clients, client)
-				close(client.send)
 			}
 		case message := <-h.broadcast:
 			for client := range h.clients {
