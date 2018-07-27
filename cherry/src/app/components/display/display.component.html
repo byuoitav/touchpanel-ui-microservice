@@ -5,9 +5,9 @@
         
         And then users can swipe left/right to access more displays if there are more
     -->
-    <div *ngFor="let d of preset?.displays" class="output">
+    <div *ngFor="let d of preset?.displays">
         <button mat-button 
-            class="mat-elevation-z5"
+            class="output mat-elevation-z15"
             [color]="selectedDisplays.has(d) ? 'accent' : ''" 
             (click)="toggleDisplay(d)" 
             [class.mat-raised-button]="selectedDisplays.has(d)">
@@ -36,9 +36,9 @@
 
 <div class="inputs">
     <!-- blank button -->
-    <div class="input">
+    <div>
         <button mat-button 
-            class="mat-elevation-z2"
+            class="input mat-elevation-z7"
             [color]="isOneBlanked() ? 'accent' : ''"
             (click)="blank()"
             [class.mat-raised-button]="isOneBlanked()">
@@ -51,9 +51,9 @@
     </div>
 
     <!-- inputs -->
-    <div *ngFor="let i of preset?.inputs" class="input">
+    <div *ngFor="let i of preset?.inputs">
         <button mat-button 
-            class="mat-elevation-z2"
+            class="input mat-elevation-z7"
             [color]="inputUsed(i) ? 'accent' : ''"
             (click)="changeInput(i)"
             (press)="openInputDialog(i)"

@@ -29,19 +29,19 @@ $inputs-height: 40vh;
 }
 
 %io-button {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    padding: 0 .5vw 0 .5vw;
+
     .mat-button {
         padding-top: 1vh;
-        min-width: 0 !important;
     }
 }
 
-@mixin io-icon($width, $height, $iconsize) {
+@mixin io-icon($iconsize) {
     @extend %align-vert;
-
-    text-align: center;
-    max-height: $height / 1.5;
-    width: $width / 10;
-    min-width: 0 !important;
 
     .material-icons {
         font-size: $iconsize;
@@ -59,11 +59,12 @@ $inputs-height: 40vh;
     text-align: center;
 
     .output {
-        @extend %io-button;
-        margin-right: $max-width / 100;
+         @extend %io-button;
+         margin-right: $max-width / 100;
+         width: $max-width / 7;
 
         .icon {
-            @include io-icon($max-width, $outputs-height, 400%);
+            @include io-icon(400%);
         }
     }
 
@@ -79,12 +80,18 @@ $inputs-height: 40vh;
     margin-bottom: $inputs-height / 8;
     margin-top: $inputs-height / 10;
 
+    // overflowing inputs line
+    flex-wrap: wrap-reverse;
+
     .input {
         @extend %io-button;
         margin-right: $max-width / 200;
+        width: $max-width / 9;
+        margin-bottom: $inputs-height / 23;
 
         .icon {
-            @include io-icon($max-width/1.5, $inputs-height, 200%);
+            padding-top: 1.3vh;
+            @include io-icon(200%);
         }
     }
 }
