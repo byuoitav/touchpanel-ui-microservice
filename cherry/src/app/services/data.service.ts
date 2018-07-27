@@ -149,7 +149,7 @@ export class DataService {
           this.audioDevices.push(a);
         } else {
           console.warn(
-            "No device configuration for this audio device: ",
+            "No output configuration for this audio device (check the ui config): ",
             status.name
           );
         }
