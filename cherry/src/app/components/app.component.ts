@@ -44,7 +44,9 @@ export class AppComponent {
   }
 
   public isPoweredOff(): boolean {
-    if (!this.loaded) return true;
+    if (!this.loaded) {
+      return true;
+    }
     return !Output.isPoweredOn(this.data.panel.preset.displays);
   }
 
@@ -53,8 +55,9 @@ export class AppComponent {
     this.progressMode = QUERY;
 
     this.command.powerOnDefault(this.data.panel.preset).subscribe(success => {
-      if (!success) console.warn("failed to turn on");
-      else {
+      if (!success) {
+        console.warn("failed to turn on");
+      } else {
         // switch direction of loading bar
         this.progressMode = LOADING;
 
@@ -67,8 +70,9 @@ export class AppComponent {
     this.progressMode = QUERY;
 
     this.command.powerOff(this.data.panel.preset).subscribe(success => {
-      if (!success) console.warn("failed to turn off");
-      else {
+      if (!success) {
+        console.warn("failed to turn off");
+      } else {
         this.reset();
       }
     });
@@ -89,7 +93,7 @@ export class AppComponent {
   }
 
   public openHelpDialog() {
-    let dialogRef = this.dialog.open(HelpDialog, {
+    const dialogRef = this.dialog.open(HelpDialog, {
       width: "70vw"
     });
   }
