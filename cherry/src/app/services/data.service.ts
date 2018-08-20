@@ -350,24 +350,31 @@ export class DataService {
               break;
             }
             case BLANKED: {
-              let display: Display;
-              display = this.displays.find(d => d.name === e.device);
+              const display = this.displays.find(d => d.name === e.device);
 
-              display.blanked = e.eventInfoValue.toLowerCase() === "true";
+              if (display != null) {
+                display.blanked = e.eventInfoValue.toLowerCase() === "true";
+              }
               break;
             }
             case MUTED: {
-              let audioDevice: AudioDevice;
-              audioDevice = this.audioDevices.find(a => a.name === e.device);
+              const audioDevice = this.audioDevices.find(
+                a => a.name === e.device
+              );
 
-              audioDevice.muted = e.eventInfoValue.toLowerCase() === "true";
+              if (audioDevice != null) {
+                audioDevice.muted = e.eventInfoValue.toLowerCase() === "true";
+              }
               break;
             }
             case VOLUME: {
-              let audioDevice: AudioDevice;
-              audioDevice = this.audioDevices.find(a => a.name === e.device);
+              const audioDevice = this.audioDevices.find(
+                a => a.name === e.device
+              );
 
-              audioDevice.volume = parseInt(e.eventInfoValue, 10);
+              if (audioDevice != null) {
+                audioDevice.volume = parseInt(e.eventInfoValue, 10);
+              }
               break;
             }
             case PRESET_SWITCH:
