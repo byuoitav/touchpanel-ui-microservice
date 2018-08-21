@@ -36,11 +36,11 @@ export class APIService {
     this.loaded = new EventEmitter<boolean>();
 
     if (APIService.options == null) {
-      let headers = new Headers();
+      const headers = new Headers();
       headers.append("content-type", "application/json");
       APIService.options = new RequestOptions({ headers: headers });
 
-      let base = location.origin.split(":");
+      const base = location.origin.split(":");
       APIService.localurl = base[0] + ":" + base[1];
 
       APIService.room = new Room();
@@ -69,7 +69,7 @@ export class APIService {
       data => {
         APIService.piHostname = String(data);
 
-        let split = APIService.piHostname.split("-");
+        const split = APIService.piHostname.split("-");
         APIService.building = split[0];
         APIService.roomName = split[1];
 
@@ -120,7 +120,7 @@ export class APIService {
   private monitorAPI() {
     this.getAPIHealth().subscribe(
       data => {
-        if (data["statuscode"] != 0) {
+        if (data["statuscode"] !== 0) {
           this.setupAPIUrl(true);
         }
 
@@ -268,7 +268,7 @@ export class APIService {
   }
 
   public help(type: string): Observable<Object> {
-    let body = { building: APIService.building, room: APIService.roomName };
+    const body = { building: APIService.building, room: APIService.roomName };
 
     switch (type) {
       case "help":

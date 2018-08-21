@@ -30,12 +30,14 @@
 
 
 <ng-template #home>
-    <button mat-raised-button
-        color="warn"
-        class="power"
-        (click)="powerOff()">
-        Power Off
-    </button>
+    <ng-container *ngIf="data?.panel?.preset?.displays?.length > 0">
+        <button mat-raised-button
+            color="warn"
+            class="power"
+            (click)="powerOff()">
+            Power Off
+        </button>
+    </ng-container>
 
     <div class="secondary-theme">
         <button mat-raised-button
@@ -46,26 +48,48 @@
         </button>
     </div>
 
-    <mat-tab-group
-        backgroundColor="primary"
-        color="accent"
-        [(selectedIndex)]="selectedTabIndex">
-        <mat-tab label="Display">
-            <!-- display component -->
-            <display
-                [preset]="data?.panel?.preset">
-            </display>
-        </mat-tab>
-    
-        <mat-tab label="Audio Control">
-            <!-- audio control -->
-            <!-- requires weird trick (*ngIf) to make animations work when the tab is opened -->
-            <audiocontrol
-                *ngIf="selectedTabIndex == 1" [@delay]
-                [preset]="data?.panel?.preset">
-            </audiocontrol>
-        </mat-tab>
-    </mat-tab-group>
+    <!-- home screen if there are displays -->
+    <ng-container *ngIf="data?.panel?.preset?.displays?.length > 0">
+        <mat-tab-group
+            backgroundColor="primary"
+            color="accent"
+            [(selectedIndex)]="selectedTabIndex">
+
+            <mat-tab label="Display">
+                <!-- display component -->
+                <display
+                    [preset]="data?.panel?.preset">
+                </display>
+            </mat-tab>
+
+            <mat-tab label="Audio Control">
+                <!-- audio control -->
+                <!-- requires weird trick (*ngIf) to make animations work when the tab is opened -->
+                <audiocontrol
+                    *ngIf="selectedTabIndex == 1"
+                    [@delay]
+                    [preset]="data?.panel?.preset"
+                    [audioGroups]="!data?.panel?.features?.includes('no-audio-groups')">
+                </audiocontrol>
+            </mat-tab>
+        </mat-tab-group>
+    </ng-container>
+
+    <!-- if there are no displays -->
+    <ng-container>
+        <mat-tab-group
+            backgroundColor="primary"
+            color="accent">
+
+            <mat-tab label="Audio Control">
+                <!-- audio control -->
+                <audiocontrol
+                    [preset]="data?.panel?.preset"
+                    [audioGroups]="!data?.panel?.features?.includes('no-audio-groups')">
+                </audiocontrol>
+            </mat-tab>
+        </mat-tab-group>
+    </ng-container>
 </ng-template>
 
 <ng-template #loading>
