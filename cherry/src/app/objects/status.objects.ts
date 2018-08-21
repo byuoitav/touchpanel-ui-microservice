@@ -1,222 +1,260 @@
-import { Type } from 'serializer.ts/Decorators';
-import { EventEmitter } from '@angular/core';
-//import { SpringboardItem } from '../components/springboard.component';
-import { AudioConfiguration } from './objects';
-import { APIService } from '../services/api.service';
+import { Type } from "serializer.ts/Decorators";
+import { EventEmitter } from "@angular/core";
+import { AudioConfiguration } from "./objects";
+import { APIService } from "../services/api.service";
 
-export const POWER: string = "power";
-export const INPUT: string = "input";
-export const BLANKED: string = "blanked";
-export const MUTED: string = "muted";
-export const VOLUME: string = "volume";
+export const POWER = "power";
+export const INPUT = "input";
+export const BLANKED = "blanked";
+export const MUTED = "muted";
+export const VOLUME = "volume";
 
 export class Device {
-	name: string;
-	displayname: string;
-    icon: string;
+  name: string;
+  displayname: string;
+  icon: string;
 
-    constructor(name: string, displayname: string, icon: string) {
-        this.name = name;
-        this.displayname = displayname;
-        this.icon = icon;
+  constructor(name: string, displayname: string, icon: string) {
+    this.name = name;
+    this.displayname = displayname;
+    this.icon = icon;
+  }
+
+  public static filterDevices<T extends Device>(
+    names: string[],
+    devices: T[]
+  ): T[] {
+    if (names == null || devices == null) {
+      return [];
+    }
+    const ret: T[] = [];
+
+    for (const name of names) {
+      const dev = devices.find(d => d.name === name);
+      if (dev != null) {
+        ret.push(dev);
+      }
     }
 
-    public static filterDevices<T extends Device>(names: string[], devices: T[]): T[] {
-        if (names == null || devices == null) {
-            return [];
-        }
-        let ret: T[] = []; 
+    return ret;
+  }
 
-        for (let name of names) {
-            let dev = devices.find(d => d.name == name);
-            if (dev != null) {
-                ret.push(dev); 
-            }
-        }
-
-        return ret;
+  public static getDeviceByName<T extends Device>(
+    name: string,
+    devices: T[]
+  ): T {
+    if (name == null || devices == null) {
+      return null;
     }
 
-    public static getDeviceByName<T extends Device>(name: string, devices: T[]): T {
-        if (name == null || devices == null) {
-            return null;
-        }
-
-        for (let d of devices) {
-            if (d.name == name)
-                return d;
-        }
-
-        return null;
+    for (const d of devices) {
+      if (d.name === name) {
+        return d;
+      }
     }
 
-    public getName(): string {
-        return this.name; 
-    }
+    return null;
+  }
 
-    public getDisplayName(): string {
-        return this.displayname; 
-    }
+  public getName(): string {
+    return this.name;
+  }
 
-    public getIcon(): string {
-        return this.icon; 
-    }
+  public getDisplayName(): string {
+    return this.displayname;
+  }
+
+  public getIcon(): string {
+    return this.icon;
+  }
 }
 
 export class Input extends Device {
-    click: EventEmitter<null> = new EventEmitter();
+  click: EventEmitter<null> = new EventEmitter();
 
-    constructor(name: string, displayname: string, icon: string) {
-        super(name, displayname, icon);
-    }
+  constructor(name: string, displayname: string, icon: string) {
+    super(name, displayname, icon);
+  }
 
-    public static getInput(name: string, inputs: Input[]): Input {
-        return inputs.find(i => i.name === name);
-    }
+  public static getInput(name: string, inputs: Input[]): Input {
+    return inputs.find(i => i.name === name);
+  }
 }
 
 export class Output extends Device {
-    power: string;
-    input: Input;
+  power: string;
+  input: Input;
 
-    powerEmitter: EventEmitter<string>;
+  powerEmitter: EventEmitter<string>;
 
-    constructor(name: string, displayname: string, power: string, input: Input, icon: string) {
-        super(name, displayname, icon); 
-        this.power = power;
-        this.input = input;
-
-        this.powerEmitter = new EventEmitter();
+  public static getPower(outputs: Output[]): string {
+    for (const o of outputs) {
+      if (o.power === "on") {
+        return o.power;
+      }
     }
 
-    public getInputIcon(): string {
-        if (this.input == null)
-            return this.icon;
-        return this.input.icon;
+    return "standby";
+  }
+
+  public static isPoweredOn(outputs: Output[]): boolean {
+    for (const o of outputs) {
+      if (o.power !== "on") {
+        return false;
+      }
     }
 
-    public static getPower(outputs: Output[]): string {
-        for (let o of outputs) {
-            if (o.power == 'on')
-                return o.power;
-        }
+    return true;
+  }
 
-        return 'standby';
+  public static getInput(outputs: Output[]): Input {
+    let input: Input = null;
+
+    for (const o of outputs) {
+      if (input == null) {
+        input = o.input;
+      } else if (o.input !== input) {
+        // this means the input that appears selected may not actually be selected on all displays.
+        // to get the ~correct~ behavior, return null.
+        return o.input;
+      }
     }
 
-    public static isPoweredOn(outputs: Output[]): boolean {
-        for (let o of outputs) {
-            if (o.power != 'on') {
-                return false;
-            }
-        }
+    return input;
+  }
 
-        return true; 
+  public static setPower(s: string, outputs: Output[]) {
+    outputs.forEach(o => (o.power = s));
+  }
+
+  public static setInput(i: Input, outputs: Output[]) {
+    outputs.forEach(o => (o.input = i));
+  }
+
+  constructor(
+    name: string,
+    displayname: string,
+    power: string,
+    input: Input,
+    icon: string
+  ) {
+    super(name, displayname, icon);
+    this.power = power;
+    this.input = input;
+
+    this.powerEmitter = new EventEmitter();
+  }
+
+  public getInputIcon(): string {
+    if (this.input === null) {
+      return this.icon;
     }
-
-    public static getInput(outputs: Output[]): Input {
-        let input: Input = null;
-
-        for (let o of outputs) {
-            if (input == null) {
-                input = o.input;
-            } else if (o.input != input) {
-                // this means the input that appears selected may not actually be selected on all displays.
-                // to get the ~correct~ behavior, return null.
-                return o.input;
-            }
-        }
-
-        return input; 
-    }
-
-    public static setPower(s: string, outputs: Output[]) {
-        outputs.forEach(o => o.power = s); 
-    }
-
-    public static setInput(i: Input, outputs: Output[]) {
-        outputs.forEach(o => o.input = i); 
-    }
+    return this.input.icon;
+  }
 }
 
 export class Display extends Output {
-	blanked: boolean;
+  blanked: boolean;
 
-    constructor(name: string, displayname: string, power: string, input: Input, blanked: boolean, icon: string) {
-        super(name, displayname, power, input, icon);
-        this.blanked = blanked;
+  public static getDisplayListFromNames(
+    names: string[],
+    displaysSource: Display[]
+  ): Display[] {
+    return displaysSource.filter(d => names.includes(d.name));
+  }
+
+  constructor(
+    name: string,
+    displayname: string,
+    power: string,
+    input: Input,
+    blanked: boolean,
+    icon: string
+  ) {
+    super(name, displayname, power, input, icon);
+    this.blanked = blanked;
+  }
+
+  // returns true iff all are blanked
+  public static getBlank(displays: Display[]): boolean {
+    for (const d of displays) {
+      if (!d.blanked) {
+        return false;
+      }
     }
 
-    // returns true iff all are blanked
-    public static getBlank(displays: Display[]): boolean {
-        for (let d of displays) {
-            if (!d.blanked) {
-                return false;
-            }
-        }
+    return true;
+  }
 
-        return true; 
-    }
+  public static setBlank(b: boolean, displays: Display[]) {
+    displays.forEach(d => (d.blanked = b));
+  }
 
-    public static setBlank(b: boolean, displays: Display[]) {
-        displays.forEach(d => d.blanked = b); 
-    }
-
-    public getAudioConfiguration(): AudioConfiguration {
-        return APIService.room.uiconfig.audioConfiguration.find(a => a.display === this.name);
-    }
-
-    public static getDisplayListFromNames(names: string[], displaysSource: Display[]): Display[] {
-        return displaysSource.filter(d => names.includes(d.name));
-    }
+  public getAudioConfiguration(): AudioConfiguration {
+    return APIService.room.uiconfig.audioConfiguration.find(
+      a => a.display === this.name
+    );
+  }
 }
 
 export class AudioDevice extends Output {
-	muted: boolean;
-	volume: number;
-    type: string;
+  muted: boolean;
+  volume: number;
+  type: string;
 
-    mixlevel: number;
+  mixlevel: number;
 
-    constructor(name: string, displayname: string, power: string, input: Input, muted: boolean, volume: number, icon: string, type: string, mixlevel: number) {
-        super(name, displayname, power, input, icon);
-        this.muted = muted;
-        this.volume = volume;
-        this.type = type;
-        this.mixlevel = mixlevel;
+  constructor(
+    name: string,
+    displayname: string,
+    power: string,
+    input: Input,
+    muted: boolean,
+    volume: number,
+    icon: string,
+    type: string,
+    mixlevel: number
+  ) {
+    super(name, displayname, power, input, icon);
+    this.muted = muted;
+    this.volume = volume;
+    this.type = type;
+    this.mixlevel = mixlevel;
+  }
+
+  // return average of all volumes
+  public static getVolume(audioDevices: AudioDevice[]): number {
+    if (audioDevices == null) {
+      return 0;
     }
 
-    // return average of all volumes
-    public static getVolume(audioDevices: AudioDevice[]): number {
-        if (audioDevices == null)
-            return 0;
+    let volume = 0;
 
-        let volume: number = 0;
+    audioDevices.forEach(a => (volume += a.volume));
 
-        audioDevices.forEach(a => volume += a.volume);
+    return volume / audioDevices.length;
+  }
 
-        return volume / audioDevices.length;
+  // returns true iff both are muted
+  public static getMute(audioDevices: AudioDevice[]): boolean {
+    if (audioDevices == null) {
+      return false;
     }
 
-    // returns true iff both are muted
-    public static getMute(audioDevices: AudioDevice[]): boolean {
-        if (audioDevices == null)
-            return false;
-
-        for (let a of audioDevices) {
-            if (!a.muted) {
-                return false;
-            }
-        }
-
-        return true; 
+    for (const a of audioDevices) {
+      if (!a.muted) {
+        return false;
+      }
     }
 
-    public static setVolume(v: number, audioDevices: AudioDevice[]) {
-        audioDevices.forEach(a => a.volume = v);
-    }
+    return true;
+  }
 
-    public static setMute(m: boolean, audioDevices: AudioDevice[]) {
-        audioDevices.forEach(a => a.muted = m); 
-    }
+  public static setVolume(v: number, audioDevices: AudioDevice[]) {
+    audioDevices.forEach(a => (a.volume = v));
+  }
+
+  public static setMute(m: boolean, audioDevices: AudioDevice[]) {
+    audioDevices.forEach(a => (a.muted = m));
+  }
 }
