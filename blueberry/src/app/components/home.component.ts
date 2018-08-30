@@ -325,29 +325,42 @@ export class HomeComponent implements OnInit {
   }
 
   public turnOff(): EventEmitter<boolean> {
+    const ret: EventEmitter<boolean> = new EventEmitter<boolean>();
+
     if (this.wheel.preset === this.sharePreset) {
+      // unshare first
       this.unShare(true).subscribe(success => {
-        const ret: EventEmitter<boolean> = this.wheel.command.powerOff(
-          this.wheel.preset
-        );
-        ret.subscribe(good => {
-          if (good) {
-            this.wheel.close();
-          }
-        });
-        return ret;
-      });
-    } else {
-      const ret: EventEmitter<boolean> = this.wheel.command.powerOff(
-        this.wheel.preset
-      );
-      ret.subscribe(success => {
+
         if (success) {
-          this.wheel.close();
+          // power off this preset
+          this.wheel.command.powerOff(this.wheel.preset).subscribe(successTwo => {
+            if (successTwo) {
+              this.wheel.close();
+              ret.emit(true);
+            } else {
+              console.warn("failed to power off preset");
+              ret.emit(false);
+            }
+          });
+        } else {
+          console.warn("failed to unshare to turn off preset.")
+          ret.emit(false);
         }
       });
-      return ret;
+    } else {
+      // power off this preset.
+      this.wheel.command.powerOff(this.wheel.preset).subscribe(success => {
+        if (success) {
+          this.wheel.close();
+          ret.emit(true);
+        } else {
+          console.warn("failed to power off preset");
+          ret.emit(false);
+        }
+      });
     }
+
+    return ret;
   }
 
   public openedSelectDisplaysDialog() {
