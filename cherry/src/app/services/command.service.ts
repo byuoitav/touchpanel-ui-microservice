@@ -312,7 +312,6 @@ export class CommandService {
     for (const a of preset.audioDevices) {
       body.audioDevices.push({
         name: a.name,
-        power: "on",
         muted: false,
         volume: 30
       });
@@ -437,13 +436,6 @@ export class CommandService {
     for (const d of preset.displays) {
       body.displays.push({
         name: d.name,
-        power: "standby"
-      });
-    }
-
-    for (const a of preset.audioDevices) {
-      body.audioDevices.push({
-        name: a.name,
         power: "standby"
       });
     }
@@ -579,7 +571,6 @@ export class CommandService {
       for (const a of ac.audioDevices) {
         body.audioDevices.push({
           name: a.name,
-          power: "on",
           volume: 30,
           muted: false
         });
