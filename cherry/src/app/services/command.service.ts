@@ -11,6 +11,7 @@ import { MatSliderChange } from "@angular/material";
 
 import { APIService } from "./api.service";
 import { DataService } from "./data.service";
+import { Event } from "./socket.service";
 import { Input, Display, AudioDevice } from "../objects/status.objects";
 import { Preset, AudioConfig, ConfigCommand } from "../objects/objects";
 
@@ -24,7 +25,11 @@ const TIMEOUT = 12 * 1000;
 export class CommandService {
   private options: RequestOptions;
 
-  constructor(private http: Http, private data: DataService) {
+  constructor(
+    private http: Http,
+    private data: DataService,
+    public api: APIService
+  ) {
     const headers = new Headers();
     headers.append("content-type", "application/json");
     this.options = new RequestOptions({ headers: headers });
@@ -251,6 +256,16 @@ export class CommandService {
 
     this.put(body).subscribe(
       data => {
+        // post master volume update
+        const event = new Event(
+          0,
+          0,
+          APIService.piHostname,
+          preset.name,
+          "master-volume",
+          String(v)
+        );
+        this.api.sendFeatureEvent(event);
         ret.emit(true);
       },
       err => {
@@ -284,6 +299,15 @@ export class CommandService {
 
     this.put(body).subscribe(
       data => {
+        const event = new Event(
+          0,
+          0,
+          APIService.piHostname,
+          a.name,
+          "mix-level",
+          String(v)
+        );
+        this.api.sendFeatureEvent(event);
         ret.emit(true);
       },
       err => {
