@@ -92,6 +92,12 @@ export class DataService {
 
   private createOutputs() {
     // create displays
+    if (APIService.room.uiconfig.outputConfiguration == null) {
+      console.warn(
+        "missing output configuration. this will probably cause problems on cherry."
+      );
+    }
+
     for (const status of APIService.room.status.displays) {
       const config = APIService.room.config.devices.find(
         d => d.name === status.name
@@ -374,6 +380,25 @@ export class DataService {
 
               if (audioDevice != null) {
                 audioDevice.volume = parseInt(e.eventInfoValue, 10);
+              }
+              break;
+            }
+            case "master-volume": {
+              const presetToChange = this.presets.find(
+                p => p.name === e.device
+              );
+              if (presetToChange != null) {
+                presetToChange.masterVolume = parseInt(e.eventInfoValue, 10);
+              }
+              break;
+            }
+            case "mix-level": {
+              const audioDevice = this.audioDevices.find(
+                a => a.name === e.device
+              );
+
+              if (audioDevice != null) {
+                audioDevice.mixlevel = parseInt(e.eventInfoValue, 10);
               }
               break;
             }
