@@ -19,15 +19,20 @@ import { AudioDevice } from "../../objects/status.objects";
   encapsulation: ViewEncapsulation.Emulated
 })
 export class VolumeComponent {
-  @Input() level: number;
-  @Input() mute: boolean;
+  @Input()
+  level: number;
+  @Input()
+  mute: boolean;
 
-  @Output() levelChange: EventEmitter<number> = new EventEmitter();
-  @Output() muteChange: EventEmitter<MuteStatus> = new EventEmitter();
+  @Output()
+  levelChange: EventEmitter<number> = new EventEmitter();
+  @Output()
+  muteChange: EventEmitter<MuteStatus> = new EventEmitter();
 
   public beforeMuteLevel: number;
 
-  @ViewChild("slider") slider: MatSlider;
+  @ViewChild("slider")
+  slider: MatSlider;
 
   constructor() {}
 
@@ -46,7 +51,7 @@ export class VolumeComponent {
   public closeThumb() {
     setTimeout(() => {
       this.slider._elementRef.nativeElement.blur();
-    }, 1000);
+    }, 2000);
   }
 }
 

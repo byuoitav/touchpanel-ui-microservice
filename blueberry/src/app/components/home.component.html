@@ -5,7 +5,7 @@
     <button mat-fab class="help button" (click)="help.show()">
         <mat-icon>help</mat-icon>
     </button>
-</div> 
+</div>
 
 <div *ngIf="data.panel?.render">
     <wheel top="50vh" right="50vw" [sharing]="wheel?.preset === sharePreset" [openControlledByPower]="true" [blur]="false" [preset]="data.panel.preset" (init)="onWheelInit()"></wheel>
@@ -21,10 +21,10 @@
             <mat-icon>stop_screen_share</mat-icon>
         </button>
     </ng-container>
-</div> 
+</div>
 
 <div class="buttons top right">
-	<button mat-fab *ngIf="defaultPreset?.independentAudioDevices?.length > 0" class="independentAudio button" (click)="audioDialog.show()">
+    <button mat-fab *ngIf="defaultPreset?.independentAudioDevices?.length > 0" class="independentAudio button" (click)="audioDialog.show()">
         <mat-icon>mic</mat-icon>
     </button>
 </div>
@@ -37,24 +37,22 @@
     </div>
 </swal>
 
-<swal #help 
-    (confirm)="helpConfirmDialog.show()">
+<swal #help (confirm)="helpConfirmDialog.show()">
 
     <div *swalPartial="swalTargets.content">
-        <span>Please call AV Support at 801-422-7671 for help, or request help by pressing 'Request Help'</span>
+        <span *ngIf="!isAfterHours()">Please call AV Support at 801-422-7671 for help, or request help by pressing 'Request Help'.</span>
+        <span *ngIf="isAfterHours()">No technicians are currently available. For emergencies please call 801-422-7671.</span>
     </div>
 </swal>
 
-<swal #helpConfirm 
-    (cancel)="api.help('cancel').subscribe()">
-    
+<swal #helpConfirm (cancel)="api.help('cancel').subscribe()">
+
     <div *swalPartial="swalTargets.content">
         <span>Your help request has been recieved. A technician is on their way.</span>
     </div>
 </swal>
 
-<swal #selectdisplays 
-    (open)="openedSelectDisplaysDialog()">
+<swal #selectdisplays (open)="openedSelectDisplaysDialog()">
 
     <div *swalPartial="swalTargets.title">
         <span *ngIf="wheel.getInput()?.reachableDisplays?.length > 1">Select displays to share {{wheel.getInput()?.displayname}} with</span>
@@ -73,14 +71,10 @@
     </div>
 </swal>
 
-<swal #unshare
-    (open)="unShare(true)">
+<swal #unshare (open)="unShare(true)">
 </swal>
 
-<swal #mirror
-    (confirm)="unMirror(true)"
-    (cancel)="showAudioControl(mirrorDialog)"
-    [showCancelButton]="wheel?.preset?.independentAudioDevices?.length > 0">
+<swal #mirror (confirm)="unMirror(true)" (cancel)="showAudioControl(mirrorDialog)" [showCancelButton]="wheel?.preset?.independentAudioDevices?.length > 0">
 
     <div *swalPartial="swalTargets.confirmButton" class="swal-button">
         <span>Stop</span>

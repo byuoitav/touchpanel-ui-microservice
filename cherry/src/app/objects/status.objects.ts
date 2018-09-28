@@ -146,9 +146,10 @@ export class Output extends Device {
   }
 
   public getInputIcon(): string {
-    if (this.input === null) {
+    if (this.input == null) {
       return this.icon;
     }
+
     return this.input.icon;
   }
 }
