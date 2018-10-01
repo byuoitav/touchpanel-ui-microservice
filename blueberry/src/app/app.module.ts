@@ -9,7 +9,8 @@ import {
   MatMenuModule,
   MatDialogModule,
   MatGridListModule,
-  MatChipsModule
+  MatChipsModule,
+  MatProgressSpinnerModule
 } from "@angular/material";
 import { UiSwitchModule } from "ngx-ui-switch";
 import { SweetAlert2Module } from "@toverux/ngx-sweetalert2";
@@ -51,6 +52,7 @@ import { GraphService } from "./services/graph.service";
     MatDialogModule,
     MatGridListModule,
     MatChipsModule,
+    MatProgressSpinnerModule,
     UiSwitchModule,
     SweetAlert2Module.forRoot()
   ],
