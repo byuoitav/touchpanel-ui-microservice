@@ -30,8 +30,9 @@ import { HomeComponent } from "./home.component";
   styleUrls: ["./app.component.scss", "../colorscheme.scss"]
 })
 export class AppComponent {
-  @ViewChild(HomeComponent) public home: HomeComponent;
-  public animate: boolean = false;
+  @ViewChild(HomeComponent)
+  public home: HomeComponent;
+  public unlocking = false;
 
   constructor(private api: APIService, public socket: SocketService) {}
 
@@ -40,13 +41,12 @@ export class AppComponent {
       return;
     }
 
-    this.animate = true;
+    this.unlocking = true;
     this.home.turnOn().subscribe(success => {
       if (!success) {
         console.log("failed to turn on");
-        setTimeout(() => this.unlock, 1000);
       } else {
-        setTimeout(() => (this.animate = false), 1000);
+        setTimeout(() => (this.unlocking = false), 1000);
       }
     });
   }

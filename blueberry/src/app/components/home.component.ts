@@ -201,6 +201,7 @@ export class HomeComponent implements OnInit {
       type: "question",
       text: "i should be hidden",
       focusConfirm: false,
+      showConfirmButton: !this.isAfterHours(),
       confirmButtonText: "Request Help",
       showCancelButton: true,
       showLoaderOnConfirm: true,
