@@ -1,10 +1,30 @@
 <div class="basediv">
     <management [enabled]="home?.wheel?.getPower() != 'on'"></management>
 
-    <div class="lock" [class.disabled]="home?.wheel?.getPower() == 'on'" (click)="unlock()">
-        <object type="image/svg+xml" data="./assets/byu_medallion_white.svg" class="logo" [class.animate]="animate">
-        </object>
+    <ng-container>
+    <div *ngIf="home?.wheel?.getPower() != 'on'"
+        class="lock"
+        (click)="unlock()">
+
+        <ng-container *ngIf="!unlocking; else poweringOn">
+            <!-- byu logo -->
+            <object type="image/svg+xml"
+                data="./assets/byu_medallion_white.svg"
+                class="logo">
+            </object>
+
+            <!-- unlock text -->
+            <span class="text">Touch anywhere to start</span>
+        </ng-container>
+
+        <ng-template #poweringOn>
+            <div class="logo">
+                <mat-spinner color="primary"></mat-spinner>
+            </div>
+            <span class="text smaller">powering on, please wait...</span>
+        </ng-template>
     </div>
+    </ng-container>
 
     <home></home>
 </div>

@@ -16,32 +16,31 @@
         pointer-events: auto;
 
         display: flex;
+        flex-direction: column;
         justify-content: center;
         align-items: center;
 
-        transition: 1s ease-in all;
-        
-        &.disabled {
-            opacity: 0; 
-            pointer-events: none;
+        .text {
+            margin-top: 3%;
+            font-size: 150%;
+            color: white;
+            filter: invert(5%);
+
+            &.smaller {
+                transform: scale(.75);
+            }
         }
 
 
         .logo {
-            margin-top: 2%;
-            height: 50%; 
-            width: 50%;
+            height: 70vh;
+            width: 70vh;
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
             pointer-events: none;
-
             filter: invert(5%);
-
-            &.animate {
-                animation: spin 4s linear infinite alternate;        
-            }
-
-            &.grow {
-                animation: grow 500ms linear; 
-            }
         }
     }
 }
