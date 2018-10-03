@@ -50,7 +50,7 @@ func (h *Hub) WriteToSockets(message interface{}) {
 	h.broadcast <- message
 }
 
-func (h *Hub) GetStatus(context echo.Context) error {
+func (h *Hub) GetStatus(econtext echo.Context) error {
 	ret := make(map[string]interface{})
 
 	statusInfo := make(map[string]interface{})
@@ -102,7 +102,7 @@ func (h *Hub) GetStatus(context echo.Context) error {
 	statusInfo["websocket-info"] = wsInfo
 	ret["statusinfo"] = statusInfo
 
-	return context.JSON(http.StatusOK, ret)
+	return econtext.JSON(http.StatusOK, ret)
 }
 
 func (h *Hub) run() {
