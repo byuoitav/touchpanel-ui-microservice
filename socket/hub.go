@@ -220,6 +220,7 @@ func (h *Hub) run() {
 					event.Event.EventInfoValue = fmt.Sprintf("closed with %s", resolvedRemote)
 					countEvent.Event.Requestor = fmt.Sprintf("%s", resolvedRemote)
 				}
+				cancel()
 				h.eventNode.PublishEvent(events.Metrics, event)
 				h.eventNode.PublishEvent(events.Metrics, countEvent)
 			}
