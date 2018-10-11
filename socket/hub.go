@@ -1,6 +1,7 @@
 package socket
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"net"
@@ -13,6 +14,8 @@ import (
 	"github.com/fatih/color"
 	"github.com/labstack/echo"
 )
+
+const dnsTimeout = 50 * time.Millisecond
 
 type Hub struct {
 	// registered clients
@@ -50,6 +53,7 @@ func (h *Hub) WriteToSockets(message interface{}) {
 func (h *Hub) GetStatus(context echo.Context) error {
 	var ret status.MStatus
 	var err error
+
 	statusInfo := make(map[string]interface{})
 
 	ret.Version, err = status.GetMicroserviceVersion()
@@ -70,12 +74,22 @@ func (h *Hub) GetStatus(context echo.Context) error {
 		remoteAddr := client.conn.RemoteAddr()
 		info["raw-connection"] = fmt.Sprintf("%s => %s", remoteAddr, localAddr)
 
-		resolvedLocal, err := net.LookupAddr(strings.Split(localAddr.String(), ":")[0])
+		// build timeout context for reverse DNS lookup
+		ctx1, cancel1 := context.WithTimeout(context.TODO(), dnsTimeout)
+		ctx2, cancel2 := context.WithTimeout(context.TODO(), dnsTimeout)
+
+		defer cancel1()
+		defer cancel2()
+
+		// resolver for dns lookup
+		var r net.Resolver
+
+		resolvedLocal, err := r.LookupAddr(ctx1, strings.Split(localAddr.String(), ":")[0])
 		if err != nil {
 			info["resolve-local-error"] = err.Error()
 		}
 
-		resolvedRemote, err := net.LookupAddr(strings.Split(remoteAddr.String(), ":")[0])
+		resolvedRemote, err := r.LookupAddr(ctx2, strings.Split(remoteAddr.String(), ":")[0])
 		if err != nil {
 			info["resolve-remote-error"] = err.Error()
 		}
@@ -87,7 +101,7 @@ func (h *Hub) GetStatus(context echo.Context) error {
 	statusInfo["websocket-info"] = wsInfo
 	ret.Info = statusInfo
 
-	return context.JSON(http.StatusOK, ret)
+	return econtext.JSON(http.StatusOK, ret)
 }
 
 func (h *Hub) run() {
@@ -140,11 +154,17 @@ func (h *Hub) run() {
 				Room:     room,
 			}
 
-			resolvedRemote, err := net.LookupAddr(strings.Split(remoteAddr.String(), ":")[0])
+			// build timeout context for reverse DNS lookup
+			ctx, cancel := context.WithTimeout(context.TODO(), dnsTimeout)
+
+			// lookup DNS address
+			var r net.Resolver
+			resolvedRemote, err := r.LookupAddr(ctx, strings.Split(remoteAddr.String(), ":")[0])
 			if err == nil {
 				event.Event.EventInfoValue = fmt.Sprintf("opened with %s", resolvedRemote)
 				countEvent.Event.Requestor = fmt.Sprintf("%s", resolvedRemote)
 			}
+			cancel()
 			h.eventNode.PublishEvent(events.Metrics, event)
 			h.eventNode.PublishEvent(events.Metrics, countEvent)
 		case client := <-h.unregister:
@@ -190,12 +210,16 @@ func (h *Hub) run() {
 					Building: building,
 					Room:     room,
 				}
+				ctx, cancel := context.WithTimeout(context.TODO(), dnsTimeout)
 
-				resolvedRemote, err := net.LookupAddr(strings.Split(remoteAddr.String(), ":")[0])
+				// lookup DNS address
+				var r net.Resolver
+				resolvedRemote, err := r.LookupAddr(ctx, strings.Split(remoteAddr.String(), ":")[0])
 				if err == nil {
 					event.Event.EventInfoValue = fmt.Sprintf("closed with %s", resolvedRemote)
 					countEvent.Event.Requestor = fmt.Sprintf("%s", resolvedRemote)
 				}
+				cancel()
 				h.eventNode.PublishEvent(events.Metrics, event)
 				h.eventNode.PublishEvent(events.Metrics, countEvent)
 			}
