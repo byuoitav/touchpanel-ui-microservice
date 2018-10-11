@@ -9,7 +9,7 @@ import (
 	"time"
 
 	"github.com/byuoitav/common/events"
-	"github.com/byuoitav/device-monitoring-microservice/statusinfrastructure"
+	"github.com/byuoitav/common/status"
 	"github.com/fatih/color"
 	"github.com/labstack/echo"
 )
@@ -48,19 +48,17 @@ func (h *Hub) WriteToSockets(message interface{}) {
 }
 
 func (h *Hub) GetStatus(context echo.Context) error {
-	ret := make(map[string]interface{})
-
+	var ret status.MStatus
+	var err error
 	statusInfo := make(map[string]interface{})
 
-	version, err := statusinfrastructure.GetVersion("version.txt")
+	ret.Version, err = status.GetMicroserviceVersion()
 	if err != nil {
-		ret["version"] = "missing"
-		ret["statuscode"] = statusinfrastructure.StatusSick
-		statusInfo["version-error"] = err.Error()
+		ret.StatusCode = status.Sick
+		ret.Info = err.Error()
 	} else {
-		ret["version"] = version
-		ret["statuscode"] = statusinfrastructure.StatusOK
-		statusInfo["version-error"] = ""
+		ret.StatusCode = status.Healthy
+		ret.Info = err.Error()
 	}
 
 	statusInfo["websocket-connections"] = len(h.clients)
@@ -87,7 +85,7 @@ func (h *Hub) GetStatus(context echo.Context) error {
 	}
 
 	statusInfo["websocket-info"] = wsInfo
-	ret["statusinfo"] = statusInfo
+	ret.Info = statusInfo
 
 	return context.JSON(http.StatusOK, ret)
 }
