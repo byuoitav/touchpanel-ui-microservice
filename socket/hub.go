@@ -58,7 +58,6 @@ func (h *Hub) GetStatus(context echo.Context) error {
 		ret.Info = err.Error()
 	} else {
 		ret.StatusCode = status.Healthy
-		ret.Info = err.Error()
 	}
 
 	statusInfo["websocket-connections"] = len(h.clients)
