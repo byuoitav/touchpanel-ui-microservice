@@ -8,6 +8,7 @@ import (
 	"github.com/byuoitav/central-event-system/hub/base"
 	"github.com/byuoitav/central-event-system/messenger"
 	"github.com/byuoitav/common"
+	"github.com/byuoitav/common/log"
 	commonEvents "github.com/byuoitav/common/v2/events"
 	"github.com/byuoitav/touchpanel-ui-microservice/events"
 	"github.com/byuoitav/touchpanel-ui-microservice/handlers"
@@ -17,10 +18,13 @@ import (
 )
 
 func main() {
+	deviceInfo := commonEvents.GenerateBasicDeviceInfo(os.Getenv("SYSTEM_ID"))
 	messenger, err := messenger.BuildMessenger(os.Getenv("HUB_ADDRESS"), base.Messenger, 1000)
 	if err != nil {
+		log.L.Errorf("unable to build the messenger: %s", err.Error())
 	}
 
+	messenger.SubscribeToRooms([]string{deviceInfo.RoomID})
 	socket.SetMessenger(messenger)
 
 	// websocket hub
@@ -91,18 +95,6 @@ func main() {
 
 	router.Start(port)
 }
-
-/*
-// BindEventNode ...
-func BindEventNode(en *ce.EventNode) echo.MiddlewareFunc {
-	return func(next echo.HandlerFunc) echo.HandlerFunc {
-		return func(c echo.Context) error {
-			c.Set(ce.ContextEventNode, en)
-			return next(c)
-		}
-	}
-}
-*/
 
 func redirect(context echo.Context) error {
 	http.Redirect(context.Response().Writer, context.Request(), "http://github.com/404", 302)
