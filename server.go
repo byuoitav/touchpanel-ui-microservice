@@ -5,57 +5,66 @@ import (
 	"os"
 	"time"
 
-	ce "github.com/byuoitav/common/events"
+	"github.com/byuoitav/central-event-system/hub/base"
+	"github.com/byuoitav/central-event-system/messenger"
+	"github.com/byuoitav/common"
+	commonEvents "github.com/byuoitav/common/v2/events"
 	"github.com/byuoitav/touchpanel-ui-microservice/events"
 	"github.com/byuoitav/touchpanel-ui-microservice/handlers"
 	"github.com/byuoitav/touchpanel-ui-microservice/socket"
 	"github.com/byuoitav/touchpanel-ui-microservice/uiconfig"
-	"github.com/jessemillar/health"
 	"github.com/labstack/echo"
-	"github.com/labstack/echo/middleware"
 )
 
 func main() {
-	filters := []string{ce.UI, ce.UIFeature}
-	en := ce.NewEventNode("Touchpanel UI", os.Getenv("EVENT_ROUTER_ADDRESS"), filters)
+	messenger, err := messenger.BuildMessenger(os.Getenv("HUB_ADDRESS"), base.Messenger, 1000)
+	if err != nil {
+	}
+
+	socket.SetMessenger(messenger)
 
 	// websocket hub
-	hub := socket.NewHub(en)
-	go events.WriteEventsToSocket(en, hub)
-	go events.SendRefresh(hub, time.NewTimer(time.Second*10))
+	go events.WriteEventsToSocket(messenger)
+	go events.SendRefresh(time.NewTimer(time.Second * 10))
 
 	port := ":8888"
-	router := echo.New()
-	router.Pre(middleware.RemoveTrailingSlash())
-	router.Use(middleware.CORS())
-	// router.Use(echo.WrapMiddleware(authmiddleware.AuthenticateUser))
+	router := common.NewRouter()
 
-	router.GET("/health", echo.WrapHandler(http.HandlerFunc(health.Check)))
-	router.GET("/mstatus", func(context echo.Context) error {
-		return hub.GetStatus(context)
+	router.GET("/status", func(ctx echo.Context) error {
+		return socket.GetStatus(ctx)
 	})
 
+	// TODO note that I am removing the publish feature endpoint.
 	// event endpoints
-	router.POST("/publish", handlers.PublishEvent, BindEventNode(en))
-	router.POST("/publishfeature", handlers.PublishFeature, BindEventNode(en))
+	router.POST("/publish", func(ctx echo.Context) error {
+		var event commonEvents.Event
+		gerr := ctx.Bind(&event)
+		if gerr != nil {
+			return ctx.String(http.StatusBadRequest, gerr.Error())
+		}
+
+		// TODO verify that I am correct in assuming that events are always routed to each messenger in the room (to the other UI's)
+		messenger.SendEvent(base.WrapEvent(event))
+		return ctx.String(http.StatusOK, "success")
+	})
 
 	// websocket
 	router.GET("/websocket", func(context echo.Context) error {
-		socket.ServeWebsocket(hub, context.Response().Writer, context.Request())
+		socket.ServeWebsocket(context.Response().Writer, context.Request())
 		return nil
 	})
 
 	// socket endpoints
 	router.PUT("/screenoff", func(context echo.Context) error {
-		events.SendScreenTimeout(hub)
+		events.SendScreenTimeout()
 		return nil
 	})
 	router.PUT("/refresh", func(context echo.Context) error {
-		events.SendRefresh(hub, time.NewTimer(0))
+		events.SendRefresh(time.NewTimer(0))
 		return nil
 	})
 	router.PUT("/socketTest", func(context echo.Context) error {
-		events.SendTest(hub)
+		events.SendTest()
 		return context.JSON(http.StatusOK, "sent")
 	})
 
@@ -83,6 +92,7 @@ func main() {
 	router.Start(port)
 }
 
+/*
 // BindEventNode ...
 func BindEventNode(en *ce.EventNode) echo.MiddlewareFunc {
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
@@ -92,6 +102,7 @@ func BindEventNode(en *ce.EventNode) echo.MiddlewareFunc {
 		}
 	}
 }
+*/
 
 func redirect(context echo.Context) error {
 	http.Redirect(context.Response().Writer, context.Request(), "http://github.com/404", 302)

@@ -1,59 +1,62 @@
 package events
 
 import (
-	"encoding/json"
-	"errors"
 	"log"
-	"os"
 	"time"
 
-	"github.com/byuoitav/common/events"
+	"github.com/byuoitav/central-event-system/hub/base"
+	"github.com/byuoitav/central-event-system/messenger"
+	"github.com/byuoitav/common/v2/events"
 	"github.com/byuoitav/touchpanel-ui-microservice/socket"
 	"github.com/fatih/color"
-	"github.com/xuther/go-message-router/common"
 )
 
+// Message is a message down a websocket
 type Message struct {
 	Message string `json:"message"`
 }
 
-func WriteEventsToSocket(en *events.EventNode, h *socket.Hub) {
+func WriteEventsToSocket(m *messenger.Messenger) {
 	for {
-		var e events.Event
-		e, err := en.Read()
+		event, err := base.UnwrapEvent(m.ReceiveEvent())
 		if err != nil {
-			color.Set(color.FgRed)
-			log.Printf("failed to read into Event type: %s", err.Error())
-			color.Unset()
-		} else {
-			h.WriteToSockets(e)
+			log.Printf("unable to write an event to the socket: %s", err.Error())
 		}
+
+		// TODO decide what to filter out
+		// filter out heartbeat events (and whatever else)
+		if events.HasTag(event, events.Heartbeat) {
+			continue
+		}
+
+		socket.H.WriteToSockets(event)
 	}
 }
 
-func SendScreenTimeout(h *socket.Hub) {
-	h.WriteToSockets(Message{Message: "screenoff"})
+func SendScreenTimeout() {
+	socket.H.WriteToSockets(Message{Message: "screenoff"})
 }
 
-func SendRefresh(h *socket.Hub, delay *time.Timer) {
+func SendRefresh(delay *time.Timer) {
 	defer color.Unset()
 
 	<-delay.C
 	color.Set(color.FgYellow)
 	log.Printf("Refreshing...")
 
-	h.WriteToSockets(Message{Message: "refresh"})
+	socket.H.WriteToSockets(Message{Message: "refresh"})
 }
 
-func SendTest(h *socket.Hub) {
+func SendTest() {
 	defer color.Unset()
 
 	color.Set(color.FgYellow)
 	log.Printf("Sending event test...")
 
-	h.WriteToSockets(Message{Message: "websocketTest"})
+	socket.H.WriteToSockets(Message{Message: "websocketTest"})
 }
 
+/*
 func Publish(en *events.EventNode, event events.EventInfo, eventType string) error {
 	var e events.Event
 
@@ -98,3 +101,4 @@ func UIFilter(event common.Message) events.EventInfo {
 
 	return e.Event
 }
+*/
