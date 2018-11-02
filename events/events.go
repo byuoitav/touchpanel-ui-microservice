@@ -4,7 +4,6 @@ import (
 	"log"
 	"time"
 
-	"github.com/byuoitav/central-event-system/hub/base"
 	"github.com/byuoitav/central-event-system/messenger"
 	"github.com/byuoitav/common/v2/events"
 	"github.com/byuoitav/touchpanel-ui-microservice/socket"
@@ -18,10 +17,7 @@ type Message struct {
 
 func WriteEventsToSocket(m *messenger.Messenger) {
 	for {
-		event, err := base.UnwrapEvent(m.ReceiveEvent())
-		if err != nil {
-			log.Printf("unable to write an event to the socket: %s", err.Error())
-		}
+		event := m.ReceiveEvent()
 
 		// TODO decide what to filter out
 		// filter out heartbeat events (and whatever else)
