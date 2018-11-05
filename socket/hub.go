@@ -9,7 +9,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/byuoitav/central-event-system/hub/base"
 	"github.com/byuoitav/central-event-system/messenger"
 	"github.com/byuoitav/common/status"
 	"github.com/byuoitav/common/v2/events"
@@ -149,8 +148,8 @@ func (h *hub) run() {
 			}
 
 			if h.messenger != nil {
-				h.messenger.SendEvent(base.WrapEvent(event))
-				h.messenger.SendEvent(base.WrapEvent(countEvent))
+				h.messenger.SendEvent(event)
+				h.messenger.SendEvent(countEvent)
 			}
 		case client := <-h.unregister:
 			if _, ok := h.clients[client]; ok {
@@ -191,8 +190,8 @@ func (h *hub) run() {
 				}
 
 				if h.messenger != nil {
-					h.messenger.SendEvent(base.WrapEvent(event))
-					h.messenger.SendEvent(base.WrapEvent(countEvent))
+					h.messenger.SendEvent(event)
+					h.messenger.SendEvent(countEvent)
 				}
 			}
 		case message := <-h.broadcast:
