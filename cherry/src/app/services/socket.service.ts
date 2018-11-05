@@ -4,7 +4,16 @@ import {
   $WebSocket,
   WebSocketConfig
 } from "angular2-websocket/angular2-websocket";
-import { deserialize } from "serializer.ts/Serializer";
+import {
+  JsonConvert,
+  OperationMode,
+  ValueCheckingMode,
+  JsonObject,
+  JsonProperty,
+  Any,
+  JsonCustomConvert,
+  JsonConverter
+} from "json2typescript";
 
 export const OPEN = "open";
 export const CLOSE = "close";
@@ -31,6 +40,9 @@ export class SocketService {
     this.listener = new EventEmitter();
     this.screenoff = false;
 
+    const jsonConvert = new JsonConvert();
+    jsonConvert.ignorePrimitiveChecks = false;
+
     this.socket.onMessage(
       msg => {
         if (msg.data.includes("keepalive")) {
@@ -45,7 +57,8 @@ export class SocketService {
           console.log("socket test");
         } else {
           const data = JSON.parse(msg.data);
-          const event = deserialize<EventWrapper>(EventWrapper, data);
+          const event = jsonConvert.deserialize(data, Event);
+
           console.log("received event", event);
           this.listener.emit({ type: MESSAGE, data: event });
         }
@@ -77,6 +90,85 @@ export class SocketService {
   }
 }
 
+@JsonObject("BasicRoomInfo")
+class BasicRoomInfo {
+  @JsonProperty("buildingID", String)
+  BuildingID: string = undefined;
+
+  @JsonProperty("roomID", String)
+  RoomID: string = undefined;
+}
+
+@JsonObject("BasicDeviceInfo")
+class BasicDeviceInfo {
+  @JsonProperty("buildingID", String)
+  BuildingID: string = undefined;
+
+  @JsonProperty("roomID", String)
+  RoomID: string = undefined;
+
+  @JsonProperty("deviceID", String)
+  DeviceID: string = undefined;
+}
+
+@JsonConverter
+class DateConverter implements JsonCustomConvert<Date> {
+  serialize(date: Date): any {
+    function pad(n) {
+      return n < 10 ? "0" + n : n;
+    }
+
+    return (
+      date.getUTCFullYear() +
+      "-" +
+      pad(date.getUTCMonth() + 1) +
+      "-" +
+      pad(date.getUTCDate()) +
+      "T" +
+      pad(date.getUTCHours()) +
+      ":" +
+      pad(date.getUTCMinutes()) +
+      ":" +
+      pad(date.getUTCSeconds()) +
+      "Z"
+    );
+  }
+
+  deserialize(date: any): Date {
+    return new Date(date);
+  }
+}
+
+@JsonObject("Event")
+export class Event {
+  @JsonProperty("generating-system", String)
+  GeneratingSystem: string = undefined;
+
+  @JsonProperty("timestamp", DateConverter)
+  Timestamp: Date = undefined;
+
+  @JsonProperty("event-tags", [String])
+  EventTags: string[] = new Array<string>();
+
+  @JsonProperty("target-device", BasicDeviceInfo)
+  TargetDevice: BasicDeviceInfo = undefined;
+
+  @JsonProperty("affected-room", BasicRoomInfo)
+  AffectedRoom: BasicRoomInfo = undefined;
+
+  @JsonProperty("key", String)
+  Key: string = undefined;
+
+  @JsonProperty("value", String)
+  Value: string = undefined;
+
+  @JsonProperty("user", String, true)
+  User: string = undefined;
+
+  @JsonProperty("data", Any, true)
+  Data: any = undefined;
+
+  /*
 export class EventWrapper {
   hostname: string;
   timestamp: string;
@@ -85,7 +177,6 @@ export class EventWrapper {
   building: string;
   room: string;
 }
-
 export class Event {
   type: number;
   eventCause: number;
@@ -109,4 +200,6 @@ export class Event {
     this.eventInfoKey = eventInfoKey;
     this.eventInfoValue = eventInfoValue;
   }
+}
+*/
 }

@@ -2,7 +2,7 @@ import { Injectable, EventEmitter } from "@angular/core";
 import { Http } from "@angular/http";
 
 import { APIService } from "./api.service";
-import { SocketService, MESSAGE, EventWrapper, Event } from "./socket.service";
+import { SocketService, MESSAGE, Event } from "./socket.service";
 import {
   Preset,
   Panel,
@@ -322,95 +322,95 @@ export class DataService {
   private update() {
     this.socket.getEventListener().subscribe(event => {
       if (event.type === MESSAGE) {
-        const ew: EventWrapper = event.data;
-        const e = ew.event;
+        const e = event.data;
+        const split = e.TargetDevice.DeviceID.split("-");
 
-        if (e.eventInfoValue.length > 0) {
-          switch (e.eventInfoKey) {
+        if (e.Value.length > 0 && split.length === 3) {
+          switch (e.Key) {
             case POWER: {
               let output: Output;
-              output = this.displays.find(d => d.name === e.device);
+              output = this.displays.find(d => d.name === split[2]);
               if (output != null) {
-                output.power = e.eventInfoValue;
+                output.power = e.Value;
               }
 
-              output = this.audioDevices.find(a => a.name === e.device);
+              output = this.audioDevices.find(a => a.name === split[2]);
               if (output != null) {
-                output.power = e.eventInfoValue;
+                output.power = e.Value;
               }
 
               break;
             }
             case INPUT: {
               let output: Output;
-              output = this.displays.find(d => d.name === e.device);
+              output = this.displays.find(d => d.name === split[2]);
               if (output != null) {
-                output.input = Input.getInput(e.eventInfoValue, this.inputs);
+                output.input = Input.getInput(e.Value, this.inputs);
               }
 
-              output = this.audioDevices.find(a => a.name === e.device);
+              output = this.audioDevices.find(a => a.name === split[2]);
               if (output != null) {
-                output.input = Input.getInput(e.eventInfoValue, this.inputs);
+                output.input = Input.getInput(e.Value, this.inputs);
               }
 
               break;
             }
             case BLANKED: {
-              const display = this.displays.find(d => d.name === e.device);
+              const display = this.displays.find(d => d.name === split[2]);
 
               if (display != null) {
-                display.blanked = e.eventInfoValue.toLowerCase() === "true";
+                display.blanked = e.Value.toLowerCase() === "true";
               }
               break;
             }
             case MUTED: {
               const audioDevice = this.audioDevices.find(
-                a => a.name === e.device
+                a => a.name === split[2]
               );
 
               if (audioDevice != null) {
-                audioDevice.muted = e.eventInfoValue.toLowerCase() === "true";
+                audioDevice.muted = e.Value.toLowerCase() === "true";
               }
               break;
             }
             case VOLUME: {
               const audioDevice = this.audioDevices.find(
-                a => a.name === e.device
+                a => a.name === split[2]
               );
 
               if (audioDevice != null) {
-                audioDevice.volume = parseInt(e.eventInfoValue, 10);
+                audioDevice.volume = parseInt(e.Value, 10);
               }
               break;
             }
             case "master-volume": {
               const presetToChange = this.presets.find(
-                p => p.name === e.device
+                p => p.name === split[2]
               );
               if (presetToChange != null) {
-                presetToChange.masterVolume = parseInt(e.eventInfoValue, 10);
+                presetToChange.masterVolume = parseInt(e.Value, 10);
               }
               break;
             }
             case "mix-level": {
               const audioDevice = this.audioDevices.find(
-                a => a.name === e.device
+                a => a.name === split[2]
               );
 
               if (audioDevice != null) {
-                audioDevice.mixlevel = parseInt(e.eventInfoValue, 10);
+                audioDevice.mixlevel = parseInt(e.Value, 10);
               }
               break;
             }
             case PRESET_SWITCH:
               // switch presets
               if (
-                APIService.piHostname.toLowerCase() !== e.device.toLowerCase()
+                APIService.piHostname.toLowerCase() !== split[2].toLowerCase()
               ) {
                 break;
               }
 
-              const presetName = e.eventInfoValue.toLowerCase();
+              const presetName = e.Value.toLowerCase();
               const preset = this.presets.find(
                 p => p.name.toLowerCase() === presetName
               );

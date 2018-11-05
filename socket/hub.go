@@ -28,6 +28,8 @@ func init() {
 		unregister: make(chan *Client),
 		clients:    make(map[*Client]bool),
 	}
+
+	go H.run()
 }
 
 // hub is a socket hub
@@ -194,6 +196,7 @@ func (h *hub) run() {
 				}
 			}
 		case message := <-h.broadcast:
+			log.Printf("broadcasting message: %s", message)
 			for client := range h.clients {
 				select {
 				case client.send <- message:

@@ -18,6 +18,7 @@ import (
 )
 
 func main() {
+	log.L.Infof("here")
 	deviceInfo := commonEvents.GenerateBasicDeviceInfo(os.Getenv("SYSTEM_ID"))
 	messenger, err := messenger.BuildMessenger(os.Getenv("HUB_ADDRESS"), base.Messenger, 1000)
 	if err != nil {

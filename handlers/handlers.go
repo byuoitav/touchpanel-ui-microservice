@@ -23,7 +23,7 @@ func GetHostname(context echo.Context) error {
 }
 
 func GetPiHostname(context echo.Context) error {
-	hostname := os.Getenv("PI_HOSTNAME")
+	hostname := os.Getenv("SYSTEM_ID")
 	return context.JSON(http.StatusOK, hostname)
 }
 
