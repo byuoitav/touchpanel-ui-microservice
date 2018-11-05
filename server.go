@@ -49,7 +49,7 @@ func main() {
 		}
 
 		// TODO verify that I am correct in assuming that events are always routed to each messenger in the room (to the other UI's)
-		messenger.SendEvent(base.WrapEvent(event))
+		messenger.SendEvent(event)
 		return ctx.String(http.StatusOK, "success")
 	})
 
