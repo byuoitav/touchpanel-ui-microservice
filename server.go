@@ -25,7 +25,7 @@ func main() {
 		log.L.Errorf("unable to build the messenger: %s", err.Error())
 	}
 
-	messenger.SubscribeToRooms([]string{deviceInfo.RoomID})
+	messenger.SubscribeToRooms(deviceInfo.RoomID)
 	socket.SetMessenger(messenger)
 
 	// websocket hub
