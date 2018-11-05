@@ -257,14 +257,15 @@ export class CommandService {
     this.put(body).subscribe(
       data => {
         // post master volume update
-        const event = new Event(
-          0,
-          0,
-          APIService.piHostname,
-          preset.name,
-          "master-volume",
-          String(v)
-        );
+        const event = new Event();
+
+        event.User = APIService.piHostname;
+        event.EventTags = ["ui-communication"];
+        event.TargetDevice.DeviceID =
+          APIService.building + "-" + APIService.room + "-" + preset.name;
+        event.Key = "master-volume";
+        event.Value = String(v);
+
         this.api.sendFeatureEvent(event);
         ret.emit(true);
       },
@@ -299,14 +300,15 @@ export class CommandService {
 
     this.put(body).subscribe(
       data => {
-        const event = new Event(
-          0,
-          0,
-          APIService.piHostname,
-          a.name,
-          "mix-level",
-          String(v)
-        );
+        const event = new Event();
+
+        event.User = APIService.piHostname;
+        event.EventTags = ["ui-communication"];
+        event.TargetDevice.DeviceID =
+          APIService.building + "-" + APIService.room + "-" + a.name;
+        event.Key = "mix-level";
+        event.Value = String(v);
+
         this.api.sendFeatureEvent(event);
         ret.emit(true);
       },

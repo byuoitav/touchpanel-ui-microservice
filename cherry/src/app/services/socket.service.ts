@@ -168,6 +168,10 @@ export class Event {
   @JsonProperty("data", Any, true)
   Data: any = undefined;
 
+  public hasTag(tag: string): boolean {
+    return this.EventTags.includes(tag);
+  }
+
   /*
 export class EventWrapper {
   hostname: string;

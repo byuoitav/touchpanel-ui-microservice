@@ -274,15 +274,14 @@ export class GraphService {
 
     this.socket.getEventListener().subscribe(event => {
       if (event.type === MESSAGE) {
-        const ew: EventWrapper = event.data;
-        const e: Event = ew.event;
+        const e: Event = event.data;
 
-        switch (e.eventInfoKey) {
+        switch (e.Key) {
           case CONNECT:
-            this.connect(e.eventInfoValue);
+            this.connect(e.Value);
             break;
           case DISCONNECT:
-            this.disconnect(e.eventInfoValue);
+            this.disconnect(e.Value);
             break;
         }
       }
