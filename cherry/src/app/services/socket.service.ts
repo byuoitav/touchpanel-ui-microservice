@@ -98,7 +98,7 @@ export class BasicRoomInfo {
   RoomID: string = undefined;
 
   constructor(roomID: string) {
-    if (roomID == null) {
+    if (roomID == null || roomID === undefined) {
       return;
     }
 
@@ -123,7 +123,7 @@ export class BasicDeviceInfo {
   DeviceID: string = undefined;
 
   constructor(deviceID: string) {
-    if (deviceID == null) {
+    if (deviceID == null || deviceID === undefined) {
       return;
     }
 
@@ -199,7 +199,7 @@ export class Event {
   }
 
   constructor() {
-    this.TargetDevice = new BasicDeviceInfo();
-    this.AffectedRoom = new BasicRoomInfo();
+    this.TargetDevice = new BasicDeviceInfo(undefined);
+    this.AffectedRoom = new BasicRoomInfo(undefined);
   }
 }
