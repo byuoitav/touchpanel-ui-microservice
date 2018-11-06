@@ -90,24 +90,51 @@ export class SocketService {
 }
 
 @JsonObject("BasicRoomInfo")
-class BasicRoomInfo {
-  @JsonProperty("buildingID", String)
-  BuildingID: string = undefined;
+export class BasicRoomInfo {
+  @JsonProperty("buildingID", String, true)
+  BuildingID = "";
 
-  @JsonProperty("roomID", String)
-  RoomID: string = undefined;
+  @JsonProperty("roomID", String, true)
+  RoomID = "";
+
+  constructor(roomID: string) {
+    if (roomID == null || roomID === undefined) {
+      return;
+    }
+
+    const split = roomID.split("-");
+
+    if (split.length === 2) {
+      this.BuildingID = split[0];
+      this.RoomID = split[0] + "-" + split[1];
+    }
+  }
 }
 
 @JsonObject("BasicDeviceInfo")
-class BasicDeviceInfo {
-  @JsonProperty("buildingID", String)
-  BuildingID: string = undefined;
+export class BasicDeviceInfo {
+  @JsonProperty("buildingID", String, true)
+  BuildingID = "";
 
-  @JsonProperty("roomID", String)
-  RoomID: string = undefined;
+  @JsonProperty("roomID", String, true)
+  RoomID = "";
 
-  @JsonProperty("deviceID", String)
-  DeviceID: string = undefined;
+  @JsonProperty("deviceID", String, true)
+  DeviceID = "";
+
+  constructor(deviceID: string) {
+    if (deviceID == null || deviceID === undefined) {
+      return;
+    }
+
+    const split = deviceID.split("-");
+
+    if (split.length === 3) {
+      this.BuildingID = split[0];
+      this.RoomID = split[0] + "-" + split[1];
+      this.DeviceID = split[0] + "-" + split[1] + "-" + split[2];
+    }
+  }
 }
 
 @JsonConverter
@@ -140,25 +167,25 @@ class DateConverter implements JsonCustomConvert<Date> {
 
 @JsonObject("Event")
 export class Event {
-  @JsonProperty("generating-system", String)
+  @JsonProperty("generating-system", String, true)
   GeneratingSystem: string = undefined;
 
-  @JsonProperty("timestamp", DateConverter)
+  @JsonProperty("timestamp", DateConverter, true)
   Timestamp: Date = undefined;
 
-  @JsonProperty("event-tags", [String])
+  @JsonProperty("event-tags", [String], true)
   EventTags: string[] = new Array<string>();
 
-  @JsonProperty("target-device", BasicDeviceInfo)
+  @JsonProperty("target-device", BasicDeviceInfo, true)
   TargetDevice: BasicDeviceInfo = undefined;
 
   @JsonProperty("affected-room", BasicRoomInfo)
   AffectedRoom: BasicRoomInfo = undefined;
 
-  @JsonProperty("key", String)
+  @JsonProperty("key", String, true)
   Key: string = undefined;
 
-  @JsonProperty("value", String)
+  @JsonProperty("value", String, true)
   Value: string = undefined;
 
   @JsonProperty("user", String, true)
@@ -169,6 +196,11 @@ export class Event {
 
   public hasTag(tag: string): boolean {
     return this.EventTags.includes(tag);
+  }
+
+  constructor() {
+    this.TargetDevice = new BasicDeviceInfo(undefined);
+    this.AffectedRoom = new BasicRoomInfo(undefined);
   }
 }
 
