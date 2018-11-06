@@ -8,6 +8,7 @@ import {
   RoomStatus
 } from "../objects/objects";
 import { Event } from "./socket.service";
+import { JsonConvert, OperationMode, ValueCheckingMode } from "json2typescript";
 
 import "rxjs/add/operator/map";
 import "rxjs/add/operator/timeout";
@@ -19,6 +20,7 @@ const MONITOR_TIMEOUT = 30 * 1000;
 @Injectable()
 export class APIService {
   public loaded: EventEmitter<boolean>;
+  private jsonConvert: JsonConvert;
 
   public static building: string;
   public static roomName: string;
@@ -34,6 +36,8 @@ export class APIService {
 
   constructor(private http: Http) {
     this.loaded = new EventEmitter<boolean>();
+    this.jsonConvert = new JsonConvert();
+    this.jsonConvert.ignorePrimitiveChecks = false;
 
     if (APIService.options == null) {
       const headers = new Headers();
@@ -254,16 +258,12 @@ export class APIService {
       .map(res => deserialize<RoomStatus>(RoomStatus, res));
   }
 
-  public sendFeatureEvent(event: Event) {
-    console.log("sending feature event", event);
+  public sendEvent(event: Event) {
+    const data = this.jsonConvert.serializeObject(event);
+    console.log("sending feature event", data);
 
     this.http
-      .post(
-        APIService.localurl + ":8888/publishfeature",
-        event,
-        APIService.options
-      )
-      .map(res => res.json())
+      .post(APIService.localurl + ":8888/publish", data, APIService.options)
       .subscribe();
   }
 

@@ -323,7 +323,11 @@ export class DataService {
     this.socket.getEventListener().subscribe(event => {
       if (event.type === MESSAGE) {
         const e = event.data;
-        const split = e.TargetDevice.DeviceID.split("-");
+
+        let split: string[] = [];
+        if (e.TargetDevice !== undefined) {
+          split = e.TargetDevice.DeviceID.split("-");
+        }
 
         if (e.Value.length > 0 && split.length === 3) {
           switch (e.Key) {

@@ -50,6 +50,8 @@ func main() {
 
 		// TODO verify that I am correct in assuming that events are always routed to each messenger in the room (to the other UI's)
 		messenger.SendEvent(event)
+
+		log.L.Debugf("sent event from UI: %+v", event)
 		return ctx.String(http.StatusOK, "success")
 	})
 

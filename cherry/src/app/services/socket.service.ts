@@ -18,7 +18,6 @@ import {
 export const OPEN = "open";
 export const CLOSE = "close";
 export const MESSAGE = "message";
-
 @Injectable()
 export class SocketService {
   private url: string;
@@ -91,24 +90,51 @@ export class SocketService {
 }
 
 @JsonObject("BasicRoomInfo")
-class BasicRoomInfo {
-  @JsonProperty("buildingID", String)
+export class BasicRoomInfo {
+  @JsonProperty("buildingID", String, true)
   BuildingID: string = undefined;
 
-  @JsonProperty("roomID", String)
+  @JsonProperty("roomID", String, true)
   RoomID: string = undefined;
+
+  constructor(roomID: string) {
+    if (roomID == null) {
+      return;
+    }
+
+    const split = roomID.split("-");
+
+    if (split.length === 2) {
+      this.BuildingID = split[0];
+      this.RoomID = split[0] + "-" + split[1];
+    }
+  }
 }
 
 @JsonObject("BasicDeviceInfo")
-class BasicDeviceInfo {
-  @JsonProperty("buildingID", String)
+export class BasicDeviceInfo {
+  @JsonProperty("buildingID", String, true)
   BuildingID: string = undefined;
 
-  @JsonProperty("roomID", String)
+  @JsonProperty("roomID", String, true)
   RoomID: string = undefined;
 
-  @JsonProperty("deviceID", String)
+  @JsonProperty("deviceID", String, true)
   DeviceID: string = undefined;
+
+  constructor(deviceID: string) {
+    if (deviceID == null) {
+      return;
+    }
+
+    const split = deviceID.split("-");
+
+    if (split.length === 3) {
+      this.BuildingID = split[0];
+      this.RoomID = split[0] + "-" + split[1];
+      this.DeviceID = split[0] + "-" + split[1] + "-" + split[2];
+    }
+  }
 }
 
 @JsonConverter
@@ -141,25 +167,25 @@ class DateConverter implements JsonCustomConvert<Date> {
 
 @JsonObject("Event")
 export class Event {
-  @JsonProperty("generating-system", String)
+  @JsonProperty("generating-system", String, true)
   GeneratingSystem: string = undefined;
 
-  @JsonProperty("timestamp", DateConverter)
+  @JsonProperty("timestamp", DateConverter, true)
   Timestamp: Date = undefined;
 
-  @JsonProperty("event-tags", [String])
+  @JsonProperty("event-tags", [String], true)
   EventTags: string[] = new Array<string>();
 
-  @JsonProperty("target-device", BasicDeviceInfo)
+  @JsonProperty("target-device", BasicDeviceInfo, true)
   TargetDevice: BasicDeviceInfo = undefined;
 
   @JsonProperty("affected-room", BasicRoomInfo)
   AffectedRoom: BasicRoomInfo = undefined;
 
-  @JsonProperty("key", String)
+  @JsonProperty("key", String, true)
   Key: string = undefined;
 
-  @JsonProperty("value", String)
+  @JsonProperty("value", String, true)
   Value: string = undefined;
 
   @JsonProperty("user", String, true)
@@ -172,38 +198,8 @@ export class Event {
     return this.EventTags.includes(tag);
   }
 
-  /*
-export class EventWrapper {
-  hostname: string;
-  timestamp: string;
-  localEnvironment: boolean;
-  event: Event;
-  building: string;
-  room: string;
-}
-export class Event {
-  type: number;
-  eventCause: number;
-  requestor: string;
-  device: string;
-  eventInfoKey: string;
-  eventInfoValue: string;
-
-  constructor(
-    type: number,
-    eventCause: number,
-    requestor: string,
-    device: string,
-    eventInfoKey: string,
-    eventInfoValue: string
-  ) {
-    this.type = type;
-    this.eventCause = eventCause;
-    this.requestor = requestor;
-    this.device = device;
-    this.eventInfoKey = eventInfoKey;
-    this.eventInfoValue = eventInfoValue;
+  constructor() {
+    this.TargetDevice = new BasicDeviceInfo();
+    this.AffectedRoom = new BasicRoomInfo();
   }
-}
-*/
 }

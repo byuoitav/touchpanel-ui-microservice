@@ -4,13 +4,13 @@ import { Http } from "@angular/http";
 import { DeviceConfiguration } from "../objects/objects";
 import { APIService } from "./api.service";
 import { DataService } from "./data.service";
-import { SocketService, MESSAGE, EventWrapper, Event } from "./socket.service";
+import { SocketService, MESSAGE, Event } from "./socket.service";
 
 /*
  *
  *  When the GraphService recieves an event from a Pi that is monitoring contact points,
  *      it will find the node who's display field matches the full set of displays on one half
- *      of the eventInfoValue (shown below). Once it finds that node (1), it will create a new node (2) with 
+ *      of the eventInfoValue (shown below). Once it finds that node (1), it will create a new node (2) with
  *      displays equal to the other half of the eventInfoValue as a child of the node (1).
  *
  *  The HomeComponent will use the GraphService to decide which names to show when a user presses share.
@@ -54,7 +54,9 @@ export class GraphService {
       return;
     }
 
-    if (this.data.panel.preset.shareableDisplays == null) return;
+    if (this.data.panel.preset.shareableDisplays == null) {
+      return;
+    }
 
     // the root node is the set of displays and shareableDisplays for the preset
     const displays: Set<string> = new Set();
@@ -96,7 +98,7 @@ export class GraphService {
     if (displays.length > 0) {
       displays.forEach(d => list.add(d));
 
-      for (let child of node.children) {
+      for (const child of node.children) {
         this.getdisplaylist(child, list);
       }
     }
@@ -124,14 +126,16 @@ export class GraphService {
               do {
                 numChanged = 0;
 
-                for (let connected of data["connected"]) {
-                  if (this.connect(connected)) ++numChanged;
+                for (const connected of data["connected"]) {
+                  if (this.connect(connected)) {
+                    ++numChanged;
+                  }
                 }
               } while (numChanged > 0);
             }
 
             if (data["disconnected"] != null) {
-              for (let disconnected of data["disconnected"]) {
+              for (const disconnected of data["disconnected"]) {
                 this.disconnect(disconnected);
               }
             }
@@ -144,7 +148,7 @@ export class GraphService {
   }
 
   private getNodeByDisplays(list: Set<string>): Node {
-    let l = JSON.stringify(Array.from(list));
+    const l = JSON.stringify(Array.from(list));
     return this.nodes.find(n => JSON.stringify(Array.from(n.displays)) === l);
   }
 
@@ -201,7 +205,9 @@ export class GraphService {
     const lnode = this.getNodeByDisplays(left);
     const rnode = this.getNodeByDisplays(right);
 
-    if (lnode == null || rnode == null) return false;
+    if (lnode == null || rnode == null) {
+      return false;
+    }
 
     if (lnode.children.includes(rnode) || rnode.children.includes(lnode)) {
       changed = true;
@@ -210,7 +216,9 @@ export class GraphService {
       rnode.children = rnode.children.filter(n => n !== lnode);
     }
 
-    if (changed) this.displayList.emit(this.getDisplayList());
+    if (changed) {
+      this.displayList.emit(this.getDisplayList());
+    }
 
     return changed;
   }
@@ -219,16 +227,17 @@ export class GraphService {
     this.displayList.emit(this.getDisplayList());
 
     this.socket.getEventListener().subscribe(event => {
-      if (event.type == MESSAGE) {
-        let ew: EventWrapper = event.data;
-        let e: Event = ew.event;
+      if (event.type === MESSAGE) {
+        // let ew: EventWrapper = event.data;
+        // let e: Event = ew.event;
+        const e = event.data;
 
-        switch (e.eventInfoKey) {
+        switch (e.Key) {
           case CONNECT:
-            this.connect(e.eventInfoValue);
+            this.connect(e.Value);
             break;
           case DISCONNECT:
-            this.disconnect(e.eventInfoValue);
+            this.disconnect(e.Value);
             break;
         }
       }
@@ -237,7 +246,7 @@ export class GraphService {
 }
 
 /*
- *  Represents an array of displays that a preset can share to.  
+ *  Represents an array of displays that a preset can share to.
  */
 class Node {
   displays: Set<string>;
@@ -248,9 +257,11 @@ class Node {
   }
 
   public matches(list: Set<string>): boolean {
-    if (this.displays.size !== list.size) return false;
+    if (this.displays.size !== list.size) {
+      return false;
+    }
 
-    for (let d of Array.from(this.displays)) {
+    for (const d of Array.from(this.displays)) {
       if (!list.has(d)) {
         return false;
       }

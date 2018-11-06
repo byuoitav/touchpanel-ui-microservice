@@ -195,7 +195,6 @@ func (h *hub) run() {
 				}
 			}
 		case message := <-h.broadcast:
-			log.Printf("broadcasting message: %s", message)
 			for client := range h.clients {
 				select {
 				case client.send <- message:

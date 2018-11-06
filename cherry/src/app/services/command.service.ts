@@ -11,7 +11,7 @@ import { MatSliderChange } from "@angular/material";
 
 import { APIService } from "./api.service";
 import { DataService } from "./data.service";
-import { Event } from "./socket.service";
+import { Event, BasicDeviceInfo, BasicRoomInfo } from "./socket.service";
 import { Input, Display, AudioDevice } from "../objects/status.objects";
 import { Preset, AudioConfig, ConfigCommand } from "../objects/objects";
 
@@ -261,12 +261,16 @@ export class CommandService {
 
         event.User = APIService.piHostname;
         event.EventTags = ["ui-communication"];
-        event.TargetDevice.DeviceID =
-          APIService.building + "-" + APIService.room + "-" + preset.name;
+        event.AffectedRoom = new BasicRoomInfo(
+          APIService.building + "-" + APIService.roomName
+        );
+        event.TargetDevice = new BasicDeviceInfo(
+          APIService.building + "-" + APIService.roomName + "-" + preset.name
+        );
         event.Key = "master-volume";
         event.Value = String(v);
 
-        this.api.sendFeatureEvent(event);
+        this.api.sendEvent(event);
         ret.emit(true);
       },
       err => {
@@ -304,12 +308,16 @@ export class CommandService {
 
         event.User = APIService.piHostname;
         event.EventTags = ["ui-communication"];
-        event.TargetDevice.DeviceID =
-          APIService.building + "-" + APIService.room + "-" + a.name;
+        event.AffectedRoom = new BasicRoomInfo(
+          APIService.building + "-" + APIService.roomName
+        );
+        event.TargetDevice = new BasicDeviceInfo(
+          APIService.building + "-" + APIService.roomName + "-" + preset.name
+        );
         event.Key = "mix-level";
         event.Value = String(v);
 
-        this.api.sendFeatureEvent(event);
+        this.api.sendEvent(event);
         ret.emit(true);
       },
       err => {
