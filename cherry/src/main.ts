@@ -19,21 +19,14 @@ import { environment } from "./environments/environment";
       "Logging is disabled. To enable, call log.enable(), or reload this page with the query parameter of 'log' set to true."
     );
 
-    (<any>window).console.log = function() {};
-    (<any>window).console.info = function() {};
+    window.console.log = function() {};
+    window.console.info = function() {};
   }
 };
 
 if (environment.production) {
   enableProdMode();
 
-  const urlParams = new URLSearchParams(window.location.search);
-  if (window && urlParams.get("log") !== "true") {
-    (<any>window).log.disable();
-  } else {
-    (<any>window).log.enable();
-  }
-} else {
   const urlParams = new URLSearchParams(window.location.search);
   if (window && urlParams.get("log") !== "true") {
     (<any>window).log.disable();
