@@ -325,11 +325,11 @@ export class DataService {
         const e = event.data;
 
         let split: string[] = [];
-        if (e.TargetDevice !== undefined) {
+        if (e.TargetDevice.DeviceID.length > 0) {
           split = e.TargetDevice.DeviceID.split("-");
         }
 
-        if (e.Value.length > 0 && split.length === 3) {
+        if (e.Key.length > 0 && e.Value.length > 0 && split.length === 3) {
           switch (e.Key) {
             case POWER: {
               let output: Output;

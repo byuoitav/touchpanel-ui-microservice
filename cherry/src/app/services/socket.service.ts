@@ -92,10 +92,10 @@ export class SocketService {
 @JsonObject("BasicRoomInfo")
 export class BasicRoomInfo {
   @JsonProperty("buildingID", String, true)
-  BuildingID: string = undefined;
+  BuildingID = "";
 
   @JsonProperty("roomID", String, true)
-  RoomID: string = undefined;
+  RoomID = "";
 
   constructor(roomID: string) {
     if (roomID == null || roomID === undefined) {
@@ -114,13 +114,13 @@ export class BasicRoomInfo {
 @JsonObject("BasicDeviceInfo")
 export class BasicDeviceInfo {
   @JsonProperty("buildingID", String, true)
-  BuildingID: string = undefined;
+  BuildingID = "";
 
   @JsonProperty("roomID", String, true)
-  RoomID: string = undefined;
+  RoomID = "";
 
   @JsonProperty("deviceID", String, true)
-  DeviceID: string = undefined;
+  DeviceID = "";
 
   constructor(deviceID: string) {
     if (deviceID == null || deviceID === undefined) {
@@ -168,38 +168,33 @@ class DateConverter implements JsonCustomConvert<Date> {
 @JsonObject("Event")
 export class Event {
   @JsonProperty("generating-system", String, true)
-  GeneratingSystem: string = undefined;
+  GeneratingSystem = "";
 
   @JsonProperty("timestamp", DateConverter, true)
   Timestamp: Date = undefined;
 
   @JsonProperty("event-tags", [String], true)
-  EventTags: string[] = new Array<string>();
+  EventTags: string[] = [];
 
   @JsonProperty("target-device", BasicDeviceInfo, true)
-  TargetDevice: BasicDeviceInfo = undefined;
+  TargetDevice = new BasicDeviceInfo(undefined);
 
   @JsonProperty("affected-room", BasicRoomInfo)
-  AffectedRoom: BasicRoomInfo = undefined;
+  AffectedRoom = new BasicRoomInfo(undefined);
 
   @JsonProperty("key", String, true)
-  Key: string = undefined;
+  Key = "";
 
   @JsonProperty("value", String, true)
-  Value: string = undefined;
+  Value = "";
 
   @JsonProperty("user", String, true)
-  User: string = undefined;
+  User = "";
 
   @JsonProperty("data", Any, true)
   Data: any = undefined;
 
   public hasTag(tag: string): boolean {
     return this.EventTags.includes(tag);
-  }
-
-  constructor() {
-    this.TargetDevice = new BasicDeviceInfo(undefined);
-    this.AffectedRoom = new BasicRoomInfo(undefined);
   }
 }
