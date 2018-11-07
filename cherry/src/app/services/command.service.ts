@@ -88,6 +88,43 @@ export class CommandService {
     const prevBlank = Display.getBlank(displays);
     Display.setBlank(false, displays);
 
+    /*
+    // check if another display in the room has the same
+    // input. if so, mute the corrosponding audio device if
+    // it also exists.
+    const displaysWithInput: Display[] = [];
+    for (const display of this.data.displays) {
+      if (display.input === i) {
+        displaysWithInput.push(display);
+      }
+    }
+
+    const notMutedDisplaysWithInput: AudioDevice[] = [];
+    for (const display of displaysWithInput) {
+      const audioDevice = AudioDevice.getDeviceByName(
+        display.name,
+        this.data.audioDevices
+      );
+
+      if (!audioDevice.muted) {
+        notMutedDisplaysWithInput.push(audioDevice);
+      }
+    }
+
+    if (notMutedDisplaysWithInput.length >= 1) {
+      notMutedDisplaysWithInput.pop();
+    }
+
+    // TODO we need to have some kind of "why did I mute" so that we
+    // can know whether or not to unmute it when someone changes input.
+    // need to decide if the problem is worth it
+    // if it is, we can't persist the info across refresh's (meaning if someone remotes in the info won't be there).
+    AudioDevice.setMute(true, notMutedDisplaysWithInput);
+     */
+
+    /*
+    const body = { displays: [], audioDevices: [] };
+     */
     const body = { displays: [] };
     for (const d of displays) {
       body.displays.push({
@@ -97,6 +134,15 @@ export class CommandService {
       });
     }
 
+    /*
+    for (const a of notMutedDisplaysWithInput) {
+      body.audioDevices.push({
+        name: a.name,
+        muted: true
+      });
+    }
+     */
+
     this.put(body).subscribe(
       data => {
         ret.emit(true);
@@ -104,6 +150,10 @@ export class CommandService {
       err => {
         Display.setInput(prev, displays);
         Display.setBlank(prevBlank, displays);
+        /*
+        AudioDevice.setMute(false, notMutedDisplaysWithInput);
+         */
+
         ret.emit(false);
       }
     );
