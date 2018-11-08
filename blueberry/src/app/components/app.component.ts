@@ -34,6 +34,8 @@ export class AppComponent {
   public home: HomeComponent;
   public unlocking = false;
 
+  public location = window.location;
+
   constructor(private api: APIService, public socket: SocketService) {}
 
   public unlock() {

@@ -19,13 +19,9 @@ func WriteEventsToSocket(m *messenger.Messenger) {
 	for {
 		event := m.ReceiveEvent()
 
-		// TODO decide what to filter out
-		// filter out heartbeat events (and whatever else)
-		if events.HasTag(event, events.Heartbeat) {
-			continue
+		if events.ContainsAnyTags(event, events.CoreState, events.UICommunication, events.Error, events.RoomDivide) {
+			socket.H.WriteToSockets(event)
 		}
-
-		socket.H.WriteToSockets(event)
 	}
 }
 

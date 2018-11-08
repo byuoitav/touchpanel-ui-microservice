@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"net/http"
 	"os"
 	"time"
@@ -8,6 +9,7 @@ import (
 	"github.com/byuoitav/central-event-system/hub/base"
 	"github.com/byuoitav/central-event-system/messenger"
 	"github.com/byuoitav/common"
+	"github.com/byuoitav/common/db"
 	"github.com/byuoitav/common/log"
 	commonEvents "github.com/byuoitav/common/v2/events"
 	"github.com/byuoitav/touchpanel-ui-microservice/events"
@@ -94,10 +96,27 @@ func main() {
 	router.Static("/blueberry", "blueberry-dist")
 	router.Static("/cherry", "cherry-dist")
 
+	router.GET("/blueberry/:attachment", getCouchAttachment("blueberry"))
+	router.GET("/cherry/:attachment", getCouchAttachment("cherry"))
+
 	router.Start(port)
 }
 
 func redirect(context echo.Context) error {
 	http.Redirect(context.Response().Writer, context.Request(), "http://github.com/404", 302)
 	return nil
+}
+
+func getCouchAttachment(ui string) func(ctx echo.Context) error {
+	return func(ctx echo.Context) error {
+		attachment := ctx.Param("attachment")
+		log.L.Debugf("Getting attachment %s for %s ui.", attachment, ui)
+
+		typeString, bytes, err := db.GetDB().GetUIAttachment(ui, attachment)
+		if err != nil {
+			return ctx.String(http.StatusInternalServerError, fmt.Sprintf("failed to get %s: %v", ctx.Param("attachment"), err))
+		}
+
+		return ctx.Blob(http.StatusOK, typeString, bytes)
+	}
 }
