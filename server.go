@@ -96,8 +96,8 @@ func main() {
 	router.Static("/blueberry", "blueberry-dist")
 	router.Static("/cherry", "cherry-dist")
 
-	router.GET("/blueberry/:attachment", getCouchAttachment("blueberry"))
-	router.GET("/cherry/:attachment", getCouchAttachment("cherry"))
+	router.GET("/blueberry/db/:attachment", getCouchAttachment("blueberry"))
+	router.GET("/cherry/db/:attachment", getCouchAttachment("cherry"))
 
 	router.Start(port)
 }
