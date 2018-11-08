@@ -18,7 +18,6 @@ import (
 )
 
 func main() {
-	log.L.Infof("here")
 	deviceInfo := commonEvents.GenerateBasicDeviceInfo(os.Getenv("SYSTEM_ID"))
 	messenger, err := messenger.BuildMessenger(os.Getenv("HUB_ADDRESS"), base.Messenger, 1000)
 	if err != nil {
@@ -39,7 +38,6 @@ func main() {
 		return socket.GetStatus(ctx)
 	})
 
-	// TODO note that I am removing the publish feature endpoint.
 	// event endpoints
 	router.POST("/publish", func(ctx echo.Context) error {
 		var event commonEvents.Event
