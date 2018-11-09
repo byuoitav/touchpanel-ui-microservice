@@ -150,12 +150,11 @@ export class HomeComponent implements OnInit {
     this.data.loaded.subscribe(() => {
       this.updateFromEvents();
       this.setupInputFunctions();
+      this.setupDialogs();
     });
   }
 
-  public ngOnInit() {
-    this.setupDialogs();
-  }
+  public ngOnInit() {}
 
   private setupInputFunctions() {
     console.log("setting up input functions");
@@ -215,7 +214,7 @@ export class HomeComponent implements OnInit {
       type: "question",
       text: "i should be hidden",
       focusConfirm: false,
-      showConfirmButton: !this.isAfterHours(),
+      showConfirmButton: this.getHelp().showConfirm,
       confirmButtonText: "Request Help",
       showCancelButton: true,
       showLoaderOnConfirm: true,
@@ -1020,67 +1019,61 @@ export class HomeComponent implements OnInit {
     });
   }
 
-  public isAfterHours(): boolean {
+  public getHelp(): HelpInfo {
     const date = new Date();
-    const DayOfTheWeek = date.getDay();
+    const dayOfTheWeek = date.getDay();
     const CurrentHour = date.getHours();
-
-    switch (DayOfTheWeek) {
-      // Sunday
-      case 0: {
-        return true;
-      }
-      // Monday
-      case 1: {
-        if (CurrentHour < 7 || CurrentHour >= 19) {
-          return true;
-        } else {
-          return false;
-        }
-      }
-      // Tuesday
-      case 2: {
-        if (CurrentHour < 7 || CurrentHour >= 21) {
-          return true;
-        } else {
-          return false;
-        }
-      }
-      // Wednesday
-      case 3: {
-        if (CurrentHour < 7 || CurrentHour >= 21) {
-          return true;
-        } else {
-          return false;
-        }
-      }
-      // Thursday
-      case 4: {
-        if (CurrentHour < 7 || CurrentHour >= 21) {
-          return true;
-        } else {
-          return false;
-        }
-      }
-      // Friday
-      case 5: {
-        if (CurrentHour < 7 || CurrentHour >= 20) {
-          return true;
-        } else {
-          return false;
-        }
-      }
-      // Saturday
-      case 6: {
-        if (CurrentHour < 8 || CurrentHour >= 12) {
-          return true;
-        } else {
-          return false;
-        }
-      }
-      default: {
-        return false;
-      }
+    let dayOfWeekString = "sunday";
+    switch (dayOfTheWeek) {
+      case 1:
+        dayOfWeekString = "monday";
+        break;
+      case 2:
+        dayOfWeekString = "tuesday";
+        break;
+      case 3:
+        dayOfWeekString = "wednesday";
+        break;
+      case 4:
+        dayOfWeekString = "thursday";
+        break;
+      case 5:
+        dayOfWeekString = "friday";
+        break;
+      case 6:
+        dayOfWeekString = "saturday";
+        break;
+      default:
+        break;
     }
+
+    const ret = new HelpInfo();
+
+    if (APIService.helpConfig == null) {
+      ret.msg = "Unable to get help message.";
+      return ret;
+    } else if (APIService.helpConfig["helpHours"][dayOfWeekString] == null) {
+      ret.msg = "Help hours are not defined for " + dayOfWeekString + ".";
+      return ret;
+    }
+
+    if (
+      APIService.helpConfig["helpHours"][dayOfWeekString].open &&
+      CurrentHour >= APIService.helpConfig["helpHours"][dayOfWeekString].from &&
+      CurrentHour < APIService.helpConfig["helpHours"][dayOfWeekString].to
+    ) {
+      ret.msg = APIService.helpConfig["helpMessage"]["workHours"];
+      ret.showConfirm = true;
+      return ret;
+    } else {
+      ret.msg = APIService.helpConfig["helpMessage"]["afterHours"];
+    }
+
+    return ret;
   }
+}
+
+class HelpInfo {
+  msg = "";
+  showConfirm = false;
 }

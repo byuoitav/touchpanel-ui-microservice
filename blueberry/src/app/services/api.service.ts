@@ -26,6 +26,7 @@ export class APIService {
   public static apiurl: string;
 
   public static room: Room;
+  public static helpConfig: any;
 
   public static apihost: string;
   private static localurl: string;
@@ -144,10 +145,25 @@ export class APIService {
         Object.assign(APIService.room.uiconfig, data);
         console.info("UI Configuration:", APIService.room.uiconfig);
 
-        this.setupRoomConfig();
+        this.setupHelpConfig();
       },
       err => {
         setTimeout(() => this.setupUIConfig(), RETRY_TIMEOUT);
+      }
+    );
+  }
+
+  private setupHelpConfig() {
+    this.getHelpConfig().subscribe(
+      data => {
+        APIService.helpConfig = new Object();
+        Object.assign(APIService.helpConfig, data);
+        console.info("help config", APIService.helpConfig);
+
+        this.setupRoomConfig();
+      },
+      err => {
+        setTimeout(() => this.setupHelpConfig(), RETRY_TIMEOUT);
       }
     );
   }
@@ -242,6 +258,12 @@ export class APIService {
       .get(APIService.localurl + ":8888/uiconfig")
       .map(response => response.json())
       .map(res => deserialize<UIConfiguration>(UIConfiguration, res));
+  }
+
+  private getHelpConfig(): Observable<Object> {
+    return this.http
+      .get(APIService.localurl + ":8888/blueberry/db/help.json")
+      .map(response => response.json());
   }
 
   private getRoomConfig(): Observable<Object> {
