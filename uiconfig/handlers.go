@@ -48,7 +48,7 @@ func GetUIPath(context echo.Context) error {
 		return context.JSON(http.StatusInternalServerError, err.Error())
 	}
 
-	hostname := os.Getenv("PI_HOSTNAME")
+	hostname := os.Getenv("SYSTEM_ID")
 	for _, panel := range config.Panels {
 		if strings.EqualFold(hostname, panel.Hostname) {
 			return context.JSON(http.StatusOK, &APIHost{Hostname: panel.UIPath})

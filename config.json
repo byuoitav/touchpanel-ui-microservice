@@ -1,0 +1,14 @@
+{
+    "name": "touchpanel-ui-microservice",
+    "port": ":8888",
+    "env-vars": [
+        "DB_ADDRESS",
+        "DB_PASSWORD",
+        "DB_USERNAME",
+        "HELP_SLACKBOT_WEBHOOK",
+        "HUB_ADDRESS",
+        "ROOM_SYSTEM",
+        "SYSTEM_ID",
+        "UI_CONFIGURATION_ADDRESS"
+    ]
+}

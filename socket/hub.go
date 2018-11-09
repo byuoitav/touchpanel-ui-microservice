@@ -5,16 +5,34 @@ import (
 	"log"
 	"net"
 	"net/http"
+	"os"
 	"strings"
 	"time"
 
-	"github.com/byuoitav/common/events"
+	"github.com/byuoitav/central-event-system/messenger"
 	"github.com/byuoitav/common/status"
+	"github.com/byuoitav/common/v2/events"
+	"github.com/byuoitav/device-monitoring/pi"
 	"github.com/fatih/color"
 	"github.com/labstack/echo"
 )
 
-type Hub struct {
+// H is the socket hub
+var H *hub
+
+func init() {
+	H = &hub{
+		broadcast:  make(chan interface{}),
+		register:   make(chan *Client),
+		unregister: make(chan *Client),
+		clients:    make(map[*Client]bool),
+	}
+
+	go H.run()
+}
+
+// hub is a socket hub
+type hub struct {
 	// registered clients
 	clients map[*Client]bool
 
@@ -27,43 +45,37 @@ type Hub struct {
 	// 'unregister' requests from clients
 	unregister chan *Client
 
-	eventNode *events.EventNode
+	messenger *messenger.Messenger
 }
 
-func NewHub(eventNode *events.EventNode) *Hub {
-	hub := &Hub{
-		broadcast:  make(chan interface{}),
-		register:   make(chan *Client),
-		unregister: make(chan *Client),
-		clients:    make(map[*Client]bool),
-		eventNode:  eventNode,
-	}
-	go hub.run()
-
-	return hub
+// SetMessenger .
+func SetMessenger(m *messenger.Messenger) {
+	H.messenger = m
 }
 
-func (h *Hub) WriteToSockets(message interface{}) {
-	h.broadcast <- message
-}
+// GetStatus returns the status of the hub along with the program
+func GetStatus(context echo.Context) error {
+	log.Printf("Status request from %v", context.Request().RemoteAddr)
 
-func (h *Hub) GetStatus(context echo.Context) error {
-	var ret status.MStatus
 	var err error
-	statusInfo := make(map[string]interface{})
+	stat := status.NewStatus()
 
-	ret.Version, err = status.GetMicroserviceVersion()
+	stat.Bin = os.Args[0]
+	stat.Uptime = status.GetProgramUptime().String()
+
+	stat.Version, err = status.GetMicroserviceVersion()
 	if err != nil {
-		ret.StatusCode = status.Sick
-		ret.Info = err.Error()
-	} else {
-		ret.StatusCode = status.Healthy
+		stat.StatusCode = status.Sick
+		stat.Info["error"] = "failed to open version.txt"
+		return context.JSON(http.StatusInternalServerError, stat)
 	}
 
-	statusInfo["websocket-connections"] = len(h.clients)
+	stat.StatusCode = status.Healthy
+
+	stat.Info["websocket-connections"] = len(H.clients)
 	var wsInfo []map[string]interface{}
 
-	for client := range h.clients {
+	for client := range H.clients {
 		info := make(map[string]interface{})
 		localAddr := client.conn.LocalAddr()
 		remoteAddr := client.conn.RemoteAddr()
@@ -83,23 +95,24 @@ func (h *Hub) GetStatus(context echo.Context) error {
 		wsInfo = append(wsInfo, info)
 	}
 
-	statusInfo["websocket-info"] = wsInfo
-	ret.Info = statusInfo
+	stat.Info["websocket-info"] = wsInfo
 
-	return context.JSON(http.StatusOK, ret)
+	return context.JSON(http.StatusOK, stat)
 }
 
-func (h *Hub) run() {
-	hostname := events.GetPiHostname()
-	device := events.GetDeviceNameFromHostname()
-	building := events.GetBuildingFromHostname()
-	room := events.GetRoomFromHostname()
+func (h *hub) WriteToSockets(message interface{}) {
+	h.broadcast <- message
+}
+
+func (h *hub) run() {
+	id := pi.MustDeviceID()
+	deviceInfo := events.GenerateBasicDeviceInfo(id)
+	roomInfo := events.GenerateBasicRoomInfo(deviceInfo.RoomID)
 
 	for {
 		select {
 		case client := <-h.register:
 			remoteAddr := client.conn.RemoteAddr()
-			localAddr := client.conn.LocalAddr()
 
 			h.clients[client] = true
 
@@ -108,48 +121,39 @@ func (h *Hub) run() {
 			color.Unset()
 
 			event := events.Event{
-				Hostname:         hostname,
-				Timestamp:        time.Now().Format(time.RFC3339),
-				LocalEnvironment: true,
-				Event: events.EventInfo{
-					Type:           events.DETAILSTATE,
-					Requestor:      localAddr.String(),
-					EventCause:     events.INTERNAL,
-					Device:         device,
-					EventInfoKey:   "websocket",
-					EventInfoValue: fmt.Sprintf("opened with %s", remoteAddr),
-				},
-				Building: building,
-				Room:     room,
+				GeneratingSystem: id,
+				Timestamp:        time.Now(),
+				EventTags:        []string{events.DetailState},
+				TargetDevice:     deviceInfo,
+				AffectedRoom:     roomInfo,
+				User:             remoteAddr.String(),
+				Key:              "websocket",
+				Value:            fmt.Sprintf("opened with %s", remoteAddr),
 			}
 
 			countEvent := events.Event{
-				Hostname:         hostname,
-				Timestamp:        time.Now().Format(time.RFC3339),
-				LocalEnvironment: true,
-				Event: events.EventInfo{
-					Type:           events.DETAILSTATE,
-					Requestor:      remoteAddr.String(),
-					EventCause:     events.INTERNAL,
-					Device:         device,
-					EventInfoKey:   "websocket-count",
-					EventInfoValue: fmt.Sprintf("%v", len(h.clients)),
-				},
-				Building: building,
-				Room:     room,
+				GeneratingSystem: id,
+				Timestamp:        time.Now(),
+				EventTags:        []string{events.DetailState},
+				TargetDevice:     deviceInfo,
+				AffectedRoom:     roomInfo,
+				Key:              "websocket-count",
+				Value:            fmt.Sprintf("%v", len(h.clients)),
 			}
 
 			resolvedRemote, err := net.LookupAddr(strings.Split(remoteAddr.String(), ":")[0])
 			if err == nil {
-				event.Event.EventInfoValue = fmt.Sprintf("opened with %s", resolvedRemote)
-				countEvent.Event.Requestor = fmt.Sprintf("%s", resolvedRemote)
+				event.Value = fmt.Sprintf("opened with %s", resolvedRemote)
+				event.User = fmt.Sprintf("%s", resolvedRemote)
 			}
-			h.eventNode.PublishEvent(events.Metrics, event)
-			h.eventNode.PublishEvent(events.Metrics, countEvent)
+
+			if h.messenger != nil {
+				h.messenger.SendEvent(event)
+				h.messenger.SendEvent(countEvent)
+			}
 		case client := <-h.unregister:
 			if _, ok := h.clients[client]; ok {
 				remoteAddr := client.conn.RemoteAddr()
-				localAddr := client.conn.LocalAddr()
 
 				delete(h.clients, client)
 				close(client.send)
@@ -159,44 +163,36 @@ func (h *Hub) run() {
 				color.Unset()
 
 				event := events.Event{
-					Hostname:         hostname,
-					Timestamp:        time.Now().Format(time.RFC3339),
-					LocalEnvironment: true,
-					Event: events.EventInfo{
-						Type:           events.DETAILSTATE,
-						Requestor:      localAddr.String(),
-						EventCause:     events.INTERNAL,
-						Device:         device,
-						EventInfoKey:   "websocket",
-						EventInfoValue: fmt.Sprintf("closed with %s", remoteAddr),
-					},
-					Building: building,
-					Room:     room,
+					GeneratingSystem: id,
+					Timestamp:        time.Now(),
+					EventTags:        []string{events.DetailState},
+					TargetDevice:     deviceInfo,
+					AffectedRoom:     roomInfo,
+					User:             remoteAddr.String(),
+					Key:              "websocket",
+					Value:            fmt.Sprintf("closed with %s", remoteAddr),
 				}
 
 				countEvent := events.Event{
-					Hostname:         hostname,
-					Timestamp:        time.Now().Format(time.RFC3339),
-					LocalEnvironment: true,
-					Event: events.EventInfo{
-						Type:           events.DETAILSTATE,
-						Requestor:      remoteAddr.String(),
-						EventCause:     events.INTERNAL,
-						Device:         device,
-						EventInfoKey:   "websocket-count",
-						EventInfoValue: fmt.Sprintf("%v", len(h.clients)),
-					},
-					Building: building,
-					Room:     room,
+					GeneratingSystem: id,
+					Timestamp:        time.Now(),
+					EventTags:        []string{events.DetailState},
+					TargetDevice:     deviceInfo,
+					AffectedRoom:     roomInfo,
+					Key:              "websocket-count",
+					Value:            fmt.Sprintf("%v", len(h.clients)),
 				}
 
 				resolvedRemote, err := net.LookupAddr(strings.Split(remoteAddr.String(), ":")[0])
 				if err == nil {
-					event.Event.EventInfoValue = fmt.Sprintf("closed with %s", resolvedRemote)
-					countEvent.Event.Requestor = fmt.Sprintf("%s", resolvedRemote)
+					event.Value = fmt.Sprintf("closed with %s", resolvedRemote)
+					event.User = fmt.Sprintf("%s", resolvedRemote)
 				}
-				h.eventNode.PublishEvent(events.Metrics, event)
-				h.eventNode.PublishEvent(events.Metrics, countEvent)
+
+				if h.messenger != nil {
+					h.messenger.SendEvent(event)
+					h.messenger.SendEvent(countEvent)
+				}
 			}
 		case message := <-h.broadcast:
 			for client := range h.clients {

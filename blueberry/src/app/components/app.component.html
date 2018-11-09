@@ -1,15 +1,15 @@
 <div class="basediv">
-    <management [enabled]="home?.wheel?.getPower() != 'on'"></management>
+    <management [enabled]="home?.wheel?.getPower() !== 'on'"></management>
 
     <ng-container>
-    <div *ngIf="home?.wheel?.getPower() != 'on'"
+    <div *ngIf="home?.wheel?.getPower() !== 'on'"
         class="lock"
         (click)="unlock()">
 
         <ng-container *ngIf="!unlocking; else poweringOn">
             <!-- byu logo -->
             <object type="image/svg+xml"
-                data="./assets/byu_medallion_white.svg"
+                data="db/logo.svg"
                 class="logo">
             </object>
 

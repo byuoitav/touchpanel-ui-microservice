@@ -50,6 +50,7 @@
 	</div>
 </div>
 
+<ng-container *ngIf="preset?.audioDevices.length > 0 || preset?.independentAudioDevices?.length > 0">
 <div class="volume" [class.muted]="getMute()" *ngIf="circleOpen" [class.independentAudio]="preset?.independentAudioDevices?.length > 0">
     <mat-slider id="slider" vertical [class.notouch]="getMute()" [disabled]="getMute()" [value]="getVolume()" [step]="5" [thumbLabel]="thumbLabel" (change)="command.setVolume($event.value, preset.audioDevices); closeThumb()"></mat-slider>
 
@@ -58,6 +59,7 @@
         <mat-icon *ngIf="!getMute()">volume_up</mat-icon>
     </button>
 </div>
+<ng-container>
 
 <!-- one 'slice' of wheel -->
 <svg id='svg-block' width="0" height="0" style="position: absolute;">

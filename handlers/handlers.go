@@ -3,15 +3,12 @@ package handlers
 import (
 	"bytes"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
 
-	"github.com/byuoitav/common/events"
-	tpe "github.com/byuoitav/touchpanel-ui-microservice/events"
 	"github.com/byuoitav/touchpanel-ui-microservice/helpers"
 	"github.com/labstack/echo"
 )
@@ -26,42 +23,8 @@ func GetHostname(context echo.Context) error {
 }
 
 func GetPiHostname(context echo.Context) error {
-	hostname := os.Getenv("PI_HOSTNAME")
+	hostname := os.Getenv("SYSTEM_ID")
 	return context.JSON(http.StatusOK, hostname)
-}
-
-func PublishEvent(context echo.Context) error {
-	var event events.EventInfo
-	err := context.Bind(&event)
-	if err != nil {
-		return context.JSON(http.StatusBadRequest, err.Error())
-	}
-
-	e := context.Get(events.ContextEventNode)
-	if en, ok := e.(*events.EventNode); ok {
-		tpe.Publish(en, event, events.Metrics)
-	} else {
-		return context.JSON(http.StatusInternalServerError, errors.New("Middleware failed to set the publisher"))
-	}
-
-	return context.JSON(http.StatusOK, event)
-}
-
-func PublishFeature(context echo.Context) error {
-	var event events.EventInfo
-	err := context.Bind(&event)
-	if err != nil {
-		return context.JSON(http.StatusBadRequest, err.Error())
-	}
-
-	e := context.Get(events.ContextEventNode)
-	if en, ok := e.(*events.EventNode); ok {
-		tpe.Publish(en, event, events.UIFeature)
-	} else {
-		return context.JSON(http.StatusInternalServerError, errors.New("Middleware failed to set the publisher"))
-	}
-
-	return context.JSON(http.StatusOK, event)
 }
 
 func GetDeviceInfo(context echo.Context) error {
