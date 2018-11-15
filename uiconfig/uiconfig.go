@@ -18,14 +18,14 @@ const UI_CONFIG_FILE = "ui-config.json"
 
 func getUIConfig() (structs.UIConfig, error) {
 	address := os.Getenv("UI_CONFIGURATION_ADDRESS")
-	hn := os.Getenv("PI_HOSTNAME")
+	hn := os.Getenv("SYSTEM_ID")
 
 	split := strings.Split(hn, "-")
 	building := split[0]
 	room := split[1]
 
 	if len(hn) == 0 {
-		logError("PI_HOSTNAME is not set")
+		logError("SYSTEM_ID is not set")
 		return getUIConfigFromFile()
 	} else if len(address) == 0 {
 		logError("UI_CONFIGURATION_ADDRESS not set")

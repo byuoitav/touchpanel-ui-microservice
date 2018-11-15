@@ -12,14 +12,13 @@ import { Event } from "./socket.service";
 import "rxjs/add/operator/map";
 import "rxjs/add/operator/timeout";
 import { deserialize } from "serializer.ts/Serializer";
+import { JsonConvert, OperationMode, ValueCheckingMode } from "json2typescript";
 
 const RETRY_TIMEOUT = 5 * 1000;
 const MONITOR_TIMEOUT = 30 * 1000;
 
 @Injectable()
 export class APIService {
-  public loaded: EventEmitter<boolean>;
-
   public static building: string;
   public static roomName: string;
   public static piHostname: string;
@@ -27,20 +26,26 @@ export class APIService {
   public static apiurl: string;
 
   public static room: Room;
+  public static helpConfig: any;
 
   public static apihost: string;
   private static localurl: string;
   private static options: RequestOptions;
 
+  public loaded: EventEmitter<boolean>;
+  public jsonConvert: JsonConvert;
+
   constructor(private http: Http) {
     this.loaded = new EventEmitter<boolean>();
+    this.jsonConvert = new JsonConvert();
+    this.jsonConvert.ignorePrimitiveChecks = false;
 
     if (APIService.options == null) {
-      let headers = new Headers();
+      const headers = new Headers();
       headers.append("content-type", "application/json");
       APIService.options = new RequestOptions({ headers: headers });
 
-      let base = location.origin.split(":");
+      const base = location.origin.split(":");
       APIService.localurl = base[0] + ":" + base[1];
 
       APIService.room = new Room();
@@ -69,7 +74,7 @@ export class APIService {
       data => {
         APIService.piHostname = String(data);
 
-        let split = APIService.piHostname.split("-");
+        const split = APIService.piHostname.split("-");
         APIService.building = split[0];
         APIService.roomName = split[1];
 
@@ -120,7 +125,7 @@ export class APIService {
   private monitorAPI() {
     this.getAPIHealth().subscribe(
       data => {
-        if (data["statuscode"] != 0) {
+        if (data["statuscode"] !== 0) {
           this.setupAPIUrl(true);
         }
 
@@ -140,10 +145,25 @@ export class APIService {
         Object.assign(APIService.room.uiconfig, data);
         console.info("UI Configuration:", APIService.room.uiconfig);
 
-        this.setupRoomConfig();
+        this.setupHelpConfig();
       },
       err => {
         setTimeout(() => this.setupUIConfig(), RETRY_TIMEOUT);
+      }
+    );
+  }
+
+  private setupHelpConfig() {
+    this.getHelpConfig().subscribe(
+      data => {
+        APIService.helpConfig = new Object();
+        Object.assign(APIService.helpConfig, data);
+        console.info("help config", APIService.helpConfig);
+
+        this.setupRoomConfig();
+      },
+      err => {
+        setTimeout(() => this.setupHelpConfig(), RETRY_TIMEOUT);
       }
     );
   }
@@ -240,6 +260,12 @@ export class APIService {
       .map(res => deserialize<UIConfiguration>(UIConfiguration, res));
   }
 
+  private getHelpConfig(): Observable<Object> {
+    return this.http
+      .get(APIService.localurl + ":8888/blueberry/db/help.json")
+      .map(response => response.json());
+  }
+
   private getRoomConfig(): Observable<Object> {
     return this.http
       .get(APIService.apiurl + "/configuration")
@@ -254,21 +280,17 @@ export class APIService {
       .map(res => deserialize<RoomStatus>(RoomStatus, res));
   }
 
-  public sendFeatureEvent(event: Event) {
-    console.log("sending feature event", event);
+  public sendEvent(event: Event) {
+    const data = this.jsonConvert.serializeObject(event);
+    console.log("sending feature event", data);
 
     this.http
-      .post(
-        APIService.localurl + ":8888/publishfeature",
-        event,
-        APIService.options
-      )
-      .map(res => res.json())
+      .post(APIService.localurl + ":8888/publish", data, APIService.options)
       .subscribe();
   }
 
   public help(type: string): Observable<Object> {
-    let body = { building: APIService.building, room: APIService.roomName };
+    const body = { building: APIService.building, room: APIService.roomName };
 
     switch (type) {
       case "help":

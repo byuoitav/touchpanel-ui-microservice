@@ -1,22 +1,21 @@
-import { Component, Input, OnInit } from '@angular/core';
-
+import { Component, Input, OnInit } from "@angular/core";
 
 export interface SpringboardItem {
-    getName(): string;
-    getDisplayName(): string;
-    getIcon(): string;
-    getColor(): string;
+  getName(): string;
+  getDisplayName(): string;
+  getIcon(): string;
+  getColor(): string;
 }
 
 class Page {
-    items: SpringboardItem[] = [];
+  items: SpringboardItem[] = [];
 }
 
 const MAX_ITEMS = 3;
 
 @Component({
-    selector: 'springboard',
-    template: `
+  selector: "springboard",
+  template: `
         <div class="basediv" [ngStyle]="{'height': size, 'width': size}">
             <div *ngFor="let page of pages">
                 <div *ngFor="let item of page.items">
@@ -25,48 +24,49 @@ const MAX_ITEMS = 3;
             </div>
         </div>
     `,
-    styles: [`
-        .basediv {
-            background-color: blue; 
-            border-radius: 6vw;
-            // box-shadow, outline, etc
-        }
+  styles: [
+    `
+      .basediv {
+        background-color: blue;
+        border-radius: 6vw;
+        // box-shadow, outline, etc
+      }
 
-        .items {
-        
-            .item {
-        
-            }
+      .items {
+        .item {
         }
-
-    `]
+      }
+    `
+  ]
 })
 export class SpringboardComponent implements OnInit {
-    @Input() size: string;
-    @Input() items: SpringboardItem[];
+  @Input()
+  size: string;
+  @Input()
+  items: SpringboardItem[];
 
-    // pages is a map of the page to its children
-    public pages: Page[] = [];
+  // pages is a map of the page to its children
+  public pages: Page[] = [];
 
-    constructor() {}
+  constructor() {}
 
-    ngOnInit() {
-        setTimeout(() => {
-            this.breakup();
-        }, 0);
+  ngOnInit() {
+    setTimeout(() => {
+      this.breakup();
+    }, 0);
+  }
+
+  private breakup() {
+    let pageNum = -1;
+
+    for (let i = 0; i < this.items.length; ++i) {
+      if (i % MAX_ITEMS === 0) {
+        pageNum++;
+        this.pages.push(new Page());
+      }
+      this.pages[pageNum].items.push(this.items[i]);
     }
 
-    private breakup() {
-        let pageNum = -1;
-
-        for (let i = 0; i < this.items.length; ++i) {
-            if (i % MAX_ITEMS == 0) {
-                pageNum++; 
-                this.pages.push(new Page());
-            }
-            this.pages[pageNum].items.push(this.items[i]);
-        }
-
-        console.log("pages", this.pages);
-    }
+    console.log("pages", this.pages);
+  }
 }
