@@ -1,7 +1,8 @@
 import { Component, Input, OnChanges, SimpleChanges } from "@angular/core";
 
 const LOW = 3;
-const REDIRECT: string = "http://" + window.location.hostname + ":10000/dash";
+const REDIRECT: string =
+  "http://" + window.location.hostname + ":10000/dashboard";
 
 @Component({
   selector: "management",
@@ -9,7 +10,8 @@ const REDIRECT: string = "http://" + window.location.hostname + ":10000/dash";
   styleUrls: ["./management.component.scss"]
 })
 export class ManagementComponent implements OnChanges {
-  @Input() enabled: boolean;
+  @Input()
+  enabled: boolean;
   defcon: number;
 
   constructor() {

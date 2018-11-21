@@ -1,14 +1,15 @@
 package handlers
 
 import (
-	"bytes"
-	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
+	"time"
 
+	"github.com/byuoitav/central-event-system/messenger"
+	"github.com/byuoitav/common/v2/events"
 	"github.com/byuoitav/touchpanel-ui-microservice/helpers"
 	"github.com/labstack/echo"
 )
@@ -59,136 +60,29 @@ func GetDockerStatus(context echo.Context) error {
 	return context.String(http.StatusOK, string(body))
 }
 
-func Help(context echo.Context) error {
-	var sh helpers.SlackHelp
-	err := context.Bind(&sh)
-	if err != nil {
-		return context.JSON(http.StatusBadRequest, err.Error())
+// GenerateHelpFunction generates an echo handler that handles help requests.
+func GenerateHelpFunction(value string, messenger *messenger.Messenger) func(ctx echo.Context) error {
+	return func(ctx echo.Context) error {
+		deviceInfo := events.GenerateBasicDeviceInfo(os.Getenv("SYSTEM_ID"))
+
+		// send an event requesting help
+		event := events.Event{
+			GeneratingSystem: deviceInfo.DeviceID,
+			Timestamp:        time.Now(),
+			EventTags: []string{
+				events.Alert,
+			},
+			TargetDevice: deviceInfo,
+			AffectedRoom: events.GenerateBasicRoomInfo(deviceInfo.RoomID),
+			Key:          "help-request",
+			Value:        value,
+			User:         ctx.RealIP(),
+			Data:         nil,
+		}
+
+		log.Printf("Sending event to %s help. (event: %+v)", value, event)
+		messenger.SendEvent(event)
+
+		return ctx.String(http.StatusOK, fmt.Sprintf("Help has been %sed", value))
 	}
-
-	log.Printf("Requesting help in building %s, room %s", sh.Building, sh.Room)
-	url := os.Getenv("HELP_SLACKBOT_WEBHOOK")
-	if len(url) == 0 {
-		panic(fmt.Sprintf("HELP_SLACKBOT_WEBHOOK is not set."))
-	}
-
-	// build json payload
-	// attachment
-	var attachment helpers.Attachment
-	attachment.Title = "help request"
-	// fields
-	var fieldOne helpers.Field
-	var fieldTwo helpers.Field
-	fieldOne.Title = "building"
-	fieldOne.Value = sh.Building
-	fieldOne.Short = true
-	fieldTwo.Title = "room"
-	fieldTwo.Value = sh.Room
-	fieldTwo.Short = true
-	// actions
-	var actionOne helpers.Action
-	actionOne.Name = "accepthelp"
-	actionOne.Text = "help"
-	actionOne.Type = "button"
-	actionOne.Value = "true"
-	// put into sh
-	attachment.Fields = append(attachment.Fields, fieldOne)
-	attachment.Fields = append(attachment.Fields, fieldTwo)
-	attachment.Actions = append(attachment.Actions, actionOne)
-	sh.Attachments = append(sh.Attachments, attachment)
-
-	json, err := json.Marshal(sh)
-	if err != nil {
-		log.Printf("failed to marshal sh: %v", sh)
-		return context.JSON(http.StatusInternalServerError, err.Error())
-	}
-
-	req, err := http.NewRequest("POST", url, bytes.NewBuffer(json))
-	req.Header.Set("Content-Type", "application/json")
-
-	client := &http.Client{}
-	resp, err := client.Do(req)
-	if err != nil {
-		panic(err)
-	}
-	defer resp.Body.Close()
-
-	body, _ := ioutil.ReadAll(resp.Body)
-
-	return context.JSON(http.StatusOK, string(body))
-}
-
-func ConfirmHelp(context echo.Context) error {
-	var sh helpers.SlackHelp
-	err := context.Bind(&sh)
-	if err != nil {
-		return context.JSON(http.StatusBadRequest, err.Error())
-	}
-
-	log.Printf("Confirming help in building %s, room %s", sh.Building, sh.Room)
-	url := os.Getenv("HELP_SLACKBOT_WEBHOOK")
-	if len(url) == 0 {
-		panic(fmt.Sprintf("HELP_SLACKBOT_WEBHOOK is not set."))
-	}
-
-	var shm helpers.SlackMessage
-
-	shm.Text = fmt.Sprintf("Confirmation of request for help in building %s and room %s", sh.Building, sh.Room)
-	json, err := json.Marshal(shm)
-	if err != nil {
-		log.Printf("failed to marshal shm: %s", shm)
-		return context.JSON(http.StatusInternalServerError, err.Error())
-	}
-
-	req, err := http.NewRequest("POST", url, bytes.NewBuffer(json))
-	req.Header.Set("Content-Type", "application/json")
-
-	client := &http.Client{}
-	resp, err := client.Do(req)
-	if err != nil {
-		panic(err)
-	}
-	defer resp.Body.Close()
-
-	body, _ := ioutil.ReadAll(resp.Body)
-
-	return context.JSON(http.StatusOK, string(body))
-}
-
-func CancelHelp(context echo.Context) error {
-	var sh helpers.SlackHelp
-	err := context.Bind(&sh)
-	if err != nil {
-		return context.JSON(http.StatusBadRequest, err.Error())
-	}
-
-	log.Printf("Canceling request for help %s, room %s", sh.Building, sh.Room)
-	url := os.Getenv("HELP_SLACKBOT_WEBHOOK")
-	if len(url) == 0 {
-		panic(fmt.Sprintf("HELP_SLACKBOT_WEBHOOK is not set."))
-	}
-
-	var shm helpers.SlackMessage
-
-	shm.Text = fmt.Sprintf("Cancellation of request for help in building %s and room %s", sh.Building, sh.Room)
-	json, err := json.Marshal(shm)
-	if err != nil {
-		log.Printf("failed to marshal shm: %s", shm)
-		return context.JSON(http.StatusInternalServerError, err.Error())
-	}
-
-	req, err := http.NewRequest("POST", url, bytes.NewBuffer(json))
-	req.Header.Set("Content-Type", "application/json")
-
-	client := &http.Client{}
-	resp, err := client.Do(req)
-	if err != nil {
-		panic(err)
-	}
-	defer resp.Body.Close()
-
-	body, _ := ioutil.ReadAll(resp.Body)
-
-	return context.JSON(http.StatusOK, string(body))
-
 }

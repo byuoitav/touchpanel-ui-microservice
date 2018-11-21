@@ -99,7 +99,7 @@ ul {
 }
 
 .line {
-	background: linear-gradient(to right, rgba(255,255,222,1) 50%, rgba(255,255,255,0) 50%);
+	background: linear-gradient(to right, var(--wheel-outline-color) 50%, rgba(255,255,255,0) 50%);
 	height: $linewidth;
 	transform: rotate(90deg);
 }
@@ -167,6 +167,14 @@ ul {
         &.open {
             opacity: 1;
         }
+
+        ::ng-deep .switch {
+            background-color: var(--picture-on-color) !important;
+        }
+
+        ::ng-deep .checked {
+            background-color: var(--picture-off-color) !important;
+        }
     }
 }
 
@@ -194,6 +202,23 @@ ul {
         height: 100%;
     }
 
+    ::ng-deep .mat-slider-thumb,
+    ::ng-deep .mat-slider-thumb-label,
+    ::ng-deep .mat-slider-thumb-label-text,
+    ::ng-deep .mat-slider-track-fill {
+        background-color: var(--volume-color);
+        color: var(--volume-text-color);
+    }
+
+    &.muted {
+        ::ng-deep .mat-slider-thumb,
+        ::ng-deep .mat-slider-thumb-label,
+        ::ng-deep .mat-slider-track-fill {
+            background-color: var(--volume-muted-color);
+            color: var(--volume-text-color);
+        }
+    }
+
     .notouch {
         pointer-events: none; 
     }
@@ -206,10 +231,12 @@ ul {
         height: 8vw;
         width: 8vw;
 
-        background-color: #1E88E5;
+        background-color: var(--volume-color);
+        color: var(--volume-text-color);
 
         &.muted {
-            background-color: #c62828; 
+            background-color: var(--volume-muted-color);
+            color: var(--volume-text-color);
         }
 
         .mat-icon {
