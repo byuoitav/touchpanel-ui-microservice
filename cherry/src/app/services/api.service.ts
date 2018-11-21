@@ -272,25 +272,23 @@ export class APIService {
 
     switch (type) {
       case "help":
-        return this.http
-          .post(APIService.localurl + ":8888/help", body, APIService.options)
-          .map(res => res.json());
+        return this.http.post(
+          APIService.localurl + ":8888/help",
+          body,
+          APIService.options
+        );
       case "confirm":
-        return this.http
-          .post(
-            APIService.localurl + ":8888/confirmhelp",
-            body,
-            APIService.options
-          )
-          .map(res => res.json());
+        return this.http.post(
+          APIService.localurl + ":8888/confirmhelp",
+          body,
+          APIService.options
+        );
       case "cancel":
-        return this.http
-          .post(
-            APIService.localurl + ":8888/cancelhelp",
-            body,
-            APIService.options
-          )
-          .map(res => res.json());
+        return this.http.post(
+          APIService.localurl + ":8888/cancelhelp",
+          body,
+          APIService.options
+        );
     }
   }
 }

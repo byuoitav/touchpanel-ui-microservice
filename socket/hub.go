@@ -12,7 +12,7 @@ import (
 	"github.com/byuoitav/central-event-system/messenger"
 	"github.com/byuoitav/common/status"
 	"github.com/byuoitav/common/v2/events"
-	"github.com/byuoitav/device-monitoring/pi"
+	"github.com/byuoitav/device-monitoring/localsystem"
 	"github.com/fatih/color"
 	"github.com/labstack/echo"
 )
@@ -105,7 +105,7 @@ func (h *hub) WriteToSockets(message interface{}) {
 }
 
 func (h *hub) run() {
-	id := pi.MustDeviceID()
+	id := localsystem.MustSystemID()
 	deviceInfo := events.GenerateBasicDeviceInfo(id)
 	roomInfo := events.GenerateBasicRoomInfo(deviceInfo.RoomID)
 

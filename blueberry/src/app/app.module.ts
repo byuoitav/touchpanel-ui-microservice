@@ -19,8 +19,6 @@ import "hammerjs";
 import { AppComponent } from "./components/app.component";
 import { HomeComponent } from "./components/home.component";
 import { WheelComponent } from "./components/wheel.component";
-import { AdvancedComponent } from "./components/advanced.component";
-import { SpringboardComponent } from "./components/springboard.component";
 import { ManagementComponent } from "./components/management.component";
 import { HelpDialog } from "./dialogs/help.dialog";
 import { ChangedDialog } from "./dialogs/changed.dialog";
@@ -37,9 +35,7 @@ import { GraphService } from "./services/graph.service";
     AppComponent,
     HomeComponent,
     WheelComponent,
-    ManagementComponent,
-    AdvancedComponent,
-    SpringboardComponent
+    ManagementComponent
   ],
   imports: [
     BrowserModule,

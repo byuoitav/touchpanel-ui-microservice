@@ -86,9 +86,9 @@ func main() {
 	router.GET("/api", uiconfig.GetAPI)
 	router.GET("/nextapi", uiconfig.NextAPI)
 
-	router.POST("/help", handlers.Help)
-	router.POST("/confirmhelp", handlers.ConfirmHelp)
-	router.POST("/cancelhelp", handlers.CancelHelp)
+	router.POST("/help", handlers.GenerateHelpFunction("request", messenger))
+	router.POST("/confirmhelp", handlers.GenerateHelpFunction("confirm", messenger))
+	router.POST("/cancelhelp", handlers.GenerateHelpFunction("cancel", messenger))
 
 	// all the different ui's
 	router.Static("/", "redirect.html")

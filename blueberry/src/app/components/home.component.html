@@ -60,7 +60,7 @@
     <div *swalPartial="swalTargets.content" class="grid">
         <ng-container *ngIf="wheel.getInput()?.reachableDisplays?.length > 1">
             <div *ngFor="let d of shareableDisplays" class="item">
-                <button mat-fab color="primary" (click)="toggleSelected(d)">{{d.name}}
+                <button mat-fab class="share-display" (click)="toggleSelected(d)">{{d.name}}
                     <div *ngIf="isSelected(d)" class="badge">
                         <mat-icon>check</mat-icon>
                     </div>
