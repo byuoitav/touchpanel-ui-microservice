@@ -687,4 +687,6 @@ export class CommandService {
 
     return ret;
   }
+
+  public buttonPressEvent(key: string, value: string) {}
 }
