@@ -11,8 +11,8 @@
                     <volume class="volume"
                         [level]="preset?.masterVolume"
                         [mute]="preset?.masterVolume == 0"
-                        (levelChange)="command.setMasterVolume($event, preset)"
-                        (muteChange)="setMasterMute($event.muted)">
+                        (levelChange)="command.setMasterVolume($event, preset); command.buttonPress('master volume set')"
+                        (muteChange)="setMasterMute($event.muted); command.buttonPress('master volume mute')">
                     </volume>
                 </div>
             </div>
@@ -25,8 +25,8 @@
                     <volume class="volume"
                         [level]="a?.mixlevel"
                         [mute]="a?.mixlevel == 0"
-                        (levelChange)="command.setMixLevel($event, a, preset)"
-                        (muteChange)="command.setMixLevel($event.level, a, preset)">
+                        (levelChange)="command.setMixLevel($event, a, preset); command.buttonPress('mix level set')"
+                        (muteChange)="command.setMixLevel($event.level, a, preset); command.buttonPress('mix level mute')">
                     </volume>
                 </div>
             </div>
@@ -43,8 +43,8 @@
                     <volume class="volume"
                         [level]="!a?.muted ? a?.volume : 0"
                         [mute]="a?.muted" 
-                        (levelChange)="command.setVolume($event, [a])"
-                        (muteChange)="command.setMute($event.muted, [a])">
+                        (levelChange)="command.setVolume($event, [a]); command.buttonPress('audio type volume set')"
+                        (muteChange)="command.setMute($event.muted, [a]); command.buttonPress('audio type mute')">
                     </volume>
                 </div>
             </div>
@@ -60,8 +60,8 @@
                     <volume class="volume"
                         [level]="a?.volume"
                         [mute]="a?.muted"
-                        (levelChange)="command.setVolume($event, [a])"
-                        (muteChange)="command.setMute($event.muted, [a])">
+                        (levelChange)="command.setVolume($event, [a]); command.buttonPress('independent audio volume set')"
+                        (muteChange)="command.setMute($event.muted, [a]); command.buttonPress('independent audio mute')">
                     </volume>
                 </div>
             </div>

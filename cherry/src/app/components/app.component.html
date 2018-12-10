@@ -6,7 +6,7 @@
 <ng-container *ngIf="loaded; else loading">
     <div *ngIf="isPoweredOff(); else home"
         class="lock"
-        (click)="unlock()">
+        (click)="unlock(); command.buttonPress('power on')">
 
         <ng-container *ngIf="!unlocking; else poweringOn">
             <!-- byu logo -->
@@ -34,7 +34,7 @@
         <button mat-raised-button
             color="warn"
             class="power"
-            (click)="powerOff()">
+            (click)="powerOff(); command.buttonPress('power off')">
             Power Off
         </button>
     </ng-container>
@@ -43,7 +43,7 @@
         <button mat-raised-button
             class="help"
             color="accent"
-            (click)="openHelpDialog()">
+            (click)="openHelpDialog(); command.buttonPress('help')">
             Help
         </button>
     </div>

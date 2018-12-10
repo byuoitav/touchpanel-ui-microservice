@@ -9,8 +9,9 @@
         <button mat-button 
             class="output mat-elevation-z15"
             [color]="selectedDisplays.has(d) ? 'accent' : ''" 
-            (click)="toggleDisplay(d)" 
+            (click)="toggleDisplay(d); command.buttonPress('selected' + d?.name)"
             [class.mat-raised-button]="selectedDisplays.has(d)">
+            <!-- i need to see if that works (up two lines) -->
 
             <span>{{d?.displayname}}</span>
 

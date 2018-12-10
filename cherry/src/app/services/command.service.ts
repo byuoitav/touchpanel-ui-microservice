@@ -688,7 +688,7 @@ export class CommandService {
     return ret;
   }
 
-  public buttonPressEvent(value: string) {
+  public buttonPress(value: string) {
     const event = new Event();
 
     // figure out tag for these events
@@ -698,8 +698,7 @@ export class CommandService {
       APIService.building + "-" + APIService.roomName
     );
     event.TargetDevice = new BasicDeviceInfo(APIService.piHostname);
-    // event.GeneratingSystem = APIService.piHostname;
-    event.GeneratingSystem = this.data.panel.preset.name;
+    event.GeneratingSystem = APIService.piHostname;
     event.Timestamp = new Date();
     event.User = "";
     event.Data = undefined;
