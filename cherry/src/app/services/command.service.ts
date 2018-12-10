@@ -688,5 +688,25 @@ export class CommandService {
     return ret;
   }
 
-  public buttonPressEvent(key: string, value: string) {}
+  public buttonPressEvent(value: string) {
+    const event = new Event();
+
+    // figure out tag for these events
+    event.EventTags = [""];
+
+    event.AffectedRoom = new BasicRoomInfo(
+      APIService.building + "-" + APIService.roomName
+    );
+    event.TargetDevice = new BasicDeviceInfo(APIService.piHostname);
+    // event.GeneratingSystem = APIService.piHostname;
+    event.GeneratingSystem = this.data.panel.preset.name;
+    event.Timestamp = new Date();
+    event.User = "";
+    event.Data = undefined;
+
+    event.Key = "button-press";
+    event.Value = value;
+
+    this.api.sendEvent(event);
+  }
 }
