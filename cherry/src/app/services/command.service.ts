@@ -691,7 +691,6 @@ export class CommandService {
   public buttonPress(value: string, data?: any) {
     const event = new Event();
 
-    // figure out tag for these events
     event.EventTags = ["ui-event"];
 
     event.AffectedRoom = new BasicRoomInfo(
