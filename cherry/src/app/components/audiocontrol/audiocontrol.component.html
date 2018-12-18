@@ -25,8 +25,8 @@
                     <volume class="volume"
                         [level]="a?.mixlevel"
                         [mute]="a?.mixlevel == 0"
-                        (levelChange)="command.setMixLevel($event, a, preset); command.buttonPress('mix level set')"
-                        (muteChange)="command.setMixLevel($event.level, a, preset); command.buttonPress('mix level mute')">
+                        (levelChange)="command.setMixLevel($event, a, preset); command.buttonPress('mix level set', a?.name)"
+                        (muteChange)="command.setMixLevel($event.level, a, preset); command.buttonPress('mix level mute', a?.name)">
                     </volume>
                 </div>
             </div>
@@ -43,8 +43,8 @@
                     <volume class="volume"
                         [level]="!a?.muted ? a?.volume : 0"
                         [mute]="a?.muted" 
-                        (levelChange)="command.setVolume($event, [a]); command.buttonPress('audio type volume set')"
-                        (muteChange)="command.setMute($event.muted, [a]); command.buttonPress('audio type mute')">
+                        (levelChange)="command.setVolume($event, [a]); command.buttonPress('audio type volume set', a?.name)"
+                        (muteChange)="command.setMute($event.muted, [a]); command.buttonPress('audio type mute', a?.name)">
                     </volume>
                 </div>
             </div>
@@ -60,8 +60,8 @@
                     <volume class="volume"
                         [level]="a?.volume"
                         [mute]="a?.muted"
-                        (levelChange)="command.setVolume($event, [a]); command.buttonPress('independent audio volume set')"
-                        (muteChange)="command.setMute($event.muted, [a]); command.buttonPress('independent audio mute')">
+                        (levelChange)="command.setVolume($event, [a]); command.buttonPress('independent audio volume set', a?.name)"
+                        (muteChange)="command.setMute($event.muted, [a]); command.buttonPress('independent audio mute', a?.name)">
                     </volume>
                 </div>
             </div>

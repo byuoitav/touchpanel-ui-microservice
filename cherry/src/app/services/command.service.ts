@@ -688,11 +688,11 @@ export class CommandService {
     return ret;
   }
 
-  public buttonPress(value: string) {
+  public buttonPress(value: string, data?: any) {
     const event = new Event();
 
     // figure out tag for these events
-    event.EventTags = [""];
+    event.EventTags = ["ui-event"];
 
     event.AffectedRoom = new BasicRoomInfo(
       APIService.building + "-" + APIService.roomName
@@ -701,9 +701,9 @@ export class CommandService {
     event.GeneratingSystem = APIService.piHostname;
     event.Timestamp = new Date();
     event.User = "";
-    event.Data = undefined;
+    event.Data = data;
 
-    event.Key = "button-press";
+    event.Key = "user-interaction";
     event.Value = value;
 
     this.api.sendEvent(event);

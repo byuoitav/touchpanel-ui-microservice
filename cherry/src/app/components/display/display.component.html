@@ -9,7 +9,7 @@
         <button mat-button 
             class="output mat-elevation-z15"
             [color]="selectedDisplays.has(d) ? 'accent' : ''" 
-            (click)="toggleDisplay(d); command.buttonPress('selected' + d?.name)"
+            (click)="toggleDisplay(d); command.buttonPress('selected display', d?.name)"
             [class.mat-raised-button]="selectedDisplays.has(d)">
             <!-- i need to see if that works (up two lines) -->
 
@@ -41,7 +41,7 @@
         <button mat-button 
             class="input mat-elevation-z7"
             [color]="isOneBlanked() ? 'accent' : ''"
-            (click)="blank()"
+            (click)="blank(); command.buttonPress('blank', getSelectedDisplayNames())"
             [class.mat-raised-button]="isOneBlanked()">
 
             <div class="icon">
@@ -56,8 +56,8 @@
         <button mat-button 
             class="input mat-elevation-z7"
             [color]="inputUsed(i) ? 'accent' : ''"
-            (click)="changeInput(i)"
-            (press)="openInputDialog(i)"
+            (click)="changeInput(i); command.buttonPress('change input', {'input': i.name, 'displays': getSelectedDisplayNames()})"
+            (press)="openInputDialog(i); command.buttonPress('long press input', i.name)"
             [class.mat-raised-button]="inputUsed(i)">
 
             <div class="icon">
@@ -73,8 +73,8 @@
     <volume
     [level]="preset?.masterVolume"
     [mute]="preset?.masterVolume == 0"
-    (levelChange)="command.setMasterVolume($event, preset)"
-    (muteChange)="setMasterMute($event.muted)">
+    (levelChange)="command.setMasterVolume($event, preset); command.buttonPress('master volume set on display page')"
+    (muteChange)="setMasterMute($event.muted); command.buttonPress('master volume mute on display page')">
     </volume>
 </div>
 
