@@ -144,7 +144,7 @@ export class HomeComponent implements OnInit {
     private socket: SocketService,
     public api: APIService,
     public readonly swalTargets: SwalPartialTargets,
-    private command: CommandService,
+    public command: CommandService,
     private graph: GraphService
   ) {
     this.data.loaded.subscribe(() => {
