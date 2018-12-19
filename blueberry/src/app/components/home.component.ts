@@ -286,9 +286,20 @@ export class HomeComponent implements OnInit {
           names.push(d.name);
         }
 
+        for (const d of this.defaultPreset.displays) {
+          names.push(d.name);
+        }
+
         // just make sure that things don't crash
-        if (this.wheel.preset != null && this.wheel.preset.displays[0] != null && this.wheel.preset.displays[0].input != null) {
-          this.command.buttonPress("share", { "input": this.wheel.preset.displays[0].input.name, "displays": names})
+        if (
+          this.wheel.preset != null &&
+          this.wheel.preset.displays[0] != null &&
+          this.wheel.preset.displays[0].input != null
+        ) {
+          this.command.buttonPress("share", {
+            input: this.wheel.preset.displays[0].input.name,
+            displays: names
+          });
         }
 
         return new Promise((resolve, reject) => {
@@ -582,8 +593,8 @@ export class HomeComponent implements OnInit {
   }
 
   /*
-     * Tell the minion to mirror a specific preset.
-     */
+   * Tell the minion to mirror a specific preset.
+   */
   public mirror(preset: Preset, sendCommand: boolean, sendEvent: boolean) {
     // show the popup
     this.mirrorDialog.show();
