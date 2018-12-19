@@ -691,7 +691,7 @@ export class CommandService {
   public buttonPress(value: string, data?: any) {
     const event = new Event();
 
-    event.EventTags = ["ui-event"];
+    event.EventTags = ["ui-event", "cherry-ui"];
 
     event.AffectedRoom = new BasicRoomInfo(
       APIService.building + "-" + APIService.roomName
