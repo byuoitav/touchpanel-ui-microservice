@@ -3,7 +3,6 @@
         <mat-icon>power_settings_new</mat-icon>
     </button>
 
-    <!-- TODO fix this event on cherry -->
     <button mat-fab class="help button" (click)="help.show(); command.buttonPress('open help modal')">
         <mat-icon>help</mat-icon>
     </button>
@@ -103,7 +102,7 @@
         <div *ngFor="let a of defaultPreset?.independentAudioDevices" class="mic" [class.muted]="a?.muted">
             <span>{{a?.displayname}}</span>
             <mat-slider vertical [class.notouch]="a?.muted" [disabled]="a?.muted" [value]="a?.volume" [step]="5" [thumbLabel]="true" (change)="wheel.command.setVolume($event.value, [a]); command.buttonPress('independent audio volume set', a?.name)"></mat-slider>
-            <button mat-mini-fab class="mute" [class.muted]="a?.muted" (click)="wheel.command.setMute(!a.muted, [a]); command.buttonPress('independent audio mute', a?.name)">
+            <button mat-mini-fab class="mute" [class.muted]="a?.muted" (click)="wheel.command.setMute(!a.muted, [a]); command.buttonPress('independent audio ' + (!a.muted ? 'mute' : 'unmute'), a?.name)">
                 <mat-icon *ngIf="a?.muted">volume_off</mat-icon>
                 <mat-icon *ngIf="!a?.muted">volume_up</mat-icon>
             </button>

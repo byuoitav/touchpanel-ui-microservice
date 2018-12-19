@@ -10,9 +10,9 @@
                     <i class="material-icons">speaker_group</i>
                     <volume class="volume"
                         [level]="preset?.masterVolume"
-                        [mute]="preset?.masterVolume == 0"
+                        [mute]="preset?.masterVolume === 0"
                         (levelChange)="command.setMasterVolume($event, preset); command.buttonPress('master volume set')"
-                        (muteChange)="setMasterMute($event.muted); command.buttonPress('master volume mute')">
+                        (muteChange)="setMasterMute($event.muted); command.buttonPress('master volume ' + ($event.muted ? 'mute' : 'unmute'))">
                     </volume>
                 </div>
             </div>
@@ -26,7 +26,7 @@
                         [level]="a?.mixlevel"
                         [mute]="a?.mixlevel == 0"
                         (levelChange)="command.setMixLevel($event, a, preset); command.buttonPress('mix level set', a?.name)"
-                        (muteChange)="command.setMixLevel($event.level, a, preset); command.buttonPress('mix level mute', a?.name)">
+                        (muteChange)="command.setMixLevel($event.level, a, preset); command.buttonPress('mix level ' + ($event.level === 0 ? 'mute' : 'unmute'), a?.name)">
                     </volume>
                 </div>
             </div>
@@ -44,7 +44,7 @@
                         [level]="!a?.muted ? a?.volume : 0"
                         [mute]="a?.muted" 
                         (levelChange)="command.setVolume($event, [a]); command.buttonPress('audio type volume set', a?.name)"
-                        (muteChange)="command.setMute($event.muted, [a]); command.buttonPress('audio type mute', a?.name)">
+                        (muteChange)="command.setMute($event.muted, [a]); command.buttonPress('audio type ' + ($event.muted ? 'mute' : 'unmute'), a?.name)">
                     </volume>
                 </div>
             </div>
@@ -61,7 +61,7 @@
                         [level]="a?.volume"
                         [mute]="a?.muted"
                         (levelChange)="command.setVolume($event, [a]); command.buttonPress('independent audio volume set', a?.name)"
-                        (muteChange)="command.setMute($event.muted, [a]); command.buttonPress('independent audio mute', a?.name)">
+                        (muteChange)="command.setMute($event.muted, [a]); command.buttonPress('independent audio ' + ($event.muted ? 'mute' : 'unmute'), a?.name)">
                     </volume>
                 </div>
             </div>
