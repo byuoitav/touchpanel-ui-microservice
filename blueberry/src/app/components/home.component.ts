@@ -183,6 +183,8 @@ export class HomeComponent implements OnInit {
       showCancelButton: true,
       showLoaderOnConfirm: true,
       preConfirm: () => {
+        this.command.buttonPress("power off all");
+
         return new Promise((resolve, reject) => {
           this.turnOff().subscribe(() => {
             this.wheel.command.powerOffAll().subscribe(success => {
@@ -219,6 +221,8 @@ export class HomeComponent implements OnInit {
       showCancelButton: true,
       showLoaderOnConfirm: true,
       preConfirm: () => {
+        this.command.buttonPress("request help");
+
         return new Promise((resolve, reject) => {
           this.api.help("help").subscribe(
             data => {
@@ -241,6 +245,8 @@ export class HomeComponent implements OnInit {
       showCancelButton: true,
       showLoaderOnConfirm: true,
       preConfirm: () => {
+        this.command.buttonPress("confirm help request");
+
         return new Promise((resolve, reject) => {
           this.api.help("confirm").subscribe(
             data => {
@@ -275,6 +281,16 @@ export class HomeComponent implements OnInit {
       width: "85vw",
       showLoaderOnConfirm: true,
       preConfirm: () => {
+        const names: string[] = [];
+        for (const d of this.selectedDisplays) {
+          names.push(d.name);
+        }
+
+        // just make sure that things don't crash
+        if (this.wheel.preset != null && this.wheel.preset.displays[0] != null && this.wheel.preset.displays[0].input != null) {
+          this.command.buttonPress("share", { "input": this.wheel.preset.displays[0].input.name, "displays": names})
+        }
+
         return new Promise((resolve, reject) => {
           this.share(this.selectedDisplays, true).subscribe(success => {
             if (success) {
@@ -1003,8 +1019,10 @@ export class HomeComponent implements OnInit {
     const index = this.selectedDisplays.indexOf(d);
 
     if (index === -1) {
+      this.command.buttonPress("add display to share group", d.name);
       this.selectedDisplays.push(d);
     } else {
+      this.command.buttonPress("remove display from share group", d.name);
       this.selectedDisplays.splice(index, 1);
     }
   }
@@ -1070,6 +1088,20 @@ export class HomeComponent implements OnInit {
     }
 
     return ret;
+  }
+
+  public getPresetDisplayNames(preset: Preset): string[] {
+    const displays: string[] = [];
+
+    if (preset == null || preset.displays == null) {
+      return displays;
+    }
+
+    for (const d of preset.displays) {
+      displays.push(d.name);
+    }
+
+    return displays;
   }
 }
 
