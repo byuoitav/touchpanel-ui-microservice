@@ -648,6 +648,7 @@ export class HomeComponent implements OnInit {
         currInput.reachableDisplays
       );
       input.click.subscribe(() => {
+        this.command.buttonPress("remirror", preset.name);
         this.mirror(preset, true, true);
       });
 

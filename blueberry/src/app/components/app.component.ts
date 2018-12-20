@@ -37,7 +37,11 @@ export class AppComponent {
 
   public location = window.location;
 
-  constructor(private api: APIService, public socket: SocketService, public command: CommandService) {}
+  constructor(
+    private api: APIService,
+    public socket: SocketService,
+    public command: CommandService
+  ) {}
 
   public unlock() {
     if (this.home.wheel == null) {

@@ -33,7 +33,8 @@
         })
       "
       (press)="
-        openInputModal(i); command.buttonPress('long press input', i?.name)
+        openInputModal(i);
+        command.buttonPress('long press remirror', i?.displayname)
       "
     >
       <div class="input" [style.top]="topoffset" [style.right]="rightoffset">
@@ -42,18 +43,11 @@
       </div>
     </li>
 
-    <!-- TODO test extra inputs -->
     <li
       *ngFor="let i of preset.extraInputs"
       class="input-slice"
       [class.selected-input]="getInput() === i"
-      (click)="
-        i.click.emit();
-        command.buttonPress('change input', {
-          input: i?.name,
-          displays: getDisplayNames()
-        })
-      "
+      (click)="i.click.emit()"
       (press)="
         openInputModal(i); command.buttonPress('long press input', i?.name)
       "
