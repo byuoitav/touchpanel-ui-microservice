@@ -32,10 +32,7 @@
           displays: getDisplayNames()
         })
       "
-      (press)="
-        openInputModal(i);
-        command.buttonPress('long press remirror', i?.displayname)
-      "
+      (press)="command.buttonPress('long press remirror', i?.displayname)"
     >
       <div class="input" [style.top]="topoffset" [style.right]="rightoffset">
         <i class="material-icons">{{ i.icon }}</i>
