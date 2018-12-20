@@ -87,7 +87,9 @@
     [mute]="preset?.masterVolume == 0"
     (levelChange)="
       command.setMasterVolume($event, preset);
-      command.buttonPress('master volume set on display page')
+      command.buttonPress('master volume set on display page', {
+        level: $event
+      })
     "
     (muteChange)="
       setMasterMute($event.muted);
