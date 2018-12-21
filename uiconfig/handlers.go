@@ -61,7 +61,7 @@ func GetUIPath(context echo.Context) error {
 		if strings.EqualFold(hostname, panel.Hostname) {
 			//we also want to generate a query parameter to add to the end each time it refreshes.
 			str := GenRandString(4)
-			queryString := url.QueryEscape(fmt.Sprintf("?%s%s", version, str))
+			queryString := "?" + url.QueryEscape(fmt.Sprintf("%s%s", version, str))
 
 			return context.JSON(http.StatusOK, &APIHost{Hostname: panel.UIPath + queryString})
 		}
