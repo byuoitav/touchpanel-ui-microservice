@@ -18,7 +18,6 @@ import (
 const UI_CONFIG_FILE = "ui-config.json"
 
 func getUIConfig() (structs.UIConfig, error) {
-	address := os.Getenv("UI_CONFIGURATION_ADDRESS")
 	hn := os.Getenv("SYSTEM_ID")
 
 	split := strings.Split(hn, "-")
@@ -28,18 +27,15 @@ func getUIConfig() (structs.UIConfig, error) {
 	if len(hn) == 0 {
 		logError("SYSTEM_ID is not set")
 		return getUIConfigFromFile()
-	} else if len(address) == 0 {
-		logError("UI_CONFIGURATION_ADDRESS not set")
-		return getUIConfigFromFile()
 	}
 
 	color.Set(color.FgYellow)
-	log.Printf("Getting UI Config for %s-%s from %s", building, room, address)
+	log.Printf("Getting UI Config for %s-%s from database.", building, room)
 	color.Unset()
 
 	config, err := db.GetDB().GetUIConfig(fmt.Sprintf("%s-%s", building, room))
 	if err != nil {
-		logError(fmt.Sprintf("Failed to get UI Config for %s-%s from %s", building, room, address))
+		logError(fmt.Sprintf("Failed to get UI Config for %s-%s from database: %v", building, room, err))
 		return getUIConfigFromFile()
 	}
 
