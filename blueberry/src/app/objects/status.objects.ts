@@ -1,6 +1,5 @@
 import { Type } from "serializer.ts/Decorators";
 import { EventEmitter } from "@angular/core";
-import { SpringboardItem } from "../components/springboard.component";
 import { AudioConfiguration } from "./objects";
 import { APIService } from "../services/api.service";
 
@@ -50,7 +49,7 @@ export class Device {
   }
 }
 
-export class Input extends Device implements SpringboardItem {
+export class Input extends Device {
   icon: string;
   click: EventEmitter<null> = new EventEmitter();
   reachableDisplays: string[] = [];
@@ -72,10 +71,6 @@ export class Input extends Device implements SpringboardItem {
 
   public isDisplayReachable(name: string): boolean {
     return this.reachableDisplays.includes(name);
-  }
-
-  public getColor(): string {
-    return "red";
   }
 
   public getIcon(): string {

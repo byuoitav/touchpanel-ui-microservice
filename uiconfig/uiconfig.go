@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
+	"math/rand"
 	"os"
 	"strings"
 
@@ -17,28 +18,24 @@ import (
 const UI_CONFIG_FILE = "ui-config.json"
 
 func getUIConfig() (structs.UIConfig, error) {
-	address := os.Getenv("UI_CONFIGURATION_ADDRESS")
-	hn := os.Getenv("PI_HOSTNAME")
+	hn := os.Getenv("SYSTEM_ID")
 
 	split := strings.Split(hn, "-")
 	building := split[0]
 	room := split[1]
 
 	if len(hn) == 0 {
-		logError("PI_HOSTNAME is not set")
-		return getUIConfigFromFile()
-	} else if len(address) == 0 {
-		logError("UI_CONFIGURATION_ADDRESS not set")
+		logError("SYSTEM_ID is not set")
 		return getUIConfigFromFile()
 	}
 
 	color.Set(color.FgYellow)
-	log.Printf("Getting UI Config for %s-%s from %s", building, room, address)
+	log.Printf("Getting UI Config for %s-%s from database.", building, room)
 	color.Unset()
 
 	config, err := db.GetDB().GetUIConfig(fmt.Sprintf("%s-%s", building, room))
 	if err != nil {
-		logError(fmt.Sprintf("Failed to get UI Config for %s-%s from %s", building, room, address))
+		logError(fmt.Sprintf("Failed to get UI Config for %s-%s from database: %v", building, room, err))
 		return getUIConfigFromFile()
 	}
 
@@ -97,4 +94,30 @@ func logError(err string) {
 	color.Set(color.FgRed)
 	log.Printf("%s", err)
 	color.Unset()
+}
+
+const letterBytes = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+const (
+	letterIdxBits = 6                    // 6 bits to represent a letter index
+	letterIdxMask = 1<<letterIdxBits - 1 // All 1-bits, as many as letterIdxBits
+	letterIdxMax  = 63 / letterIdxBits   // # of letter indices fitting in 63 bits
+)
+
+//GenRandString .
+func GenRandString(n int) string {
+	b := make([]byte, n)
+	// A rand.Int63() generates 63 random bits, enough for letterIdxMax letters!
+	for i, cache, remain := n-1, rand.Int63(), letterIdxMax; i >= 0; {
+		if remain == 0 {
+			cache, remain = rand.Int63(), letterIdxMax
+		}
+		if idx := int(cache & letterIdxMask); idx < len(letterBytes) {
+			b[i] = letterBytes[idx]
+			i--
+		}
+		cache >>= letterIdxBits
+		remain--
+	}
+
+	return string(b)
 }

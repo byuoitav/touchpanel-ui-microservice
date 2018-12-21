@@ -25,13 +25,20 @@ export class WheelComponent implements AfterContentInit {
   private static TITLE_ANGLE = 100;
   private static TITLE_ANGLE_ROTATE: number = WheelComponent.TITLE_ANGLE / 2;
 
-  @AngularInput() preset: Preset;
-  @AngularInput() blur: boolean;
-  @AngularInput() top: string;
-  @AngularInput() right: string;
-  @AngularInput() openControlledByPower: boolean;
-  @AngularInput() sharing: boolean;
-  @AngularOutput() init: EventEmitter<any> = new EventEmitter();
+  @AngularInput()
+  preset: Preset;
+  @AngularInput()
+  blur: boolean;
+  @AngularInput()
+  top: string;
+  @AngularInput()
+  right: string;
+  @AngularInput()
+  openControlledByPower: boolean;
+  @AngularInput()
+  sharing: boolean;
+  @AngularOutput()
+  init: EventEmitter<any> = new EventEmitter();
 
   arcpath: string;
   titlearcpath: string;
@@ -41,10 +48,12 @@ export class WheelComponent implements AfterContentInit {
   circleOpen = false;
   thumbLabel = true;
 
-  @ViewChild("wheel") wheel: ElementRef;
+  @ViewChild("wheel")
+  wheel: ElementRef;
 
   // for via control
-  @ViewChild("via") viaDialog: SwalComponent;
+  @ViewChild("via")
+  viaDialog: SwalComponent;
   openInput: Input;
 
   constructor(
@@ -300,5 +309,33 @@ export class WheelComponent implements AfterContentInit {
         });
       }
     });
+  }
+
+  public getDisplayNames(): string[] {
+    const names: string[] = [];
+
+    if (this.preset == null || this.preset.displays == null) {
+      return names;
+    }
+
+    for (const d of this.preset.displays) {
+      names.push(d.name);
+    }
+
+    return names;
+  }
+
+  public getAudioNames(): string[] {
+    const names: string[] = [];
+
+    if (this.preset == null || this.preset.audioDevices == null) {
+      return names;
+    }
+
+    for (const a of this.preset.audioDevices) {
+      names.push(a.name);
+    }
+
+    return names;
   }
 }

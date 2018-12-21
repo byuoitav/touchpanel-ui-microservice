@@ -11,7 +11,7 @@ import { MatSliderChange } from "@angular/material";
 
 import { APIService } from "./api.service";
 import { DataService } from "./data.service";
-import { Event } from "./socket.service";
+import { Event, BasicDeviceInfo, BasicRoomInfo } from "./socket.service";
 import { Input, Display, AudioDevice } from "../objects/status.objects";
 import { Preset, AudioConfig, ConfigCommand } from "../objects/objects";
 
@@ -104,6 +104,7 @@ export class CommandService {
       err => {
         Display.setInput(prev, displays);
         Display.setBlank(prevBlank, displays);
+
         ret.emit(false);
       }
     );
@@ -257,15 +258,20 @@ export class CommandService {
     this.put(body).subscribe(
       data => {
         // post master volume update
-        const event = new Event(
-          0,
-          0,
-          APIService.piHostname,
-          preset.name,
-          "master-volume",
-          String(v)
+        const event = new Event();
+
+        event.User = APIService.piHostname;
+        event.EventTags = ["ui-communication"];
+        event.AffectedRoom = new BasicRoomInfo(
+          APIService.building + "-" + APIService.roomName
         );
-        this.api.sendFeatureEvent(event);
+        event.TargetDevice = new BasicDeviceInfo(
+          APIService.building + "-" + APIService.roomName + "-" + preset.name
+        );
+        event.Key = "master-volume";
+        event.Value = String(v);
+
+        this.api.sendEvent(event);
         ret.emit(true);
       },
       err => {
@@ -299,15 +305,20 @@ export class CommandService {
 
     this.put(body).subscribe(
       data => {
-        const event = new Event(
-          0,
-          0,
-          APIService.piHostname,
-          a.name,
-          "mix-level",
-          String(v)
+        const event = new Event();
+
+        event.User = APIService.piHostname;
+        event.EventTags = ["ui-communication"];
+        event.AffectedRoom = new BasicRoomInfo(
+          APIService.building + "-" + APIService.roomName
         );
-        this.api.sendFeatureEvent(event);
+        event.TargetDevice = new BasicDeviceInfo(
+          APIService.building + "-" + APIService.roomName + "-" + preset.name
+        );
+        event.Key = "mix-level";
+        event.Value = String(v);
+
+        this.api.sendEvent(event);
         ret.emit(true);
       },
       err => {
@@ -675,5 +686,25 @@ export class CommandService {
     );
 
     return ret;
+  }
+
+  public buttonPress(value: string, data?: any) {
+    const event = new Event();
+
+    event.EventTags = ["ui-event", "cherry-ui"];
+
+    event.AffectedRoom = new BasicRoomInfo(
+      APIService.building + "-" + APIService.roomName
+    );
+    event.TargetDevice = new BasicDeviceInfo(APIService.piHostname);
+    event.GeneratingSystem = APIService.piHostname;
+    event.Timestamp = new Date();
+    event.User = "";
+    event.Data = data;
+
+    event.Key = "user-interaction";
+    event.Value = value;
+
+    this.api.sendEvent(event);
   }
 }

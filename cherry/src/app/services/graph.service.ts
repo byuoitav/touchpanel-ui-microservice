@@ -4,7 +4,7 @@ import { Http } from "@angular/http";
 import { DeviceConfiguration } from "../objects/objects";
 import { APIService } from "./api.service";
 import { DataService } from "./data.service";
-import { SocketService, MESSAGE, EventWrapper, Event } from "./socket.service";
+import { SocketService, MESSAGE, Event } from "./socket.service";
 
 /*
  *
@@ -274,15 +274,14 @@ export class GraphService {
 
     this.socket.getEventListener().subscribe(event => {
       if (event.type === MESSAGE) {
-        const ew: EventWrapper = event.data;
-        const e: Event = ew.event;
+        const e: Event = event.data;
 
-        switch (e.eventInfoKey) {
+        switch (e.Key) {
           case CONNECT:
-            this.connect(e.eventInfoValue);
+            this.connect(e.Value);
             break;
           case DISCONNECT:
-            this.disconnect(e.eventInfoValue);
+            this.disconnect(e.Value);
             break;
         }
       }

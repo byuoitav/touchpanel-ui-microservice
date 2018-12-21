@@ -29,6 +29,11 @@
             &.smaller {
                 transform: scale(.75);
             }
+
+            &::after {
+                content: var(--lock-message);
+                color: var(--lock-message-color);
+            }
         }
 
 

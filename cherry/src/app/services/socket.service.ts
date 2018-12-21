@@ -4,12 +4,20 @@ import {
   $WebSocket,
   WebSocketConfig
 } from "angular2-websocket/angular2-websocket";
-import { deserialize } from "serializer.ts/Serializer";
+import {
+  JsonConvert,
+  OperationMode,
+  ValueCheckingMode,
+  JsonObject,
+  JsonProperty,
+  Any,
+  JsonCustomConvert,
+  JsonConverter
+} from "json2typescript";
 
 export const OPEN = "open";
 export const CLOSE = "close";
 export const MESSAGE = "message";
-
 @Injectable()
 export class SocketService {
   private url: string;
@@ -31,6 +39,9 @@ export class SocketService {
     this.listener = new EventEmitter();
     this.screenoff = false;
 
+    const jsonConvert = new JsonConvert();
+    jsonConvert.ignorePrimitiveChecks = false;
+
     this.socket.onMessage(
       msg => {
         if (msg.data.includes("keepalive")) {
@@ -45,7 +56,8 @@ export class SocketService {
           console.log("socket test");
         } else {
           const data = JSON.parse(msg.data);
-          const event = deserialize<EventWrapper>(EventWrapper, data);
+          const event = jsonConvert.deserialize(data, Event);
+
           console.log("received event", event);
           this.listener.emit({ type: MESSAGE, data: event });
         }
@@ -77,36 +89,112 @@ export class SocketService {
   }
 }
 
-export class EventWrapper {
-  hostname: string;
-  timestamp: string;
-  localEnvironment: boolean;
-  event: Event;
-  building: string;
-  room: string;
+@JsonObject("BasicRoomInfo")
+export class BasicRoomInfo {
+  @JsonProperty("buildingID", String, true)
+  BuildingID = "";
+
+  @JsonProperty("roomID", String, true)
+  RoomID = "";
+
+  constructor(roomID: string) {
+    if (roomID == null || roomID === undefined) {
+      return;
+    }
+
+    const split = roomID.split("-");
+
+    if (split.length === 2) {
+      this.BuildingID = split[0];
+      this.RoomID = split[0] + "-" + split[1];
+    }
+  }
 }
 
-export class Event {
-  type: number;
-  eventCause: number;
-  requestor: string;
-  device: string;
-  eventInfoKey: string;
-  eventInfoValue: string;
+@JsonObject("BasicDeviceInfo")
+export class BasicDeviceInfo {
+  @JsonProperty("buildingID", String, true)
+  BuildingID = "";
 
-  constructor(
-    type: number,
-    eventCause: number,
-    requestor: string,
-    device: string,
-    eventInfoKey: string,
-    eventInfoValue: string
-  ) {
-    this.type = type;
-    this.eventCause = eventCause;
-    this.requestor = requestor;
-    this.device = device;
-    this.eventInfoKey = eventInfoKey;
-    this.eventInfoValue = eventInfoValue;
+  @JsonProperty("roomID", String, true)
+  RoomID = "";
+
+  @JsonProperty("deviceID", String, true)
+  DeviceID = "";
+
+  constructor(deviceID: string) {
+    if (deviceID == null || deviceID === undefined) {
+      return;
+    }
+
+    const split = deviceID.split("-");
+
+    if (split.length === 3) {
+      this.BuildingID = split[0];
+      this.RoomID = split[0] + "-" + split[1];
+      this.DeviceID = split[0] + "-" + split[1] + "-" + split[2];
+    }
+  }
+}
+
+@JsonConverter
+class DateConverter implements JsonCustomConvert<Date> {
+  serialize(date: Date): any {
+    function pad(n) {
+      return n < 10 ? "0" + n : n;
+    }
+
+    return (
+      date.getUTCFullYear() +
+      "-" +
+      pad(date.getUTCMonth() + 1) +
+      "-" +
+      pad(date.getUTCDate()) +
+      "T" +
+      pad(date.getUTCHours()) +
+      ":" +
+      pad(date.getUTCMinutes()) +
+      ":" +
+      pad(date.getUTCSeconds()) +
+      "Z"
+    );
+  }
+
+  deserialize(date: any): Date {
+    return new Date(date);
+  }
+}
+
+@JsonObject("Event")
+export class Event {
+  @JsonProperty("generating-system", String, true)
+  GeneratingSystem = "";
+
+  @JsonProperty("timestamp", DateConverter, true)
+  Timestamp: Date = undefined;
+
+  @JsonProperty("event-tags", [String], true)
+  EventTags: string[] = [];
+
+  @JsonProperty("target-device", BasicDeviceInfo, true)
+  TargetDevice = new BasicDeviceInfo(undefined);
+
+  @JsonProperty("affected-room", BasicRoomInfo)
+  AffectedRoom = new BasicRoomInfo(undefined);
+
+  @JsonProperty("key", String, true)
+  Key = "";
+
+  @JsonProperty("value", String, true)
+  Value = "";
+
+  @JsonProperty("user", String, true)
+  User = "";
+
+  @JsonProperty("data", Any, true)
+  Data: any = undefined;
+
+  public hasTag(tag: string): boolean {
+    return this.EventTags.includes(tag);
   }
 }

@@ -1,10 +1,13 @@
 package uiconfig
 
 import (
+	"fmt"
 	"net/http"
+	"net/url"
 	"os"
 	"strings"
 
+	"github.com/byuoitav/common/status"
 	"github.com/labstack/echo"
 )
 
@@ -13,6 +16,11 @@ type APIHost struct {
 }
 
 var apiNum = 0
+var version = "0"
+
+func init() {
+	version, _ = status.GetMicroserviceVersion()
+}
 
 func GetAPI(context echo.Context) error {
 	config, err := getUIConfig()
@@ -48,10 +56,14 @@ func GetUIPath(context echo.Context) error {
 		return context.JSON(http.StatusInternalServerError, err.Error())
 	}
 
-	hostname := os.Getenv("PI_HOSTNAME")
+	hostname := os.Getenv("SYSTEM_ID")
 	for _, panel := range config.Panels {
 		if strings.EqualFold(hostname, panel.Hostname) {
-			return context.JSON(http.StatusOK, &APIHost{Hostname: panel.UIPath})
+			//we also want to generate a query parameter to add to the end each time it refreshes.
+			str := GenRandString(8)
+			queryString := fmt.Sprintf("?%s=%s", url.QueryEscape(version), url.QueryEscape(str))
+
+			return context.JSON(http.StatusOK, &APIHost{Hostname: panel.UIPath + queryString})
 		}
 	}
 

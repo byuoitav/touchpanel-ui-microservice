@@ -1,100 +1,66 @@
-// background
-$background: #042149;
-$backgroundShadow: inset 0 0 30vh 7vh rgba(0,0,0,0.5); 
-
-// wheel
-$slice: #002b4b;
-$titleSlice: #39719b;
-$selectedSlice: #007ad4;
-
-$center: #d32f2f;
-$centerOn: #7cb342; 
-$icon: white;
-
 .basediv {
-    background-color: $background;
-    box-shadow: $backgroundShadow;
+    background-color: var(--background-color);
+    box-shadow: var(--background-shadow);
 
     .lock {
-        background-color: $background; 
-        box-shadow: $backgroundShadow;
+        background-color: var(--background-color);
+        box-shadow: var(--background-shadow);
     }
 }
 
 #screenoff {
-    background-color: $background;
-    box-shadow: $backgroundShadow;
+    background-color: var(--background-color);
+    box-shadow: var(--background-shadow);
     color: white;
 }
 
 .circle {
     .wheel {
-        border: .2vh solid white;
+        border: .2vh solid var(--wheel-outline-color);
 
         li {
-            text-shadow: 0 0 1.2vh black; 
+            text-shadow: 0 0 1.2vh black;
         }
 
         .input-slice {
-             background-color: $slice; 
+             background-color: var(--input-color);
              box-shadow: inset 0 0 30vh 1vh rgba(0,0,0,.3); 
 
              .input {
-                color: white; 
+                color: var(--input-text-color); 
              }
         }
 
         .title-slice {
-            background-color: $titleSlice; 
+            background-color: var(--wheel-title-color);
         }
 
         .selected-input {
-            background-color: $selectedSlice; 
+            background-color: var(--selected-input-color);
 
-            /*
-            animation: selectInput 1s 3;
-
-            // selection animation  
-            @keyframes selectInput {
-                from {
-                    box-shadow: inset 0 0 6vh 2vh rgba(0,0,0,0.8);
-                } to {
-                    box-shadow: inset 0 0 6vh 2vh rgba(255,255,255,0.8);
-                }
-            }
-            */
+             .input {
+                color: var(--selected-input-text-color); 
+             }
         }
     }
 
     .center {
-        background-color: $center; 
-        border: .5vh solid white;
-        color: white;
+        background-color: var(--center-off-color);
+        border: .5vh solid var(--wheel-outline-color);
+        color: var(--center-text-color);
 
         box-shadow: inset 0 0 15vh 3vh rgba(0,0,0,.3);
 
+        .name {
+            color: var(--wheel-title-text-color);
+        }
+
         &.on {
-            background-color: $centerOn;
+            background-color: var(--center-on-color);
         }
 
         .icon {
-            color: $icon; 
+            color: var(text-color);
         }
     }
 }
-
-/* ShareScreenDialog
-* 
-*/
-.selection {
-    background-color: $background;
-
-    &.selected {
-        background-color: $centerOn;
-    }
-}
-
-.grey {
-    filter: grayscale(100%) brightness(70%);
-}
-
