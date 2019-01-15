@@ -164,7 +164,7 @@ export class GraphService {
       .get(
         "http://" +
           this.dividerSensor.address +
-          ":10000/divider/preset" +
+          ":10000/divider/preset/" +
           APIService.piHostname
       )
       .map(res => res.json())
