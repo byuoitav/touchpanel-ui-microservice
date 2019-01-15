@@ -100,8 +100,8 @@ export class GraphService {
   }
 
   /*
-     * recursivly descends through nodes and adds their displays to the list
-     */
+   * recursivly descends through nodes and adds their displays to the list
+   */
   private getdisplaylist(node: Node, list: Set<string>): Set<string> {
     let displays = Array.from(node.displays);
 
@@ -119,17 +119,17 @@ export class GraphService {
   }
 
   /*
-     * gets the status of the room from the divider sensor.
-     * loops through the connected events and adds connected nodes until
-     * there isnt' a change in my displays.
-     *
-     * loops through the disconnected events and disconnects displays that may be disconnected.
-     *      TODO (?) is this necessary? or should i just assume they are disconnected.
-     */
+   * gets the status of the room from the divider sensor.
+   * loops through the connected events and adds connected nodes until
+   * there isnt' a change in my displays.
+   *
+   * loops through the disconnected events and disconnects displays that may be disconnected.
+   *      TODO (?) is this necessary? or should i just assume they are disconnected.
+   */
   private getDividerSensorStatus() {
     if (this.dividerSensor != null) {
       this.http
-        .get("http://" + this.dividerSensor.address + ":8200/status")
+        .get("http://" + this.dividerSensor.address + ":10000/divider/state")
         .map(res => res.json())
         .subscribe(
           data => {
@@ -164,7 +164,7 @@ export class GraphService {
       .get(
         "http://" +
           this.dividerSensor.address +
-          ":8200/preset/" +
+          ":10000/divider/preset" +
           APIService.piHostname
       )
       .map(res => res.json())
