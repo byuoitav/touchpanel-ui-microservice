@@ -294,7 +294,7 @@ export class DataService {
       .get(
         "http://" +
           this.dividerSensor.address +
-          ":8200/preset/" +
+          ":10000/divider/preset/" +
           APIService.piHostname
       )
       .map(res => res.json())
