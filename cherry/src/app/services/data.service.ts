@@ -413,7 +413,8 @@ export class DataService {
             case PRESET_SWITCH:
               // switch presets
               if (
-                APIService.piHostname.toLowerCase() !== split[2].toLowerCase()
+                APIService.piHostname.toLowerCase() !==
+                e.TargetDevice.DeviceID.toLowerCase()
               ) {
                 break;
               }
