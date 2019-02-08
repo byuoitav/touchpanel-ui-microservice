@@ -120,6 +120,8 @@ export class HomeComponent implements OnInit {
 
   mirrorPresetName: string;
 
+  helpInfo: HelpInfo = new HelpInfo();
+
   @ViewChild("poweroffall")
   powerOffAllDialog: SwalComponent;
   @ViewChild("help")
@@ -151,6 +153,8 @@ export class HomeComponent implements OnInit {
       this.updateFromEvents();
       this.setupInputFunctions();
       this.setupDialogs();
+
+      this.updateHelp();
     });
   }
 
@@ -216,7 +220,7 @@ export class HomeComponent implements OnInit {
       type: "question",
       text: "i should be hidden",
       focusConfirm: false,
-      showConfirmButton: this.getHelp().showConfirm,
+      // showConfirmButton: this.helpInfo.showConfirm,
       confirmButtonText: "Request Help",
       showCancelButton: true,
       showLoaderOnConfirm: true,
@@ -1047,6 +1051,16 @@ export class HomeComponent implements OnInit {
     this.audioDialog.show().then(result => {
       from.show();
     });
+  }
+
+  public updateHelp() {
+    this.helpInfo = this.getHelp();
+    console.log("updated help info", this.helpInfo);
+
+    setInterval(() => {
+      this.helpInfo = this.getHelp();
+      console.log("updated help info", this.helpInfo);
+    }, 5 * 60 * 1000);
   }
 
   public getHelp(): HelpInfo {

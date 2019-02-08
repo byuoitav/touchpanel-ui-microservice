@@ -80,9 +80,10 @@
   #help
   (confirm)="helpConfirmDialog.show()"
   (cancel)="command.buttonPress('exit help modal')"
+  [showConfirmButton]="helpInfo?.showConfirm"
 >
   <div *swalPartial="swalTargets.content">
-    <span>{{ getHelp().msg }}</span>
+    <span>{{ helpInfo?.msg }}</span>
   </div>
 </swal>
 
