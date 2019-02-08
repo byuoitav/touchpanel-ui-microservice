@@ -1060,7 +1060,7 @@ export class HomeComponent implements OnInit {
     setInterval(() => {
       this.helpInfo = this.getHelp();
       console.log("updated help info", this.helpInfo);
-    }, 5 * 60 * 1000);
+    }, 1 * 60 * 1000);
   }
 
   public getHelp(): HelpInfo {
