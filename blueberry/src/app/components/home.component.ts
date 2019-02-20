@@ -976,6 +976,8 @@ export class HomeComponent implements OnInit {
 
               break;
           }
+        } else {
+          console.warn("<home comonent> invalid event: ", e);
         }
       }
     });
