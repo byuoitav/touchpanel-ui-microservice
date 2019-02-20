@@ -7,6 +7,7 @@
       *ngIf="isPoweredOff(); else home"
       class="lock"
       (click)="unlock(); command.buttonPress('power on')"
+      (press)="unlock(); command.buttonPress('long press power on')"
     >
       <ng-container *ngIf="!unlocking; else poweringOn">
         <!-- byu logo -->
@@ -35,6 +36,7 @@
         color="warn"
         class="power"
         (click)="powerOff(); command.buttonPress('power off')"
+        (press)="powerOff(); command.buttonPress('long press power off')"
       >
         Power Off
       </button>
@@ -46,6 +48,9 @@
         class="help"
         color="accent"
         (click)="openHelpDialog(); command.buttonPress('open help modal')"
+        (press)="
+          openHelpDialog(); command.buttonPress('long press open help modal')
+        "
       >
         Help
       </button>
