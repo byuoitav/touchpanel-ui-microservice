@@ -32,7 +32,14 @@
           displays: getDisplayNames()
         })
       "
-      (press)="command.buttonPress('long press remirror', i?.displayname)"
+      (press)="
+        i.click.emit();
+        command.buttonPress('long press change input', {
+          input: i?.name,
+          displays: getDisplayNames()
+        }) // openInputModal(i);
+        // command.buttonPress('long press input', i?.displayname)
+      "
     >
       <div class="input" [style.top]="topoffset" [style.right]="rightoffset">
         <i class="material-icons">{{ i.icon }}</i>
@@ -46,7 +53,7 @@
       [class.selected-input]="getInput() === i"
       (click)="i.click.emit()"
       (press)="
-        openInputModal(i); command.buttonPress('long press input', i?.name)
+        openInputModal(i); command.buttonPress('long press remirror', i?.name)
       "
     >
       <div

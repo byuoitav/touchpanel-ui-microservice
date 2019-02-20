@@ -2,10 +2,10 @@
   <button
     mat-fab
     class="power button"
-    (click)="turnOff(); command.buttonPress('power off')"
-    (press)="
-      poweroffall.show(); command.buttonPress('open power off all modal')
-    "
+    (click)="command.buttonPress('power off')"
+    (click)="data.panels.length > 1 ? poweroffall.show() : turnOff()"
+    (press)="command.buttonPress('long press power off')"
+    (press)="data.panels.length > 1 ? poweroffall.show() : turnOff()"
   >
     <mat-icon>power_settings_new</mat-icon>
   </button>
@@ -70,9 +70,41 @@
 </div>
 
 <!-- modal windows -->
-<swal #poweroffall (cancel)="command.buttonPress('close power off all modal')">
+<swal #poweroffall>
   <div *swalPartial="swalTargets.content">
-    <span>Would you like to turn everything off?</span>
+    <span>Would you like to turn off all displays or just this one?</span>
+    <button
+      type="button"
+      class="btn-neutral swal2-styled"
+      (click)="
+        poweroffall.nativeSwal.clickCancel();
+        command.buttonPress('close power off all modal')
+      "
+    >
+      Cancel
+    </button>
+    <button
+      type="button"
+      class="btn-warn swal2-styled"
+      (click)="
+        powerOffType = 'this';
+        poweroffall.nativeSwal.clickConfirm();
+        command.buttonPress('power off')
+      "
+    >
+      This display
+    </button>
+    <button
+      type="button"
+      class="btn-danger swal2-styled"
+      (click)="
+        powerOffType = 'all';
+        poweroffall.nativeSwal.clickConfirm();
+        command.buttonPress('power off all')
+      "
+    >
+      All displays
+    </button>
   </div>
 </swal>
 
