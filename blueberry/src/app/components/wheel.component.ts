@@ -185,7 +185,7 @@ export class WheelComponent implements AfterContentInit {
         console.warn(
           "no configuration for",
           this.preset.inputs.length + this.preset.extraInputs.length,
-          "displays"
+          "inputs"
         );
         break;
     }
