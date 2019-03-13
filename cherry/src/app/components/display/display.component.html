@@ -13,6 +13,10 @@
       (click)="
         toggleDisplay(d); command.buttonPress('selected display', d?.name)
       "
+      (press)="
+        toggleDisplay(d);
+        command.buttonPress('long press selected display', d?.name)
+      "
       [class.mat-raised-button]="selectedDisplays.has(d)"
     >
       <!-- i need to see if that works (up two lines) -->
@@ -45,6 +49,10 @@
       class="input mat-elevation-z7"
       [color]="isOneBlanked() ? 'accent' : ''"
       (click)="blank(); command.buttonPress('blank', getSelectedDisplayNames())"
+      (press)="
+        blank();
+        command.buttonPress('long press blank', getSelectedDisplayNames())
+      "
       [class.mat-raised-button]="isOneBlanked()"
     >
       <div class="icon">
@@ -68,7 +76,11 @@
         })
       "
       (press)="
-        openInputDialog(i); command.buttonPress('long press input', i.name)
+        changeInput(i);
+        command.buttonPress('long press change input', {
+          input: i.name,
+          displays: getSelectedDisplayNames()
+        })
       "
       [class.mat-raised-button]="inputUsed(i)"
     >

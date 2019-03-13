@@ -120,6 +120,8 @@ export class HomeComponent implements OnInit {
 
   mirrorPresetName: string;
 
+  helpInfo: HelpInfo = new HelpInfo();
+
   @ViewChild("poweroffall")
   powerOffAllDialog: SwalComponent;
   @ViewChild("help")
@@ -139,6 +141,8 @@ export class HomeComponent implements OnInit {
   @ViewChild("notShareable")
   notSharableDialog: SwalComponent;
 
+  powerOffType = "this";
+
   constructor(
     public data: DataService,
     private socket: SocketService,
@@ -151,6 +155,8 @@ export class HomeComponent implements OnInit {
       this.updateFromEvents();
       this.setupInputFunctions();
       this.setupDialogs();
+
+      this.updateHelp();
     });
   }
 
@@ -173,41 +179,56 @@ export class HomeComponent implements OnInit {
     }
   }
 
+  public log(something: object) {
+    console.log(something);
+  }
+
   private setupDialogs() {
     this.powerOffAllDialog.options = {
-      title: "Power Off All",
+      title: "Power Off",
       type: "warning",
       text: "i should be hidden",
       focusConfirm: false,
-      confirmButtonText: "Yes",
-      showCancelButton: true,
       showLoaderOnConfirm: true,
+      showConfirmButton: false,
+      showCancelButton: false,
       preConfirm: () => {
-        this.command.buttonPress("power off all");
+        if (this.powerOffType === "all") {
+          return new Promise((resolve, reject) => {
+            this.turnOff().subscribe(() => {
+              this.wheel.command.powerOffAll().subscribe(success => {
+                if (success) {
+                  const event = new Event();
 
-        return new Promise((resolve, reject) => {
-          this.turnOff().subscribe(() => {
-            this.wheel.command.powerOffAll().subscribe(success => {
-              if (success) {
-                const event = new Event();
+                  event.User = APIService.piHostname;
+                  event.EventTags = ["ui-communication"];
+                  event.AffectedRoom = new BasicRoomInfo(
+                    APIService.building + "-" + APIService.roomName
+                  );
+                  event.TargetDevice = new BasicDeviceInfo(undefined);
+                  event.Key = POWER_OFF_ALL;
+                  event.Value = " ";
 
-                event.User = APIService.piHostname;
-                event.EventTags = ["ui-communication"];
-                event.AffectedRoom = new BasicRoomInfo(
-                  APIService.building + "-" + APIService.roomName
-                );
-                event.TargetDevice = new BasicDeviceInfo(undefined);
-                event.Key = POWER_OFF_ALL;
-                event.Value = " ";
+                  this.api.sendEvent(event);
 
-                this.api.sendEvent(event);
-
-                resolve();
-              }
-              reject();
+                  resolve();
+                } else {
+                  reject();
+                }
+              });
             });
           });
-        });
+        } else {
+          return new Promise((resolve, reject) => {
+            this.turnOff().subscribe(success => {
+              if (success) {
+                resolve();
+              } else {
+                reject();
+              }
+            });
+          });
+        }
       }
     };
 
@@ -216,7 +237,7 @@ export class HomeComponent implements OnInit {
       type: "question",
       text: "i should be hidden",
       focusConfirm: false,
-      showConfirmButton: this.getHelp().showConfirm,
+      // showConfirmButton: this.helpInfo.showConfirm,
       confirmButtonText: "Request Help",
       showCancelButton: true,
       showLoaderOnConfirm: true,
@@ -972,6 +993,8 @@ export class HomeComponent implements OnInit {
 
               break;
           }
+        } else {
+          console.warn("<home comonent> invalid event: ", e);
         }
       }
     });
@@ -1047,6 +1070,16 @@ export class HomeComponent implements OnInit {
     this.audioDialog.show().then(result => {
       from.show();
     });
+  }
+
+  public updateHelp() {
+    this.helpInfo = this.getHelp();
+    console.log("updated help info", this.helpInfo);
+
+    setInterval(() => {
+      this.helpInfo = this.getHelp();
+      console.log("updated help info", this.helpInfo);
+    }, 1 * 60 * 1000);
   }
 
   public getHelp(): HelpInfo {

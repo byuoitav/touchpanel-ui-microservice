@@ -16,7 +16,11 @@
 >
   <!-- wheel -->
   <ul #wheel class="wheel" [class.open]="circleOpen">
-    <li class="title-slice" (click)="command.buttonPress('title slice')">
+    <li
+      class="title-slice"
+      (click)="command.buttonPress('title slice')"
+      (press)="command.buttonPress('long press title slice')"
+    >
       <div></div>
     </li>
 
@@ -32,7 +36,13 @@
           displays: getDisplayNames()
         })
       "
-      (press)="command.buttonPress('long press remirror', i?.displayname)"
+      (press)="
+        i.click.emit();
+        command.buttonPress('long press change input', {
+          input: i?.name,
+          displays: getDisplayNames()
+        })
+      "
     >
       <div class="input" [style.top]="topoffset" [style.right]="rightoffset">
         <i class="material-icons">{{ i.icon }}</i>
@@ -44,9 +54,9 @@
       *ngFor="let i of preset.extraInputs"
       class="input-slice"
       [class.selected-input]="getInput() === i"
-      (click)="i.click.emit()"
+      (click)="i.click.emit(); command.buttonPress('remirror', i?.name)"
       (press)="
-        openInputModal(i); command.buttonPress('long press input', i?.name)
+        i.click.emit(); command.buttonPress('long press remirror', i?.name)
       "
     >
       <div
@@ -76,7 +86,8 @@
     class="center"
     [class.open]="circleOpen"
     [class.on]="getPower() == 'on'"
-    (click)="command.buttonPress('circle center pressed')"
+    (click)="command.buttonPress('circle center')"
+    (press)="command.buttonPress('long press circle center')"
   >
     <span class="center-item name" [class.open]="circleOpen">{{
       preset.name
@@ -84,8 +95,10 @@
     <i
       class="center-item material-icons icon"
       [class.open]="circleOpen"
-      (click)="
-        command.buttonPress('circle center pressed'); $event.stopPropagation()
+      (click)="command.buttonPress('circle center'); $event.stopPropagation()"
+      (press)="
+        command.buttonPress('long press circle center');
+        $event.stopPropagation()
       "
       >{{ preset.icon }}</i
     >
@@ -105,6 +118,7 @@
       class="center-item switch"
       [class.open]="circleOpen"
       (click)="$event.stopPropagation()"
+      (press)="$event.stopPropagation()"
     >
       <ui-switch
         reverse
@@ -157,6 +171,13 @@
       (click)="
         command.setMute(!getMute(), preset.audioDevices);
         command.buttonPress(getMute() ? 'mute' : 'unmute', getAudioNames())
+      "
+      (press)="
+        command.setMute(!getMute(), preset.audioDevices);
+        command.buttonPress(
+          getMute() ? 'long press mute' : 'long press unmute',
+          getAudioNames()
+        )
       "
     >
       <mat-icon *ngIf="getMute()">volume_off</mat-icon>
@@ -211,6 +232,13 @@
             via.nativeSwal.clickCancel();
             command.buttonPress('exit via control modal', openInput?.name)
           "
+          (press)="
+            via.nativeSwal.clickCancel();
+            command.buttonPress(
+              'long press exit via control modal',
+              openInput?.name
+            )
+          "
         >
           Cancel
         </button>
@@ -221,6 +249,10 @@
             viaControl('reset');
             command.buttonPress('reset via', openInput?.name)
           "
+          (press)="
+            viaControl('reset');
+            command.buttonPress('long press reset via', openInput?.name)
+          "
         >
           Reset
         </button>
@@ -230,6 +262,10 @@
           (click)="
             viaControl('reboot');
             command.buttonPress('reboot via', openInput?.name)
+          "
+          (press)="
+            viaControl('reboot');
+            command.buttonPress('long press reboot via', openInput?.name)
           "
         >
           Reboot
