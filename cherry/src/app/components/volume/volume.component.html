@@ -1,26 +1,32 @@
 <div class="volume">
-    <!-- volume slider -->
-    <mat-slider #slider class="slider"
-        color="primary"
-        (change)="levelChange.emit($event.value); closeThumb();"
-        [max]="100"
-        [min]="0"
-        [step]="5"
-        [thumb-label]="true"
-        [vertical]="true"
-        [disabled]="mute"
-        [value]="mute ? beforeMuteLevel : level">
-    </mat-slider>
+  <!-- volume slider -->
+  <mat-slider
+    #slider
+    class="slider"
+    color="primary"
+    (change)="levelChange.emit($event.value); closeThumb()"
+    [max]="100"
+    [min]="0"
+    [step]="5"
+    [thumb-label]="true"
+    [vertical]="true"
+    [disabled]="mute"
+    [value]="mute ? beforeMuteLevel : level"
+  >
+  </mat-slider>
 
-    <!-- mute button -->
-    <div [class.secondary-theme]="!mute">
-        <button mat-raised-button
-            [color]="mute ? 'warn' : 'primary'"
-            (click)="muteClick()"
-            class="button"
-            [class.muted]="mute">
-            <ng-container *ngIf="!mute">Mute</ng-container>
-            <ng-container *ngIf="mute">Unmute</ng-container>
-        </button>
-    </div>
+  <!-- mute button -->
+  <div [class.secondary-theme]="!mute">
+    <button
+      mat-raised-button
+      [color]="mute ? 'warn' : 'primary'"
+      (click)="muteClick()"
+      (press)="muteClick()"
+      class="button"
+      [class.muted]="mute"
+    >
+      <ng-container *ngIf="!mute">Mute</ng-container>
+      <ng-container *ngIf="mute">Unmute</ng-container>
+    </button>
+  </div>
 </div>
