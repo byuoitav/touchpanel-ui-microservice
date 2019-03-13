@@ -288,6 +288,8 @@ export class DataService {
             default:
               break;
           }
+        } else {
+          console.warn("<data service> invalid event", e);
         }
       }
     });

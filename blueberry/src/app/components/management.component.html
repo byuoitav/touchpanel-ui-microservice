@@ -1,8 +1,32 @@
 <div *ngIf="enabled">
-    <button name="defcon" mat-button color="accent" class="top left button" (click)="update(3)"></button>
-    <div *ngIf="defcon < 3">
-        <button name="defcon" mat-button color="accent" class="top right button" (click)="update(2)"></button>
-        <button name="defcon" mat-button color="accent" class="bottom left button" (click)="update(1)"></button>
-        <button name="defcon" mat-button color="accent" class="bottom right button" (click)="update(0)"></button>
-    </div>
+  <button
+    name="defcon"
+    mat-button
+    color="accent"
+    class="top left button"
+    (click)="update(3)"
+  ></button>
+  <div *ngIf="defcon < 3">
+    <button
+      name="defcon"
+      mat-button
+      color="accent"
+      class="top right button"
+      (click)="update(2)"
+    ></button>
+    <button
+      name="defcon"
+      mat-button
+      color="accent"
+      class="bottom left button"
+      (click)="update(1)"
+    ></button>
+    <button
+      name="defcon"
+      mat-button
+      color="accent"
+      class="bottom right button"
+      (click)="update(0)"
+    ></button>
+  </div>
 </div>
