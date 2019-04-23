@@ -88,6 +88,8 @@ export class UIConfiguration {
 export class ConfigCommands {
   powerOn: ConfigCommand[];
   powerOff: ConfigCommand[];
+  inputSame: ConfigCommand[];
+  inputDifferent: ConfigCommand[];
 }
 
 export class ConfigCommand {

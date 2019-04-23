@@ -45,7 +45,7 @@ export class DisplayComponent {
 
   public changeInput(i: Input) {
     this.command
-      .setInput(i, Array.from(this.selectedDisplays))
+      .setInput(this.preset, i, Array.from(this.selectedDisplays))
       .subscribe(success => {
         if (!success) {
           console.warn("failed to change input");
