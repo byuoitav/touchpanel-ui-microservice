@@ -76,7 +76,11 @@ export class CommandService {
     return ret;
   }
 
-  public setInput(i: Input, displays: Display[]): EventEmitter<boolean> {
+  public setInput(
+    preset: Preset,
+    i: Input,
+    displays: Display[]
+  ): EventEmitter<boolean> {
     i.click.emit();
 
     const ret: EventEmitter<boolean> = new EventEmitter<boolean>();
@@ -97,17 +101,35 @@ export class CommandService {
       });
     }
 
-    this.put(body).subscribe(
-      data => {
-        ret.emit(true);
-      },
-      err => {
+    const changeInputReq = new Request({
+      method: "PUT",
+      url: APIService.apiurl,
+      body: body
+      // TODO add some kind of 'do this based on the response' function
+    });
+    const requests: Request[] = [changeInputReq];
+
+    const commandsToUse = preset.displays.some(d => d.input.name !== i.name)
+      ? preset.commands.inputDifferent
+      : preset.commands.inputSame;
+
+    if (commandsToUse) {
+      for (const cmd of commandsToUse) {
+        requests.push(this.buildRequest(cmd));
+      }
+    }
+
+    console.log("preset:", preset);
+    console.log("executing requests:", requests);
+
+    this.executeRequests(requests, 1, 14 * 1000).subscribe(success => {
+      if (!success) {
         Display.setInput(prev, displays);
         Display.setBlank(prevBlank, displays);
-
-        ret.emit(false);
       }
-    );
+
+      ret.emit(success);
+    });
 
     return ret;
   }
@@ -367,6 +389,12 @@ export class CommandService {
       }
     }
 
+    if (preset.commands.inputSame) {
+      for (const cmd of preset.commands.inputSame) {
+        requests.push(this.buildRequest(cmd));
+      }
+    }
+
     this.executeRequests(requests, 1, 20 * 1000).subscribe(success => {
       ret.emit(success);
     });
@@ -457,6 +485,7 @@ export class CommandService {
   }
 
   private buildRequest(cmd: ConfigCommand): Request {
+    // if we needed logic to create a request, it would be right here!!
     return new Request({
       method: cmd.method,
       url: APIService.apihost + ":" + cmd.port + "/" + cmd.endpoint,
@@ -514,6 +543,7 @@ export class CommandService {
     return ret;
   }
 
+  /*
   public share(from: Display, to: Display[]): EventEmitter<boolean> {
     const ret: EventEmitter<boolean> = new EventEmitter<boolean>();
     if (from.input == null) {
@@ -661,6 +691,7 @@ export class CommandService {
 
     return ret;
   }
+     */
 
   public viaControl(via: Input, endpoint: string): EventEmitter<boolean> {
     const ret: EventEmitter<boolean> = new EventEmitter<boolean>();
