@@ -5,6 +5,7 @@ import {
   Output as AngularOutput,
   OnInit
 } from "@angular/core";
+import { MatDialog } from "@angular/material";
 import { deserialize } from "serializer.ts/Serializer";
 import swal, { SweetAlertOptions } from "sweetalert2";
 import { SwalComponent, SwalPartialTargets } from "@toverux/ngx-sweetalert2";
@@ -20,8 +21,7 @@ import {
   BasicDeviceInfo,
   BasicRoomInfo
 } from "../services/socket.service";
-import { HelpDialog } from "../dialogs/help.dialog";
-import { ChangedDialog } from "../dialogs/changed.dialog";
+import { HelpModal } from "../modals/helpmodal/helpmodal.component";
 
 import { Preset, AudioConfig } from "../objects/objects";
 import {
@@ -33,6 +33,7 @@ import {
   POWER,
   POWER_OFF_ALL
 } from "../objects/status.objects";
+import { HelpInfo } from "../objects/modals";
 
 export const SHARE = "start_share";
 export const STOP_SHARE = "stop_share";
@@ -120,14 +121,10 @@ export class HomeComponent implements OnInit {
 
   mirrorPresetName: string;
 
-  helpInfo: HelpInfo = new HelpInfo();
+  helpInfo: HelpInfo;
 
   @ViewChild("poweroffall")
   powerOffAllDialog: SwalComponent;
-  @ViewChild("help")
-  helpDialog: SwalComponent;
-  @ViewChild("helpConfirm")
-  helpConfirmDialog: SwalComponent;
   @ViewChild("selectdisplays")
   selectDisplaysDialog: SwalComponent;
   @ViewChild("unshare")
@@ -149,7 +146,8 @@ export class HomeComponent implements OnInit {
     public api: APIService,
     public readonly swalTargets: SwalPartialTargets,
     public command: CommandService,
-    private graph: GraphService
+    private graph: GraphService,
+    private dialog: MatDialog
   ) {
     this.data.loaded.subscribe(() => {
       this.updateFromEvents();
@@ -229,55 +227,6 @@ export class HomeComponent implements OnInit {
             });
           });
         }
-      }
-    };
-
-    this.helpDialog.options = {
-      title: "Help",
-      type: "question",
-      text: "i should be hidden",
-      focusConfirm: false,
-      // showConfirmButton: this.helpInfo.showConfirm,
-      confirmButtonText: "Request Help",
-      showCancelButton: true,
-      showLoaderOnConfirm: true,
-      preConfirm: () => {
-        this.command.buttonPress("request help");
-
-        return new Promise((resolve, reject) => {
-          this.api.help("help").subscribe(
-            data => {
-              resolve();
-            },
-            err => {
-              reject();
-            }
-          );
-        });
-      }
-    };
-
-    this.helpConfirmDialog.options = {
-      title: "Confirm",
-      type: "success",
-      text: "i should be hidden",
-      focusConfirm: false,
-      confirmButtonText: "Confirm",
-      showCancelButton: true,
-      showLoaderOnConfirm: true,
-      preConfirm: () => {
-        this.command.buttonPress("confirm help request");
-
-        return new Promise((resolve, reject) => {
-          this.api.help("confirm").subscribe(
-            data => {
-              resolve();
-            },
-            err => {
-              reject();
-            }
-          );
-        });
       }
     };
 
@@ -1110,7 +1059,10 @@ export class HomeComponent implements OnInit {
         break;
     }
 
-    const ret = new HelpInfo();
+    const ret: HelpInfo = {
+      msg: "",
+      showConfirm: false
+    };
 
     if (APIService.helpConfig == null) {
       ret.msg = "Unable to get help message.";
@@ -1148,9 +1100,11 @@ export class HomeComponent implements OnInit {
 
     return displays;
   }
-}
 
-class HelpInfo {
-  msg = "";
-  showConfirm = false;
+  public showHelp() {
+    const ref = this.dialog.open(HelpModal, {
+      width: "80vw",
+      data: this.helpInfo
+    });
+  }
 }

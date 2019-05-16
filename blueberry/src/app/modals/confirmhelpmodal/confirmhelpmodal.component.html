@@ -1,0 +1,22 @@
+<h1 mat-dialog-title class="text title">Confirm</h1>
+
+<div mat-dialog-content class="text">
+  <p>
+    Your help request has been recieved; A member of our support staff is on
+    their way.
+  </p>
+</div>
+
+<div mat-dialog-actions class="items secondary-theme">
+  <button mat-raised-button color="warn" (click)="cancel()" (press)="cancel()">
+    Cancel Request
+  </button>
+  <button
+    mat-raised-button
+    color="primary"
+    (click)="confirmHelp()"
+    (press)="confirmHelp()"
+  >
+    Confirm Request
+  </button>
+</div>

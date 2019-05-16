@@ -13,8 +13,8 @@
   <button
     mat-fab
     class="help button"
-    (click)="help.show(); command.buttonPress('open help modal')"
-    (press)="help.show(); command.buttonPress('long press open help modal')"
+    (click)="showHelp(); command.buttonPress('open help modal')"
+    (press)="showHelp(); command.buttonPress('long press open help modal')"
   >
     <mat-icon>help</mat-icon>
   </button>
@@ -134,30 +134,6 @@
     >
       All displays
     </button>
-  </div>
-</swal>
-
-<swal
-  #help
-  (confirm)="helpConfirmDialog.show()"
-  (cancel)="command.buttonPress('exit help modal')"
-  [showConfirmButton]="helpInfo?.showConfirm"
->
-  <div *swalPartial="swalTargets.content">
-    <span>{{ helpInfo?.msg }}</span>
-  </div>
-</swal>
-
-<swal
-  #helpConfirm
-  (cancel)="
-    api.help('cancel').subscribe(); command.buttonPress('cancel help request')
-  "
->
-  <div *swalPartial="swalTargets.content">
-    <span
-      >Your help request has been recieved. A technician is on their way.</span
-    >
   </div>
 </swal>
 
