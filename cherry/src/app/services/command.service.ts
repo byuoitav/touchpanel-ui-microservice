@@ -109,7 +109,9 @@ export class CommandService {
     });
     const requests: Request[] = [changeInputReq];
 
-    const commandsToUse = preset.displays.some(d => d.input.name !== i.name)
+    const commandsToUse = preset.displays.some(
+      d => d.input && d.input.name !== i.name
+    )
       ? preset.commands.inputDifferent
       : preset.commands.inputSame;
 
