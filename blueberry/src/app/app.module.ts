@@ -61,7 +61,7 @@ import { PowerOffAllModalComponent } from './modals/poweroffallmodal/poweroffall
     DataService,
     GraphService
   ],
-  entryComponents: [HelpModal, ConfirmHelpModal],
+  entryComponents: [HelpModal, ConfirmHelpModal, PowerOffAllModalComponent],
   bootstrap: [AppComponent]
 })
 export class AppModule {}
