@@ -168,14 +168,32 @@ ul {
     will-change: background-color;
     .mat-slider-vertical {
         height: 100%;
+        margin-top: 80%;
+        margin-bottom: 20%;
         // width: 100%;
     }
-     ::ng-deep .mat-slider-thumb,
-     ::ng-deep .mat-slider-track {
-        -ms-transform: scale($volumeSliderScale);
-        -webkit-transform: scale($volumeSliderScale);
-        transform: scale($volumeSliderScale);
+            
+    /deep/ .mat-slider .mat-slider-thumb {
+        width: 50px;
+        height: 50px;
+        right: -25px;
+        bottom: -25px;
     }
+
+    /deep/ .mat-slider.mat-slider-vertical .mat-slider-track-wrapper {
+        width: 10px;                
+        left: -4px;
+        border-radius: 10px;
+    }
+
+    /deep/ .mat-slider.mat-slider-vertical .mat-slider-track-background {
+        width: 100%;
+    }
+
+    /deep/ .mat-slider.mat-slider-vertical .mat-slider-track-fill {
+        width: 100%;
+    }
+
      ::ng-deep .mat-slider-thumb,
      ::ng-deep .mat-slider-thumb-label,
      ::ng-deep .mat-slider-thumb-label-text,
