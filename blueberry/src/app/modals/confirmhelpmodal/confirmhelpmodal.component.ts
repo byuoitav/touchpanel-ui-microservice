@@ -20,10 +20,10 @@ export class ConfirmHelpModal implements OnInit {
   ngOnInit() {
     this.ref.disableClose = true; // don't allow them to close it by clicking outside
 
-    // even though it shouldn't be clickable...
-    this.ref.backdropClick().subscribe(() => {
-      this.confirmHelp();
-    });
+    // // even though it shouldn't be clickable...
+    // this.ref.backdropClick().subscribe(() => {
+    //   this.confirmHelp();
+    // });
   }
 
   public cancel() {
