@@ -19,13 +19,14 @@ export class HelpModal implements OnInit {
     public command: CommandService,
     public dialog: MatDialog
   ) {
-    console.log("help info:", data);
+    console.log("help info:", data);    
+    ref.disableClose = true;
   }
 
   ngOnInit() {
-    this.ref.backdropClick().subscribe(() => {
-      this.cancel();
-    });
+    // this.ref.backdropClick().subscribe(() => {
+    //   this.cancel();
+    // });
   }
 
   public cancel() {
@@ -39,7 +40,8 @@ export class HelpModal implements OnInit {
     this.api.help("help").subscribe(
       data => {
         this.dialog.open(ConfirmHelpModal, {
-          width: "80vw"
+          width: "80vw",
+          disableClose: true
         });
 
         this.ref.close();

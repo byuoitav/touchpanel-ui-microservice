@@ -1104,7 +1104,8 @@ export class HomeComponent implements OnInit {
   public showHelp() {
     const ref = this.dialog.open(HelpModal, {
       width: "80vw",
-      data: this.helpInfo
+      data: this.helpInfo,
+      disableClose: true
     });
   }
 }

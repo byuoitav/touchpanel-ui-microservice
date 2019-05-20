@@ -19,7 +19,13 @@
 }
 
 .button {
-    min-height: 30vh;
-    min-width: 20vw;
+    min-height: 100px;
+    min-width: 100px;
     z-index: 5000;
+
+    pointer-events: all;    
+}
+
+/deep/ .mat-button-focus-overlay {
+    opacity: 0 !important;
 }

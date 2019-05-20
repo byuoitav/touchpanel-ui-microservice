@@ -2,12 +2,13 @@
   <button
     mat-fab
     class="power button"
-    (click)="command.buttonPress('power off')"
-    (click)="data.panels.length > 1 ? poweroffall.show() : turnOff()"
+    (click)="poweroffall.show(); command.buttonPress('power off')"
+    
     (press)="command.buttonPress('long press power off')"
     (press)="data.panels.length > 1 ? poweroffall.show() : turnOff()"
   >
     <mat-icon>power_settings_new</mat-icon>
+    <!--(click)="data.panels.length > 1 ? poweroffall.show() : turnOff()"-->
   </button>
 
   <button
