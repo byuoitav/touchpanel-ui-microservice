@@ -1,5 +1,6 @@
 <div *ngIf="enabled">
   <button
+    #topleft
     name="defcon"
     mat-button
     color="accent"
@@ -8,6 +9,7 @@
   ></button>
   <div *ngIf="defcon < 3">
     <button
+      #topright
       name="defcon"
       mat-button
       color="accent"
@@ -15,6 +17,7 @@
       (click)="update(2)"
     ></button>
     <button
+      #bottomleft
       name="defcon"
       mat-button
       color="accent"
@@ -22,6 +25,7 @@
       (click)="update(1)"
     ></button>
     <button
+      #bottomright
       name="defcon"
       mat-button
       color="accent"

@@ -22,11 +22,7 @@ export class HelpModal implements OnInit {
     console.log("help info:", data);
   }
 
-  ngOnInit() {
-    this.ref.backdropClick().subscribe(() => {
-      this.cancel();
-    });
-  }
+  ngOnInit() {}
 
   public cancel() {
     this.command.buttonPress("exit help modal");
@@ -39,7 +35,8 @@ export class HelpModal implements OnInit {
     this.api.help("help").subscribe(
       data => {
         this.dialog.open(ConfirmHelpModal, {
-          width: "80vw"
+          width: "80vw",
+          disableClose: true
         });
 
         this.ref.close();

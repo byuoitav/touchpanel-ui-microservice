@@ -3,9 +3,17 @@
     mat-fab
     class="power button"
     (click)="command.buttonPress('power off')"
-    (click)="data.panels.length > 1 ? poweroffall.show() : turnOff()"
+    (click)="
+      wheel?.preset?.shareableDisplays?.length > 1
+        ? poweroffall.show()
+        : turnOff()
+    "
     (press)="command.buttonPress('long press power off')"
-    (press)="data.panels.length > 1 ? poweroffall.show() : turnOff()"
+    (press)="
+      wheel?.preset?.shareableDisplays?.length > 1
+        ? poweroffall.show()
+        : turnOff()
+    "
   >
     <mat-icon>power_settings_new</mat-icon>
   </button>
@@ -33,7 +41,12 @@
 </div>
 
 <div class="buttons bottom">
-  <ng-container *ngIf="data?.panel?.features.includes('share')">
+  <ng-container
+    *ngIf="
+      data?.panel?.features.includes('share') &&
+      wheel?.preset?.shareableDisplays?.length > 1
+    "
+  >
     <button
       mat-fab
       *ngIf="wheel?.preset == defaultPreset"
@@ -48,7 +61,6 @@
       <mat-icon>screen_share</mat-icon>
     </button>
 
-    <!-- TODO test unshare event -->
     <button
       mat-fab
       *ngIf="wheel?.preset != defaultPreset"
