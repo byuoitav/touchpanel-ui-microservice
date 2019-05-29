@@ -13,3 +13,24 @@ $slider-height: 80%;
 .slider {
     min-height: $slider-height !important;
 }
+
+/deep/ .mat-slider .mat-slider-thumb {
+    width: 50px;
+    height: 50px;
+    right: -25px;
+    bottom: -25px;
+}
+
+/deep/ .mat-slider.mat-slider-vertical .mat-slider-track-wrapper {
+    width: 10px;
+    left: -4px;
+    border-radius: 10px;
+}
+
+/deep/ .mat-slider.mat-slider-vertical .mat-slider-track-background {
+    width: 100%;
+}
+
+/deep/ .mat-slider.mat-slider-vertical .mat-slider-track-fill {
+    width: 100%;
+}

@@ -27,6 +27,7 @@ import { DataService } from "./services/data.service";
 import { GraphService } from "./services/graph.service";
 import { HelpModal } from "./modals/helpmodal/helpmodal.component";
 import { ConfirmHelpModal } from "./modals/confirmhelpmodal/confirmhelpmodal.component";
+import { PowerOffAllModalComponent } from './modals/poweroffallmodal/poweroffallmodal.component';
 
 @NgModule({
   declarations: [
@@ -35,7 +36,8 @@ import { ConfirmHelpModal } from "./modals/confirmhelpmodal/confirmhelpmodal.com
     WheelComponent,
     ManagementComponent,
     HelpModal,
-    ConfirmHelpModal
+    ConfirmHelpModal,
+    PowerOffAllModalComponent
   ],
   imports: [
     BrowserModule,
@@ -59,7 +61,7 @@ import { ConfirmHelpModal } from "./modals/confirmhelpmodal/confirmhelpmodal.com
     DataService,
     GraphService
   ],
-  entryComponents: [HelpModal, ConfirmHelpModal],
+  entryComponents: [HelpModal, ConfirmHelpModal, PowerOffAllModalComponent],
   bootstrap: [AppComponent]
 })
 export class AppModule {}

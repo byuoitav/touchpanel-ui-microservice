@@ -6,6 +6,8 @@ import (
 	"os"
 	"time"
 
+	"github.com/labstack/echo/middleware"
+
 	"github.com/byuoitav/central-event-system/hub/base"
 	"github.com/byuoitav/central-event-system/messenger"
 	"github.com/byuoitav/common"
@@ -93,8 +95,22 @@ func main() {
 	// all the different ui's
 	router.Static("/", "redirect.html")
 	router.Any("/404", redirect)
-	router.Static("/blueberry", "blueberry-dist")
-	router.Static("/cherry", "cherry-dist")
+	// router.Static("/blueberry", "blueberry-dist")
+	// router.Static("/cherry", "cherry-dist")
+
+	router.Group("/blueberry", middleware.StaticWithConfig(middleware.StaticConfig{
+		Root:   "blueberry-dist",
+		Index:  "index.html",
+		HTML5:  true,
+		Browse: true,
+	}))
+
+	router.Group("/cherry", middleware.StaticWithConfig(middleware.StaticConfig{
+		Root:   "cherry-dist",
+		Index:  "index.html",
+		HTML5:  true,
+		Browse: true,
+	}))
 
 	router.GET("/blueberry/db/:attachment", getCouchAttachment("blueberry"))
 	router.GET("/cherry/db/:attachment", getCouchAttachment("cherry"))

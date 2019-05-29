@@ -94,7 +94,8 @@ export class AppComponent {
 
   public openHelpDialog() {
     const dialogRef = this.dialog.open(HelpDialog, {
-      width: "70vw"
+      width: "70vw",
+      disableClose: true
     });
   }
 }

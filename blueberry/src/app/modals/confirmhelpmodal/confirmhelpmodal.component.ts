@@ -17,7 +17,9 @@ export class ConfirmHelpModal implements OnInit {
     public dialog: MatDialog
   ) {}
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.ref.disableClose = true; // don't allow them to close it by clicking outside
+  }
 
   public cancel() {
     this.command.buttonPress("cancel help request");

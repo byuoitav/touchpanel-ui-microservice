@@ -20,6 +20,7 @@ export class HelpModal implements OnInit {
     public dialog: MatDialog
   ) {
     console.log("help info:", data);
+    ref.disableClose = true;
   }
 
   ngOnInit() {}

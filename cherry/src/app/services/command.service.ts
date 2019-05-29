@@ -267,6 +267,7 @@ export class CommandService {
     const prev = preset.masterVolume;
     preset.masterVolume = v;
 
+    
     const body = { audioDevices: [] };
     for (const a of preset.audioDevices) {
       const vol = a.mixlevel * (v / 100);

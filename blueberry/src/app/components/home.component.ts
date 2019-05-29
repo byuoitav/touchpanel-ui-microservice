@@ -34,6 +34,7 @@ import {
   POWER_OFF_ALL
 } from "../objects/status.objects";
 import { HelpInfo } from "../objects/modals";
+import { PowerOffAllModalComponent } from "../modals/poweroffallmodal/poweroffallmodal.component";
 
 export const SHARE = "start_share";
 export const STOP_SHARE = "stop_share";
@@ -1105,6 +1106,13 @@ export class HomeComponent implements OnInit {
     const ref = this.dialog.open(HelpModal, {
       width: "80vw",
       data: this.helpInfo,
+      disableClose: true
+    });
+  }
+
+  public showPowerOffDialog() {
+    const ref = this.dialog.open(PowerOffAllModalComponent, {
+      width: "80vw",
       disableClose: true
     });
   }
