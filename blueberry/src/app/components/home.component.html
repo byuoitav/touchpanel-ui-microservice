@@ -63,8 +63,6 @@
     </button>
 
     <!-- TODO test unshare event -->
-    <button mat-fab *ngIf="wheel?.preset != defaultPreset" class="dta button"
-    (click)="
     <button
       mat-fab
       *ngIf="wheel?.preset != defaultPreset"
@@ -106,20 +104,6 @@
 <swal #poweroffall>
   <div *swalPartial="swalTargets.content">
     <span>Would you like to turn off all displays or just this one?</span>
-    <button
-      type="button"
-      class="btn-neutral swal2-styled"
-      (click)="
-        poweroffall.nativeSwal.clickCancel();
-        command.buttonPress('close power off all modal')
-      "
-      (press)="
-        poweroffall.nativeSwal.clickCancel();
-        command.buttonPress('long press close power off all modal')
-      "
-    >
-      Cancel
-    </button>
     <button
       type="button"
       class="btn-warn swal2-styled"
