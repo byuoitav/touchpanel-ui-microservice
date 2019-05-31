@@ -336,7 +336,7 @@ export class HomeComponent implements OnInit {
     return ret;
   }
 
-  public turnOff(): EventEmitter<boolean> {
+  public turnOff = (): EventEmitter<boolean> => {
     const ret: EventEmitter<boolean> = new EventEmitter<boolean>();
 
     if (this.wheel.preset === this.sharePreset) {
@@ -374,7 +374,7 @@ export class HomeComponent implements OnInit {
     }
 
     return ret;
-  }
+  };
 
   public openedSelectDisplaysDialog() {
     if (this.wheel.getInput() == null) {
@@ -1113,7 +1113,8 @@ export class HomeComponent implements OnInit {
   public showPowerOffDialog() {
     const ref = this.dialog.open(PowerOffAllModalComponent, {
       width: "80vw",
-      disableClose: true
+      disableClose: true,
+      data: this.turnOff
     });
   }
 }

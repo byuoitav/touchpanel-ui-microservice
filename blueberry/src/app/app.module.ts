@@ -27,7 +27,8 @@ import { DataService } from "./services/data.service";
 import { GraphService } from "./services/graph.service";
 import { HelpModal } from "./modals/helpmodal/helpmodal.component";
 import { ConfirmHelpModal } from "./modals/confirmhelpmodal/confirmhelpmodal.component";
-import { PowerOffAllModalComponent } from './modals/poweroffallmodal/poweroffallmodal.component';
+import { PowerOffAllModalComponent } from "./modals/poweroffallmodal/poweroffallmodal.component";
+import { ActivityButtonComponent } from "./components/activity-button/activity-button.component";
 
 @NgModule({
   declarations: [
@@ -37,7 +38,8 @@ import { PowerOffAllModalComponent } from './modals/poweroffallmodal/poweroffall
     ManagementComponent,
     HelpModal,
     ConfirmHelpModal,
-    PowerOffAllModalComponent
+    PowerOffAllModalComponent,
+    ActivityButtonComponent
   ],
   imports: [
     BrowserModule,
