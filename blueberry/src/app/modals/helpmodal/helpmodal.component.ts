@@ -20,31 +20,39 @@ export class HelpModal implements OnInit {
     public dialog: MatDialog
   ) {
     console.log("help info:", data);
-    ref.disableClose = true;
   }
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.ref.disableClose = true;
+  }
 
   public cancel() {
     this.command.buttonPress("exit help modal");
     this.ref.close();
   }
 
-  public requestHelp() {
+  requestHelp = async (): Promise<boolean> => {
     this.command.buttonPress("request help");
 
-    this.api.help("help").subscribe(
-      data => {
-        this.dialog.open(ConfirmHelpModal, {
-          width: "80vw",
-          disableClose: true
-        });
+    return new Promise<boolean>((resolve, reject) => {
+      this.api.help("help").subscribe(
+        data => {
+          resolve(true);
+        },
+        err => {
+          console.error("failed to request help", err);
+          resolve(false);
+        }
+      );
+    });
+  };
 
-        this.ref.close();
-      },
-      err => {
-        console.error("failed to request help", err);
-      }
-    );
-  }
+  openConfirmHelp = () => {
+    this.dialog.open(ConfirmHelpModal, {
+      width: "80vw",
+      disableClose: true
+    });
+
+    this.ref.close();
+  };
 }

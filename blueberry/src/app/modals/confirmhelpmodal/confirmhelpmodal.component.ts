@@ -18,32 +18,38 @@ export class ConfirmHelpModal implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.ref.disableClose = true; // don't allow them to close it by clicking outside
+    this.ref.disableClose = true;
   }
 
-  public cancel() {
+  cancelHelp = async (): Promise<boolean> => {
     this.command.buttonPress("cancel help request");
-    this.api.help("cancel").subscribe(
-      data => {
-        this.ref.close();
-      },
-      err => {
-        console.error("failed to cancel help:", err);
-      }
-    );
-    this.ref.close();
-  }
 
-  public confirmHelp() {
+    return new Promise<boolean>((resolve, reject) => {
+      this.api.help("cancel").subscribe(
+        data => {
+          resolve(true);
+        },
+        err => {
+          console.error("failed to cancel help:", err);
+          resolve(false);
+        }
+      );
+    });
+  };
+
+  confirmHelp = async (): Promise<boolean> => {
     this.command.buttonPress("confirm help request");
 
-    this.api.help("confirm").subscribe(
-      data => {
-        this.ref.close();
-      },
-      err => {
-        console.error("failed to confirm help:", err);
-      }
-    );
-  }
+    return new Promise<boolean>((resolve, reject) => {
+      this.api.help("confirm").subscribe(
+        data => {
+          resolve(true);
+        },
+        err => {
+          console.error("failed to cancel help:", err);
+          resolve(false);
+        }
+      );
+    });
+  };
 }

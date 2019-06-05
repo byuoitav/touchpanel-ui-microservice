@@ -31,7 +31,7 @@ export class PowerOffAllModalComponent implements OnInit {
     this.ref.close();
   }
 
-  public powerOffThisDisplay = async (): Promise<boolean> => {
+  powerOffThisDisplay = async (): Promise<boolean> => {
     this.command.buttonPress("power off");
 
     return new Promise<boolean>((resolve, reject) => {

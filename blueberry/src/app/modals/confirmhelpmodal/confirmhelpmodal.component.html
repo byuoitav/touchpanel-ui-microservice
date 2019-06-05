@@ -1,4 +1,4 @@
-<h1 mat-dialog-title class="text title">Confirm</h1>
+<h1 mat-dialog-title class="text title">Confirm Help Request</h1>
 
 <div mat-dialog-content class="text">
   <p>
@@ -8,15 +8,23 @@
 </div>
 
 <div mat-dialog-actions class="items secondary-theme">
-  <button mat-raised-button color="warn" (click)="cancel()" (press)="cancel()">
-    Cancel Request
-  </button>
-  <button
-    mat-raised-button
+  <activity-button
+    type="mat-raised-button"
+    color="warn"
+    spinnerColor="accent"
+    [click]="cancelHelp"
+    [press]="cancelHelp"
+    (success)="ref.close()"
+    >Cancel Request
+  </activity-button>
+
+  <activity-button
+    type="mat-raised-button"
     color="primary"
-    (click)="confirmHelp()"
-    (press)="confirmHelp()"
-  >
-    Confirm Request
-  </button>
+    spinnerColor="accent"
+    [click]="confirmHelp"
+    [press]="confirmHelp"
+    (success)="ref.close()"
+    >Confirm Request
+  </activity-button>
 </div>

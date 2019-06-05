@@ -15,6 +15,7 @@ export class ActivityButtonComponent {
   @Input() click: () => boolean;
   @Input() press: () => boolean;
   @Input() color: string;
+  @Input() spinnerColor: string;
 
   @Output() success: EventEmitter<void>;
   @Output() error: EventEmitter<void>;
