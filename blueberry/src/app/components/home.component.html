@@ -16,7 +16,6 @@
     "
   >
     <mat-icon>power_settings_new</mat-icon>
-    <!--(click)="data.panels.length > 1 ? poweroffall.show() : turnOff()"-->
   </button>
 
   <button
@@ -99,45 +98,6 @@
 </div>
 
 <div class="label top right"><label>Master Volume</label></div>
-
-<!-- modal windows -->
-<swal #poweroffall>
-  <div *swalPartial="swalTargets.content">
-    <span>Would you like to turn off all displays or just this one?</span>
-    <button
-      type="button"
-      class="btn-warn swal2-styled"
-      (click)="
-        powerOffType = 'this';
-        poweroffall.nativeSwal.clickConfirm();
-        command.buttonPress('power off')
-      "
-      (press)="
-        powerOffType = 'this';
-        poweroffall.nativeSwal.clickConfirm();
-        command.buttonPress('long press power off')
-      "
-    >
-      This display
-    </button>
-    <button
-      type="button"
-      class="btn-danger swal2-styled"
-      (click)="
-        powerOffType = 'all';
-        poweroffall.nativeSwal.clickConfirm();
-        command.buttonPress('power off all')
-      "
-      (press)="
-        powerOffType = 'all';
-        poweroffall.nativeSwal.clickConfirm();
-        command.buttonPress('long press power off all')
-      "
-    >
-      All displays
-    </button>
-  </div>
-</swal>
 
 <swal
   #selectdisplays

@@ -124,8 +124,6 @@ export class HomeComponent implements OnInit {
 
   helpInfo: HelpInfo;
 
-  @ViewChild("poweroffall")
-  powerOffAllDialog: SwalComponent;
   @ViewChild("selectdisplays")
   selectDisplaysDialog: SwalComponent;
   @ViewChild("unshare")
@@ -138,8 +136,6 @@ export class HomeComponent implements OnInit {
   notRoutableDialog: SwalComponent;
   @ViewChild("notShareable")
   notSharableDialog: SwalComponent;
-
-  powerOffType = "this";
 
   constructor(
     public data: DataService,
@@ -183,54 +179,6 @@ export class HomeComponent implements OnInit {
   }
 
   private setupDialogs() {
-    this.powerOffAllDialog.options = {
-      title: "Power Off",
-      type: "warning",
-      text: "i should be hidden",
-      focusConfirm: false,
-      showLoaderOnConfirm: true,
-      showConfirmButton: false,
-      showCancelButton: false,
-      preConfirm: () => {
-        if (this.powerOffType === "all") {
-          return new Promise((resolve, reject) => {
-            this.turnOff().subscribe(() => {
-              this.wheel.command.powerOffAll().subscribe(success => {
-                if (success) {
-                  const event = new Event();
-
-                  event.User = APIService.piHostname;
-                  event.EventTags = ["ui-communication"];
-                  event.AffectedRoom = new BasicRoomInfo(
-                    APIService.building + "-" + APIService.roomName
-                  );
-                  event.TargetDevice = new BasicDeviceInfo(undefined);
-                  event.Key = POWER_OFF_ALL;
-                  event.Value = " ";
-
-                  this.api.sendEvent(event);
-
-                  resolve();
-                } else {
-                  reject();
-                }
-              });
-            });
-          });
-        } else {
-          return new Promise((resolve, reject) => {
-            this.turnOff().subscribe(success => {
-              if (success) {
-                resolve();
-              } else {
-                reject();
-              }
-            });
-          });
-        }
-      }
-    };
-
     this.unShareDialog.options = {
       title: "Returning room to default state...",
       allowOutsideClick: false

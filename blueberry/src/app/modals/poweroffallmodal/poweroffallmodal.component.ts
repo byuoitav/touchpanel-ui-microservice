@@ -36,6 +36,7 @@ export class PowerOffAllModalComponent implements OnInit {
 
     return new Promise<boolean>((resolve, reject) => {
       console.log("powering off this display");
+
       this.turnOff().subscribe(success => {
         resolve(success);
       });
