@@ -219,9 +219,10 @@
     <ng-content></ng-content
   ></span>
   <mat-spinner
+    color="primary"
     class="spinner"
     [class.active]="_resolving && !_resolved && !_error"
-    diameter="20"
+    [diameter]="20"
   ></mat-spinner>
   <mat-icon [class.active]="_resolved">check</mat-icon>
   <mat-icon [class.active]="_error">close</mat-icon>
