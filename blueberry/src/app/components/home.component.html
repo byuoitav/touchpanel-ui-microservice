@@ -52,10 +52,9 @@
       *ngIf="wheel?.preset == defaultPreset"
       class="dta button"
       [class.grey]="wheel?.getInput()?.reachableDisplays?.length <= 1"
-      (click)="selectdisplays.show(); command.buttonPress('open share modal')"
+      (click)="showShareModal(); command.buttonPress('open share modal')"
       (press)="
-        selectdisplays.show();
-        command.buttonPress('long press open share modal')
+        showShareModal(); command.buttonPress('long press open share modal')
       "
     >
       <mat-icon>screen_share</mat-icon>
@@ -99,33 +98,12 @@
 
 <div class="label top right"><label>Master Volume</label></div>
 
-<swal
-  #selectdisplays
-  (open)="openedSelectDisplaysDialog()"
-  (cancel)="command.buttonPress('close share modal')"
->
-  <div *swalPartial="swalTargets.title">
-    <span *ngIf="wheel.getInput()?.reachableDisplays?.length > 1"
-      >Select displays to share {{ wheel.getInput()?.displayname }} with</span
-    >
-  </div>
-
-  <div *swalPartial="swalTargets.content" class="grid">
-    <ng-container *ngIf="wheel.getInput()?.reachableDisplays?.length > 1">
-      <div *ngFor="let d of shareableDisplays" class="item">
-        <button
-          mat-fab
-          class="share-display"
-          (click)="toggleSelected(d)"
-          (press)="toggleSelected(d)"
-        >
-          {{ d.name }}
-          <div *ngIf="isSelected(d)" class="badge">
-            <mat-icon>check</mat-icon>
-          </div>
-        </button>
-      </div>
-    </ng-container>
+<swal #selectdisplays>
+  <div *ngFor="let d of shareableDisplays" class="item">
+    <button mat-fab class="share-display">
+      {{ d.name }}
+      <div *ngIf="isSelected(d)" class="badge"><mat-icon>check</mat-icon></div>
+    </button>
   </div>
 </swal>
 
@@ -214,14 +192,5 @@
 <swal #notRoutable>
   <div *swalPartial="swalTargets.content">
     <span>You must unshare before you can select this input.</span>
-  </div>
-</swal>
-
-<swal #notShareable>
-  <div *swalPartial="swalTargets.content">
-    <span
-      >{{ wheel.getInput()?.displayname }} can't be shared with any
-      displays.</span
-    >
   </div>
 </swal>

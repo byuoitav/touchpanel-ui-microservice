@@ -29,6 +29,7 @@ import { HelpModal } from "./modals/helpmodal/helpmodal.component";
 import { ConfirmHelpModal } from "./modals/confirmhelpmodal/confirmhelpmodal.component";
 import { PowerOffAllModalComponent } from "./modals/poweroffallmodal/poweroffallmodal.component";
 import { ActivityButtonComponent } from "./components/activity-button/activity-button.component";
+import { ShareModalComponent } from "./modals/sharemodal/sharemodal.component";
 
 @NgModule({
   declarations: [
@@ -39,7 +40,8 @@ import { ActivityButtonComponent } from "./components/activity-button/activity-b
     HelpModal,
     ConfirmHelpModal,
     PowerOffAllModalComponent,
-    ActivityButtonComponent
+    ActivityButtonComponent,
+    ShareModalComponent
   ],
   imports: [
     BrowserModule,
@@ -63,7 +65,12 @@ import { ActivityButtonComponent } from "./components/activity-button/activity-b
     DataService,
     GraphService
   ],
-  entryComponents: [HelpModal, ConfirmHelpModal, PowerOffAllModalComponent],
+  entryComponents: [
+    HelpModal,
+    ConfirmHelpModal,
+    PowerOffAllModalComponent,
+    ShareModalComponent
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule {}

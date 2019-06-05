@@ -21,8 +21,6 @@ import {
   BasicDeviceInfo,
   BasicRoomInfo
 } from "../services/socket.service";
-import { HelpModal } from "../modals/helpmodal/helpmodal.component";
-
 import { Preset, AudioConfig } from "../objects/objects";
 import {
   Output,
@@ -34,7 +32,9 @@ import {
   POWER_OFF_ALL
 } from "../objects/status.objects";
 import { HelpInfo } from "../objects/modals";
+import { HelpModal } from "../modals/helpmodal/helpmodal.component";
 import { PowerOffAllModalComponent } from "../modals/poweroffallmodal/poweroffallmodal.component";
+import { ShareModalComponent } from "../modals/sharemodal/sharemodal.component";
 
 export const SHARE = "start_share";
 export const STOP_SHARE = "stop_share";
@@ -134,8 +134,6 @@ export class HomeComponent implements OnInit {
   audioDialog: SwalComponent;
   @ViewChild("notRoutable")
   notRoutableDialog: SwalComponent;
-  @ViewChild("notShareable")
-  notSharableDialog: SwalComponent;
 
   constructor(
     public data: DataService,
@@ -251,15 +249,6 @@ export class HomeComponent implements OnInit {
       focusConfirm: true,
       timer: 5000
     };
-
-    this.notSharableDialog.options = {
-      text: "i should be hidden",
-      showCancelButton: false,
-      showConfirmButton: true,
-      confirmButtonText: "Ok",
-      focusConfirm: true,
-      timer: 5000
-    };
   }
 
   private onWheelInit() {
@@ -323,43 +312,6 @@ export class HomeComponent implements OnInit {
 
     return ret;
   };
-
-  public openedSelectDisplaysDialog() {
-    if (this.wheel.getInput() == null) {
-      this.swalStatus(false);
-    }
-
-    if (this.wheel.getInput().reachableDisplays.length === 1) {
-      this.notSharableDialog.show();
-    }
-
-    // create intersection of shareable displays and reachable display from current input
-    this.shareableDisplays.length = 0;
-    const reachableDisplays = this.wheel.getInput().reachableDisplays;
-
-    this.graph.getDisplayList().forEach(display => {
-      if (this.wheel.preset.displays.some(d => d.name === display)) {
-        return;
-      }
-
-      for (const reachable of reachableDisplays) {
-        if (reachable === display) {
-          const disp = this.data.displays.find(d => d.name === display);
-          if (disp != null) {
-            this.shareableDisplays.push(disp);
-            break;
-          }
-        }
-      }
-    });
-
-    this.selectedDisplays.length = 0;
-
-    // check all displays
-    this.shareableDisplays.forEach(name => {
-      this.selectedDisplays.push(name);
-    });
-  }
 
   public share(
     displayList: Display[],
@@ -948,18 +900,6 @@ export class HomeComponent implements OnInit {
     }
   }
 
-  public toggleSelected(d: Display) {
-    const index = this.selectedDisplays.indexOf(d);
-
-    if (index === -1) {
-      this.command.buttonPress("add display to share group", d.name);
-      this.selectedDisplays.push(d);
-    } else {
-      this.command.buttonPress("remove display from share group", d.name);
-      this.selectedDisplays.splice(index, 1);
-    }
-  }
-
   public isSelected(d: Display) {
     return this.selectedDisplays.includes(d);
   }
@@ -1063,6 +1003,16 @@ export class HomeComponent implements OnInit {
       width: "80vw",
       disableClose: true,
       data: this.turnOff
+    });
+  }
+
+  public showShareModal() {
+    const ref = this.dialog.open(ShareModalComponent, {
+      width: "80vw",
+      disableClose: true,
+      data: {
+        wheel: this.wheel
+      }
     });
   }
 }
