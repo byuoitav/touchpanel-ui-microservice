@@ -150,11 +150,6 @@ export class DeviceStatus {
   }
 }
 
-export class Volume {
-  volume: number = undefined;
-  muted: boolean = undefined;
-}
-
 export class Preset {
   name: string;
   icon: string;
@@ -169,7 +164,8 @@ export class Preset {
 
   commands: ConfigCommands;
 
-  volume: Volume;
+  masterVolume: number = undefined;
+  masterMute: boolean = undefined;
 
   constructor(
     name: string,

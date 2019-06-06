@@ -144,8 +144,8 @@
   <volume
     class="volume"
     muteType="mat-fab"
-    [level]="preset?.volume?.level"
-    [mute]="preset?.volume?.muted"
+    [level]="preset?.masterVolume"
+    [mute]="preset?.masterMute"
     (levelChange)="
       command.setMasterVolume($event, preset);
       command.buttonPress('master volume set on wheel screen', {
@@ -162,46 +162,6 @@
     "
   >
   </volume>
-  <!--
-  <div
-    class="volume"
-    [class.muted]="getMute()"
-    *ngIf="circleOpen"
-    [class.independentAudio]="preset?.independentAudioDevices?.length > 0"
-  >
-    <mat-slider
-      id="slider"
-      vertical
-      [class.notouch]="getMute()"
-      [disabled]="getMute()"
-      [value]="getVolume()"
-      [step]="5"
-      [thumbLabel]="thumbLabel"
-      (change)="
-      "
-    ></mat-slider>
-
-    <button
-      mat-fab
-      class="mute"
-      [class.muted]="getMute()"
-      (click)="
-        command.setMute(!getMute(), preset.audioDevices);
-        command.buttonPress(getMute() ? 'mute' : 'unmute', getAudioNames())
-      "
-      (press)="
-        command.setMute(!getMute(), preset.audioDevices);
-        command.buttonPress(
-          getMute() ? 'long press mute' : 'long press unmute',
-          getAudioNames()
-        )
-      "
-    >
-      <mat-icon *ngIf="getMute()">volume_off</mat-icon>
-      <mat-icon *ngIf="!getMute()">volume_up</mat-icon>
-    </button>
-  </div>
-  -->
 </ng-container>
 
 <!-- one 'slice' of wheel -->

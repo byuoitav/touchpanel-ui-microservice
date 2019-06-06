@@ -26,7 +26,11 @@ const TIMEOUT = 12 * 1000;
 export class CommandService {
   private options: RequestOptions;
 
-  constructor(private http: Http, private data: DataService, private api: APIService) {
+  constructor(
+    private http: Http,
+    private data: DataService,
+    private api: APIService
+  ) {
     const headers = new Headers();
     headers.append("content-type", "application/json");
     this.options = new RequestOptions({ headers: headers });
@@ -491,7 +495,9 @@ export class CommandService {
     const body = { displays: [], audioDevices: [] };
 
     for (const d of from) {
-      const preset: Preset = this.data.presets.find(p => p.displays.includes(d));
+      const preset: Preset = this.data.presets.find(p =>
+        p.displays.includes(d)
+      );
 
       if (preset != null) {
         body.displays.push({
@@ -583,6 +589,208 @@ export class CommandService {
         ret.emit(true);
       },
       err => {
+        ret.emit(false);
+      }
+    );
+
+    return ret;
+  }
+
+  public setMasterVolume(v: number, preset: Preset): EventEmitter<boolean> {
+    const ret: EventEmitter<boolean> = new EventEmitter<boolean>();
+    console.log("changing master volume to", v, "for preset", preset);
+
+    const prev = preset.masterVolume;
+    preset.masterVolume = v;
+
+    const body = { audioDevices: [] };
+    for (const a of preset.audioDevices) {
+      const vol = a.mixlevel * (v / 100);
+      body.audioDevices.push({
+        a: a.name,
+        volume: Math.round(vol)
+        // muted: a.mixmute || preset.masterMute // mute the device if either one is muted
+      });
+    }
+
+    for (const a of preset.independentAudioDevices) {
+      const vol = a.mixlevel * (v / 100);
+      body.audioDevices.push({
+        a: a.name,
+        volume: Math.round(vol)
+        // muted: a.mixmute || preset.masterMute // mute the device if either one is muted
+      });
+    }
+
+    console.log("master volume body", body);
+
+    this.put(body).subscribe(
+      data => {
+        const event = new Event();
+
+        event.User = APIService.piHostname;
+        event.EventTags = ["ui-communication"];
+        event.AffectedRoom = new BasicRoomInfo(
+          APIService.building + "-" + APIService.roomName
+        );
+        event.TargetDevice = new BasicDeviceInfo(
+          APIService.building + "-" + APIService.roomName + "-" + preset.name
+        );
+        event.Key = "master-volume";
+        event.Value = String(v);
+
+        this.api.sendEvent(event);
+        ret.emit(true);
+      },
+      err => {
+        preset.masterVolume = prev;
+        ret.emit(false);
+      }
+    );
+
+    return ret;
+  }
+
+  public setMasterMute(m: boolean, preset: Preset): EventEmitter<boolean> {
+    const ret: EventEmitter<boolean> = new EventEmitter<boolean>();
+    console.log("changing master mute to", m, "for preset", preset);
+
+    const prev = preset.masterMute;
+    preset.masterMute = m;
+
+    const body = { audioDevices: [] };
+    for (const a of preset.audioDevices) {
+      body.audioDevices.push({
+        a: a.name,
+        muted: a.mixmute || m // mute the device if either one is muted
+      });
+    }
+
+    for (const a of preset.independentAudioDevices) {
+      body.audioDevices.push({
+        a: a.name,
+        muted: a.mixmute || m // mute the device if either one is muted
+      });
+    }
+
+    console.log("master mute body", body);
+
+    this.put(body).subscribe(
+      data => {
+        const event = new Event();
+
+        event.User = APIService.piHostname;
+        event.EventTags = ["ui-communication"];
+        event.AffectedRoom = new BasicRoomInfo(
+          APIService.building + "-" + APIService.roomName
+        );
+        event.TargetDevice = new BasicDeviceInfo(
+          APIService.building + "-" + APIService.roomName + "-" + preset.name
+        );
+        event.Key = "master-mute";
+        event.Value = String(m);
+
+        this.api.sendEvent(event);
+        ret.emit(true);
+      },
+      err => {
+        preset.masterMute = prev;
+        ret.emit(false);
+      }
+    );
+
+    return ret;
+  }
+
+  public setMixLevel(
+    v: number,
+    a: AudioDevice,
+    preset: Preset
+  ): EventEmitter<boolean> {
+    const ret: EventEmitter<boolean> = new EventEmitter<boolean>();
+    console.log("changing mix level to", v, "for audioDevice", a);
+
+    const prev = a.mixlevel;
+    a.mixlevel = v;
+
+    const body = { audioDevices: [] };
+    const vol = v * (preset.masterVolume / 100);
+    body.audioDevices.push({
+      name: a.name,
+      volume: Math.round(vol)
+      // muted: a.mixmute || preset.masterMute
+    });
+
+    console.log("mix level body:", body);
+
+    this.put(body).subscribe(
+      data => {
+        const event = new Event();
+
+        event.User = APIService.piHostname;
+        event.EventTags = ["ui-communication"];
+        event.AffectedRoom = new BasicRoomInfo(
+          APIService.building + "-" + APIService.roomName
+        );
+        event.TargetDevice = new BasicDeviceInfo(
+          APIService.building + "-" + APIService.roomName + "-" + a.name
+        );
+        event.Key = "mix-level";
+        event.Value = String(v);
+
+        this.api.sendEvent(event);
+
+        ret.emit(true);
+      },
+      err => {
+        a.mixlevel = prev;
+        ret.emit(false);
+      }
+    );
+
+    return ret;
+  }
+
+  public setMixMute(
+    m: boolean,
+    a: AudioDevice,
+    preset: Preset
+  ): EventEmitter<boolean> {
+    const ret: EventEmitter<boolean> = new EventEmitter<boolean>();
+    console.log("changing mix mute to", m, "for audioDevice", a);
+
+    const prev = a.mixmute;
+    a.mixmute = m;
+
+    const body = { audioDevices: [] };
+    body.audioDevices.push({
+      name: a.name,
+      muted: m || preset.masterMute
+    });
+
+    console.log("mix mute body:", body);
+
+    this.put(body).subscribe(
+      data => {
+        const event = new Event();
+
+        event.User = APIService.piHostname;
+        event.EventTags = ["ui-communication"];
+        event.AffectedRoom = new BasicRoomInfo(
+          APIService.building + "-" + APIService.roomName
+        );
+        event.TargetDevice = new BasicDeviceInfo(
+          APIService.building + "-" + APIService.roomName + "-" + a.name
+        );
+        event.Key = "mix-mute";
+        event.Value = String(m);
+
+        this.api.sendEvent(event);
+
+        ret.emit(true);
+      },
+      err => {
+        a.mixmute = prev;
         ret.emit(false);
       }
     );

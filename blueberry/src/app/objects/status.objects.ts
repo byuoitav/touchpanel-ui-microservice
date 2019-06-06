@@ -174,6 +174,9 @@ export class AudioDevice extends Output {
   muted: boolean;
   volume: number;
 
+  mixlevel: number = undefined;
+  mixmute: boolean = undefined;
+
   constructor(
     name: string,
     displayname: string,

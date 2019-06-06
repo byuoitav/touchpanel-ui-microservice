@@ -250,14 +250,6 @@ export class WheelComponent implements AfterContentInit {
     return Display.getPower(this.preset.displays);
   }
 
-  getVolume(): number {
-    return AudioDevice.getVolume(this.preset.audioDevices);
-  }
-
-  getMute(): boolean {
-    return AudioDevice.getMute(this.preset.audioDevices);
-  }
-
   private openInputModal(i: Input) {
     if (i.getName().includes("VIA")) {
       this.openInput = i;
@@ -320,20 +312,6 @@ export class WheelComponent implements AfterContentInit {
 
     for (const d of this.preset.displays) {
       names.push(d.name);
-    }
-
-    return names;
-  }
-
-  public getAudioNames(): string[] {
-    const names: string[] = [];
-
-    if (this.preset == null || this.preset.audioDevices == null) {
-      return names;
-    }
-
-    for (const a of this.preset.audioDevices) {
-      names.push(a.name);
     }
 
     return names;
