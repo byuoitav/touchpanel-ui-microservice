@@ -1,0 +1,17 @@
+<!-- no audiodevices -->
+<ng-container *ngIf="false">
+  <div mat-dialog-content class="text">i have nothing to say</div>
+</ng-container>
+
+<!-- audiodevices are present -->
+<ng-container *ngIf="true">
+  <h1 mat-dialog-title class="text title">Audio Control</h1>
+
+  <div mat-dialog-content class="text"></div>
+
+  <div mat-dialog-actions class="items secondary-theme">
+    <button mat-raised-button color="primary" (click)="done()" (press)="done()">
+      Done
+    </button>
+  </div>
+</ng-container>

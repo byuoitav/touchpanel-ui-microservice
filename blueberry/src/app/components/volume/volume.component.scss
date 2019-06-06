@@ -1,0 +1,52 @@
+$slider-height: 80%;
+
+.volume {
+  height: 100%;
+  width: 100%;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-around;
+}
+
+.slider {
+  min-height: $slider-height !important;
+
+  &.shorter {
+    min-height: ($slider-height - 4%) !important;
+  }
+}
+
+.mat-fab {
+  height: 8vw;
+  width: 8vw;
+
+  .mat-icon {
+    margin-top: -1.1vh;
+    font-size: 5vw;
+    height: 5vw;
+    width: 5vw;
+  }
+}
+
+/deep/ .mat-slider .mat-slider-thumb {
+  width: 50px;
+  height: 50px;
+  right: -25px;
+  bottom: -25px;
+}
+
+/deep/ .mat-slider.mat-slider-vertical .mat-slider-track-wrapper {
+  width: 10px;
+  left: -4px;
+  border-radius: 10px;
+}
+
+/deep/ .mat-slider.mat-slider-vertical .mat-slider-track-background {
+  width: 100%;
+}
+
+/deep/ .mat-slider.mat-slider-vertical .mat-slider-track-fill {
+  width: 100%;
+}

@@ -3,14 +3,14 @@ import { EventEmitter } from "@angular/core";
 import { AudioConfiguration } from "./objects";
 import { APIService } from "../services/api.service";
 
-export const POWER: string = "power";
-export const INPUT: string = "input";
-export const BLANKED: string = "blanked";
-export const MUTED: string = "muted";
-export const VOLUME: string = "volume";
-//export const SHARING: string = "sharing";
-export const POWER_OFF_ALL: string = "power_off_all";
-//export const MIRROR: string = "mirror";
+export const POWER = "power";
+export const INPUT = "input";
+export const BLANKED = "blanked";
+export const MUTED = "muted";
+export const VOLUME = "volume";
+// export const SHARING: string = "sharing";
+export const POWER_OFF_ALL = "power_off_all";
+// export const MIRROR: string = "mirror";
 
 export class Device {
   name: string;

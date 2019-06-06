@@ -35,6 +35,7 @@ import { HelpInfo } from "../objects/modals";
 import { HelpModal } from "../modals/helpmodal/helpmodal.component";
 import { PowerOffAllModalComponent } from "../modals/poweroffallmodal/poweroffallmodal.component";
 import { ShareModalComponent } from "../modals/sharemodal/sharemodal.component";
+import { AudioModalComponent } from "../modals/audiomodal/audiomodal.component";
 
 export const SHARE = "start_share";
 export const STOP_SHARE = "stop_share";
@@ -190,6 +191,7 @@ export class HomeComponent implements OnInit {
       width: "85vw"
     };
 
+    /*
     this.selectDisplaysDialog.options = {
       text: "i should be hidden",
       focusConfirm: false,
@@ -232,14 +234,7 @@ export class HomeComponent implements OnInit {
         });
       }
     };
-
-    this.audioDialog.options = {
-      text: "i should be hidden",
-      confirmButtonText: "Done",
-      focusConfirm: false,
-      showCancelButton: false,
-      width: "80vw"
-    };
+    */
 
     this.notRoutableDialog.options = {
       text: "i should be hidden",
@@ -1013,6 +1008,14 @@ export class HomeComponent implements OnInit {
       data: {
         wheel: this.wheel
       }
+    });
+  }
+
+  public showAudioModal() {
+    const ref = this.dialog.open(AudioModalComponent, {
+      width: "80vw",
+      disableClose: true,
+      data: this.defaultPreset.independentAudioDevices
     });
   }
 }

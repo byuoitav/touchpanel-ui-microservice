@@ -30,6 +30,8 @@ import { ConfirmHelpModal } from "./modals/confirmhelpmodal/confirmhelpmodal.com
 import { PowerOffAllModalComponent } from "./modals/poweroffallmodal/poweroffallmodal.component";
 import { ActivityButtonComponent } from "./components/activity-button/activity-button.component";
 import { ShareModalComponent } from "./modals/sharemodal/sharemodal.component";
+import { AudioModalComponent } from "./modals/audiomodal/audiomodal.component";
+import { VolumeComponent } from './components/volume/volume.component';
 
 @NgModule({
   declarations: [
@@ -41,7 +43,9 @@ import { ShareModalComponent } from "./modals/sharemodal/sharemodal.component";
     ConfirmHelpModal,
     PowerOffAllModalComponent,
     ActivityButtonComponent,
-    ShareModalComponent
+    ShareModalComponent,
+    AudioModalComponent,
+    VolumeComponent
   ],
   imports: [
     BrowserModule,
@@ -69,7 +73,8 @@ import { ShareModalComponent } from "./modals/sharemodal/sharemodal.component";
     HelpModal,
     ConfirmHelpModal,
     PowerOffAllModalComponent,
-    ShareModalComponent
+    ShareModalComponent,
+    AudioModalComponent
   ],
   bootstrap: [AppComponent]
 })

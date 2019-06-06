@@ -87,9 +87,9 @@
     mat-fab
     *ngIf="defaultPreset?.independentAudioDevices?.length > 0"
     class="independentAudio button"
-    (click)="audioDialog.show(); command.buttonPress('open audio modal')"
+    (click)="showAudioModal(); command.buttonPress('open audio modal')"
     (press)="
-      audioDialog.show(); command.buttonPress('long press open audio modal')
+      showAudioModal(); command.buttonPress('long press open audio modal')
     "
   >
     <mat-icon class="rotate-90">tune</mat-icon>
@@ -97,15 +97,6 @@
 </div>
 
 <div class="label top right"><label>Master Volume</label></div>
-
-<swal #selectdisplays>
-  <div *ngFor="let d of shareableDisplays" class="item">
-    <button mat-fab class="share-display">
-      {{ d.name }}
-      <div *ngIf="isSelected(d)" class="badge"><mat-icon>check</mat-icon></div>
-    </button>
-  </div>
-</swal>
 
 <swal #unshare (open)="unShare(true)"> </swal>
 
@@ -134,13 +125,7 @@
 </swal>
 
 <!-- TODO test audio modal events-->
-<swal
-  #audio
-  (confirm)="command.buttonPress('close audio modal')"
-  (cancel)="command.buttonPress('close audio modal')"
->
-  <div *swalPartial="swalTargets.title"><span>Audio Control</span></div>
-
+<swal #audio>
   <div *swalPartial="swalTargets.content" class="independentAudioContent">
     <div
       *ngFor="let a of defaultPreset?.independentAudioDevices"
