@@ -609,7 +609,6 @@ export class CommandService {
       body.audioDevices.push({
         a: a.name,
         volume: Math.round(vol)
-        // muted: a.mixmute || preset.masterMute // mute the device if either one is muted
       });
     }
 
@@ -618,7 +617,6 @@ export class CommandService {
       body.audioDevices.push({
         a: a.name,
         volume: Math.round(vol)
-        // muted: a.mixmute || preset.masterMute // mute the device if either one is muted
       });
     }
 
@@ -718,7 +716,6 @@ export class CommandService {
     body.audioDevices.push({
       name: a.name,
       volume: Math.round(vol)
-      // muted: a.mixmute || preset.masterMute
     });
 
     console.log("mix level body:", body);

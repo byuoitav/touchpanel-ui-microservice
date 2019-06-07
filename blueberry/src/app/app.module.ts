@@ -14,6 +14,7 @@ import {
 } from "@angular/material";
 import { UiSwitchModule } from "ngx-ui-switch";
 import { SweetAlert2Module } from "@toverux/ngx-sweetalert2";
+import { ScrollDispatchModule } from "@angular/cdk/scrolling";
 import "hammerjs";
 
 import { AppComponent } from "./components/app.component";
@@ -31,7 +32,7 @@ import { PowerOffAllModalComponent } from "./modals/poweroffallmodal/poweroffall
 import { ActivityButtonComponent } from "./components/activity-button/activity-button.component";
 import { ShareModalComponent } from "./modals/sharemodal/sharemodal.component";
 import { AudioModalComponent } from "./modals/audiomodal/audiomodal.component";
-import { VolumeComponent } from './components/volume/volume.component';
+import { VolumeComponent } from "./components/volume/volume.component";
 
 @NgModule({
   declarations: [
@@ -60,6 +61,7 @@ import { VolumeComponent } from './components/volume/volume.component';
     MatChipsModule,
     MatProgressSpinnerModule,
     UiSwitchModule,
+    ScrollDispatchModule,
     SweetAlert2Module.forRoot()
   ],
   providers: [

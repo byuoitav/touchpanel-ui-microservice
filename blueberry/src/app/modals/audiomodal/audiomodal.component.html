@@ -7,11 +7,39 @@
 <ng-container *ngIf="true">
   <h1 mat-dialog-title class="text title">Audio Control</h1>
 
-  <div mat-dialog-content class="text"></div>
-
-  <div mat-dialog-actions class="items secondary-theme">
-    <button mat-raised-button color="primary" (click)="done()" (press)="done()">
-      Done
+  <div mat-dialog-content class="content">
+    <button class="button" mat-raised-button>
+      <mat-icon>arrow_drop_up</mat-icon>
     </button>
+
+    <div class="mixers">
+      <!--
+      <div *ngFor="let a of devices" class="slider-container">
+        <span class="text label">{{ a?.displayname }}</span>
+        <volume class="slider" [level]="a?.mixlevel" [mute]="a?.mixmute">
+        </volume>
+      </div>
+    --></div>
+
+    <cdk-virutal-scroll-viewport>
+      <div *cdkVirtualFor="let a of devices">
+        <volume class="slider" [level]="a?.mixlevel" [mute]="a?.mixmute">
+        </volume>
+      </div>
+    </cdk-virutal-scroll-viewport>
+
+    <button class="button" mat-raised-button>
+      <mat-icon>arrow_drop_down</mat-icon>
+    </button>
+
+    <div class="master slider-container">
+      <span class="text label">Master Volume</span>
+      <volume
+        class="slider"
+        [level]="preset?.masterVolume"
+        [mute]="preset?.masterMute"
+      >
+      </volume>
+    </div>
   </div>
 </ng-container>

@@ -1015,7 +1015,7 @@ export class HomeComponent implements OnInit {
     const ref = this.dialog.open(AudioModalComponent, {
       width: "80vw",
       disableClose: true,
-      data: this.defaultPreset.independentAudioDevices
+      data: this.defaultPreset
     });
   }
 }

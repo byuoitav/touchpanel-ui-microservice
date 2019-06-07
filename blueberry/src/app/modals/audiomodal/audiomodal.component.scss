@@ -1,3 +1,6 @@
+$master-width: 25%;
+$button-width: 6%;
+
 .text {
   text-align: center;
   font-family: Roboto, "Helvetica Neue", sans-serif;
@@ -18,4 +21,89 @@
 // to space things correctly
 activity-button {
   margin-left: 8px;
+}
+
+.content {
+  height: 70vh;
+
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  flex-wrap: nowrap;
+
+  padding: 0;
+
+  overflow: hidden;
+}
+
+.slider-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  width: 17vw;
+  flex: 0 0 auto;
+
+  .label {
+    font-size: 1.1em;
+    word-wrap: break-word;
+  }
+
+  .slider {
+    height: 60vh;
+  }
+}
+
+.master {
+  height: 100%;
+  width: $master-width;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  &::before {
+    position: absolute;
+    background: linear-gradient(
+      180deg,
+      rgba(0, 0, 0, 0),
+      rgba(0, 0, 0, 0.7) 20%,
+      rgba(0, 0, 0, 0.7) 80%,
+      rgba(0, 0, 0, 0)
+    );
+
+    right: $master-width + 4.5%;
+    top: 30%;
+
+    width: 0.4vw;
+    height: 50vh;
+
+    // content: "";
+  }
+}
+
+.mixers {
+  height: 100%;
+  width: 100% - $master-width;
+
+  display: flex;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  overflow-y: hidden;
+
+  -webkit-overflow-scrolling: touch;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+.button {
+  height: 80%;
+  min-width: $button-width;
+  width: $button-width;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }

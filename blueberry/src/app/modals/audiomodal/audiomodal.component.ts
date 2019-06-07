@@ -3,6 +3,7 @@ import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from "@angular/material";
 
 import { CommandService } from "../../services/command.service";
 import { AudioDevice } from "../../objects/status.objects";
+import { Preset } from "../../objects/objects";
 
 @Component({
   selector: "audiomodal",
@@ -10,16 +11,34 @@ import { AudioDevice } from "../../objects/status.objects";
   styleUrls: ["./audiomodal.component.scss"]
 })
 export class AudioModalComponent implements OnInit {
+  devices: AudioDevice[] = [];
+
   constructor(
     public ref: MatDialogRef<AudioModalComponent>,
     private command: CommandService,
     private dialog: MatDialog,
     @Inject(MAT_DIALOG_DATA)
-    public data: { devices: AudioDevice[]; master: AudioDevice }
-  ) {}
+    public preset: Preset
+  ) {
+    for (const a of preset.audioDevices) {
+      this.devices.push(a);
+    }
+    for (const a of preset.audioDevices) {
+      this.devices.push(a);
+    }
+    for (const a of preset.audioDevices) {
+      this.devices.push(a);
+    }
+    for (const a of preset.audioDevices) {
+      this.devices.push(a);
+    }
+    for (const a of preset.audioDevices) {
+      this.devices.push(a);
+    }
+  }
 
   ngOnInit() {
-    console.log("devices", this.data.devices);
+    console.log("preset", this.preset);
   }
 
   done = () => {
