@@ -1,5 +1,6 @@
-$master-width: 25%;
-$button-width: 6%;
+$max-width: 80vw;
+$master-width: 17vw;
+$button-width: 5vw;
 
 .text {
   text-align: center;
@@ -25,6 +26,7 @@ activity-button {
 
 .content {
   height: 70vh;
+  max-height: 70vh;
 
   display: flex;
   flex-direction: row;
@@ -32,7 +34,6 @@ activity-button {
   flex-wrap: nowrap;
 
   padding: 0;
-
   overflow: hidden;
 }
 
@@ -50,7 +51,7 @@ activity-button {
   }
 
   .slider {
-    height: 60vh;
+    height: 61vh;
   }
 }
 
@@ -72,7 +73,7 @@ activity-button {
       rgba(0, 0, 0, 0)
     );
 
-    right: $master-width + 4.5%;
+    right: $master-width + 4.5vw;
     top: 30%;
 
     width: 0.4vw;
@@ -84,22 +85,57 @@ activity-button {
 
 .mixers {
   height: 100%;
-  width: 100% - $master-width;
+  width: $max-width - $master-width - (2 * $button-width);
 
   display: flex;
-  flex-wrap: nowrap;
-  overflow-x: auto;
-  overflow-y: hidden;
+  flex-direction: column;
+  align-items: center;
 
-  -webkit-overflow-scrolling: touch;
+  $sliders-height: 95%;
 
-  &::-webkit-scrollbar {
-    display: none;
+  .sliders {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    overflow-y: hidden;
+
+    height: $sliders-height;
+    width: 100%;
+
+    -webkit-overflow-scrolling: touch;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+  }
+
+  .page-indicator {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: flex-end;
+
+    height: 100% - $sliders-height;
+    width: 100%;
+
+    .dot {
+      height: 0.5em;
+      width: 0.5em;
+      margin-right: 0.35em;
+      background-color: #8b8b8b;
+      border-radius: 50%;
+      display: inline-block;
+
+      &.selected {
+        background-color: #f6f6f6;
+      }
+    }
   }
 }
 
 .button {
-  height: 80%;
+  height: 70%;
   min-width: $button-width;
   width: $button-width;
 

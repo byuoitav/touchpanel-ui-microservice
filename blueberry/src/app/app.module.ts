@@ -14,7 +14,6 @@ import {
 } from "@angular/material";
 import { UiSwitchModule } from "ngx-ui-switch";
 import { SweetAlert2Module } from "@toverux/ngx-sweetalert2";
-import { ScrollDispatchModule } from "@angular/cdk/scrolling";
 import "hammerjs";
 
 import { AppComponent } from "./components/app.component";
@@ -61,7 +60,6 @@ import { VolumeComponent } from "./components/volume/volume.component";
     MatChipsModule,
     MatProgressSpinnerModule,
     UiSwitchModule,
-    ScrollDispatchModule,
     SweetAlert2Module.forRoot()
   ],
   providers: [
