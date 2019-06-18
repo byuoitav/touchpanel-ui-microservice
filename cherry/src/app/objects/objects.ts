@@ -182,6 +182,7 @@ export class Preset {
   audioTypes: Map<string, AudioDevice[]> = new Map();
 
   masterVolume: number;
+  masterMute: boolean;
   beforeMuteLevel: number;
 
   commands: ConfigCommands;
