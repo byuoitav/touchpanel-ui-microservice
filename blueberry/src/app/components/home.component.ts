@@ -119,7 +119,9 @@ export class HomeComponent implements OnInit {
   sharePreset: Preset;
   defaultPreset: Preset;
 
-  selectedDisplays: Display[] = [];
+  mirroringMe: Preset[] = [];
+
+  // selectedDisplays: Display[] = [];
 
   mirrorPresetName: string;
 
@@ -171,10 +173,6 @@ export class HomeComponent implements OnInit {
         this.command.setInput(i, this.wheel.preset.displays);
       });
     }
-  }
-
-  public log(something: object) {
-    console.log(something);
   }
 
   private setupDialogs() {
@@ -273,7 +271,7 @@ export class HomeComponent implements OnInit {
 
     if (this.wheel.preset === this.sharePreset) {
       // unshare first
-      this.unShare(true).subscribe(success => {
+      this.unshare(true).subscribe(success => {
         if (success) {
           // power off this preset
           this.wheel.command
@@ -353,6 +351,7 @@ export class HomeComponent implements OnInit {
 
         this.command.share(from, to).subscribe(success => {
           if (success) {
+            this.mirroringMe.push(...to);
             this.sharePreset = preset;
             this.changePreset(this.sharePreset);
 
@@ -382,10 +381,6 @@ export class HomeComponent implements OnInit {
     };
   };
 
-  unShare = (b: boolean): EventEmitter<boolean> => {
-    return new EventEmitter<boolean>();
-  };
-
   // from should be the default preset, to should be the list of presets i'm sharing to
   unshare = (from: Preset, to: Preset[]): EventEmitter<boolean> => {
     const ret = new EventEmitter<boolean>();
@@ -394,6 +389,7 @@ export class HomeComponent implements OnInit {
     this.command.unshare(from, to).subscribe(success => {
       if (success) {
         this.changePreset(from);
+        this.mirroringMe = this.mirroringMe.filter(p => !to.includes(p));
 
         // send an event notifying everyone i just stopped sharing to them
         const names: string[] = [];
@@ -419,34 +415,6 @@ export class HomeComponent implements OnInit {
 
     return ret;
   };
-
-  /*
-  public unShare(sendCommand: boolean): EventEmitter<boolean> {
-    if (sendCommand) {
-    } else {
-      this.changePreset(this.defaultPreset);
-      this.swalStatus(true);
-    }
-
-    return ret;
-  }
-
-  public share(
-    displayList: Display[],
-    sendCommand: boolean
-  ): EventEmitter<boolean> {
-    if (sendCommand) {
-        if (success) {
-          this.selectedDisplays = displayList;
-        }
-    } else {
-      this.selectedDisplays = displayList;
-      this.changePreset(this.sharePreset);
-    }
-
-    return ret;
-  }
-*/
 
   /*
    * Tell the minion to mirror a specific preset.
@@ -654,16 +622,25 @@ export class HomeComponent implements OnInit {
                 );
                 // someone who's panel i'm supposed to mirror just shared.
                 // so i should look like i'm sharing too!
-                // split[2] has the displays i should be sharing to.
+                // split[2] has the presets i'm be sharing to.
 
                 const names = split[2].split(",");
-                const displays = Display.getDisplayListFromNames(
-                  names,
-                  this.data.displays
-                );
+                const presets: Preset[] = [];
+                for (const name of names) {
+                  const preset = this.data.presets.find(p => p.name === name);
+                  if (preset) {
+                    presets.push(preset);
+                  }
+                }
 
-                // TODO
-                // this.share(displays, false);
+                this.sharePreset = this.buildSharePreset(
+                  this.defaultPreset,
+                  presets
+                );
+                this.changePreset(this.sharePreset);
+                this.mirroringMe = presets;
+                
+                // TODO left off here
               } else if (this.appliesToMe(split[2].split(","))) {
                 console.log(e.User, "just shared to me");
                 if (this.wheel.preset === this.sharePreset) {
@@ -869,30 +846,6 @@ export class HomeComponent implements OnInit {
     console.log("changing preset to", newPreset);
     this.wheel.preset = newPreset;
     setTimeout(() => this.wheel.render(), 0);
-  }
-
-  private swalStatus(success: boolean): void {
-    if (!swal.isVisible()) {
-      return;
-    }
-
-    if (success) {
-      swal({
-        type: "success",
-        timer: 1500,
-        showConfirmButton: false
-      });
-    } else {
-      swal({
-        type: "error",
-        timer: 1500,
-        showConfirmButton: false
-      });
-    }
-  }
-
-  public isSelected(d: Display) {
-    return this.selectedDisplays.includes(d);
   }
 
   public showAudioControl(from: SwalComponent) {
