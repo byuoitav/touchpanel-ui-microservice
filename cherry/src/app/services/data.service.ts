@@ -239,6 +239,7 @@ export class DataService {
         this.audioDevices
       );
       const inputs = Device.filterDevices<Input>(preset.inputs, this.inputs);
+      console.log("preset:", preset.name, preset.independentAudioDevices);
       const independentAudioDevices = Device.filterDevices<AudioDevice>(
         preset.independentAudioDevices,
         this.audioDevices

@@ -23,8 +23,8 @@
                 </div>
             </div>
 
-            <div class="devices displays">
-                <!-- preset.audioDevices mixLevel sliders -->
+            <!-- <div class="devices displays">
+                preset.audioDevices mixLevel sliders
                 <div *ngFor="let a of preset?.audioDevices" class="device">
                     <span>{{ a.displayname }}</span>
                     <i class="material-icons">{{ a.icon }}</i>
@@ -44,60 +44,107 @@
             ">
                     </volume>
                 </div>
-            </div>
-        </mat-tab>
-    </ng-container>
+            </div> -->
 
-    <!-- List of all the extra audio types included. This makes sure the first char is uppercase -->
-    <ng-container *ngIf="audioGroups; else noAudioGroups">
-        <mat-tab *ngFor="let type of audioTypes" [label]="type?.charAt(0).toUpperCase() + type.slice(1) + 's'">
-            <div class="devices">
-                <div *ngFor="let a of preset?.audioTypes?.get(type)" class="device">
-                    <span>{{ a.displayname }}</span>
-                    <i class="material-icons">{{ a.icon }}</i>
-                    <volume class="volume" [level]="a?.mixlevel" [mute]="a?.mixmute" (levelChange)="
-              command.setMixLevel($event, a);
+            <div class="devices displays">
+                <div class="button left" (click)="pageDispLeft()" [class.blank]="!canPageDispLeft() || preset.audioDevices.length <= 3">
+                    <mat-icon style="transform: scale(3)">keyboard_arrow_left</mat-icon>
+                </div>
+                <div class="mixers displays">
+                    <div class="sliders">
+                        <div *ngFor="let a of preset?.audioDevices; let i = index;" class="device" [id]="'display' + i">
+                            <span>{{ a.displayname }}</span>
+                            <i class="material-icons">{{ a.icon }}</i>
+                            <volume class="volume display" [level]="a?.mixlevel" [mute]="a?.mixmute" (levelChange)="
+              command.setMixLevel($event, a, preset);
               command.setMixMute(false, a, preset);
-              command.buttonPress('audio type volume set', {
+              command.buttonPress('mix level set', {
                 level: $event,
                 audioDevices: [a?.name]
               })
             " (muteChange)="
-              command.setMute($event.muted, [a]);
+              command.setMixMute($event.muted, a, preset);
               command.buttonPress(
-                'audio type ' + ($event.muted ? 'mute' : 'unmute'),
+                'mix level ' + ($event.level === 0 ? 'mute' : 'unmute'),
                 a?.name
               )
             ">
-                    </volume>
+                            </volume>
+                        </div>
+                        <div [id]="'display' + preset?.audioDevices.length" class="slider-container">
+                            <div class="volume display"></div>
+                        </div>
+                        <div [id]="'display' + (preset?.audioDevices.length + 1)" class="slider-container">
+                            <div class="volume display"></div>
+                        </div>
+                        <div [id]="'display' + (preset?.audioDevices.length + 2)" class="slider-container">
+                            <div class="volume display"></div>
+                        </div>
+                        <div [id]="'display' + (preset?.audioDevices.length + 3)" class="slider-container">
+                            <div class="volume display"></div>
+                        </div>
+                    </div>
+                    <div class="page-indicator" *ngIf="preset != null" [class.blank]="preset?.audioDevices.length <= 3">
+                        <span *ngFor="let i of displayPages" class="dot" [class.selected]="i === curDisplayPage"></span>
+                    </div>
+                </div>
+
+                <div class="button right" (click)="pageDispRight()" [class.blank]="!canPageDispRight() || preset.audioDevices.length <= 3">
+                    <mat-icon style="transform: scale(3)">keyboard_arrow_right</mat-icon>
                 </div>
             </div>
         </mat-tab>
     </ng-container>
 
-    <ng-template #noAudioGroups>
-        <mat-tab label="Devices">
-            <div class="devices">
-                <div *ngFor="let a of preset?.independentAudioDevices" class="device">
-                    <span>{{ a.displayname }}</span>
-                    <i class="material-icons">{{ a.icon }}</i>
-                    <volume class="volume" [level]="a?.mixlevel" [mute]="a?.mixmute" (levelChange)="
-              command.setMixLevel($event, a);
-              command.setMixMute(false, a, preset);
-              command.buttonPress('independent audio volume set', {
-                level: $event,
-                audioDevices: [a?.name]
-              })
-            " (muteChange)="
-              command.setMute($event.muted, [a]);
-              command.buttonPress(
-                'independent audio ' + ($event.muted ? 'mute' : 'unmute'),
-                a?.name
-              )
-            ">
-                    </volume>
+    <mat-tab label="Microphones">
+
+        <div class="devices">
+            <div class="button left" (click)="pageLeft()" [class.blank]="!canPageLeft() || preset.independentAudioDevices.length <= 5">
+                <mat-icon style="transform: scale(3)">keyboard_arrow_left</mat-icon>
+            </div>
+            <div class="mixers">
+                <div class="sliders">
+                    <div *ngFor="let a of preset?.independentAudioDevices; let i = index;" class="device slider-container" [id]="'device' + i">
+                        <span>{{ a.displayname }}</span>
+                        <i class="material-icons">{{ a.icon }}</i>
+                        <volume class="volume" [level]="a?.mixlevel" [mute]="a?.mixmute" (levelChange)="
+                      command.setMixLevel($event, a);
+                      command.setMixMute(false, a, preset);
+                      command.buttonPress('independent audio volume set', {
+                        level: $event,
+                        audioDevices: [a?.name]
+                      })
+                    " (muteChange)="
+                      command.setMute($event.muted, [a]);
+                      command.buttonPress(
+                        'independent audio ' + ($event.muted ? 'mute' : 'unmute'),
+                        a?.name
+                      )
+                    ">
+                        </volume>
+                    </div>
+                    <div [id]="'device' + preset?.independentAudioDevices.length" class="slider-container">
+                        <div class="volume"></div>
+                    </div>
+                    <div [id]="'device' + (preset?.independentAudioDevices.length + 1)" class="slider-container">
+                        <div class="volume"></div>
+                    </div>
+                    <div [id]="'device' + (preset?.independentAudioDevices.length + 2)" class="slider-container">
+                        <div class="volume"></div>
+                    </div>
+                    <div [id]="'device' + (preset?.independentAudioDevices.length + 3)" class="slider-container">
+                        <div class="volume"></div>
+                    </div>
+                </div>
+                <div class="page-indicator" *ngIf="preset != null" [class.blank]="preset?.independentAudioDevices.length <= 5">
+                    <span *ngFor="let i of pages" class="dot" [class.selected]="i === curPage"></span>
                 </div>
             </div>
-        </mat-tab>
-    </ng-template>
+
+            <div class="button right" (click)="pageRight()" [class.blank]="!canPageRight() || preset.independentAudioDevices.length <= 5">
+                <mat-icon style="transform: scale(3)">keyboard_arrow_right</mat-icon>
+            </div>
+        </div>
+
+    </mat-tab>
 </mat-tab-group>
