@@ -10,6 +10,7 @@
   <div mat-dialog-content class="content">
     <button
       class="button"
+      color="accent"
       mat-raised-button
       (click)="pageLeft()"
       [disabled]="!canPageLeft()"
@@ -26,7 +27,13 @@
         >
           <span class="text label">{{ a?.displayname }}</span>
 
-          <volume class="slider" [level]="a?.mixlevel" [mute]="a?.mixmute">
+          <volume
+            class="slider"
+            [level]="a?.volume"
+            [mute]="a?.muted"
+            (levelChange)="command.setVolume($event, [a])"
+            (muteChange)="command.setMute($event, [a])"
+          >
           </volume>
         </div>
 
@@ -49,6 +56,7 @@
 
     <button
       class="button"
+      color="accent"
       mat-raised-button
       (click)="pageRight()"
       [disabled]="!canPageRight()"
@@ -57,11 +65,20 @@
     </button>
 
     <div class="master slider-container">
-      <span class="text label">Master Volume</span>
+      <span class="text label"
+        >Display Volume
+        {{
+          (preset?.displays)[0]?.input
+            ? "(" + (preset?.displays)[0]?.input?.name + ")"
+            : ""
+        }}</span
+      >
       <volume
         class="slider"
-        [level]="preset?.masterVolume"
-        [mute]="preset?.masterMute"
+        [level]="getDisplayVolume()"
+        [mute]="getDisplayMute()"
+        (levelChange)="command.setVolume($event, preset?.audioDevices)"
+        (muteChange)="command.setMute($event, preset?.audioDevices)"
       >
       </volume>
     </div>

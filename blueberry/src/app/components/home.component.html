@@ -4,13 +4,13 @@
     class="power button"
     (click)="command.buttonPress('power off')"
     (click)="
-      wheel?.preset?.shareableDisplays?.length > 1
+      wheel?.preset?.shareablePresets?.length > 1
         ? showPowerOffDialog()
         : turnOff()
     "
     (press)="command.buttonPress('long press power off')"
     (press)="
-      wheel?.preset?.shareableDisplays?.length > 1
+      wheel?.preset?.shareablePresets?.length > 1
         ? showPowerOffDialog()
         : turnOff()
     "
@@ -43,8 +43,9 @@
 <div class="buttons bottom">
   <ng-container
     *ngIf="
-      data?.panel?.features.includes('share') &&
-      wheel?.preset?.shareableDisplays?.length > 1
+      data?.panel?.features.includes('share') ||
+      wheel?.preset?.shareablePresets?.length == 1 ||
+      wheel?.preset?.shareablePresets?.length > 1
     "
   >
     <button

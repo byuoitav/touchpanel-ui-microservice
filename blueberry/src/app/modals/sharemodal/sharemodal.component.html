@@ -25,7 +25,7 @@
   </h1>
 
   <div mat-dialog-content class="">
-    <mat-grid-list cols="4" rowHeight="75">
+    <mat-grid-list [cols]="colMap[(selections?.length)]" rowHeight="75">
       <mat-grid-tile
         *ngFor="let p of selections"
         [colspan]="1"
@@ -51,6 +51,7 @@
     <button
       mat-raised-button
       color="warn"
+      [disabled]="button?.resolving()"
       (click)="cancel()"
       (press)="cancel()"
     >
@@ -58,21 +59,14 @@
     </button>
 
     <activity-button
+      #button
       type="mat-raised-button"
       color="primary"
       spinnerColor="accent"
+      [click]="data?.share(data?.wheel?.preset, selected)"
+      [press]="data?.share(data?.wheel?.preset, selected)"
       (success)="ref.close()"
       >Share</activity-button
     >
-
-    <!-->
-  <activity-button
-    type="mat-raised-button"
-    color="accent"
-    [click]="powerOffAllDisplays"
-    [press]="powerOffAllDisplays"
-    (success)="ref.close()"
-    >All displays</activity-button
-  >
-  --></div>
+  </div>
 </ng-container>

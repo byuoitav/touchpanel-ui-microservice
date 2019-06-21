@@ -84,17 +84,9 @@ export class Output extends Device {
 
   powerEmitter: EventEmitter<string>;
 
-  constructor(name: string, displayname: string, power: string, input: Input) {
-    super(name, displayname);
-    this.power = power;
-    this.input = input;
-
-    this.powerEmitter = new EventEmitter();
-  }
-
   public static getPower(outputs: Output[]): string {
-    for (let o of outputs) {
-      if (o.power == "on") {
+    for (const o of outputs) {
+      if (o.power === "on") {
         return o.power;
       }
     }
@@ -105,10 +97,10 @@ export class Output extends Device {
   public static getInput(outputs: Output[]): Input {
     let input: Input = null;
 
-    for (let o of outputs) {
+    for (const o of outputs) {
       if (input == null) {
         input = o.input;
-      } else if (o.input != input) {
+      } else if (o.input !== input) {
         // this means the input that appears selected may not actually be selected on all displays.
         // to get the ~correct~ behavior, return null.
         return o.input;
@@ -125,25 +117,29 @@ export class Output extends Device {
   public static setInput(i: Input, outputs: Output[]) {
     outputs.forEach(o => (o.input = i));
   }
+
+  constructor(name: string, displayname: string, power: string, input: Input) {
+    super(name, displayname);
+    this.power = power;
+    this.input = input;
+
+    this.powerEmitter = new EventEmitter();
+  }
 }
 
 export class Display extends Output {
   blanked: boolean;
 
-  constructor(
-    name: string,
-    displayname: string,
-    power: string,
-    input: Input,
-    blanked: boolean
-  ) {
-    super(name, displayname, power, input);
-    this.blanked = blanked;
+  public static getDisplayListFromNames(
+    names: string[],
+    displaysSource: Display[]
+  ): Display[] {
+    return displaysSource.filter(d => names.includes(d.name));
   }
 
   // returns true iff both are blanked
   public static getBlank(displays: Display[]): boolean {
-    for (let d of displays) {
+    for (const d of displays) {
       if (!d.blanked) {
         return false;
       }
@@ -156,17 +152,21 @@ export class Display extends Output {
     displays.forEach(d => (d.blanked = b));
   }
 
+  constructor(
+    name: string,
+    displayname: string,
+    power: string,
+    input: Input,
+    blanked: boolean
+  ) {
+    super(name, displayname, power, input);
+    this.blanked = blanked;
+  }
+
   public getAudioConfiguration(): AudioConfiguration {
     return APIService.room.uiconfig.audioConfiguration.find(
       a => a.display === this.name
     );
-  }
-
-  public static getDisplayListFromNames(
-    names: string[],
-    displaysSource: Display[]
-  ): Display[] {
-    return displaysSource.filter(d => names.includes(d.name));
   }
 }
 
@@ -174,25 +174,9 @@ export class AudioDevice extends Output {
   muted: boolean;
   volume: number;
 
-  mixlevel: number = undefined;
-  mixmute: boolean = undefined;
-
-  constructor(
-    name: string,
-    displayname: string,
-    power: string,
-    input: Input,
-    muted: boolean,
-    volume: number
-  ) {
-    super(name, displayname, power, input);
-    this.muted = muted;
-    this.volume = volume;
-  }
-
   // return average of all volumes
   public static getVolume(audioDevices: AudioDevice[]): number {
-    let volume: number = 0;
+    let volume = 0;
 
     audioDevices.forEach(a => (volume += a.volume));
 
@@ -201,7 +185,7 @@ export class AudioDevice extends Output {
 
   // returns true iff both are muted
   public static getMute(audioDevices: AudioDevice[]): boolean {
-    for (let a of audioDevices) {
+    for (const a of audioDevices) {
       if (!a.muted) {
         return false;
       }
@@ -216,5 +200,18 @@ export class AudioDevice extends Output {
 
   public static setMute(m: boolean, audioDevices: AudioDevice[]) {
     audioDevices.forEach(a => (a.muted = m));
+  }
+
+  constructor(
+    name: string,
+    displayname: string,
+    power: string,
+    input: Input,
+    muted: boolean,
+    volume: number
+  ) {
+    super(name, displayname, power, input);
+    this.muted = muted;
+    this.volume = volume;
   }
 }

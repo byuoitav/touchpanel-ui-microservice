@@ -97,8 +97,7 @@ activity-button {
     display: flex;
     flex-direction: row;
     flex-wrap: nowrap;
-    overflow-x: auto;
-    overflow-y: hidden;
+    overflow: hidden;
 
     height: $sliders-height;
     width: 100%;

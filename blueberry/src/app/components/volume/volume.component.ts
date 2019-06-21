@@ -25,9 +25,7 @@ export class VolumeComponent implements OnInit {
   @Output()
   levelChange: EventEmitter<number> = new EventEmitter();
   @Output()
-  muteChange: EventEmitter<MuteStatus> = new EventEmitter();
-
-  public beforeMuteLevel: number;
+  muteChange: EventEmitter<boolean> = new EventEmitter();
 
   @ViewChild("slider")
   slider: MatSlider;
@@ -35,31 +33,9 @@ export class VolumeComponent implements OnInit {
   constructor() {}
   ngOnInit() {}
 
-  public muteClick() {
-    let emit: MuteStatus;
-    if (this.mute) {
-      emit = new MuteStatus(this.beforeMuteLevel, false);
-    } else {
-      this.beforeMuteLevel = this.level;
-      emit = new MuteStatus(0, true);
-    }
-
-    this.muteChange.emit(emit);
-  }
-
   public closeThumb() {
     setTimeout(() => {
       this.slider._elementRef.nativeElement.blur();
     }, 2000);
-  }
-}
-
-export class MuteStatus {
-  level: number;
-  muted: boolean;
-
-  constructor(level: number, muted: boolean) {
-    this.level = level;
-    this.muted = muted;
   }
 }

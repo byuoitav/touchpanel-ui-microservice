@@ -1,5 +1,7 @@
 import { Component, Input, Output, EventEmitter } from "@angular/core";
 
+export type Action = () => Promise<boolean>;
+
 @Component({
   selector: "activity-button",
   templateUrl: "./activity-button.component.html",
@@ -12,8 +14,8 @@ export class ActivityButtonComponent {
 
   @Input() disabled: boolean;
   @Input() type: string;
-  @Input() click: () => boolean;
-  @Input() press: () => boolean;
+  @Input() click: Action;
+  @Input() press: Action;
   @Input() color: string;
   @Input() spinnerColor: string;
 
@@ -33,7 +35,11 @@ export class ActivityButtonComponent {
     this._error = false;
   }
 
-  async _do(f: () => boolean) {
+  resolving(): boolean {
+    return this._resolving;
+  }
+
+  async _do(f: Action) {
     if (this._resolving) {
       return;
     }

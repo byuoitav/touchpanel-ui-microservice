@@ -14,6 +14,8 @@ import { Preset } from "../../objects/objects";
   styleUrls: ["./sharemodal.component.scss"]
 })
 export class ShareModalComponent implements OnInit {
+  public colMap = [0, 1, 2, 3, 4, 3, 3, 4, 4, 3, 4, 4, 4, 4, 4, 4, 4, 4, 4];
+
   public selections: Preset[];
   public selected: Preset[];
 
@@ -23,7 +25,11 @@ export class ShareModalComponent implements OnInit {
     private command: CommandService,
     private graph: GraphService,
     private dialog: MatDialog,
-    @Inject(MAT_DIALOG_DATA) public data: { wheel: WheelComponent }
+    @Inject(MAT_DIALOG_DATA)
+    public data: {
+      wheel: WheelComponent;
+      share: (from: Preset, to: Preset[]) => (() => Promise<boolean>);
+    }
   ) {}
 
   ngOnInit() {
@@ -49,25 +55,25 @@ export class ShareModalComponent implements OnInit {
     this.selections = [];
 
     // create the selected presets list
-    this.graph.getDisplayList().forEach(disp => {
+    this.graph.getPresetList().forEach(pname => {
       // skip the displays in my preset
-      if (this.data.wheel.preset.displays.some(d => d.name === disp)) {
-        return;
-      }
-
-      // skip it if the display isn't reachable
-      if (!this.curInput().reachableDisplays.includes(disp)) {
+      if (this.data.wheel.preset.name === pname) {
         return;
       }
 
       // find the preset that this display is correlated with
-      const preset = this.ds.presets.find(p =>
-        p.displays.some(d => d.name === disp)
-      );
+      const preset = this.ds.presets.find(p => p.name === pname);
 
       // skip it if i already have it
       if (this.selections.includes(preset)) {
         return;
+      }
+
+      // skip this preset if one of it's displays can't get this input
+      for (const disp of preset.displays) {
+        if (!this.curInput().reachableDisplays.includes(disp.name)) {
+          return;
+        }
       }
 
       this.selections.push(preset);

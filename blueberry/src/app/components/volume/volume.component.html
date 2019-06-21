@@ -22,8 +22,8 @@
       <button
         mat-raised-button
         [color]="mute ? 'warn' : 'primary'"
-        (click)="muteClick()"
-        (press)="muteClick()"
+        (click)="muteChange.emit(!mute)"
+        (press)="muteClick.emit(!mute)"
         class="button"
         [class.muted]="mute"
       >
@@ -36,8 +36,8 @@
       <button
         mat-fab
         [color]="mute ? 'warn' : 'primary'"
-        (click)="muteClick()"
-        (press)="muteClick()"
+        (click)="muteChange.emit(!mute)"
+        (press)="muteChange.emit(!mute)"
         class="button"
         [class.muted]="mute"
       >

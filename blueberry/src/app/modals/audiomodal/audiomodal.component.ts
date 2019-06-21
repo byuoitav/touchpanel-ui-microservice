@@ -23,19 +23,13 @@ export class AudioModalComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA)
     public preset: Preset
   ) {
-    for (const a of preset.audioDevices) {
+    for (const a of preset.independentAudioDevices) {
       this.devices.push(a);
     }
-    for (const a of preset.audioDevices) {
+    for (const a of preset.independentAudioDevices) {
       this.devices.push(a);
     }
-    for (const a of preset.audioDevices) {
-      this.devices.push(a);
-    }
-    for (const a of preset.audioDevices) {
-      this.devices.push(a);
-    }
-    for (const a of preset.audioDevices) {
+    for (const a of preset.independentAudioDevices) {
       this.devices.push(a);
     }
 
@@ -53,6 +47,14 @@ export class AudioModalComponent implements OnInit {
   done = () => {
     this.command.buttonPress("close audio modal");
     this.ref.close();
+  };
+
+  getDisplayVolume = (): number => {
+    return AudioDevice.getVolume(this.preset.audioDevices);
+  };
+
+  getDisplayMute = (): boolean => {
+    return AudioDevice.getMute(this.preset.audioDevices);
   };
 
   pageLeft = () => {
@@ -93,23 +95,5 @@ export class AudioModalComponent implements OnInit {
     }
 
     return true;
-  };
-
-  scrollTo = (page: number) => {
-    /*
-    if (page < 0 || page > this.pages.length) {
-      console.warn("can't scroll to page", page);
-      return;
-    }
-
-    const idx = page * 3;
-
-    if (idx < 0 || idx >= this.devices.length) {
-      console.warn("can't scroll to index", idx, "of devices");
-      return;
-    }
-
-    console.log("scrolling to", this.devices[idx].name, "(at index", idx + ")");
-    */
   };
 }

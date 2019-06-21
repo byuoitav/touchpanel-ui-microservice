@@ -103,7 +103,7 @@ export class PresetConfiguration {
   name: string;
   icon: string;
   displays: string[];
-  shareableDisplays: string[];
+  shareablePresets: string[];
   audioDevices: string[];
   inputs: string[];
   independentAudioDevices: string[];
@@ -159,13 +159,10 @@ export class Preset {
   inputs: Input[] = [];
   extraInputs: Input[] = [];
 
-  shareableDisplays: string[];
+  shareablePresets: string[];
   independentAudioDevices: AudioDevice[] = [];
 
   commands: ConfigCommands;
-
-  masterVolume: number = undefined;
-  masterMute: boolean = undefined;
 
   constructor(
     name: string,
@@ -173,7 +170,7 @@ export class Preset {
     displays: Display[],
     audioDevices: AudioDevice[],
     inputs: Input[],
-    shareableDisplays: string[],
+    shareablePresets: string[],
     independentAudioDevices: AudioDevice[],
     commands: ConfigCommands
   ) {
@@ -182,7 +179,7 @@ export class Preset {
     this.displays = displays;
     this.audioDevices = audioDevices;
     this.inputs = inputs;
-    this.shareableDisplays = shareableDisplays;
+    this.shareablePresets = shareablePresets;
     this.independentAudioDevices = independentAudioDevices;
     this.commands = commands;
   }

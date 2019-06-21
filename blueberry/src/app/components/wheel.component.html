@@ -144,18 +144,18 @@
   <volume
     class="volume"
     muteType="mat-fab"
-    [level]="preset?.masterVolume"
-    [mute]="preset?.masterMute"
+    [level]="getVolume()"
+    [mute]="getMute()"
     (levelChange)="
-      command.setMasterVolume($event, preset);
-      command.buttonPress('master volume set on wheel screen', {
+      command.setVolume($event, preset?.audioDevices);
+      command.buttonPress('display volume set on wheel screen', {
         level: $event
       })
     "
     (muteChange)="
-      command.setMasterMute($event.muted, preset);
+      command.setMute($event, preset?.audioDevices);
       command.buttonPress(
-        'master volume ' +
+        'display volume ' +
           ($event.muted ? 'mute' : 'unmute') +
           'on wheel screen'
       )
