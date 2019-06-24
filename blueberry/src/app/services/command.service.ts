@@ -492,27 +492,20 @@ export class CommandService {
     return ret;
   }
 
-  public mirror(mirror: Preset, on: Preset) {
+  public mirror(minion: Preset, master: Preset): EventEmitter<boolean> {
     const ret: EventEmitter<boolean> = new EventEmitter<boolean>();
     const body = { displays: [], audioDevices: [] };
 
-    const power: string = Display.getPower(mirror.displays);
-    const input: Input = Display.getInput(mirror.displays);
-    const blanked: boolean = Display.getBlank(mirror.displays);
+    const power = Display.getPower(master.displays);
+    const input = Display.getInput(master.displays);
+    const blanked = Display.getInput(master.displays);
 
-    for (const d of on.displays) {
+    for (const d of minion.displays) {
       body.displays.push({
         name: d.name,
         power: power,
         input: input.name,
         blanked: blanked
-      });
-    }
-
-    for (const a of on.audioDevices) {
-      body.audioDevices.push({
-        name: a.name,
-        muted: true
       });
     }
 
