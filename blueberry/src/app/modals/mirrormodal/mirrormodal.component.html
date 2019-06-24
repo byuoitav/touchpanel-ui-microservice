@@ -1,0 +1,24 @@
+<h1 mat-dialog-title class="text title">
+  Mirroring {{ data?.input?.displayname }}
+</h1>
+
+<div mat-dialog-actions class="items secondary-theme">
+  <button
+    mat-raised-button
+    color="primary"
+    (click)="toAudioControl()"
+    (press)="toAudioControl()"
+  >
+    Audio Control
+  </button>
+
+  <activity-button
+    type="mat-raised-button"
+    color="primary"
+    spinnerColor="accent"
+    [click]="data?.unmirror"
+    [press]="data?.unmirror"
+    (success)="ref.close()"
+    >Stop Mirroring
+  </activity-button>
+</div>

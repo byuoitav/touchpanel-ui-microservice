@@ -32,6 +32,7 @@ import { ActivityButtonComponent } from "./components/activity-button/activity-b
 import { ShareModalComponent } from "./modals/sharemodal/sharemodal.component";
 import { AudioModalComponent } from "./modals/audiomodal/audiomodal.component";
 import { VolumeComponent } from "./components/volume/volume.component";
+import { MirrorModalComponent } from "./modals/mirrormodal/mirrormodal.component";
 
 @NgModule({
   declarations: [
@@ -45,7 +46,8 @@ import { VolumeComponent } from "./components/volume/volume.component";
     ActivityButtonComponent,
     ShareModalComponent,
     AudioModalComponent,
-    VolumeComponent
+    VolumeComponent,
+    MirrorModalComponent
   ],
   imports: [
     BrowserModule,
@@ -74,7 +76,8 @@ import { VolumeComponent } from "./components/volume/volume.component";
     ConfirmHelpModal,
     PowerOffAllModalComponent,
     ShareModalComponent,
-    AudioModalComponent
+    AudioModalComponent,
+    MirrorModalComponent
   ],
   bootstrap: [AppComponent]
 })

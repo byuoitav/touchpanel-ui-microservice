@@ -36,6 +36,7 @@ import { HelpModal } from "../modals/helpmodal/helpmodal.component";
 import { PowerOffAllModalComponent } from "../modals/poweroffallmodal/poweroffallmodal.component";
 import { ShareModalComponent } from "../modals/sharemodal/sharemodal.component";
 import { AudioModalComponent } from "../modals/audiomodal/audiomodal.component";
+import { MirrorModalComponent } from "../modals/mirrormodal/mirrormodal.component";
 import { Action } from "./activity-button/activity-button.component";
 
 export const SHARE = "start_share";
@@ -120,7 +121,6 @@ export class HomeComponent implements OnInit {
   defaultPreset: Preset;
 
   mirroringMe: Preset[] = [];
-  mirrorPresetName: string;
 
   helpInfo: HelpInfo;
 
@@ -128,8 +128,6 @@ export class HomeComponent implements OnInit {
   selectDisplaysDialog: SwalComponent;
   @ViewChild("unshare")
   unShareDialog: SwalComponent;
-  @ViewChild("mirror")
-  mirrorDialog: SwalComponent;
   @ViewChild("audio")
   audioDialog: SwalComponent;
   @ViewChild("notRoutable")
@@ -153,7 +151,14 @@ export class HomeComponent implements OnInit {
     });
   }
 
-  public ngOnInit() {}
+  public ngOnInit() {
+    setTimeout(() => {
+      const preset = this.data.presets.find(p => p.name === "TEST2 blueberry");
+      const input = this.addMirrorInput(preset);
+      this.removeExtraInputs();
+      this.defaultPreset.extraInputs.push(input);
+    }, 5000);
+  }
 
   private setupInputFunctions() {
     console.log("setting up input functions");
@@ -176,14 +181,6 @@ export class HomeComponent implements OnInit {
     this.unShareDialog.options = {
       title: "Returning room to default state...",
       allowOutsideClick: false
-    };
-
-    this.mirrorDialog.options = {
-      type: "info",
-      focusConfirm: false,
-      confirmButtonText: "Stop",
-      allowOutsideClick: false,
-      width: "85vw"
     };
 
     this.notRoutableDialog.options = {
@@ -369,7 +366,17 @@ export class HomeComponent implements OnInit {
   };
 
   mirror = (preset: Preset) => {
-    // TODO show the popup
+    const input = this.addMirrorInput(preset);
+    const ref = this.dialog.open(MirrorModalComponent, {
+      width: "80vw",
+      disableClose: true,
+      data: {
+        preset: this.defaultPreset,
+        input: input,
+        unmirror: this.unmirror
+      }
+    });
+
     console.log("mirroring", preset.name);
 
     if (this.wheel.preset === this.sharePreset) {
@@ -396,11 +403,13 @@ export class HomeComponent implements OnInit {
       }
     });
 
-    this.addMirrorInput(preset);
+    this.removeExtraInputs();
+    this.defaultPreset.extraInputs.push(input);
   };
 
-  addMirrorInput = (preset: Preset) => {
+  addMirrorInput = (preset: Preset): Input => {
     const currInput = this.wheel.getInput();
+
     if (currInput != null) {
       const input = new Input(
         currInput.name,
@@ -414,37 +423,45 @@ export class HomeComponent implements OnInit {
         this.mirror(preset);
       });
 
-      this.removeExtraInputs();
-      this.defaultPreset.extraInputs.push(input);
+      return input;
     } else {
       console.warn("failed to find a current input for preset:", preset);
+      return undefined;
     }
   };
 
   removeMirrorPopup = () => {
-    // TODO
+    for (const dialog of this.dialog.openDialogs) {
+      if (dialog instanceof MirrorModalComponent) {
+        dialog.close();
+      }
+    }
   };
 
   unmirror = () => {
-    console.log("unmirroring");
+    return async (): Promise<boolean> => {
+      return new Promise<boolean>((resolve, reject) => {
+        console.log("unmirroring");
 
-    const event = new Event();
-    event.User = this.defaultPreset.name;
-    event.EventTags = ["ui-communication"];
-    event.AffectedRoom = new BasicRoomInfo(
-      APIService.building + "-" + APIService.roomName
-    );
-    event.TargetDevice = new BasicDeviceInfo(
-      event.AffectedRoom.RoomID + "-" + this.defaultPreset.name
-    );
-    event.Key = LEAVE_SHARE;
-    event.Value = " ";
+        const event = new Event();
+        event.User = this.defaultPreset.name;
+        event.EventTags = ["ui-communication"];
+        event.AffectedRoom = new BasicRoomInfo(
+          APIService.building + "-" + APIService.roomName
+        );
+        event.TargetDevice = new BasicDeviceInfo(
+          event.AffectedRoom.RoomID + "-" + this.defaultPreset.name
+        );
+        event.Key = LEAVE_SHARE;
+        event.Value = " ";
 
-    this.api.sendEvent(event);
+        this.api.sendEvent(event);
 
-    // switch the input back to default
-    this.command.powerOnDefault(this.defaultPreset);
-    this.removeMirrorPopup();
+        // switch the input back to default
+        this.command.powerOnDefault(this.defaultPreset);
+        this.removeMirrorPopup();
+      });
+    };
   };
 
   private removeFromShare = (presets: Preset[]) => {
@@ -610,7 +627,9 @@ export class HomeComponent implements OnInit {
 
                 // someone shared to me. i should look like a minion.
                 const preset = this.data.presets.find(p => p.name === e.User);
-                this.addMirrorInput(preset);
+                const input = this.addMirrorInput(preset);
+                this.removeExtraInputs();
+                this.defaultPreset.extraInputs.push(input);
               } else if (this.appliesToMyGroup(sharedTo)) {
                 // a preset that i previously shared to have been shared to by a new station.
                 // they should be removed from my mirroringMe group so that
@@ -699,7 +718,9 @@ export class HomeComponent implements OnInit {
 
                 // a panel i'm mirroring just rejoined a group
                 const preset = this.data.presets.find(p => p.name === e.Value);
-                this.addMirrorInput(preset);
+                const input = this.addMirrorInput(preset);
+                this.removeExtraInputs();
+                this.defaultPreset.extraInputs.push(input);
               } else if (this.appliesToMe(split[2].split(","))) {
                 console.log(
                   e.User,
@@ -715,7 +736,7 @@ export class HomeComponent implements OnInit {
 
             case POWER_OFF_ALL:
               this.removeExtraInputs();
-              // TODO close any popups that are open
+              this.dialog.closeAll();
 
               if (this.sharePreset === this.wheel.preset) {
                 this.unshare(this.defaultPreset, this.mirroringMe).subscribe(
@@ -826,22 +847,6 @@ export class HomeComponent implements OnInit {
 
     return ret;
   }
-
-  /*
-  public getPresetDisplayNames(preset: Preset): string[] {
-    const displays: string[] = [];
-
-    if (preset == null || preset.displays == null) {
-      return displays;
-    }
-
-    for (const d of preset.displays) {
-      displays.push(d.name);
-    }
-
-    return displays;
-  }
-  */
 
   public showHelp() {
     const ref = this.dialog.open(HelpModal, {
