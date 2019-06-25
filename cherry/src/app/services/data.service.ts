@@ -394,7 +394,13 @@ export class DataService {
             }
             case "master-volume": {
               const presetToChange = this.presets.find(
-                p => p.name === split[2]
+                p => {
+                  if (p.name === split[2]) {
+                    return true;
+                  } else {
+                    return p.volumeMatches.includes(split[2]);
+                  }
+                }
               );
               if (presetToChange != null) {
                 presetToChange.masterVolume = parseInt(e.Value, 10);
