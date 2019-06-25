@@ -411,6 +411,25 @@ export class DataService {
               }
               break;
             }
+            case "master-mute": {
+              const presetToChange = this.presets.find(
+                p => {
+                  if (p.name === split[2]) {
+                    return true;
+                  } else {
+                    if (p.volumeMatches != null) {
+                      return p.volumeMatches.includes(split[2]);
+                    } else {
+                      return false;
+                    }
+                  }
+                }
+              );
+              if (presetToChange != null) {
+                presetToChange.masterMute = e.Value.toLowerCase() === "true";
+              }
+              break;
+            }
             case "mix-level": {
               const audioDevice = this.audioDevices.find(
                 a => a.name === split[2]
