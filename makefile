@@ -52,8 +52,8 @@ build-arm:
 
 build-web: $(NG1) $(NG2)
 	# ng1
-	cd $(NG1) && $(NPM_INSTALL) && $(NG_BUILD) --base-href="./$(NG1)/"
-	mv $(NG1)/dist $(NG1)-dist
+	# cd $(NG1) && $(NPM_INSTALL) && $(NG_BUILD) --base-href="./$(NG1)/"
+	# mv $(NG1)/dist $(NG1)-dist
 	# ng2
 	cd $(NG2) && $(NPM_INSTALL) && $(NG_BUILD) --base-href="./$(NG2)/"
 	mv $(NG2)/dist $(NG2)-dist
