@@ -22,7 +22,9 @@ export class MirrorModalComponent implements OnInit {
       unmirror: () => (() => Promise<boolean>);
       input: Input;
     }
-  ) {}
+  ) {
+    console.log("unmirror", this.data.unmirror);
+  }
 
   ngOnInit() {
     this.ref.disableClose = true;
@@ -34,5 +36,7 @@ export class MirrorModalComponent implements OnInit {
       disableClose: true,
       data: this.data.preset
     });
+
+    // TODO on closed, reopen this one
   };
 }

@@ -67,11 +67,11 @@
       *ngIf="wheel?.preset != defaultPreset"
       class="dta button"
       (click)="
-        unShareDialog.show();
+        unshare(defaultPreset, mirroringMe);
         command.buttonPress('unshare', getPresetDisplayNames(wheel?.preset))
       "
       (press)="
-        unShareDialog.show();
+        unshare(defaultPreset, mirroringMe);
         command.buttonPress(
           'long press unshare',
           getPresetDisplayNames(wheel?.preset)
@@ -98,73 +98,3 @@
 </div>
 
 <div class="label top right"><label>Master Volume</label></div>
-
-<swal #unshare (open)="unShare(true)"> </swal>
-
-<!-- TODO test mirroring events -->
-<swal
-  #mirror
-  (confirm)="unMirror(true); command.buttonPress('unmirror', mirrorPresetName)"
-  (cancel)="
-    showAudioControl(mirrorDialog);
-    command.buttonPress('show audio control modal while mirroring')
-  "
-  [showCancelButton]="wheel?.preset?.independentAudioDevices?.length > 0"
->
-</swal>
-
-<!-- TODO test audio modal events-->
-<swal #audio>
-  <div *swalPartial="swalTargets.content" class="independentAudioContent">
-    <div
-      *ngFor="let a of defaultPreset?.independentAudioDevices"
-      class="mic"
-      [class.muted]="a?.muted"
-    >
-      <span>{{ a?.displayname }}</span>
-      <mat-slider
-        vertical
-        [class.notouch]="a?.muted"
-        [disabled]="a?.muted"
-        [value]="a?.volume"
-        [step]="5"
-        [thumbLabel]="true"
-        (change)="
-          wheel.command.setVolume($event.value, [a]);
-          command.buttonPress('independent audio volume set', {
-            level: $event.value,
-            audioDevices: [a?.name]
-          })
-        "
-      ></mat-slider>
-      <button
-        mat-mini-fab
-        class="mute"
-        [class.muted]="a?.muted"
-        (click)="
-          wheel.command.setMute(!a.muted, [a]);
-          command.buttonPress(
-            'independent audio ' + (a.muted ? 'mute' : 'unmute'),
-            a?.name
-          )
-        "
-        (press)="
-          wheel.command.setMute(!a.muted, [a]);
-          command.buttonPress(
-            'long press independent audio ' + (a.muted ? 'mute' : 'unmute'),
-            a?.name
-          )
-        "
-      >
-        <mat-icon *ngIf="a?.muted">volume_off</mat-icon>
-        <mat-icon *ngIf="!a?.muted">volume_up</mat-icon>
-      </button>
-    </div>
-  </div>
-</swal>
-
-<swal #notRoutable>
-  <div *swalPartial="swalTargets.content">
-    <span>You must unshare before you can select this input.</span>
-  </div>
-</swal>

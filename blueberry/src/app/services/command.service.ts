@@ -479,6 +479,24 @@ export class CommandService {
       }
     }
 
+    for (const disp of from.displays) {
+      body.displays.push({
+        name: disp.name,
+        power: "on",
+        input: from.inputs[0].name,
+        blanked: false
+      });
+    }
+
+    for (const device of from.audioDevices) {
+      body.audioDevices.push({
+        name: device.name,
+        power: "on",
+        volume: 30,
+        muted: false
+      });
+    }
+
     console.log("unshare body", body);
     this.putWithCustomTimeout(body, 20 * 1000).subscribe(
       data => {

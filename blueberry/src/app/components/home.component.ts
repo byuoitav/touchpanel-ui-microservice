@@ -5,10 +5,8 @@ import {
   Output as AngularOutput,
   OnInit
 } from "@angular/core";
-import { MatDialog } from "@angular/material";
+import { MatDialog, MatDialogRef } from "@angular/material";
 import { deserialize } from "serializer.ts/Serializer";
-import swal, { SweetAlertOptions } from "sweetalert2";
-import { SwalComponent, SwalPartialTargets } from "@toverux/ngx-sweetalert2";
 import { WheelComponent } from "./wheel.component";
 import { DataService } from "../services/data.service";
 import { CommandService } from "../services/command.service";
@@ -37,6 +35,7 @@ import { PowerOffAllModalComponent } from "../modals/poweroffallmodal/poweroffal
 import { ShareModalComponent } from "../modals/sharemodal/sharemodal.component";
 import { AudioModalComponent } from "../modals/audiomodal/audiomodal.component";
 import { MirrorModalComponent } from "../modals/mirrormodal/mirrormodal.component";
+import { MessageModalComponent } from "../modals/messagemodal/messagemodal.component";
 import { Action } from "./activity-button/activity-button.component";
 
 export const SHARE = "start_share";
@@ -124,20 +123,10 @@ export class HomeComponent implements OnInit {
 
   helpInfo: HelpInfo;
 
-  @ViewChild("selectdisplays")
-  selectDisplaysDialog: SwalComponent;
-  @ViewChild("unshare")
-  unShareDialog: SwalComponent;
-  @ViewChild("audio")
-  audioDialog: SwalComponent;
-  @ViewChild("notRoutable")
-  notRoutableDialog: SwalComponent;
-
   constructor(
     public data: DataService,
     private socket: SocketService,
     public api: APIService,
-    public readonly swalTargets: SwalPartialTargets,
     public command: CommandService,
     private graph: GraphService,
     private dialog: MatDialog
@@ -145,7 +134,6 @@ export class HomeComponent implements OnInit {
     this.data.loaded.subscribe(() => {
       this.updateFromEvents();
       this.setupInputFunctions();
-      this.setupDialogs();
 
       this.updateHelp();
     });
@@ -153,7 +141,7 @@ export class HomeComponent implements OnInit {
 
   public ngOnInit() {
     setTimeout(() => {
-      const preset = this.data.presets.find(p => p.name === "TEST2 blueberry");
+      const preset = this.data.presets.find(p => p.name === "Station 1");
       const input = this.addMirrorInput(preset);
       this.removeExtraInputs();
       this.defaultPreset.extraInputs.push(input);
@@ -169,28 +157,17 @@ export class HomeComponent implements OnInit {
           this.wheel.preset === this.sharePreset &&
           i.reachableDisplays.length === 1
         ) {
-          this.notRoutableDialog.show();
+          this.showMessageModal(
+            undefined,
+            "You must unshare before you can select this input.",
+            false,
+            "Ok"
+          );
           return;
         }
         this.command.setInput(i, this.wheel.preset.displays);
       });
     }
-  }
-
-  private setupDialogs() {
-    this.unShareDialog.options = {
-      title: "Returning room to default state...",
-      allowOutsideClick: false
-    };
-
-    this.notRoutableDialog.options = {
-      text: "i should be hidden",
-      showCancelButton: false,
-      showConfirmButton: true,
-      confirmButtonText: "Ok",
-      focusConfirm: true,
-      timer: 5000
-    };
   }
 
   private onWheelInit() {
@@ -335,6 +312,14 @@ export class HomeComponent implements OnInit {
     const ret = new EventEmitter<boolean>();
     console.log("unsharing from", from, "to", to);
 
+    // show the unshare popup
+    const ref = this.showMessageModal(
+      "Returning room to default state...",
+      undefined,
+      true,
+      undefined
+    );
+
     this.command.unshare(from, to).subscribe(success => {
       if (success) {
         this.changePreset(from);
@@ -359,6 +344,7 @@ export class HomeComponent implements OnInit {
         this.api.sendEvent(event);
       }
 
+      ref.close();
       ret.emit(success);
     });
 
@@ -438,28 +424,30 @@ export class HomeComponent implements OnInit {
     }
   };
 
-  unmirror = () => {
+  unmirror = (): Action => {
     return async (): Promise<boolean> => {
       return new Promise<boolean>((resolve, reject) => {
         console.log("unmirroring");
 
-        const event = new Event();
-        event.User = this.defaultPreset.name;
-        event.EventTags = ["ui-communication"];
-        event.AffectedRoom = new BasicRoomInfo(
-          APIService.building + "-" + APIService.roomName
-        );
-        event.TargetDevice = new BasicDeviceInfo(
-          event.AffectedRoom.RoomID + "-" + this.defaultPreset.name
-        );
-        event.Key = LEAVE_SHARE;
-        event.Value = " ";
-
-        this.api.sendEvent(event);
-
         // switch the input back to default
-        this.command.powerOnDefault(this.defaultPreset);
-        this.removeMirrorPopup();
+        this.command.powerOnDefault(this.defaultPreset).subscribe(success => {
+          const event = new Event();
+          event.User = this.defaultPreset.name;
+          event.EventTags = ["ui-communication"];
+          event.AffectedRoom = new BasicRoomInfo(
+            APIService.building + "-" + APIService.roomName
+          );
+          event.TargetDevice = new BasicDeviceInfo(
+            event.AffectedRoom.RoomID + "-" + this.defaultPreset.name
+          );
+          event.Key = LEAVE_SHARE;
+          event.Value = " ";
+
+          this.api.sendEvent(event);
+
+          resolve(success);
+          this.removeMirrorPopup();
+        });
       });
     };
   };
@@ -750,7 +738,7 @@ export class HomeComponent implements OnInit {
               break;
           }
         } else {
-          console.warn("<home comonent> invalid event: ", e);
+          console.warn("<home component> invalid event: ", e);
         }
       }
     });
@@ -774,12 +762,6 @@ export class HomeComponent implements OnInit {
     console.log("changing preset to", newPreset);
     this.wheel.preset = newPreset;
     setTimeout(() => this.wheel.render(), 0);
-  }
-
-  public showAudioControl(from: SwalComponent) {
-    this.audioDialog.show().then(result => {
-      from.show();
-    });
   }
 
   public updateHelp() {
@@ -880,6 +862,24 @@ export class HomeComponent implements OnInit {
       width: "80vw",
       disableClose: true,
       data: this.defaultPreset
+    });
+  }
+
+  public showMessageModal(
+    title: string,
+    message: string,
+    showSpinner: boolean,
+    closeText: string
+  ): MatDialogRef<MessageModalComponent> {
+    return this.dialog.open(MessageModalComponent, {
+      width: "80vw",
+      disableClose: true,
+      data: {
+        title: title,
+        message: message,
+        showSpinner: showSpinner,
+        closeText: closeText
+      }
     });
   }
 }

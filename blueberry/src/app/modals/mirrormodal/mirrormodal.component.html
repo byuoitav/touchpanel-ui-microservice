@@ -16,8 +16,8 @@
     type="mat-raised-button"
     color="primary"
     spinnerColor="accent"
-    [click]="data?.unmirror"
-    [press]="data?.unmirror"
+    [click]="data?.unmirror()"
+    [press]="data?.unmirror()"
     (success)="ref.close()"
     >Stop Mirroring
   </activity-button>

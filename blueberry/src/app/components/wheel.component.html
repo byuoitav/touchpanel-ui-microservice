@@ -45,8 +45,8 @@
       "
     >
       <div class="input" [style.top]="topoffset" [style.right]="rightoffset">
-        <i class="material-icons">{{ i.icon }}</i>
-        <span class="name">{{ i.displayname }}</span>
+        <i class="material-icons">{{ i?.icon }}</i>
+        <span class="name">{{ i?.displayname }}</span>
       </div>
     </li>
 
@@ -65,8 +65,8 @@
         [style.top]="topoffset"
         [style.right]="rightoffset"
       >
-        <i class="material-icons">{{ i.icon }}</i>
-        <span class="name">{{ i.displayname }}</span>
+        <i class="material-icons">{{ i?.icon }}</i>
+        <span class="name">{{ i?.displayname }}</span>
       </div>
     </li>
 
@@ -90,7 +90,7 @@
     (press)="command.buttonPress('long press circle center')"
   >
     <span class="center-item name" [class.open]="circleOpen">{{
-      preset.name
+      preset?.name
     }}</span>
     <i
       class="center-item material-icons icon"
@@ -100,7 +100,7 @@
         command.buttonPress('long press circle center');
         $event.stopPropagation()
       "
-      >{{ preset.icon }}</i
+      >{{ preset?.icon }}</i
     >
     <span
       *ngIf="!getBlank()"
