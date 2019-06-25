@@ -398,7 +398,11 @@ export class DataService {
                   if (p.name === split[2]) {
                     return true;
                   } else {
-                    return p.volumeMatches.includes(split[2]);
+                    if (p.volumeMatches != null) {
+                      return p.volumeMatches.includes(split[2]);
+                    } else {
+                      return false;
+                    }
                   }
                 }
               );
