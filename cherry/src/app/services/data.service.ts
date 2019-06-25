@@ -261,7 +261,8 @@ export class DataService {
         audioTypes,
         30,
         30,
-        preset.commands
+        preset.commands,
+        preset.volumeMatches
       );
       this.presets.push(p);
     }
