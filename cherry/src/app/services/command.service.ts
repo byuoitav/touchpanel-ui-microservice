@@ -274,7 +274,7 @@ export class CommandService {
       body.audioDevices.push({
         name: a.name,
         volume: Math.round(vol),
-        muted: vol === 0
+        muted: a.mixmute
       });
     }
 
@@ -326,7 +326,7 @@ export class CommandService {
     for (const a of preset.independentAudioDevices) {
       body.audioDevices.push({
         a: a.name,
-        muted: a.mixmute || m
+        muted: a.mixmute
       });
     }
 
@@ -412,6 +412,7 @@ export class CommandService {
   ): EventEmitter<boolean> {
     const ret: EventEmitter<boolean> = new EventEmitter<boolean>();
     console.log("changing mix mute to", m, "for audioDevice", a);
+    console.log("preset.masterMute is:", preset.masterMute);
 
     const prev = a.mixmute;
     a.mixmute = m;
@@ -419,7 +420,7 @@ export class CommandService {
     const body = { audioDevices: [] };
     body.audioDevices.push({
       name: a.name,
-      muted: m || preset.masterMute
+      muted: m
     });
 
     console.log("mix mute body:", body);

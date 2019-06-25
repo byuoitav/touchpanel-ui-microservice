@@ -3,7 +3,7 @@ $devices-height: 75vh;
 $volume-height: 78%;
 $master-width: 15vw;
 $button-width: 5vw;
-$max-width: 93vw;
+$max-width: 95vw;
 %align {
     display: flex;
     justify-content: center;
@@ -23,27 +23,32 @@ $max-width: 93vw;
 .devices {
     @extend %align-horiz;
     justify-content: space-around;
-    max-width: $devices-width;
-    margin-left: (100vw - $devices-width) / 2;
+    max-width: $devices-width - (2 * $button-width);
+    margin: auto;
     height: $devices-height;
     margin-top: 2%;
     .device {
         @extend %align-vert;
         height: 100%;
-        margin-right: 2%;
-        margin-left: 2%;
+        width: (($devices-width - (2 * $button-width)) / 5);
+        &.display {
+            width: (($devices-width - $master-width - (2 * $button-width)) / 3.35);
+        }
     }
     &.displays {
-        max-width: 60vw;
-        // margin-left: (100vw - $devices-width - $master-width) / 2;
+        max-width: $devices-width - $master-width - (2 * $button-width);
+        padding-right: 2vw;
+    }
+    &.less {
+        justify-content: space-evenly;
     }
 }
 
 .master {
     float: right;
     margin-right: 3%;
-    margin-top: 2%;
-    height: $devices-height;
+    margin-top: 1%;
+    height: $devices-height + 3vh;
     .device {
         @extend %align-vert;
         height: 100%;
@@ -61,10 +66,11 @@ $max-width: 93vw;
 
 .volume {
     height: $volume-height;
+    min-height: $volume-height;
     padding-top: 5px;
-    width: 12vw;
+    width: (($devices-width - (2 * $button-width)) / 5);
     &.display {
-        width: 15vw;
+        width: (($devices-width - $master-width - (2 * $button-width)) / 3);
     }
 }
 
@@ -85,13 +91,13 @@ $max-width: 93vw;
 
 .mixers {
     height: 100%;
-    width: $max-width - $master-width - (1 * $button-width);
+    width: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
     $sliders-height: 95%;
     &.displays {
-        width: $max-width - $master-width - (5 * $button-width);
+        width: 90%;
     }
     .sliders {
         display: flex;
@@ -101,7 +107,6 @@ $max-width: 93vw;
         overflow-y: hidden;
         height: $sliders-height;
         width: 100%;
-        // -webkit-overflow-scrolling: touch;
         &::-webkit-scrollbar {
             display: none;
         }
@@ -113,6 +118,7 @@ $max-width: 93vw;
         align-items: flex-end;
         height: 100% - $sliders-height;
         width: 100%;
+        padding-left: 10px;
         .dot {
             height: 0.5em;
             width: 0.5em;
@@ -146,3 +152,14 @@ $max-width: 93vw;
 //         height: 61vh;
 //     }
 // }
+.volume-label {
+    width: 12vw;
+    text-align: center;
+    font-size: 10.5pt;
+}
+
+.stretch {
+    display: flex;
+    // flex-flow: row nowrap;
+    align-items: stretch;
+}
