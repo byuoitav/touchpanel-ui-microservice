@@ -50,7 +50,7 @@ build-x86:
 build-arm: 
 	env GOOS=linux GOARCH=arm $(GOBUILD) -o $(NAME)-arm -v
 
-build-web: $(NG1) $(NG2)
+build-web: $(NG2)
 	# ng1
 	# cd $(NG1) && $(NPM_INSTALL) && $(NG_BUILD) --base-href="./$(NG1)/"
 	# mv $(NG1)/dist $(NG1)-dist
@@ -65,10 +65,10 @@ clean:
 	$(GOCLEAN)
 	rm -f $(NAME)-bin
 	rm -f $(NAME)-arm
-	rm -rf $(NG1)-dist
+	# rm -rf $(NG1)-dist
 	rm -rf $(NG2)-dist
 
-run: $(NAME)-bin $(NG1)-dist $(NG2)-dist
+run: $(NAME)-bin $(NG2)-dist
 	./$(NAME)-bin
 
 deps:
@@ -85,7 +85,7 @@ endif
 
 docker: docker-x86 docker-arm
 
-docker-x86: $(NAME)-bin $(NG1)-dist $(NG2)-dist
+docker-x86: $(NAME)-bin $(NG2)-dist
 ifeq "$(BRANCH)" "master"
 	$(eval BRANCH=development)
 endif
@@ -103,7 +103,7 @@ ifeq "$(BRANCH)" "development"
 	$(eval BRANCH=master)
 endif
 
-docker-arm: $(NAME)-arm $(NG1)-dist $(NG2)-dist
+docker-arm: $(NAME)-arm $(NG2)-dist
 ifeq "$(BRANCH)" "master"
 	$(eval BRANCH=development)
 endif
@@ -128,5 +128,6 @@ $(NAME)-bin:
 $(NAME)-arm:
 	$(MAKE) build-arm
 
-$(NG1)-dist $(NG2)-dist:
+# $(NG1)-dist $(NG2)-dist:
+$(NG2)-dist:
 	$(MAKE) build-web
