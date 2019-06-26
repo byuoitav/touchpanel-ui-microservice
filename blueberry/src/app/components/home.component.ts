@@ -116,6 +116,9 @@ export class HomeComponent implements OnInit {
   @ViewChild(WheelComponent)
   public wheel: WheelComponent;
 
+  @ViewChild(AudioComponent)
+  public audio: AudioComponent;
+
   sharePreset: Preset;
   defaultPreset: Preset;
 

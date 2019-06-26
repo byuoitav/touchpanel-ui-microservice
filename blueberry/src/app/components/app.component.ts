@@ -25,6 +25,7 @@ import {
   VOLUME
 } from "../objects/status.objects";
 import { HomeComponent } from "./home.component";
+import { AudioComponent } from "./audio/audio.component";
 
 @Component({
   selector: "app-root",
@@ -37,6 +38,9 @@ export class AppComponent {
   public unlocking = false;
 
   public location = window.location;
+
+  @ViewChild(AudioComponent)
+  public audio: AudioComponent;
 
   constructor(
     private api: APIService,
@@ -62,6 +66,10 @@ export class AppComponent {
 
   showManagement = (): boolean => {
     if (this.dialog.openDialogs.length > 0) {
+      return false;
+    }
+
+    if (this.home.audio && this.home.audio.isShowing()) {
       return false;
     }
 

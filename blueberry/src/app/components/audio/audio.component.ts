@@ -66,8 +66,11 @@ export class AudioComponent implements OnInit {
 
     // scroll to the bottom of the page
     const idx = 3 * this.curPage;
+    console.log(document.querySelector("#device" + idx));
     document.querySelector("#device" + idx).scrollIntoView({
-      behavior: "smooth"
+      behavior: "smooth",
+      block: "nearest",
+      inline: "start"
     });
   };
 
@@ -78,8 +81,11 @@ export class AudioComponent implements OnInit {
 
     // scroll to the top of the page
     const idx = 4 * this.curPage + 3;
+    console.log(document.querySelector("#device" + idx));
     document.querySelector("#device" + idx).scrollIntoView({
-      behavior: "smooth"
+      behavior: "smooth",
+      block: "nearest",
+      inline: "start"
     });
   };
 
