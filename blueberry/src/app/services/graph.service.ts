@@ -24,12 +24,12 @@ import { SocketService, MESSAGE, Event } from "./socket.service";
 
 const CONNECT = "connect";
 const DISCONNECT = "disconnect";
-const LEFT_RIGHT_DELIMITER = "/";
-const DISPLAY_DELIMITER = ",";
+const LEFT_RIGHT_DELIMITER = "%";
+const PRESET_DELIMITER = "|";
 
 @Injectable()
 export class GraphService {
-  public displayList: EventEmitter<Set<string>>;
+  public presetList: EventEmitter<Set<string>>;
 
   private root: Node;
   private exists = false;
@@ -42,7 +42,7 @@ export class GraphService {
     private socket: SocketService,
     private http: Http
   ) {
-    this.displayList = new EventEmitter<Set<string>>();
+    this.presetList = new EventEmitter<Set<string>>();
 
     this.data.loaded.subscribe(() => {
       this.init();
@@ -50,20 +50,16 @@ export class GraphService {
   }
 
   public init() {
-    if (this.exists) {
+    if (this.exists || !this.data.panel.preset.shareablePresets) {
       return;
     }
 
-    if (this.data.panel.preset.shareableDisplays == null) {
-      return;
-    }
+    // the root node is the set of presets and shareablePresets for the preset
+    const presets: Set<string> = new Set();
+    presets.add(this.data.panel.preset.name);
+    this.data.panel.preset.shareablePresets.forEach(p => presets.add(p));
 
-    // the root node is the set of displays and shareableDisplays for the preset
-    const displays: Set<string> = new Set();
-    this.data.panel.preset.displays.forEach(d => displays.add(d.name));
-    this.data.panel.preset.shareableDisplays.forEach(d => displays.add(d));
-
-    this.root = new Node(displays);
+    this.root = new Node(presets);
     this.nodes.push(this.root);
     this.exists = true;
 
@@ -74,32 +70,30 @@ export class GraphService {
     console.log("dividerSensor", this.dividerSensor);
 
     this.getDividerSensorStatus();
-
     this.update();
 
     console.log("root", this.root);
   }
 
-  public getDisplayList(): Set<string> {
+  public getPresetList(): Set<string> {
     const ret: Set<string> = new Set();
 
-    this.getdisplaylist(this.root, ret);
+    this.getpresetlist(this.root, ret);
     return ret;
   }
 
   /*
-   * recursivly descends through nodes and adds their displays to the list
+   * recursivly descends through nodes and adds their presets to the list
    */
-  private getdisplaylist(node: Node, list: Set<string>): Set<string> {
-    let displays = Array.from(node.displays);
+  private getpresetlist(node: Node, list: Set<string>): Set<string> {
+    let presets = Array.from(node.presets);
+    presets = presets.filter(p => !list.has(p));
 
-    displays = displays.filter(d => !list.has(d));
-
-    if (displays.length > 0) {
-      displays.forEach(d => list.add(d));
+    if (presets.length > 0) {
+      presets.forEach(p => list.add(p));
 
       for (const child of node.children) {
-        this.getdisplaylist(child, list);
+        this.getpresetlist(child, list);
       }
     }
 
@@ -109,9 +103,9 @@ export class GraphService {
   /*
    * gets the status of the room from the divider sensor.
    * loops through the connected events and adds connected nodes until
-   * there isnt' a change in my displays.
+   * there isnt' a change in my presets.
    *
-   * loops through the disconnected events and disconnects displays that may be disconnected.
+   * loops through the disconnected events and disconnects presets that may be disconnected.
    *      TODO (?) is this necessary? or should i just assume they are disconnected.
    */
   private getDividerSensorStatus() {
@@ -147,21 +141,21 @@ export class GraphService {
     }
   }
 
-  private getNodeByDisplays(list: Set<string>): Node {
+  private getNodeByPresets(list: Set<string>): Node {
     const l = JSON.stringify(Array.from(list));
-    return this.nodes.find(n => JSON.stringify(Array.from(n.displays)) === l);
+    return this.nodes.find(n => JSON.stringify(Array.from(n.presets)) === l);
   }
 
   private connect(s: string): boolean {
     console.info("*connected* event:", s);
     const sides = s.split(LEFT_RIGHT_DELIMITER);
-    const left = new Set(sides[0].split(DISPLAY_DELIMITER));
-    const right = new Set(sides[1].split(DISPLAY_DELIMITER));
+    const left = new Set(sides[0].split(PRESET_DELIMITER));
+    const right = new Set(sides[1].split(PRESET_DELIMITER));
 
     let changed = false;
 
-    let lnode = this.getNodeByDisplays(left);
-    let rnode = this.getNodeByDisplays(right);
+    let lnode = this.getNodeByPresets(left);
+    let rnode = this.getNodeByPresets(right);
 
     if (lnode == null) {
       lnode = new Node(left);
@@ -188,7 +182,7 @@ export class GraphService {
     }
 
     if (changed) {
-      this.displayList.emit(this.getDisplayList());
+      this.presetList.emit(this.getPresetList());
     }
 
     return changed;
@@ -197,13 +191,13 @@ export class GraphService {
   private disconnect(s: string): boolean {
     console.info("*disconnected* event:", s);
     const sides = s.split(LEFT_RIGHT_DELIMITER);
-    const left = new Set(sides[0].split(DISPLAY_DELIMITER));
-    const right = new Set(sides[1].split(DISPLAY_DELIMITER));
+    const left = new Set(sides[0].split(PRESET_DELIMITER));
+    const right = new Set(sides[1].split(PRESET_DELIMITER));
 
     let changed = false;
 
-    const lnode = this.getNodeByDisplays(left);
-    const rnode = this.getNodeByDisplays(right);
+    const lnode = this.getNodeByPresets(left);
+    const rnode = this.getNodeByPresets(right);
 
     if (lnode == null || rnode == null) {
       return false;
@@ -217,14 +211,14 @@ export class GraphService {
     }
 
     if (changed) {
-      this.displayList.emit(this.getDisplayList());
+      this.presetList.emit(this.getPresetList());
     }
 
     return changed;
   }
 
   private update() {
-    this.displayList.emit(this.getDisplayList());
+    this.presetList.emit(this.getPresetList());
 
     this.socket.getEventListener().subscribe(event => {
       if (event.type === MESSAGE) {
@@ -246,22 +240,22 @@ export class GraphService {
 }
 
 /*
- *  Represents an array of displays that a preset can share to.
+ *  Represents an array of presets that a preset can share to.
  */
 class Node {
-  displays: Set<string>;
+  presets: Set<string>;
   children: Node[] = [];
 
-  constructor(displays: Set<string>) {
-    this.displays = displays;
+  constructor(presets: Set<string>) {
+    this.presets = presets;
   }
 
   public matches(list: Set<string>): boolean {
-    if (this.displays.size !== list.size) {
+    if (this.presets.size !== list.size) {
       return false;
     }
 
-    for (const d of Array.from(this.displays)) {
+    for (const d of Array.from(this.presets)) {
       if (!list.has(d)) {
         return false;
       }

@@ -5,6 +5,7 @@ import {
   ElementRef,
   ComponentRef
 } from "@angular/core";
+import { MatDialog } from "@angular/material";
 
 import { APIService } from "../services/api.service";
 import { DataService } from "../services/data.service";
@@ -24,6 +25,7 @@ import {
   VOLUME
 } from "../objects/status.objects";
 import { HomeComponent } from "./home.component";
+import { AudioComponent } from "./audio/audio.component";
 
 @Component({
   selector: "app-root",
@@ -37,10 +39,14 @@ export class AppComponent {
 
   public location = window.location;
 
+  @ViewChild(AudioComponent)
+  public audio: AudioComponent;
+
   constructor(
     private api: APIService,
     public socket: SocketService,
-    public command: CommandService
+    public command: CommandService,
+    private dialog: MatDialog
   ) {}
 
   public unlock() {
@@ -57,4 +63,28 @@ export class AppComponent {
       }
     });
   }
+
+  showManagement = (): boolean => {
+    if (this.dialog.openDialogs.length > 0) {
+      return false;
+    }
+
+    if (this.home.audio && this.home.audio.isShowing()) {
+      return false;
+    }
+
+    if (!this.home) {
+      return true;
+    }
+
+    if (!this.home.wheel) {
+      return true;
+    }
+
+    if (this.home.wheel.getPower() === "standby") {
+      return true;
+    }
+
+    return false;
+  };
 }

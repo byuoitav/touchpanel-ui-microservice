@@ -8,7 +8,8 @@ import {
   MatButtonModule,
   MatProgressBarModule,
   MatProgressSpinnerModule,
-  MatDialogModule
+  MatDialogModule,
+  MatIconModule
 } from "@angular/material";
 import "hammerjs";
 
@@ -49,7 +50,8 @@ import { ManagementComponent } from "./components/management/management.componen
     MatButtonModule,
     MatProgressBarModule,
     MatProgressSpinnerModule,
-    MatDialogModule
+    MatDialogModule,
+    MatIconModule
   ],
   providers: [
     APIService,

@@ -109,7 +109,8 @@ export class DisplayComponent {
         console.log("opening via control dialog for", i);
         const dialogRef = this.dialog.open(ViaDialog, {
           width: "50vw",
-          data: { via: i }
+          data: { via: i },
+          disableClose: true
         });
         break;
       default:

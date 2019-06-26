@@ -106,6 +106,7 @@ func (h *hub) WriteToSockets(message interface{}) {
 
 func (h *hub) run() {
 	id := localsystem.MustSystemID()
+	// id := "ITB-1010-CP1"
 	deviceInfo := events.GenerateBasicDeviceInfo(id)
 	roomInfo := events.GenerateBasicRoomInfo(deviceInfo.RoomID)
 

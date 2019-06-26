@@ -51,11 +51,6 @@ export class WheelComponent implements AfterContentInit {
   @ViewChild("wheel")
   wheel: ElementRef;
 
-  // for via control
-  @ViewChild("via")
-  viaDialog: SwalComponent;
-  openInput: Input;
-
   constructor(
     public command: CommandService,
     private api: APIService,
@@ -258,58 +253,7 @@ export class WheelComponent implements AfterContentInit {
     return AudioDevice.getMute(this.preset.audioDevices);
   }
 
-  private openInputModal(i: Input) {
-    if (i.getName().includes("VIA")) {
-      this.openInput = i;
-      console.log("opening via modal for input:", this.openInput);
-      this.viaDialog.show();
-    }
-  }
-
-  public share(displays: Display[]): EventEmitter<boolean> {
-    const ret: EventEmitter<boolean> = new EventEmitter();
-
-    this.command.share(this.preset.displays[0], displays).subscribe(success => {
-      if (success) {
-        ret.emit(true);
-      } else {
-        ret.emit(false);
-      }
-    });
-
-    return ret;
-  }
-
-  public unShare(
-    from: Display[],
-    fromAudio: AudioConfig[]
-  ): EventEmitter<boolean> {
-    const ret: EventEmitter<boolean> = new EventEmitter();
-
-    this.command.unShare(from, fromAudio).subscribe(success => {
-      if (success) {
-        ret.emit(true);
-      } else {
-        ret.emit(false);
-      }
-    });
-
-    return ret;
-  }
-
-  private viaControl(endpoint: string) {
-    this.viaDialog.nativeSwal.showLoading();
-
-    this.command.viaControl(this.openInput, endpoint).subscribe(success => {
-      if (swal.isVisible()) {
-        swal({
-          type: success ? "success" : "error",
-          timer: 1500,
-          showConfirmButton: false
-        });
-      }
-    });
-  }
+  private openInputModal(i: Input) {}
 
   public getDisplayNames(): string[] {
     const names: string[] = [];
@@ -320,20 +264,6 @@ export class WheelComponent implements AfterContentInit {
 
     for (const d of this.preset.displays) {
       names.push(d.name);
-    }
-
-    return names;
-  }
-
-  public getAudioNames(): string[] {
-    const names: string[] = [];
-
-    if (this.preset == null || this.preset.audioDevices == null) {
-      return names;
-    }
-
-    for (const a of this.preset.audioDevices) {
-      names.push(a.name);
     }
 
     return names;

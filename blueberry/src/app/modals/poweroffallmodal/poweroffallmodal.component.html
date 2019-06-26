@@ -1,0 +1,29 @@
+<h1 mat-dialog-title class="text title">Power off</h1>
+
+<div mat-dialog-content class="text">
+  <p>Would you like to turn off all displays or just this one?</p>
+</div>
+
+<div mat-dialog-actions class="items secondary-theme">
+  <button mat-raised-button color="warn" (click)="cancel()" (press)="cancel()">
+    Cancel
+  </button>
+
+  <activity-button
+    type="mat-raised-button"
+    color="accent"
+    [click]="powerOffThisDisplay"
+    [press]="powerOffThisDisplay"
+    (success)="ref.close()"
+    >This display</activity-button
+  >
+
+  <activity-button
+    type="mat-raised-button"
+    color="accent"
+    [click]="powerOffAllDisplays"
+    [press]="powerOffAllDisplays"
+    (success)="ref.close()"
+    >All displays</activity-button
+  >
+</div>

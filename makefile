@@ -68,7 +68,7 @@ clean:
 	rm -rf $(NG1)-dist
 	rm -rf $(NG2)-dist
 
-run: $(NAME)-bin $(NG1)-dist $(NG2)-dist
+run: $(NAME)-bin $(NG2)-dist
 	./$(NAME)-bin
 
 deps:
@@ -85,7 +85,7 @@ endif
 
 docker: docker-x86 docker-arm
 
-docker-x86: $(NAME)-bin $(NG1)-dist $(NG2)-dist
+docker-x86: $(NAME)-bin $(NG2)-dist
 ifeq "$(BRANCH)" "master"
 	$(eval BRANCH=development)
 endif
@@ -103,7 +103,7 @@ ifeq "$(BRANCH)" "development"
 	$(eval BRANCH=master)
 endif
 
-docker-arm: $(NAME)-arm $(NG1)-dist $(NG2)-dist
+docker-arm: $(NAME)-arm $(NG2)-dist
 ifeq "$(BRANCH)" "master"
 	$(eval BRANCH=development)
 endif
