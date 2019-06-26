@@ -537,9 +537,9 @@ export class HomeComponent implements OnInit {
             case POWER:
               if (
                 e.Value === "standby" &&
-                this.wheel.preset.displays.find(d => d.name === split[2]) !=
-                  null
+                this.wheel.preset.displays.find(d => d.name === split[2])
               ) {
+                this.dialog.closeAll();
                 this.removeExtraInputs();
               }
 
