@@ -406,7 +406,7 @@ export class HomeComponent implements OnInit {
 
   removeMirrorPopup = () => {
     for (const dialog of this.dialog.openDialogs) {
-      if (dialog instanceof MirrorModalComponent) {
+      if (dialog.componentInstance instanceof MirrorModalComponent) {
         dialog.close();
       }
     }
