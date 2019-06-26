@@ -261,7 +261,8 @@ export class DataService {
         audioTypes,
         30,
         30,
-        preset.commands
+        preset.commands,
+        preset.volumeMatches
       );
       this.presets.push(p);
     }
@@ -394,10 +395,39 @@ export class DataService {
             }
             case "master-volume": {
               const presetToChange = this.presets.find(
-                p => p.name === split[2]
+                p => {
+                  if (p.name === split[2]) {
+                    return true;
+                  } else {
+                    if (p.volumeMatches != null) {
+                      return p.volumeMatches.includes(split[2]);
+                    } else {
+                      return false;
+                    }
+                  }
+                }
               );
               if (presetToChange != null) {
                 presetToChange.masterVolume = parseInt(e.Value, 10);
+              }
+              break;
+            }
+            case "master-mute": {
+              const presetToChange = this.presets.find(
+                p => {
+                  if (p.name === split[2]) {
+                    return true;
+                  } else {
+                    if (p.volumeMatches != null) {
+                      return p.volumeMatches.includes(split[2]);
+                    } else {
+                      return false;
+                    }
+                  }
+                }
+              );
+              if (presetToChange != null) {
+                presetToChange.masterMute = e.Value.toLowerCase() === "true";
               }
               break;
             }
