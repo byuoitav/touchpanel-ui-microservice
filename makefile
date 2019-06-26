@@ -50,10 +50,10 @@ build-x86:
 build-arm: 
 	env GOOS=linux GOARCH=arm $(GOBUILD) -o $(NAME)-arm -v
 
-build-web: $(NG2)
+build-web: $(NG1) $(NG2)
 	# ng1
-	# cd $(NG1) && $(NPM_INSTALL) && $(NG_BUILD) --base-href="./$(NG1)/"
-	# mv $(NG1)/dist $(NG1)-dist
+	cd $(NG1) && $(NPM_INSTALL) && $(NG_BUILD) --base-href="./$(NG1)/"
+	mv $(NG1)/dist $(NG1)-dist
 	# ng2
 	cd $(NG2) && $(NPM_INSTALL) && $(NG_BUILD) --base-href="./$(NG2)/"
 	mv $(NG2)/dist $(NG2)-dist
@@ -65,7 +65,7 @@ clean:
 	$(GOCLEAN)
 	rm -f $(NAME)-bin
 	rm -f $(NAME)-arm
-	# rm -rf $(NG1)-dist
+	rm -rf $(NG1)-dist
 	rm -rf $(NG2)-dist
 
 run: $(NAME)-bin $(NG2)-dist
@@ -128,6 +128,5 @@ $(NAME)-bin:
 $(NAME)-arm:
 	$(MAKE) build-arm
 
-# $(NG1)-dist $(NG2)-dist:
-$(NG2)-dist:
+$(NG1)-dist $(NG2)-dist:
 	$(MAKE) build-web
