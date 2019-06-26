@@ -1,0 +1,142 @@
+<div class="container primary-background" [class.show]="_show">
+  <button
+    color="warn"
+    class="exit"
+    (click)="hide()"
+    (press)="hide()"
+    mat-button
+  >
+    <mat-icon>keyboard_backspace</mat-icon>
+    <span>Back</span>
+  </button>
+
+  <!-- no audiodevices -->
+  <ng-container *ngIf="devices.length === 0">
+    <div class="header title text">i have nothing to say</div>
+  </ng-container>
+
+  <!-- audiodevices are present -->
+  <div class="audiodevices">
+    <ng-container *ngIf="devices.length > 0">
+      <h1 class="header text title">Audio Control</h1>
+
+      <ng-container *ngIf="devices.length <= 4">
+        <div class="no-scroll">
+          <div class="content">
+            <div class="mixers">
+              <div class="sliders">
+                <div
+                  *ngFor="let a of devices; let i = index"
+                  [id]="'device' + i"
+                  class="slider-container"
+                >
+                  <volume
+                    class="slider"
+                    [level]="a?.volume"
+                    [mute]="a?.muted"
+                    [name]="a?.displayname"
+                    (levelChange)="command.setVolume($event, [a])"
+                    (muteChange)="command.setMute($event, [a])"
+                  >
+                  </volume>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="master slider-container">
+            <volume
+              class="slider"
+              [level]="getDisplayVolume()"
+              [mute]="getDisplayMute()"
+              [name]="getInputName()"
+              (levelChange)="command.setVolume($event, preset?.audioDevices)"
+              (muteChange)="command.setMute($event, preset?.audioDevices)"
+            >
+            </volume>
+          </div>
+        </div>
+      </ng-container>
+
+      <ng-container *ngIf="devices.length > 4">
+        <div class="content">
+          <button
+            color="accent"
+            class="button left"
+            [class.hidden]="!canPageLeft()"
+            (click)="pageLeft()"
+            mat-button
+          >
+            <mat-icon style="transform: scale(3)">keyboard_arrow_left</mat-icon>
+          </button>
+
+          <div class="mixers">
+            <div class="sliders">
+              <div
+                *ngFor="let a of devices; let i = index"
+                [id]="'device' + i"
+                class="slider-container"
+              >
+                <volume
+                  class="slider"
+                  [level]="a?.volume"
+                  [mute]="a?.muted"
+                  [name]="a?.displayname"
+                  (levelChange)="command.setVolume($event, [a])"
+                  (muteChange)="command.setMute($event, [a])"
+                >
+                </volume>
+              </div>
+
+              <!-- two fake 'sliders' for scrolling -->
+              <div
+                [id]="'device' + devices?.length"
+                class="slider-container"
+              ></div>
+              <div
+                [id]="'device' + (devices?.length + 1)"
+                class="slider-container"
+              ></div>
+              <div
+                [id]="'device' + (devices?.length + 2)"
+                class="slider-container"
+              ></div>
+            </div>
+
+            <div class="page-indicator fake">
+              <span
+                *ngFor="let i of pages"
+                class="dot"
+                [class.selected]="i === curPage"
+              ></span>
+            </div>
+          </div>
+
+          <button
+            color="accent"
+            class="button right"
+            [class.hidden]="!canPageRight()"
+            (click)="pageRight()"
+            mat-button
+          >
+            <mat-icon style="transform: scale(3)"
+              >keyboard_arrow_right</mat-icon
+            >
+          </button>
+
+          <div class="master slider-container">
+            <volume
+              class="slider"
+              [level]="getDisplayVolume()"
+              [mute]="getDisplayMute()"
+              [name]="getInputName()"
+              (levelChange)="command.setVolume($event, preset?.audioDevices)"
+              (muteChange)="command.setMute($event, preset?.audioDevices)"
+            >
+            </volume>
+          </div>
+        </div>
+      </ng-container>
+    </ng-container>
+  </div>
+</div>

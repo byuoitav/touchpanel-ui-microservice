@@ -30,7 +30,7 @@ import { ConfirmHelpModal } from "./modals/confirmhelpmodal/confirmhelpmodal.com
 import { PowerOffAllModalComponent } from "./modals/poweroffallmodal/poweroffallmodal.component";
 import { ActivityButtonComponent } from "./components/activity-button/activity-button.component";
 import { ShareModalComponent } from "./modals/sharemodal/sharemodal.component";
-import { AudioModalComponent } from "./modals/audiomodal/audiomodal.component";
+import { AudioComponent } from "./components/audio/audio.component";
 import { VolumeComponent } from "./components/volume/volume.component";
 import { MirrorModalComponent } from "./modals/mirrormodal/mirrormodal.component";
 import { MessageModalComponent } from "./modals/messagemodal/messagemodal.component";
@@ -46,7 +46,7 @@ import { MessageModalComponent } from "./modals/messagemodal/messagemodal.compon
     PowerOffAllModalComponent,
     ActivityButtonComponent,
     ShareModalComponent,
-    AudioModalComponent,
+    AudioComponent,
     VolumeComponent,
     MirrorModalComponent,
     MessageModalComponent
@@ -78,7 +78,6 @@ import { MessageModalComponent } from "./modals/messagemodal/messagemodal.compon
     ConfirmHelpModal,
     PowerOffAllModalComponent,
     ShareModalComponent,
-    AudioModalComponent,
     MirrorModalComponent,
     MessageModalComponent
   ],

@@ -18,6 +18,7 @@ export class VolumeComponent implements OnInit {
   level: number;
   @Input()
   mute: boolean;
+  @Input() name: string;
 
   @Input()
   muteType: string;

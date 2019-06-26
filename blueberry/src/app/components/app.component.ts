@@ -5,6 +5,7 @@ import {
   ElementRef,
   ComponentRef
 } from "@angular/core";
+import { MatDialog } from "@angular/material";
 
 import { APIService } from "../services/api.service";
 import { DataService } from "../services/data.service";
@@ -40,7 +41,8 @@ export class AppComponent {
   constructor(
     private api: APIService,
     public socket: SocketService,
-    public command: CommandService
+    public command: CommandService,
+    private dialog: MatDialog
   ) {}
 
   public unlock() {
@@ -57,4 +59,24 @@ export class AppComponent {
       }
     });
   }
+
+  showManagement = (): boolean => {
+    if (this.dialog.openDialogs.length > 0) {
+      return false;
+    }
+
+    if (!this.home) {
+      return true;
+    }
+
+    if (!this.home.wheel) {
+      return true;
+    }
+
+    if (this.home.wheel.getPower() === "standby") {
+      return true;
+    }
+
+    return false;
+  };
 }

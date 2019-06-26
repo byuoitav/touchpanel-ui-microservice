@@ -1,52 +1,54 @@
-import { Component, OnInit, Inject } from "@angular/core";
-import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from "@angular/material";
+import { Component, OnInit, Input } from "@angular/core";
 
 import { CommandService } from "../../services/command.service";
 import { AudioDevice } from "../../objects/status.objects";
 import { Preset } from "../../objects/objects";
 
 @Component({
-  selector: "audiomodal",
-  templateUrl: "./audiomodal.component.html",
-  styleUrls: ["./audiomodal.component.scss"]
+  selector: "audiocontrol",
+  templateUrl: "./audio.component.html",
+  styleUrls: ["./audio.component.scss"]
 })
-export class AudioModalComponent implements OnInit {
+export class AudioComponent implements OnInit {
+  preset: Preset;
   devices: AudioDevice[] = [];
 
   pages: number[] = [];
   curPage: number;
 
-  constructor(
-    public ref: MatDialogRef<AudioModalComponent>,
-    private command: CommandService,
-    private dialog: MatDialog,
-    @Inject(MAT_DIALOG_DATA)
-    public preset: Preset
-  ) {
+  _show: boolean;
+
+  constructor(private command: CommandService) {
+    this._show = false;
+  }
+
+  ngOnInit() {}
+
+  show = (preset: Preset) => {
+    this.preset = preset;
+    this.devices.length = 0; // reset devices
+
     for (const a of preset.independentAudioDevices) {
-      this.devices.push(a);
-    }
-    for (const a of preset.independentAudioDevices) {
-      this.devices.push(a);
-    }
-    for (const a of preset.independentAudioDevices) {
+      a.displayname = a.name; // TODO remove this line
       this.devices.push(a);
     }
 
-    const pages = Math.ceil(this.devices.length / 3);
+    const pages = Math.ceil(this.devices.length / 4);
     this.pages = new Array(pages).fill(undefined).map((x, i) => i);
 
     console.log("devices:", this.devices.length, "pages:", this.pages);
     this.curPage = 0;
-  }
 
-  ngOnInit() {
-    console.log("preset", this.preset);
-  }
+    this._show = true;
+  };
 
-  done = () => {
+  hide = () => {
     this.command.buttonPress("close audio modal");
-    this.ref.close();
+    this._show = false;
+  };
+
+  isShowing = () => {
+    return this._show;
   };
 
   getDisplayVolume = (): number => {
@@ -75,7 +77,7 @@ export class AudioModalComponent implements OnInit {
     }
 
     // scroll to the top of the page
-    const idx = 3 * this.curPage + 2;
+    const idx = 4 * this.curPage + 3;
     document.querySelector("#device" + idx).scrollIntoView({
       behavior: "smooth"
     });
@@ -95,5 +97,21 @@ export class AudioModalComponent implements OnInit {
     }
 
     return true;
+  };
+
+  getInputName = (): string => {
+    if (!this.preset) {
+      return "Display Volume";
+    }
+
+    if (!this.preset.displays || this.preset.displays.length === 0) {
+      return "Display Volume";
+    }
+
+    if (!this.preset.displays[0].input || !this.preset.displays[0].input.name) {
+      return "Display Volume";
+    }
+
+    return "Display Volume (" + this.preset.displays[0].input.displayname + ")";
   };
 }

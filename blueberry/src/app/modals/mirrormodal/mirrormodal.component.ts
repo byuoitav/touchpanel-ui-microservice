@@ -5,7 +5,7 @@ import { APIService } from "../../services/api.service";
 import { CommandService } from "../../services/command.service";
 import { Input } from "../../objects/status.objects";
 import { Preset } from "../../objects/objects";
-import { AudioModalComponent } from "../audiomodal/audiomodal.component";
+import { AudioComponent } from "../../components/audio/audio.component";
 
 @Component({
   selector: "mirrormodal",
@@ -30,6 +30,7 @@ export class MirrorModalComponent implements OnInit {
     this.ref.disableClose = true;
   }
 
+  /*
   toAudioControl = () => {
     const ref = this.dialog.open(AudioModalComponent, {
       width: "80vw",
@@ -39,4 +40,5 @@ export class MirrorModalComponent implements OnInit {
 
     // TODO on closed, reopen this one
   };
+  */
 }

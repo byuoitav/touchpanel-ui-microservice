@@ -33,7 +33,7 @@ import { HelpInfo } from "../objects/modals";
 import { HelpModal } from "../modals/helpmodal/helpmodal.component";
 import { PowerOffAllModalComponent } from "../modals/poweroffallmodal/poweroffallmodal.component";
 import { ShareModalComponent } from "../modals/sharemodal/sharemodal.component";
-import { AudioModalComponent } from "../modals/audiomodal/audiomodal.component";
+import { AudioComponent } from "./audio/audio.component";
 import { MirrorModalComponent } from "../modals/mirrormodal/mirrormodal.component";
 import { MessageModalComponent } from "../modals/messagemodal/messagemodal.component";
 import { Action } from "./activity-button/activity-button.component";
@@ -139,14 +139,7 @@ export class HomeComponent implements OnInit {
     });
   }
 
-  public ngOnInit() {
-    setTimeout(() => {
-      const preset = this.data.presets.find(p => p.name === "Station 1");
-      const input = this.addMirrorInput(preset);
-      this.removeExtraInputs();
-      this.defaultPreset.extraInputs.push(input);
-    }, 5000);
-  }
+  public ngOnInit() {}
 
   private setupInputFunctions() {
     console.log("setting up input functions");
@@ -857,6 +850,7 @@ export class HomeComponent implements OnInit {
     });
   }
 
+  /*
   public showAudioModal() {
     const ref = this.dialog.open(AudioModalComponent, {
       width: "80vw",
@@ -864,6 +858,7 @@ export class HomeComponent implements OnInit {
       data: this.defaultPreset
     });
   }
+  */
 
   public showMessageModal(
     title: string,

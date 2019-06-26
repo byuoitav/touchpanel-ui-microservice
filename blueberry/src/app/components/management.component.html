@@ -25,6 +25,7 @@
       (click)="update(1)"
     ></button>
     <button
+      *ngIf="defcon < 1"
       #bottomright
       name="defcon"
       mat-button

@@ -9,6 +9,10 @@ $warn: mat-palette($mat-red, 600, 800, 400);
 $blueberry: mat-dark-theme($primary, $accent, $warn);
 @include angular-material-theme($blueberry);
 
+.primary-background {
+  background-color: mat-color($primary, darker);
+}
+
 /*
 .mat-app-background {
   background-color: mat-color($primary, darker);

@@ -1,4 +1,6 @@
 <div class="volume">
+  <div *ngIf="name" class="label">{{ name }}</div>
+
   <!-- volume slider -->
   <mat-slider
     #slider
@@ -18,7 +20,7 @@
 
   <!-- mute button -->
   <ng-container [ngSwitch]="muteType">
-    <div [class.secondary-theme]="!mute" *ngSwitchDefault>
+    <div class="mute" [class.secondary-theme]="!mute" *ngSwitchDefault>
       <button
         mat-raised-button
         [color]="mute ? 'warn' : 'primary'"
@@ -32,7 +34,7 @@
       </button>
     </div>
 
-    <div [class.secondary-theme]="!mute" *ngSwitchCase="'mat-fab'">
+    <div class="mute" [class.secondary-theme]="!mute" *ngSwitchCase="'mat-fab'">
       <button
         mat-fab
         [color]="mute ? 'warn' : 'primary'"

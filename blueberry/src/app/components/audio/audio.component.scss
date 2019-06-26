@@ -1,6 +1,43 @@
-$max-width: 80vw;
+$max-width: 95vw;
+$header-height: 10%;
 $master-width: 17vw;
 $button-width: 5vw;
+
+.container {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  top: 0;
+  left: 0;
+
+  display: none;
+
+  .header {
+    height: $header-height;
+  }
+
+  .content {
+    height: 100% - $header-height;
+  }
+
+  &.show {
+    display: unset;
+    z-index: 1000;
+  }
+}
+
+.audiodevices {
+  height: 100%;
+  width: 100%;
+  opacity: 0;
+  display: unset;
+
+  transition: 0.3s opacity ease-in-out;
+
+  &.loaded {
+    opacity: 1;
+  }
+}
 
 .text {
   text-align: center;
@@ -8,8 +45,27 @@ $button-width: 5vw;
   font-size: 1.3em;
 
   &.title {
+    color: white;
     font-size: 1.7em;
   }
+}
+
+.exit {
+  position: absolute;
+  top: 4vh;
+  left: 5vh;
+
+  mat-icon {
+    transform: scale(2.5);
+  }
+
+  span {
+    font-size: 1.5em;
+    margin-left: 2.5vw;
+  }
+
+  background-color: transparent;
+  color: white;
 }
 
 .items {
@@ -25,9 +81,6 @@ activity-button {
 }
 
 .content {
-  height: 70vh;
-  max-height: 70vh;
-
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -35,6 +88,38 @@ activity-button {
 
   padding: 0;
   overflow: hidden;
+}
+
+.no-scroll {
+  height: 100%;
+  width: 100%;
+
+  display: flex;
+
+  .content {
+    width: 80%;
+
+    .mixers {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-around;
+      align-items: center;
+
+      width: 100%;
+
+      .sliders {
+        justify-content: space-evenly;
+      }
+    }
+  }
+
+  .master {
+    height: 90%;
+
+    &::before {
+      right: $master-width + 4vw;
+    }
+  }
 }
 
 .slider-container {
@@ -51,16 +136,16 @@ activity-button {
   }
 
   .slider {
-    height: 61vh;
+    height: 85%;
   }
 }
 
 .master {
+  top: 0;
   height: 100%;
   width: $master-width;
 
   display: flex;
-  justify-content: center;
   align-items: center;
 
   &::before {
@@ -73,13 +158,13 @@ activity-button {
       rgba(0, 0, 0, 0)
     );
 
-    right: $master-width + 4.5vw;
+    right: $master-width + 1vw;
     top: 30%;
 
     width: 0.4vw;
     height: 50vh;
 
-    // content: "";
+    content: "";
   }
 }
 
@@ -91,15 +176,13 @@ activity-button {
   flex-direction: column;
   align-items: center;
 
-  $sliders-height: 95%;
-
   .sliders {
     display: flex;
     flex-direction: row;
     flex-wrap: nowrap;
     overflow: hidden;
 
-    height: $sliders-height;
+    height: 100%;
     width: 100%;
 
     -webkit-overflow-scrolling: touch;
@@ -115,8 +198,11 @@ activity-button {
     justify-content: center;
     align-items: flex-end;
 
-    height: 100% - $sliders-height;
+    height: 3vh;
     width: 100%;
+
+    position: absolute;
+    bottom: 2.3vh;
 
     .dot {
       height: 0.5em;
@@ -141,4 +227,23 @@ activity-button {
   display: flex;
   justify-content: center;
   align-items: center;
+
+  margin-bottom: 15vh;
+
+  transition: 0.3s opacity ease-in-out;
+  background-color: transparent;
+  color: white;
+
+  &.right {
+    margin-right: 2vw;
+  }
+
+  &.left {
+    margin-left: 2vw;
+  }
+}
+
+.hidden {
+  pointer-events: none;
+  opacity: 0;
 }

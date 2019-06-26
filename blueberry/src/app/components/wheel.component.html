@@ -145,6 +145,7 @@
     class="volume"
     muteType="mat-fab"
     [level]="getVolume()"
+    name="Display Volume"
     [mute]="getMute()"
     (levelChange)="
       command.setVolume($event, preset?.audioDevices);

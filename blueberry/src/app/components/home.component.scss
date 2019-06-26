@@ -1,3 +1,9 @@
+.audio {
+  position: absolute;
+  height: 100vh;
+  width: 100vw;
+}
+
 $duration: 0.4s;
 .buttons {
   position: absolute;
@@ -33,7 +39,7 @@ $duration: 0.4s;
     }
 
     &.right {
-      margin-right: 10vw;
+      margin-right: 11.5vw;
     }
 
     &.corner {

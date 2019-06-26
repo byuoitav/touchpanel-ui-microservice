@@ -1,3 +1,5 @@
+<audiocontrol #audio class="audio"></audiocontrol>
+
 <div class="buttons top">
   <button
     mat-fab
@@ -86,15 +88,16 @@
 <div class="buttons bottom right" [class.corner]="wheel?.getPower() !== 'on'">
   <button
     mat-fab
-    *ngIf="defaultPreset?.independentAudioDevices?.length > 0"
+    *ngIf="
+      defaultPreset?.independentAudioDevices?.length > 0 && !audio.isShowing()
+    "
     class="independentAudio button"
-    (click)="showAudioModal(); command.buttonPress('open audio modal')"
+    (click)="audio.show(defaultPreset); command.buttonPress('open audio modal')"
     (press)="
-      showAudioModal(); command.buttonPress('long press open audio modal')
+      audio.show(defaultPreset);
+      command.buttonPress('long press open audio modal')
     "
   >
     <mat-icon class="rotate-90">tune</mat-icon>
   </button>
 </div>
-
-<div class="label top right"><label>Master Volume</label></div>
