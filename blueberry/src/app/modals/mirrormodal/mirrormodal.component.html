@@ -6,8 +6,8 @@
   <button
     mat-raised-button
     color="primary"
-    (click)="toAudioControl()"
-    (press)="toAudioControl()"
+    (click)="data?.audio?.show(data?.preset)"
+    (press)="data?.audio?.show(data?.preset)"
   >
     Audio Control
   </button>

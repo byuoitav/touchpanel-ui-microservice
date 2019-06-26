@@ -348,12 +348,13 @@ export class HomeComponent implements OnInit {
   };
 
   mirror = (preset: Preset) => {
-    const input = this.addMirrorInput(preset);
+    const input = this.buildMirrorInput(preset);
     const ref = this.dialog.open(MirrorModalComponent, {
       width: "80vw",
       disableClose: true,
       data: {
         preset: this.defaultPreset,
+        audio: this.audio,
         input: input,
         unmirror: this.unmirror
       }
@@ -389,7 +390,7 @@ export class HomeComponent implements OnInit {
     this.defaultPreset.extraInputs.push(input);
   };
 
-  addMirrorInput = (preset: Preset): Input => {
+  buildMirrorInput = (preset: Preset): Input => {
     const currInput = this.wheel.getInput();
 
     if (currInput != null) {
@@ -611,7 +612,7 @@ export class HomeComponent implements OnInit {
 
                 // someone shared to me. i should look like a minion.
                 const preset = this.data.presets.find(p => p.name === e.User);
-                const input = this.addMirrorInput(preset);
+                const input = this.buildMirrorInput(preset);
                 this.removeExtraInputs();
                 this.defaultPreset.extraInputs.push(input);
               } else if (this.appliesToMyGroup(sharedTo)) {
@@ -702,7 +703,7 @@ export class HomeComponent implements OnInit {
 
                 // a panel i'm mirroring just rejoined a group
                 const preset = this.data.presets.find(p => p.name === e.Value);
-                const input = this.addMirrorInput(preset);
+                const input = this.buildMirrorInput(preset);
                 this.removeExtraInputs();
                 this.defaultPreset.extraInputs.push(input);
               } else if (this.appliesToMe(split[2].split(","))) {

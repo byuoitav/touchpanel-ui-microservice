@@ -29,7 +29,6 @@ export class AudioComponent implements OnInit {
     this.devices.length = 0; // reset devices
 
     for (const a of preset.independentAudioDevices) {
-      a.displayname = a.name; // TODO remove this line
       this.devices.push(a);
     }
 

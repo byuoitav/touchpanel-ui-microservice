@@ -19,26 +19,13 @@ export class MirrorModalComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA)
     public data: {
       preset: Preset;
+      audio: AudioComponent;
       unmirror: () => (() => Promise<boolean>);
       input: Input;
     }
-  ) {
-    console.log("unmirror", this.data.unmirror);
-  }
+  ) {}
 
   ngOnInit() {
     this.ref.disableClose = true;
   }
-
-  /*
-  toAudioControl = () => {
-    const ref = this.dialog.open(AudioModalComponent, {
-      width: "80vw",
-      disableClose: true,
-      data: this.data.preset
-    });
-
-    // TODO on closed, reopen this one
-  };
-  */
 }
