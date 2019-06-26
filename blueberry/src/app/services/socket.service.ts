@@ -58,7 +58,7 @@ export class SocketService {
           const data = JSON.parse(msg.data);
           const event = jsonConvert.deserialize(data, Event);
 
-          console.log("received event", event);
+          console.debug("received event", event);
           this.listener.emit({ type: MESSAGE, data: event });
         }
       },

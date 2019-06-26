@@ -349,16 +349,7 @@ export class HomeComponent implements OnInit {
 
   mirror = (preset: Preset) => {
     const input = this.buildMirrorInput(preset);
-    const ref = this.dialog.open(MirrorModalComponent, {
-      width: "80vw",
-      disableClose: true,
-      data: {
-        preset: this.defaultPreset,
-        audio: this.audio,
-        input: input,
-        unmirror: this.unmirror
-      }
-    });
+    const ref = this.showMirrorModal(input);
 
     console.log("mirroring", preset.name);
 
@@ -461,12 +452,24 @@ export class HomeComponent implements OnInit {
 
     // remove presets from list of current presets
     this.mirroringMe = this.mirroringMe.filter(p => !presets.includes(p));
+    console.log("presets still mirroring me", this.mirroringMe);
 
     // only keep displays that i'm mirroring to
-    this.sharePreset.displays = this.sharePreset.displays.filter(disp => {
-      this.mirroringMe.some(p => p.displays.some(d => d.name === disp.name));
-    });
+    const keepers: Display[] = [];
+    for (const display of this.sharePreset.displays) {
+      if (this.defaultPreset.displays.some(d => d.name === display.name)) {
+        keepers.push(display);
+        continue;
+      }
 
+      for (const preset of this.mirroringMe) {
+        if (preset.displays.some(d => d.name === display.name)) {
+          keepers.push(display);
+        }
+      }
+    }
+
+    this.sharePreset.displays = keepers;
     this.sharePreset = this.fixAudio(this.sharePreset);
     console.log("new share preset", this.sharePreset);
   };
@@ -615,6 +618,9 @@ export class HomeComponent implements OnInit {
                 const input = this.buildMirrorInput(preset);
                 this.removeExtraInputs();
                 this.defaultPreset.extraInputs.push(input);
+
+                // show the popup
+                this.showMirrorModal(input);
               } else if (this.appliesToMyGroup(sharedTo)) {
                 // a preset that i previously shared to have been shared to by a new station.
                 // they should be removed from my mirroringMe group so that
@@ -878,6 +884,19 @@ export class HomeComponent implements OnInit {
         message: message,
         showSpinner: showSpinner,
         closeText: closeText
+      }
+    });
+  }
+
+  public showMirrorModal(input: Input): MatDialogRef<MirrorModalComponent> {
+    return this.dialog.open(MirrorModalComponent, {
+      width: "80vw",
+      disableClose: true,
+      data: {
+        preset: this.defaultPreset,
+        audio: this.audio,
+        input: input,
+        unmirror: this.unmirror
       }
     });
   }

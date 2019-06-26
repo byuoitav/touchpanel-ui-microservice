@@ -392,7 +392,7 @@ export class CommandService {
     const input = from.displays[0].input;
 
     // displays i'm sharing to
-    const displays: Display[] = from.displays;
+    const displays: Display[] = from.displays.slice();
     to.forEach(p => displays.push(...p.displays));
 
     const body = { displays: [], audioDevices: [] };
