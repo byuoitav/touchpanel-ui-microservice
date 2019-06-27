@@ -69,15 +69,11 @@
       *ngIf="wheel?.preset != defaultPreset"
       class="dta button"
       (click)="
-        unshare(defaultPreset, mirroringMe);
-        command.buttonPress('unshare', getPresetDisplayNames(wheel?.preset))
+        unshare(defaultPreset, mirroringMe); command.buttonPress('unshare')
       "
       (press)="
         unshare(defaultPreset, mirroringMe);
-        command.buttonPress(
-          'long press unshare',
-          getPresetDisplayNames(wheel?.preset)
-        )
+        command.buttonPress('long press unshare')
       "
     >
       <mat-icon>stop_screen_share</mat-icon>

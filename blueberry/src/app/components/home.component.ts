@@ -277,10 +277,6 @@ export class HomeComponent implements OnInit {
             this.sharePreset = preset;
             this.changePreset(this.sharePreset);
 
-            // send an event notifying everyone i just shared to them
-            const names: string[] = [];
-            to.forEach(p => names.push(p.name));
-
             const event = new Event();
 
             event.User = from.name;
@@ -288,13 +284,28 @@ export class HomeComponent implements OnInit {
             event.AffectedRoom = new BasicRoomInfo(
               APIService.building + "-" + APIService.roomName
             );
-            event.TargetDevice = new BasicDeviceInfo(
-              event.AffectedRoom.RoomID + "-" + names.join(",")
-            );
+            event.TargetDevice = new BasicDeviceInfo(APIService.piHostname);
             event.Key = SHARE;
             event.Value = " ";
+            event.Data = this.mirroringMe.map(p => p.name);
 
             this.api.sendEvent(event);
+            /*
+            for (const p of this.mirroringMe) {
+              const event = new Event();
+
+              event.User = from.name;
+              event.EventTags = ["ui-communication"];
+              event.AffectedRoom = new BasicRoomInfo(
+                APIService.building + "-" + APIService.roomName
+              );
+              event.TargetDevice = new BasicDeviceInfo(APIService.piHostname);
+              event.Key = SHARE;
+              event.Value = p.name;
+
+              this.api.sendEvent(event);
+            }
+            */
           }
 
           resolve(success);
@@ -556,18 +567,17 @@ export class HomeComponent implements OnInit {
 
               break;
             case SHARE:
-              const sharedTo = split[2].split(",");
-
+              const sharedTo = [];
               if (e.User === this.defaultPreset.name) {
                 console.log(
-                  "a panel i'm mirroring (" + e.User + ") just shared"
+                  "a panel i'm mirroring (" + e.User + ") just shared to",
+                  e.Value
                 );
 
                 // someone who's panel i'm supposed to mirror just shared.
                 // so i should look like i'm sharing too!
-                // const names = split[2].split(",");
                 const presets: Preset[] = [];
-                for (const name of sharedTo) {
+                for (const name of e.Data) {
                   const preset = this.data.presets.find(p => p.name === name);
                   if (preset) {
                     presets.push(preset);
@@ -578,6 +588,7 @@ export class HomeComponent implements OnInit {
                   this.defaultPreset,
                   presets
                 );
+
                 this.changePreset(this.sharePreset);
                 this.mirroringMe = presets;
               } else if (this.appliesToMe(sharedTo)) {
@@ -647,6 +658,10 @@ export class HomeComponent implements OnInit {
 
               break;
             case STOP_SHARE:
+              console.log(
+                "got unshare event, unshared to ",
+                split[2].split(",")
+              );
               if (
                 this.wheel.preset === this.sharePreset &&
                 e.User === this.defaultPreset.name
