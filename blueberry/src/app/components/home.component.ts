@@ -290,22 +290,6 @@ export class HomeComponent implements OnInit {
             event.Data = this.mirroringMe.map(p => p.name);
 
             this.api.sendEvent(event);
-            /*
-            for (const p of this.mirroringMe) {
-              const event = new Event();
-
-              event.User = from.name;
-              event.EventTags = ["ui-communication"];
-              event.AffectedRoom = new BasicRoomInfo(
-                APIService.building + "-" + APIService.roomName
-              );
-              event.TargetDevice = new BasicDeviceInfo(APIService.piHostname);
-              event.Key = SHARE;
-              event.Value = p.name;
-
-              this.api.sendEvent(event);
-            }
-            */
           }
 
           resolve(success);
@@ -332,21 +316,16 @@ export class HomeComponent implements OnInit {
         this.changePreset(from);
         this.mirroringMe = this.mirroringMe.filter(p => !to.includes(p));
 
-        // send an event notifying everyone i just stopped sharing to them
-        const names: string[] = [];
-        to.forEach(p => names.push(p.name));
-
         const event = new Event();
         event.User = from.name;
         event.EventTags = ["ui-communication"];
         event.AffectedRoom = new BasicRoomInfo(
           APIService.building + "-" + APIService.roomName
         );
-        event.TargetDevice = new BasicDeviceInfo(
-          event.AffectedRoom.RoomID + "-" + names.join(",")
-        );
+        event.TargetDevice = new BasicDeviceInfo(APIService.piHostname);
         event.Key = STOP_SHARE;
         event.Value = " ";
+        event.Data = to.map(p => p.name);
 
         this.api.sendEvent(event);
       }
@@ -378,11 +357,10 @@ export class HomeComponent implements OnInit {
         event.AffectedRoom = new BasicRoomInfo(
           APIService.building + "-" + APIService.roomName
         );
-        event.TargetDevice = new BasicDeviceInfo(
-          event.AffectedRoom.RoomID + "-" + this.defaultPreset.name
-        );
+        event.TargetDevice = new BasicDeviceInfo(APIService.piHostname);
         event.Key = JOIN_SHARE;
         event.Value = preset.name;
+        event.Data = [this.defaultPreset.name];
 
         this.api.sendEvent(event);
       }
@@ -436,11 +414,10 @@ export class HomeComponent implements OnInit {
           event.AffectedRoom = new BasicRoomInfo(
             APIService.building + "-" + APIService.roomName
           );
-          event.TargetDevice = new BasicDeviceInfo(
-            event.AffectedRoom.RoomID + "-" + this.defaultPreset.name
-          );
+          event.TargetDevice = new BasicDeviceInfo(APIService.piHostname);
           event.Key = LEAVE_SHARE;
-          event.Value = " ";
+          event.Value = this.defaultPreset.name;
+          event.Data = [this.defaultPreset.name];
 
           this.api.sendEvent(event);
 
@@ -461,26 +438,16 @@ export class HomeComponent implements OnInit {
       return;
     }
 
-    // remove presets from list of current presets
-    this.mirroringMe = this.mirroringMe.filter(p => !presets.includes(p));
-    console.log("presets still mirroring me", this.mirroringMe);
-
     // only keep displays that i'm mirroring to
-    const keepers: Display[] = [];
-    for (const display of this.sharePreset.displays) {
-      if (this.defaultPreset.displays.some(d => d.name === display.name)) {
-        keepers.push(display);
-        continue;
-      }
-
-      for (const preset of this.mirroringMe) {
-        if (preset.displays.some(d => d.name === display.name)) {
-          keepers.push(display);
-        }
-      }
+    const trash: Display[] = [];
+    for (const preset of presets) {
+      trash.push(...preset.displays);
     }
 
-    this.sharePreset.displays = keepers;
+    this.sharePreset.displays = this.sharePreset.displays.filter(
+      disp => !trash.some(d => d.name === disp.name)
+    );
+
     this.sharePreset = this.fixAudio(this.sharePreset);
     console.log("new share preset", this.sharePreset);
   };
@@ -497,6 +464,8 @@ export class HomeComponent implements OnInit {
     }
 
     console.log("adding", presets, "to my share group");
+    this.mirroringMe.push(...presets);
+
     for (const preset of presets) {
       this.sharePreset.displays.push(...preset.displays);
     }
@@ -567,7 +536,6 @@ export class HomeComponent implements OnInit {
 
               break;
             case SHARE:
-              const sharedTo = [];
               if (e.User === this.defaultPreset.name) {
                 console.log(
                   "a panel i'm mirroring (" + e.User + ") just shared to",
@@ -591,7 +559,7 @@ export class HomeComponent implements OnInit {
 
                 this.changePreset(this.sharePreset);
                 this.mirroringMe = presets;
-              } else if (this.appliesToMe(sharedTo)) {
+              } else if (this.appliesToMe(e.Data)) {
                 console.log(e.User, "just shared to me");
 
                 if (this.wheel.preset === this.sharePreset) {
@@ -600,7 +568,7 @@ export class HomeComponent implements OnInit {
                   // the preset who just shared to me should absorb my group.
                   const presetsToMirror: string[] = [];
                   this.mirroringMe
-                    .filter(p => !sharedTo.includes(p.name))
+                    .filter(p => !e.Data.includes(p.name))
                     .forEach(p => presetsToMirror.push(p.name));
 
                   if (presetsToMirror.length > 0) {
@@ -611,12 +579,13 @@ export class HomeComponent implements OnInit {
                       APIService.building + "-" + APIService.roomName
                     );
                     eve.TargetDevice = new BasicDeviceInfo(
-                      event.AffectedRoom.RoomID +
-                        "-" +
-                        presetsToMirror.join(",")
+                      APIService.piHostname
                     );
                     eve.Key = JOIN_SHARE;
                     eve.Value = e.User;
+                    eve.Data = this.mirroringMe
+                      .filter(p => !e.Data.includes(p.name))
+                      .map(p => p.name);
 
                     this.api.sendEvent(eve);
                   }
@@ -632,7 +601,7 @@ export class HomeComponent implements OnInit {
 
                 // show the popup
                 this.showMirrorModal(input);
-              } else if (this.appliesToMyGroup(sharedTo)) {
+              } else if (this.appliesToMyGroup(e.Data)) {
                 // a preset that i previously shared to have been shared to by a new station.
                 // they should be removed from my mirroringMe group so that
                 // i don't send an unshare event to them.
@@ -642,7 +611,7 @@ export class HomeComponent implements OnInit {
                 );
 
                 this.mirroringMe = this.mirroringMe.filter(
-                  p => !sharedTo.includes(p.name)
+                  p => !e.Data.includes(p.name)
                 );
 
                 if (this.mirroringMe.length === 0) {
@@ -658,10 +627,7 @@ export class HomeComponent implements OnInit {
 
               break;
             case STOP_SHARE:
-              console.log(
-                "got unshare event, unshared to ",
-                split[2].split(",")
-              );
+              console.log("got unshare event, unshared to ", e.Data);
               if (
                 this.wheel.preset === this.sharePreset &&
                 e.User === this.defaultPreset.name
@@ -670,18 +636,15 @@ export class HomeComponent implements OnInit {
 
                 // someone who's panel i'm mirroring just unshared.
                 this.changePreset(this.defaultPreset);
-              } else if (this.appliesToMe(split[2].split(","))) {
+              } else if (this.appliesToMe(e.Data)) {
                 console.log(e.User, "just stopped sharing with me");
                 this.removeExtraInputs();
                 this.removeMirrorPopup();
               }
               break;
             case LEAVE_SHARE:
-              if (this.appliesToMe(split[2].split(","))) {
-                console.log(
-                  "a panel i'm mirroring just left",
-                  e.User + "'s group."
-                );
+              if (this.appliesToMe(e.Data)) {
+                console.log("a panel i'm mirroring just left our share group");
 
                 // someone who's panel i'm mirroring just left a group
                 this.removeMirrorPopup();
@@ -700,10 +663,9 @@ export class HomeComponent implements OnInit {
                 e.Value === this.defaultPreset.name
               ) {
                 // someone wants to join *my* group
-                const names = split[2].split(",");
                 const presets = this.data.presets.filter(p => {
                   return (
-                    names.includes(p.name) && !this.mirroringMe.includes(p)
+                    e.Data.includes(p.name) && !this.mirroringMe.includes(p)
                   );
                 });
 
@@ -727,7 +689,7 @@ export class HomeComponent implements OnInit {
                 const input = this.buildMirrorInput(preset);
                 this.removeExtraInputs();
                 this.defaultPreset.extraInputs.push(input);
-              } else if (this.appliesToMe(split[2].split(","))) {
+              } else if (this.appliesToMe(e.Data)) {
                 console.log(
                   e.User,
                   "wants me to join a ",
