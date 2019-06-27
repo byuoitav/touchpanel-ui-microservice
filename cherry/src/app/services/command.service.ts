@@ -318,14 +318,14 @@ export class CommandService {
     const body = { audioDevices: [] };
     for (const a of preset.audioDevices) {
       body.audioDevices.push({
-        a: a.name,
+        name: a.name,
         muted: a.mixmute || m
       });
     }
 
     for (const a of preset.independentAudioDevices) {
       body.audioDevices.push({
-        a: a.name,
+        name: a.name,
         muted: a.mixmute
       });
     }
