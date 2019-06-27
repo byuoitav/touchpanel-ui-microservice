@@ -464,6 +464,8 @@ export class HomeComponent implements OnInit {
     }
 
     console.log("adding", presets, "to my share group");
+    this.mirroringMe.push(...presets);
+
     for (const preset of presets) {
       this.sharePreset.displays.push(...preset.displays);
     }
