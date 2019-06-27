@@ -438,26 +438,16 @@ export class HomeComponent implements OnInit {
       return;
     }
 
-    // remove presets from list of current presets
-    this.mirroringMe = this.mirroringMe.filter(p => !presets.includes(p));
-    console.log("presets still mirroring me", this.mirroringMe);
-
     // only keep displays that i'm mirroring to
-    const keepers: Display[] = [];
-    for (const display of this.sharePreset.displays) {
-      if (this.defaultPreset.displays.some(d => d.name === display.name)) {
-        keepers.push(display);
-        continue;
-      }
-
-      for (const preset of this.mirroringMe) {
-        if (preset.displays.some(d => d.name === display.name)) {
-          keepers.push(display);
-        }
-      }
+    const trash: Display[] = [];
+    for (const preset of presets) {
+      trash.push(...preset.displays);
     }
 
-    this.sharePreset.displays = keepers;
+    this.sharePreset.displays = this.sharePreset.displays.filter(
+      disp => !trash.some(d => d.name === disp.name)
+    );
+
     this.sharePreset = this.fixAudio(this.sharePreset);
     console.log("new share preset", this.sharePreset);
   };
