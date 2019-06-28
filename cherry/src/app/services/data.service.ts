@@ -245,10 +245,15 @@ export class DataService {
         this.audioDevices
       );
       const audioTypes = new Map<string, AudioDevice[]>();
-      independentAudioDevices.forEach(a => {
-        audioTypes.set(a.type, audioTypes.get(a.type) || []);
-        audioTypes.get(a.type).push(a);
-      });
+      // independentAudioDevices.forEach(a => {
+      //   audioTypes.set(a.type, audioTypes.get(a.type) || []);
+      //   audioTypes.get(a.type).push(a);
+      // });
+
+      for (const [key, group] of Object.entries(preset.audioGroups)) {
+        const groupDevices = Device.filterDevices(group, this.audioDevices);
+        audioTypes.set(key, groupDevices);
+      }
 
       const p = new Preset(
         preset.name,
