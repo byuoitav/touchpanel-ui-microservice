@@ -401,11 +401,11 @@ export class DataService {
             case "master-volume": {
               const presetToChange = this.presets.find(
                 p => {
-                  if (p.name === split[2]) {
+                  if (p.name === e.Data) {
                     return true;
                   } else {
                     if (p.volumeMatches != null) {
-                      return p.volumeMatches.includes(split[2]);
+                      return p.volumeMatches.includes(e.Data);
                     } else {
                       return false;
                     }
@@ -420,11 +420,11 @@ export class DataService {
             case "master-mute": {
               const presetToChange = this.presets.find(
                 p => {
-                  if (p.name === split[2]) {
+                  if (p.name === e.Data) {
                     return true;
                   } else {
                     if (p.volumeMatches != null) {
-                      return p.volumeMatches.includes(split[2]);
+                      return p.volumeMatches.includes(e.Data);
                     } else {
                       return false;
                     }

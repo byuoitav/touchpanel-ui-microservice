@@ -267,7 +267,6 @@ export class CommandService {
     const prev = preset.masterVolume;
     preset.masterVolume = v;
 
-    
     const body = { audioDevices: [] };
     for (const a of preset.audioDevices) {
       const vol = a.mixlevel * (v / 100);
@@ -295,6 +294,7 @@ export class CommandService {
         );
         event.Key = "master-volume";
         event.Value = String(v);
+        event.Data = preset.name;
 
         this.api.sendEvent(event);
         ret.emit(true);
@@ -326,7 +326,7 @@ export class CommandService {
     for (const a of preset.independentAudioDevices) {
       body.audioDevices.push({
         name: a.name,
-        muted: a.mixmute
+        muted: a.muted
       });
     }
 
@@ -346,6 +346,7 @@ export class CommandService {
         );
         event.Key = "master-mute";
         event.Value = String(m);
+        event.Data = preset.name;
 
         this.api.sendEvent(event);
         ret.emit(true);
