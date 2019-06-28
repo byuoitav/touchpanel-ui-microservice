@@ -179,9 +179,13 @@ export class Preset {
   shareableDisplays: string[];
   independentAudioDevices: AudioDevice[] = [];
 
+  volumeMatches: string[];
+  audioGroups: Map<string, string[]> = new Map();
+
   audioTypes: Map<string, AudioDevice[]> = new Map();
 
   masterVolume: number;
+  masterMute: boolean;
   beforeMuteLevel: number;
 
   commands: ConfigCommands;

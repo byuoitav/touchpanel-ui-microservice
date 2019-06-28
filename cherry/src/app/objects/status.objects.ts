@@ -204,6 +204,7 @@ export class AudioDevice extends Output {
   type: string;
 
   mixlevel: number;
+  mixmute: boolean;
 
   constructor(
     name: string,

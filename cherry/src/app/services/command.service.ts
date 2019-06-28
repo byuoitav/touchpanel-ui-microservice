@@ -305,6 +305,57 @@ export class CommandService {
     return ret;
   }
 
+  public setMasterMute(m: boolean, preset: Preset): EventEmitter<boolean> {
+    const ret: EventEmitter<boolean> = new EventEmitter<boolean>();
+    console.log("changing master mute to", m, "for preset", preset);
+
+    const prev = preset.masterMute;
+    preset.masterMute = m;
+
+    const body = { audioDevices: [] };
+    for (const a of preset.audioDevices) {
+      body.audioDevices.push({
+        name: a.name,
+        muted: a.mixmute || m
+      });
+    }
+
+    for (const a of preset.independentAudioDevices) {
+      body.audioDevices.push({
+        name: a.name,
+        muted: a.mixmute
+      });
+    }
+
+    console.log("master mute body", body);
+
+    this.put(body).subscribe(
+      data => {
+        const event = new Event();
+
+        event.User = APIService.piHostname;
+        event.EventTags = ["ui-communication"];
+        event.AffectedRoom = new BasicRoomInfo(
+          APIService.building + "-" + APIService.roomName
+        );
+        event.TargetDevice = new BasicDeviceInfo(
+          APIService.building + "-" + APIService.roomName + "-" + preset.name
+        );
+        event.Key = "master-mute";
+        event.Value = String(m);
+
+        this.api.sendEvent(event);
+        ret.emit(true);
+      },
+      err => {
+        preset.masterMute = prev;
+        ret.emit(false);
+      }
+    );
+
+    return ret;
+  }
+
   public setMixLevel(
     v: number,
     a: AudioDevice,
