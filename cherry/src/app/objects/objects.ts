@@ -125,6 +125,7 @@ export class PresetConfiguration {
   inputs: string[];
   independentAudioDevices: string[];
   volumeMatches: string[];
+  audioGroups: Map<string, string[]> = new Map();
   commands: ConfigCommands;
 }
 
@@ -181,7 +182,6 @@ export class Preset {
   independentAudioDevices: AudioDevice[] = [];
 
   volumeMatches: string[];
-  audioGroups: Map<string, string[]> = new Map();
 
   audioTypes: Map<string, AudioDevice[]> = new Map();
 

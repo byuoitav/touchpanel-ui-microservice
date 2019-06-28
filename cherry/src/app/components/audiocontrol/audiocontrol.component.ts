@@ -29,6 +29,9 @@ export class AudiocontrolComponent implements AfterViewInit, OnChanges {
   displayPages: number[] = [];
   curDisplayPage: number;
 
+  groupPages: Map<string, number[]> = new Map();
+  groupCurPage: Map<string, number> = new Map();
+
   audioTypes: string[]; // used to do optimize change detection (mostly at the beginning)
 
   constructor(public command: CommandService, private ref: ChangeDetectorRef) {
@@ -50,7 +53,7 @@ export class AudiocontrolComponent implements AfterViewInit, OnChanges {
   }
 
   ngOnChanges(changes) {
-    if (this.audioGroups) {
+    if (this.preset.audioTypes != null) {
       setTimeout(() => {
         this.updateAudioTypes();
       });
@@ -120,9 +123,20 @@ export class AudiocontrolComponent implements AfterViewInit, OnChanges {
   }
 
   private updateAudioTypes() {
-    if (this.audioGroups) {
+    if (this.preset.audioTypes != null) {
       if (this.preset != null) {
         this.audioTypes = Array.from(this.preset.audioTypes.keys());
+
+        if (this.audioTypes != null && this.audioTypes.length) {
+          for (const type of this.audioTypes) {
+            const p = Math.ceil(this.preset.audioTypes.get(type).length / 5);
+            const tempPages = new Array(p).fill(undefined).map((x, i) => i);
+            this.groupPages.set(type, tempPages);
+
+            console.log("audio group ", type, "pages:", this.groupPages.get(type));
+            this.groupCurPage.set(type, 0);
+          }
+        }
       }
     }
   }
@@ -214,5 +228,46 @@ export class AudiocontrolComponent implements AfterViewInit, OnChanges {
       this.command.setMasterMute(false, preset);
     }
     this.command.buttonPress("master volume set", {level: v});
+  }
+
+
+  groupPageLeft(groupName: string) {
+    if (this.groupCanPageLeft(groupName)) {
+      let pNum = this.groupCurPage.get(groupName);
+      pNum--;
+      this.groupCurPage.set(groupName, pNum);
+    }
+
+    // scroll to the bottom of the page
+    const idx = 5 * this.groupCurPage.get(groupName);
+    document.querySelector("#" + groupName + idx).scrollIntoView({ behavior: "smooth", block: "nearest", inline: "start" });
+  }
+
+  groupPageRight(groupName: string) {
+    if (this.groupCanPageRight(groupName)) {
+      let pNum = this.groupCurPage.get(groupName);
+      pNum++;
+      this.groupCurPage.set(groupName, pNum);
+    }
+
+    // scroll to the bottom of the page
+    const idx = 5 * this.groupCurPage.get(groupName);
+    document.querySelector("#" + groupName + idx).scrollIntoView({ behavior: "smooth", block: "nearest", inline: "start" });
+  }
+
+  groupCanPageLeft(groupName: string): boolean {
+    if (this.groupCurPage.get(groupName) <= 0) {
+      return false;
+    }
+
+    return true;
+  }
+
+  groupCanPageRight(groupName: string): boolean {
+    if (this.groupCurPage.get(groupName) + 1 >= this.groupPages.get(groupName).length) {
+      return false;
+    }
+
+    return true;
   }
 }
