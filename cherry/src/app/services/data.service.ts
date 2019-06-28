@@ -399,40 +399,58 @@ export class DataService {
               break;
             }
             case "master-volume": {
-              const presetToChange = this.presets.find(
-                p => {
-                  if (p.name === e.Data) {
-                    return true;
-                  } else {
-                    if (p.volumeMatches != null) {
-                      return p.volumeMatches.includes(e.Data);
-                    } else {
-                      return false;
-                    }
+              // const presetToChange = this.presets.find(
+              //   p => {
+              //     if (p.name === e.Data) {
+              //       return true;
+              //     } else {
+              //       if (p.volumeMatches != null) {
+              //         return p.volumeMatches.includes(e.Data);
+              //       } else {
+              //         return false;
+              //       }
+              //     }
+              //   }
+              // );
+              // if (presetToChange != null) {
+              //   presetToChange.masterVolume = parseInt(e.Value, 10);
+              // }
+              for (const p of this.presets) {
+                if (p.name === e.Data) {
+                  p.masterVolume = parseInt(e.Value, 10);
+                }
+                if (p.volumeMatches != null) {
+                  if (p.volumeMatches.includes(e.Data)) {
+                    p.masterVolume = parseInt(e.Value, 10);
                   }
                 }
-              );
-              if (presetToChange != null) {
-                presetToChange.masterVolume = parseInt(e.Value, 10);
               }
               break;
             }
             case "master-mute": {
-              const presetToChange = this.presets.find(
-                p => {
-                  if (p.name === e.Data) {
-                    return true;
-                  } else {
-                    if (p.volumeMatches != null) {
-                      return p.volumeMatches.includes(e.Data);
-                    } else {
-                      return false;
-                    }
-                  }
+              // const presetToChange = this.presets.find(
+              //   p => {
+              //     if (p.name === e.Data) {
+              //       return true;
+              //     } else {
+              //       if (p.volumeMatches != null) {
+              //         return p.volumeMatches.includes(e.Data);
+              //       } else {
+              //         return false;
+              //       }
+              //     }
+              //   }
+              // );
+              // if (presetToChange != null) {
+              //   presetToChange.masterMute = e.Value.toLowerCase() === "true";
+              // }
+              for (const p of this.presets) {
+                if (p.name === e.Data) {
+                  p.masterMute = e.Value.toLowerCase() === "true";
                 }
-              );
-              if (presetToChange != null) {
-                presetToChange.masterMute = e.Value.toLowerCase() === "true";
+                if (p.volumeMatches != null) {
+                  p.masterMute = e.Value.toLowerCase() === "true";
+                }
               }
               break;
             }
