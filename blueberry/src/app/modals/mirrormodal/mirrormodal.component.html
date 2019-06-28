@@ -1,0 +1,28 @@
+<h1 mat-dialog-title class="text title">
+  Mirroring {{ data?.input?.displayname }}
+</h1>
+
+<div mat-dialog-actions class="items secondary-theme">
+  <button
+    *ngIf="
+      data?.preset?.independentAudioDevices?.length > 0 &&
+      !data?.audio?.isShowing()
+    "
+    mat-raised-button
+    color="primary"
+    (click)="data?.audio?.show(data?.preset)"
+    (press)="data?.audio?.show(data?.preset)"
+  >
+    Audio Control
+  </button>
+
+  <activity-button
+    type="mat-raised-button"
+    color="primary"
+    spinnerColor="accent"
+    [click]="data?.unmirror()"
+    [press]="data?.unmirror()"
+    (success)="ref.close()"
+    >Stop Mirroring
+  </activity-button>
+</div>

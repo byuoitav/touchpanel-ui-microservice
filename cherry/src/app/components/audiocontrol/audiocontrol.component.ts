@@ -24,10 +24,16 @@ export class AudiocontrolComponent implements AfterViewInit, OnChanges {
   preset: Preset;
   @Input()
   audioGroups: boolean;
+  pages: number[] = [];
+  curPage: number;
+  displayPages: number[] = [];
+  curDisplayPage: number;
 
   audioTypes: string[]; // used to do optimize change detection (mostly at the beginning)
 
-  constructor(public command: CommandService, private ref: ChangeDetectorRef) {}
+  constructor(public command: CommandService, private ref: ChangeDetectorRef) {
+
+  }
 
   ngAfterViewInit() {
     if (!this.audioGroups) {
@@ -39,6 +45,8 @@ export class AudiocontrolComponent implements AfterViewInit, OnChanges {
     this.tabs._elementRef.nativeElement.getElementsByClassName(
       "mat-tab-labels"
     )[0].style.justifyContent = "flex-start";
+
+
   }
 
   ngOnChanges(changes) {
@@ -46,6 +54,68 @@ export class AudiocontrolComponent implements AfterViewInit, OnChanges {
       setTimeout(() => {
         this.updateAudioTypes();
       });
+    }
+
+    if (this.preset != null) {
+      // this.preset.independentAudioDevices.push(
+      //   new AudioDevice(
+      //     "MIC7",
+      //     "Mic 7",
+      //     "on",
+      //     null,
+      //     false,
+      //     30,
+      //     "mic",
+      //     "Microphone",
+      //     100
+      //   ),
+      //   new AudioDevice(
+      //     "MIC8",
+      //     "Mic 8",
+      //     "on",
+      //     null,
+      //     false,
+      //     30,
+      //     "mic",
+      //     "Microphone",
+      //     100
+      //   )
+      // );
+      // this.preset.audioDevices.push(
+      //   new AudioDevice(
+      //     "D3",
+      //     "Display 3",
+      //     "on",
+      //     null,
+      //     false,
+      //     30,
+      //     "videocam",
+      //     "ADCP Sony VPL",
+      //     100
+      //   ),
+      //   new AudioDevice(
+      //     "D4",
+      //     "Display 4",
+      //     "on",
+      //     null,
+      //     false,
+      //     30,
+      //     "videocam",
+      //     "ADCP Sony VPL",
+      //     100
+      //   )
+      // );
+      const pages = Math.ceil(this.preset.independentAudioDevices.length / 5);
+      this.pages = new Array(pages).fill(undefined).map((x, i) => i);
+
+      console.log("mics:", this.preset.independentAudioDevices.length, "pages:", this.pages);
+      this.curPage = 0;
+
+      const dispPages = Math.ceil(this.preset.audioDevices.length / 3);
+      this.displayPages = new Array(dispPages).fill(undefined).map((x, i) => i);
+
+      console.log("displays:", this.preset.audioDevices.length, "pages:", this.displayPages);
+      this.curDisplayPage = 0;
     }
   }
 
@@ -64,5 +134,85 @@ export class AudiocontrolComponent implements AfterViewInit, OnChanges {
     } else {
       this.command.setMasterVolume(this.preset.beforeMuteLevel, this.preset);
     }
+  }
+
+  pageLeft = () => {
+    if (this.canPageLeft()) {
+      this.curPage--;
+    }
+
+    // scroll to the bottom of the page
+    const idx = 5 * this.curPage;
+    document.querySelector("#device" + idx).scrollIntoView({ behavior: "smooth", block: "nearest", inline: "start" });
+  }
+
+  pageRight = () => {
+    if (this.canPageRight()) {
+      this.curPage++;
+    }
+
+    // scroll to the top of the page
+    const idx = 5 * this.curPage;
+    document.querySelector("#device" + idx).scrollIntoView({ behavior: "smooth", block: "nearest", inline: "start" });
+  }
+
+  canPageLeft = (): boolean => {
+    if (this.curPage <= 0) {
+      return false;
+    }
+
+    return true;
+  }
+
+  canPageRight = (): boolean => {
+    if (this.curPage + 1 >= this.pages.length) {
+      return false;
+    }
+
+    return true;
+  }
+
+  pageDispLeft = () => {
+    if (this.canPageDispLeft()) {
+      this.curDisplayPage--;
+    }
+
+    // scroll to the bottom of the page
+    const idx = 3 * this.curDisplayPage;
+    document.querySelector("#display" + idx).scrollIntoView({ behavior: "smooth", block: "nearest", inline: "start" });
+  }
+
+  pageDispRight = () => {
+    if (this.canPageDispRight()) {
+      this.curDisplayPage++;
+    }
+
+    // scroll to the top of the page
+    const idx = 3 * this.curDisplayPage;
+    document.querySelector("#display" + idx).scrollIntoView({ behavior: "smooth", block: "nearest", inline: "start" });
+  }
+
+  canPageDispLeft = (): boolean => {
+    if (this.curDisplayPage <= 0) {
+      return false;
+    }
+
+    return true;
+  }
+
+  canPageDispRight = (): boolean => {
+    if (this.curDisplayPage + 1 >= this.displayPages.length) {
+      return false;
+    }
+
+    return true;
+  }
+
+  onMasterVolumeLevelChange(v: number, preset: Preset) {
+    this.command.setMasterVolume(v, preset);
+    if (preset.masterMute) {
+      this.command.setMasterMute(false, preset);
+    }
+    this.command.buttonPress("master volume set", {level: v});
   }
 }

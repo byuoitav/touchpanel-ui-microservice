@@ -45,8 +45,8 @@
       "
     >
       <div class="input" [style.top]="topoffset" [style.right]="rightoffset">
-        <i class="material-icons">{{ i.icon }}</i>
-        <span class="name">{{ i.displayname }}</span>
+        <i class="material-icons">{{ i?.icon }}</i>
+        <span class="name">{{ i?.displayname }}</span>
       </div>
     </li>
 
@@ -65,8 +65,8 @@
         [style.top]="topoffset"
         [style.right]="rightoffset"
       >
-        <i class="material-icons">{{ i.icon }}</i>
-        <span class="name">{{ i.displayname }}</span>
+        <i class="material-icons">{{ i?.icon }}</i>
+        <span class="name">{{ i?.displayname }}</span>
       </div>
     </li>
 
@@ -90,7 +90,7 @@
     (press)="command.buttonPress('long press circle center')"
   >
     <span class="center-item name" [class.open]="circleOpen">{{
-      preset.name
+      preset?.name
     }}</span>
     <i
       class="center-item material-icons icon"
@@ -100,7 +100,7 @@
         command.buttonPress('long press circle center');
         $event.stopPropagation()
       "
-      >{{ preset.icon }}</i
+      >{{ preset?.icon }}</i
     >
     <span
       *ngIf="!getBlank()"
@@ -134,143 +134,63 @@
   </div>
 </div>
 
+<!-- master volume slider -->
 <ng-container
   *ngIf="
     preset?.audioDevices.length > 0 ||
     preset?.independentAudioDevices?.length > 0
   "
 >
-  <div
+  <volume
     class="volume"
-    [class.muted]="getMute()"
-    *ngIf="circleOpen"
-    [class.independentAudio]="preset?.independentAudioDevices?.length > 0"
+    muteType="mat-fab"
+    [level]="getVolume()"
+    name="Display Volume"
+    [mute]="getMute()"
+    (levelChange)="
+      command.setVolume($event, preset?.audioDevices);
+      command.buttonPress('display volume set on wheel screen', {
+        level: $event
+      })
+    "
+    (muteChange)="
+      command.setMute($event, preset?.audioDevices);
+      command.buttonPress(
+        'display volume ' +
+          ($event.muted ? 'mute' : 'unmute') +
+          'on wheel screen'
+      )
+    "
   >
-    <mat-slider
-      id="slider"
-      vertical
-      [class.notouch]="getMute()"
-      [disabled]="getMute()"
-      [value]="getVolume()"
-      [step]="5"
-      [thumbLabel]="thumbLabel"
-      (change)="
-        command.setVolume($event.value, preset.audioDevices);
-        closeThumb();
-        command.buttonPress('volume set', {
-          level: $event.value,
-          audioDevices: getAudioNames()
-        })
-      "
-    ></mat-slider>
+  </volume>
+</ng-container>
 
-    <button
-      mat-fab
-      class="mute"
-      [class.muted]="getMute()"
-      (click)="
-        command.setMute(!getMute(), preset.audioDevices);
-        command.buttonPress(getMute() ? 'mute' : 'unmute', getAudioNames())
-      "
-      (press)="
-        command.setMute(!getMute(), preset.audioDevices);
-        command.buttonPress(
-          getMute() ? 'long press mute' : 'long press unmute',
-          getAudioNames()
-        )
-      "
-    >
-      <mat-icon *ngIf="getMute()">volume_off</mat-icon>
-      <mat-icon *ngIf="!getMute()">volume_up</mat-icon>
-    </button>
-  </div>
-  <ng-container>
-    <!-- one 'slice' of wheel -->
-    <svg id="svg-block" width="0" height="0" style="position: absolute;">
-      <defs>
-        <clipPath clipPathUnits="objectBoundingBox" id="sector">
-          <path
-            fill="transparent"
-            stroke="#111"
-            stroke-width="1"
-            id="sector"
-            [attr.d]="arcpath"
-          ></path>
-        </clipPath>
-      </defs>
-    </svg>
+<!-- one 'slice' of wheel -->
+<svg id="svg-block" width="0" height="0" style="position: absolute;">
+  <defs>
+    <clipPath clipPathUnits="objectBoundingBox" id="sector">
+      <path
+        fill="transparent"
+        stroke="#111"
+        stroke-width="1"
+        id="sector"
+        [attr.d]="arcpath"
+      ></path>
+    </clipPath>
+  </defs>
+</svg>
 
-    <!-- title slice -->
-    <svg id="svg-block" width="0" height="0" style="position: absolute;">
-      <defs>
-        <clipPath clipPathUnits="objectBoundingBox" id="title-sector">
-          <path
-            fill="transparent"
-            stroke="#111"
-            stroke-width="1"
-            id="sector"
-            [attr.d]="titlearcpath"
-          ></path>
-        </clipPath>
-      </defs>
-    </svg>
-
-    <!-- via reset/reboot modal -->
-    <swal
-      #via
-      title="VIA Control"
-      type="info"
-      text="i should be hidden"
-      [showConfirmButton]="false"
-      [showCancelButton]="false"
-    >
-      <div *swalPartial="swalTargets.content">
-        <button
-          type="button"
-          class="btn-neutral swal2-styled"
-          (click)="
-            via.nativeSwal.clickCancel();
-            command.buttonPress('exit via control modal', openInput?.name)
-          "
-          (press)="
-            via.nativeSwal.clickCancel();
-            command.buttonPress(
-              'long press exit via control modal',
-              openInput?.name
-            )
-          "
-        >
-          Cancel
-        </button>
-        <button
-          type="button"
-          class="btn-warn swal2-styled"
-          (click)="
-            viaControl('reset');
-            command.buttonPress('reset via', openInput?.name)
-          "
-          (press)="
-            viaControl('reset');
-            command.buttonPress('long press reset via', openInput?.name)
-          "
-        >
-          Reset
-        </button>
-        <button
-          type="button"
-          class="btn-danger swal2-styled"
-          (click)="
-            viaControl('reboot');
-            command.buttonPress('reboot via', openInput?.name)
-          "
-          (press)="
-            viaControl('reboot');
-            command.buttonPress('long press reboot via', openInput?.name)
-          "
-        >
-          Reboot
-        </button>
-      </div>
-    </swal></ng-container
-  ></ng-container
->
+<!-- title slice -->
+<svg id="svg-block" width="0" height="0" style="position: absolute;">
+  <defs>
+    <clipPath clipPathUnits="objectBoundingBox" id="title-sector">
+      <path
+        fill="transparent"
+        stroke="#111"
+        stroke-width="1"
+        id="sector"
+        [attr.d]="titlearcpath"
+      ></path>
+    </clipPath>
+  </defs>
+</svg>

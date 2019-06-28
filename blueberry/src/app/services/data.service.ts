@@ -190,7 +190,7 @@ export class DataService {
         displays,
         audioDevices,
         inputs,
-        preset.shareableDisplays,
+        preset.shareablePresets,
         independentAudioDevices,
         preset.commands
       );

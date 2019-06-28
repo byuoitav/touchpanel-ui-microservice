@@ -10,6 +10,8 @@ import { ConfirmHelpDialog } from "./confirmhelp.dialog";
   template: `
         <h1 mat-dialog-title class="text">Help</h1>
 
+        <management [enabled]="true"></management>
+
         <div mat-dialog-content class="text">
             <p *ngIf="!isAfterHours()">
               Please call AV Support at 801-422-7671 for help, or request help by pressing <i>Request Help</i> to send support staff to you.
@@ -60,7 +62,8 @@ export class HelpDialog {
     this.api.help("help").subscribe(success => {
       if (success) {
         const dialogRef = this.dialog.open(ConfirmHelpDialog, {
-          width: "70vw"
+          width: "70vw",
+          disableClose: true
         });
 
         this.dialogRef.close();

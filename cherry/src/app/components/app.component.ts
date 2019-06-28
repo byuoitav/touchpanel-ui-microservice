@@ -33,9 +33,9 @@ export class AppComponent {
   public selectedTabIndex: number;
 
   constructor(
-    private data: DataService,
-    private command: CommandService,
-    private dialog: MatDialog
+    public data: DataService,
+    public command: CommandService,
+    public dialog: MatDialog
   ) {
     this.loaded = false;
     this.data.loaded.subscribe(() => {
@@ -88,13 +88,17 @@ export class AppComponent {
     // reset masterVolume level
     this.data.panel.preset.masterVolume = 30;
 
+    // reset masterMute
+    this.data.panel.preset.masterMute = false;
+
     // stop showing progress bar
     this.unlocking = false;
   }
 
   public openHelpDialog() {
     const dialogRef = this.dialog.open(HelpDialog, {
-      width: "70vw"
+      width: "70vw",
+      disableClose: true
     });
   }
 }
