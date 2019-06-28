@@ -181,6 +181,7 @@ export class Preset {
   independentAudioDevices: AudioDevice[] = [];
 
   volumeMatches: string[];
+  audioGroups: Map<string, string[]> = new Map();
 
   audioTypes: Map<string, AudioDevice[]> = new Map();
 
