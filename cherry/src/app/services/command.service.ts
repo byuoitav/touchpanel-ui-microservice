@@ -473,6 +473,8 @@ export class CommandService {
       });
     }
 
+    preset.masterMute = false;
+
     console.log("sending power on default body", body);
 
     const powerOnReq = new Request({
