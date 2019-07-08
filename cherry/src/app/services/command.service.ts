@@ -323,13 +323,6 @@ export class CommandService {
       });
     }
 
-    for (const a of preset.independentAudioDevices) {
-      body.audioDevices.push({
-        name: a.name,
-        muted: a.muted
-      });
-    }
-
     console.log("master mute body", body);
 
     this.put(body).subscribe(
@@ -601,7 +594,8 @@ export class CommandService {
     for (const d of preset.displays) {
       body.displays.push({
         name: d.name,
-        power: "standby"
+        power: "standby",
+        input: preset.inputs[0].name
       });
     }
 
