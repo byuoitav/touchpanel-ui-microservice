@@ -30,7 +30,7 @@ $max-width: 95vw;
     .device {
         @extend %align-vert;
         height: 100%;
-        width: (($devices-width - (2 * $button-width)) / 5);
+        width: (($devices-width - (2 * $button-width)) / 4);
         &.display {
             width: (($devices-width - $master-width - (2 * $button-width)) / 3.35);
         }

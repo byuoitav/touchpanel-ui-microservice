@@ -98,7 +98,7 @@
     <mat-tab label="Microphones">
 
         <!-- If there aren't enough to make 2 pages -->
-        <div class="devices less" *ngIf="preset?.independentAudioDevices.length <= 5">
+        <div class="devices less" *ngIf="preset?.independentAudioDevices.length <= 4">
             <div *ngFor="let a of preset?.independentAudioDevices; let i = index;" class="device slider-container" [id]="'device' + i">
                 <span>{{ a.displayname }}</span>
                 <i class="material-icons">{{ a.icon }}</i>
@@ -120,8 +120,8 @@
             </div>
         </div>
 
-        <div class="devices" *ngIf="preset?.independentAudioDevices.length > 5">
-            <div class="button left" (click)="pageLeft()" [class.blank]="!canPageLeft() || preset.independentAudioDevices.length <= 5">
+        <div class="devices" *ngIf="preset?.independentAudioDevices.length > 4">
+            <div class="button left" (click)="pageLeft()" [class.blank]="!canPageLeft() || preset.independentAudioDevices.length <= 4">
                 <mat-icon style="transform: scale(3)">keyboard_arrow_left</mat-icon>
             </div>
             <div class="mixers">
@@ -158,12 +158,12 @@
                         <div class="volume"></div>
                     </div>
                 </div>
-                <div class="page-indicator" *ngIf="preset != null" [class.blank]="preset?.independentAudioDevices.length <= 5">
+                <div class="page-indicator" *ngIf="preset != null" [class.blank]="preset?.independentAudioDevices.length <= 4">
                     <span *ngFor="let i of pages" class="dot" [class.selected]="i === curPage"></span>
                 </div>
             </div>
 
-            <div class="button right" (click)="pageRight()" [class.blank]="!canPageRight() || preset.independentAudioDevices.length <= 5">
+            <div class="button right" (click)="pageRight()" [class.blank]="!canPageRight() || preset.independentAudioDevices.length <= 4">
                 <mat-icon style="transform: scale(3)">keyboard_arrow_right</mat-icon>
             </div>
         </div>

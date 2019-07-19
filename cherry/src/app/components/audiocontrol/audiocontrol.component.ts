@@ -108,7 +108,7 @@ export class AudiocontrolComponent implements AfterViewInit, OnChanges {
       //     100
       //   )
       // );
-      const pages = Math.ceil(this.preset.independentAudioDevices.length / 5);
+      const pages = Math.ceil(this.preset.independentAudioDevices.length / 4);
       this.pages = new Array(pages).fill(undefined).map((x, i) => i);
 
       console.log("mics:", this.preset.independentAudioDevices.length, "pages:", this.pages);
@@ -129,7 +129,7 @@ export class AudiocontrolComponent implements AfterViewInit, OnChanges {
 
         if (this.audioTypes != null && this.audioTypes.length) {
           for (const type of this.audioTypes) {
-            const p = Math.ceil(this.preset.audioTypes.get(type).length / 5);
+            const p = Math.ceil(this.preset.audioTypes.get(type).length / 4);
             const tempPages = new Array(p).fill(undefined).map((x, i) => i);
             this.groupPages.set(type, tempPages);
 
