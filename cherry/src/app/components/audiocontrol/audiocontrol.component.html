@@ -173,7 +173,7 @@
     <ng-container *ngIf="audioTypes?.length > 0">
         <mat-tab *ngFor="let label of audioTypes" [label]="label">
             <!-- If there aren't enough to make 2 pages -->
-            <div class="devices less" *ngIf="preset?.audioTypes.get(label).length <= 5">
+            <div class="devices less" *ngIf="preset?.audioTypes.get(label).length <= 4">
                 <div *ngFor="let a of preset?.audioTypes.get(label); let i = index;" class="device slider-container" [id]="label + i">
                     <span>{{ a.displayname }}</span>
                     <i class="material-icons">{{ a.icon }}</i>
@@ -195,8 +195,8 @@
                 </div>
             </div>
 
-            <div class="devices" *ngIf="preset?.audioTypes.get(label).length > 5">
-                <div class="button left" (click)="groupPageLeft(label)" [class.blank]="!groupCanPageLeft(label) || preset.audioTypes.get(label).length <= 5">
+            <div class="devices" *ngIf="preset?.audioTypes.get(label).length > 4">
+                <div class="button left" (click)="groupPageLeft(label)" [class.blank]="!groupCanPageLeft(label) || preset.audioTypes.get(label).length <= 4">
                     <mat-icon style="transform: scale(3)">keyboard_arrow_left</mat-icon>
                 </div>
                 <div class="mixers">
@@ -233,12 +233,12 @@
                             <div class="volume"></div>
                         </div>
                     </div>
-                    <div class="page-indicator" *ngIf="preset != null" [class.blank]="preset?.audioTypes.get(label).length <= 5">
+                    <div class="page-indicator" *ngIf="preset != null" [class.blank]="preset?.audioTypes.get(label).length <= 4">
                         <span *ngFor="let i of groupPages.get(label)" class="dot" [class.selected]="i === groupCurPage.get(label)"></span>
                     </div>
                 </div>
 
-                <div class="button right" (click)="groupPageRight(label)" [class.blank]="!groupCanPageRight(label) || preset.audioTypes.get(label).length <= 5">
+                <div class="button right" (click)="groupPageRight(label)" [class.blank]="!groupCanPageRight(label) || preset.audioTypes.get(label).length <= 4">
                     <mat-icon style="transform: scale(3)">keyboard_arrow_right</mat-icon>
                 </div>
             </div>
