@@ -7,7 +7,7 @@ import {
   Request
 } from "@angular/http";
 import { Observable } from "rxjs/Rx";
-import { MatSliderChange } from "@angular/material";
+import { MatSliderChange, MatDialog } from "@angular/material";
 
 import { APIService } from "./api.service";
 import { DataService } from "./data.service";
@@ -18,6 +18,7 @@ import { Preset, AudioConfig, ConfigCommand } from "../objects/objects";
 import "rxjs/add/operator/map";
 import "rxjs/add/operator/timeout";
 import { deserialize } from "serializer.ts/Serializer";
+import { ErrorDialog } from "../dialogs/error.dialog";
 
 const TIMEOUT = 12 * 1000;
 
@@ -28,7 +29,8 @@ export class CommandService {
   constructor(
     private http: Http,
     private data: DataService,
-    public api: APIService
+    public api: APIService,
+    public dialog: MatDialog
   ) {
     const headers = new Headers();
     headers.append("content-type", "application/json");
@@ -347,6 +349,9 @@ export class CommandService {
       err => {
         preset.masterMute = prev;
         ret.emit(false);
+        this.dialog.open(ErrorDialog, {
+          data: "Failed to mute master volume."
+        })
       }
     );
 
