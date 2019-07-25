@@ -1,8 +1,6 @@
 import { Component, Inject } from "@angular/core";
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from "@angular/material";
 
-import { APIService } from "../services/api.service";
-import { CommandService } from "../services/command.service";
 
 @Component({
   selector: "error-dialog",
@@ -51,9 +49,7 @@ import { CommandService } from "../services/command.service";
 export class ErrorDialog {
   constructor(
     public dialogRef: MatDialogRef<ErrorDialog>,
-    @Inject(MAT_DIALOG_DATA) public data: any,
-    public api: APIService,
-    public command: CommandService,
+    @Inject(MAT_DIALOG_DATA) public data: any
   ) {}
 
   close = () => {

@@ -72,6 +72,9 @@ export class CommandService {
       err => {
         Display.setPower(p, displays);
         ret.emit(false);
+        this.dialog.open(ErrorDialog, {
+          data: "Failed to power on the system."
+        });
       }
     );
 
@@ -351,7 +354,7 @@ export class CommandService {
         ret.emit(false);
         this.dialog.open(ErrorDialog, {
           data: "Failed to mute master volume."
-        })
+        });
       }
     );
 
