@@ -154,9 +154,9 @@
                     <div [id]="'device' + (preset?.independentAudioDevices.length + 2)" class="slider-container">
                         <div class="volume"></div>
                     </div>
-                    <div [id]="'device' + (preset?.independentAudioDevices.length + 3)" class="slider-container">
+                    <!-- <div [id]="'device' + (preset?.independentAudioDevices.length + 3)" class="slider-container">
                         <div class="volume"></div>
-                    </div>
+                    </div> -->
                 </div>
                 <div class="page-indicator" *ngIf="preset != null" [class.blank]="preset?.independentAudioDevices.length <= 4">
                     <span *ngFor="let i of pages" class="dot" [class.selected]="i === curPage"></span>
