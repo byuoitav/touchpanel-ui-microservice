@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/byuoitav/central-event-system/messenger"
+	logger "github.com/byuoitav/common/log"
 	"github.com/byuoitav/common/status"
 	"github.com/byuoitav/common/v2/events"
 	"github.com/byuoitav/device-monitoring/localsystem"
@@ -110,6 +111,8 @@ func (h *hub) run() {
 	deviceInfo := events.GenerateBasicDeviceInfo(id)
 	roomInfo := events.GenerateBasicRoomInfo(deviceInfo.RoomID)
 
+	go h.reportWebSocketCount()
+
 	for {
 		select {
 		case client := <-h.register:
@@ -205,5 +208,31 @@ func (h *hub) run() {
 				}
 			}
 		}
+	}
+}
+
+func (h *hub) reportWebSocketCount() {
+	id := localsystem.MustSystemID()
+	// id := "ITB-1010-CP1"
+	deviceInfo := events.GenerateBasicDeviceInfo(id)
+	roomInfo := events.GenerateBasicRoomInfo(deviceInfo.RoomID)
+
+	for {
+		logger.L.Debugf("sending websocket count of: %d", len(h.clients))
+		countEvent := events.Event{
+			GeneratingSystem: id,
+			Timestamp:        time.Now(),
+			EventTags:        []string{events.DetailState},
+			TargetDevice:     deviceInfo,
+			AffectedRoom:     roomInfo,
+			Key:              "websocket-count",
+			Value:            fmt.Sprintf("%v", len(h.clients)),
+		}
+
+		if h.messenger != nil {
+			h.messenger.SendEvent(countEvent)
+		}
+
+		time.Sleep(3 * time.Minute)
 	}
 }
