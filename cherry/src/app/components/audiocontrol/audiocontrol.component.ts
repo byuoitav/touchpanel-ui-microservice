@@ -156,7 +156,7 @@ export class AudiocontrolComponent implements AfterViewInit, OnChanges {
     }
 
     // scroll to the bottom of the page
-    const idx = 5 * this.curPage;
+    const idx = 4 * this.curPage;
     document.querySelector("#device" + idx).scrollIntoView({ behavior: "smooth", block: "nearest", inline: "start" });
   }
 
@@ -166,7 +166,7 @@ export class AudiocontrolComponent implements AfterViewInit, OnChanges {
     }
 
     // scroll to the top of the page
-    const idx = 5 * this.curPage;
+    const idx = 4 * this.curPage;
     document.querySelector("#device" + idx).scrollIntoView({ behavior: "smooth", block: "nearest", inline: "start" });
   }
 
