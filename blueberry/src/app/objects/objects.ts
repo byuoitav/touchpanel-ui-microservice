@@ -135,6 +135,7 @@ export class AudioConfig {
 export class InputConfiguration {
   name: string;
   icon: string;
+  displayname: string;
 }
 
 export class DeviceStatus {
