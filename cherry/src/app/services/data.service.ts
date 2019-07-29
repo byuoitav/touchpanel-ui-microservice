@@ -69,25 +69,24 @@ export class DataService {
 
   private createInputs() {
     // create real inputs
-    APIService.room.config.devices
-      .filter(device => device.hasRole("VideoIn") || device.hasRole("AudioIn"))
-      .forEach(input => {
-        const inputConfiguration = APIService.room.uiconfig.inputConfiguration.find(
-          i => i.name === input.name
-        );
-        if (inputConfiguration != null) {
-          const i = new Input(
-            input.name,
-            input.display_name,
-            inputConfiguration.icon
-          );
-          this.inputs.push(i);
-        } else {
-          console.warn("No input configuration found for:", input.name);
-        }
-      });
+    for (const config of APIService.room.uiconfig.inputConfiguration) {
+      const name = config.name.split("|")[0];
+      const input = APIService.room.config.devices.find(i => i.name === name);
 
-    console.info("Inputs", this.inputs);
+      if (input && input.hasRole("VideoIn")) {
+        const dispname = config.displayname
+          ? config.displayname
+          : input.display_name;
+
+        this.inputs.push(new Input(config.name, dispname, config.icon));
+      } else {
+        console.warn(
+          "no input '" + name + "' found with role 'VideoIn', skipping it"
+        );
+      }
+    }
+
+    console.info("inputs", this.inputs);
   }
 
   private createOutputs() {
