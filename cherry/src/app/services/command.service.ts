@@ -18,7 +18,7 @@ import { Preset, AudioConfig, ConfigCommand } from "../objects/objects";
 import "rxjs/add/operator/map";
 import "rxjs/add/operator/timeout";
 import { deserialize } from "serializer.ts/Serializer";
-import { ErrorDialog } from "../dialogs/error.dialog";
+import { ErrorDialogComponent } from "../dialogs/error/error.component";
 
 const TIMEOUT = 12 * 1000;
 
@@ -72,7 +72,7 @@ export class CommandService {
       err => {
         Display.setPower(p, displays);
         ret.emit(false);
-        this.dialog.open(ErrorDialog, {
+        this.dialog.open(ErrorDialogComponent, {
           data: "Failed to power on the system."
         });
       }
@@ -162,6 +162,9 @@ export class CommandService {
       err => {
         Display.setBlank(prev, displays);
         ret.emit(false);
+        this.dialog.open(ErrorDialogComponent, {
+          data: "Failed to blank displays."
+        });
       }
     );
 
@@ -194,6 +197,9 @@ export class CommandService {
       err => {
         AudioDevice.setVolume(prev, audioDevices);
         ret.emit(false);
+        this.dialog.open(ErrorDialogComponent, {
+          data: "Failed to set the volume."
+        });
       }
     );
 
@@ -224,6 +230,9 @@ export class CommandService {
       err => {
         AudioDevice.setMute(prev, audioDevices);
         ret.emit(false);
+        this.dialog.open(ErrorDialogComponent, {
+          data: "Failed to mute the audio devices."
+        });
       }
     );
 
@@ -307,6 +316,9 @@ export class CommandService {
       err => {
         preset.masterVolume = prev;
         ret.emit(false);
+        this.dialog.open(ErrorDialogComponent, {
+          data: "Failed to set the master volume."
+        });
       }
     );
 
@@ -352,7 +364,7 @@ export class CommandService {
       err => {
         preset.masterMute = prev;
         ret.emit(false);
-        this.dialog.open(ErrorDialog, {
+        this.dialog.open(ErrorDialogComponent, {
           data: "Failed to mute master volume."
         });
       }
@@ -401,6 +413,9 @@ export class CommandService {
       err => {
         a.mixlevel = prev;
         ret.emit(false);
+        this.dialog.open(ErrorDialogComponent, {
+          data: "Failed to set the mix level."
+        });
       }
     );
 
@@ -446,6 +461,9 @@ export class CommandService {
       err => {
         a.mixmute = prev;
         ret.emit(false);
+        this.dialog.open(ErrorDialogComponent, {
+          data: "Failed to mute the mix."
+        });
       }
     );
 
@@ -498,8 +516,19 @@ export class CommandService {
     }
 
     this.executeRequests(requests, 1, 20 * 1000).subscribe(success => {
+      if (!success) {
+        this.dialog.open(ErrorDialogComponent, {
+          data: {
+            headerMessage: "System offline",
+            bodyMessage: "There is a problem and this room's system is offline. Technicians have been notified. Call our helpdesk at 801-422-7671 for more information.",
+            errorMessage: "Technical information: It done broke, I tell you what."
+          }
+        });
+      }
+      
       ret.emit(success);
     });
+
     return ret;
   }
 
@@ -568,6 +597,7 @@ export class CommandService {
 
           if (maxTries === 0) {
             ret.emit(false);
+            console.error("request (" + req + ") failed. error:", err);
             return;
           }
 

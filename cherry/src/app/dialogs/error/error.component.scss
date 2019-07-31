@@ -1,0 +1,36 @@
+.column {
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: space-evenly;
+    align-items: center;
+}
+
+.centered {
+    display: flex;
+    flex-flow: row wrap;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+    margin-top: 3vh;
+    margin-bottom: 3vh;
+}
+
+.divider {
+    margin-top: 5vh;
+    margin-bottom: 3vh;
+}
+
+.message {
+    text-align: center;
+    font-size: 16pt;
+}
+
+.title {
+    font-size: 30pt;
+}
+
+.ok-button {
+    transform: scale(1.5);
+    margin-top: 2vh;
+    margin-bottom: 4vh;
+}

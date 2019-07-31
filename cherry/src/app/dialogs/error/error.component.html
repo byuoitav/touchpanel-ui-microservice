@@ -1,0 +1,16 @@
+<div class="centered" mat-dialog-title>
+    <span class="mat-h1 title">{{data?.headerMessage}}</span>
+</div>
+
+<div class="centered" mat-dialog-content>
+    <span class="mat-h3 message">{{data?.bodyMessage}}</span>
+</div>
+
+<div class="centered">
+    <button mat-flat-button color="accent" class="ok-button" (click)="close()">OK</button>
+</div>
+
+<mat-divider class="divider"></mat-divider>
+<div class="centered" mat-dialog-actions>
+    <span class="mat-h5">{{data?.errorMessage}}</span>
+</div>
