@@ -24,6 +24,8 @@ const TIMEOUT = 12 * 1000;
 
 @Injectable()
 export class CommandService {
+  public commandInProgress = false;
+
   private options: RequestOptions;
 
   constructor(
@@ -129,10 +131,17 @@ export class CommandService {
     console.log("preset:", preset);
     console.log("executing requests:", requests);
 
-    this.executeRequests(requests, 1, 14 * 1000).subscribe(success => {
+    this.executeRequests(requests, 1, 6 * 1000).subscribe(success => {
       if (!success) {
         Display.setInput(prev, displays);
         Display.setBlank(prevBlank, displays);
+        this.dialog.open(ErrorDialogComponent, {
+          data: {
+            headerMessage: "Unable to change input",
+            bodyMessage: "There is a problem and the input cannot be changed. Technicians have been notified. Please feel free to continue to use the functioning parts of the system. Call our helpdesk at 801-422-7671 for more information.",
+            errorMessage: "Technical information: It done broke, I tell you what."
+          }
+        });
       }
 
       ret.emit(success);
@@ -155,6 +164,7 @@ export class CommandService {
       });
     }
 
+    this.commandInProgress = true;
     this.put(body).subscribe(
       data => {
         ret.emit(true);
@@ -162,8 +172,13 @@ export class CommandService {
       err => {
         Display.setBlank(prev, displays);
         ret.emit(false);
+        this.commandInProgress = false;
         this.dialog.open(ErrorDialogComponent, {
-          data: "Failed to blank displays."
+          data: {
+            headerMessage: "Unable to blank display",
+            bodyMessage: "There is a problem and the display cannot be blanked. Technicians have been notified. Please feel free to continue to use the functioning parts of the system. Call our helpdesk at 801-422-7671 for more information.",
+            errorMessage: "Technical information: It done broke, I tell you what. " + err
+          }
         });
       }
     );
@@ -190,6 +205,7 @@ export class CommandService {
 
     console.log("volume body", body);
 
+    this.commandInProgress = true;
     this.put(body).subscribe(
       data => {
         ret.emit(true);
@@ -197,8 +213,13 @@ export class CommandService {
       err => {
         AudioDevice.setVolume(prev, audioDevices);
         ret.emit(false);
+        this.commandInProgress = false;
         this.dialog.open(ErrorDialogComponent, {
-          data: "Failed to set the volume."
+          data: {
+            headerMessage: "Unable to set the volume",
+            bodyMessage: "There is a problem and the volume cannot be set. Technicians have been notified. Please feel free to continue to use the functioning parts of the system. Call our helpdesk at 801-422-7671 for more information.",
+            errorMessage: "Technical information: It done broke, I tell you what. " + err
+          }
         });
       }
     );
@@ -223,6 +244,7 @@ export class CommandService {
       });
     }
 
+    this.commandInProgress = true;
     this.put(body).subscribe(
       data => {
         ret.emit(true);
@@ -230,8 +252,13 @@ export class CommandService {
       err => {
         AudioDevice.setMute(prev, audioDevices);
         ret.emit(false);
+        this.commandInProgress = false;
         this.dialog.open(ErrorDialogComponent, {
-          data: "Failed to mute the audio devices."
+          data: {
+            headerMessage: "Unable to mute the device(s)",
+            bodyMessage: "There is a problem and the device(s) could not be muted. Technicians have been notified. Please feel free to continue to use the functioning parts of the system. Call our helpdesk at 801-422-7671 for more information.",
+            errorMessage: "Technical information: It done broke, I tell you what. " + err
+          }
         });
       }
     );
@@ -293,6 +320,7 @@ export class CommandService {
 
     console.log("volume body", body);
 
+    this.commandInProgress = true;
     this.put(body).subscribe(
       data => {
         // post master volume update
@@ -311,13 +339,19 @@ export class CommandService {
         event.Data = preset.name;
 
         this.api.sendEvent(event);
+        this.commandInProgress = false;
         ret.emit(true);
       },
       err => {
         preset.masterVolume = prev;
         ret.emit(false);
+        this.commandInProgress = false;
         this.dialog.open(ErrorDialogComponent, {
-          data: "Failed to set the master volume."
+          data: {
+            headerMessage: "Unable to set the volume",
+            bodyMessage: "There is a problem and the volume cannot be set. Technicians have been notified. Please feel free to continue to use the functioning parts of the system. Call our helpdesk at 801-422-7671 for more information.",
+            errorMessage: "Technical information: It done broke, I tell you what. " + err
+          }
         });
       }
     );
@@ -342,6 +376,7 @@ export class CommandService {
 
     console.log("master mute body", body);
 
+    this.commandInProgress = true;
     this.put(body).subscribe(
       data => {
         const event = new Event();
@@ -359,13 +394,19 @@ export class CommandService {
         event.Data = preset.name;
 
         this.api.sendEvent(event);
+        this.commandInProgress = false;
         ret.emit(true);
       },
       err => {
         preset.masterMute = prev;
         ret.emit(false);
+        this.commandInProgress = false;
         this.dialog.open(ErrorDialogComponent, {
-          data: "Failed to mute master volume."
+          data: {
+            headerMessage: "Unable to mute the system",
+            bodyMessage: "There is a problem and the system could not be muted. Technicians have been notified. Please feel free to continue to use the functioning parts of the system. Call our helpdesk at 801-422-7671 for more information.",
+            errorMessage: "Technical information: It done broke, I tell you what. " + err
+          }
         });
       }
     );
@@ -392,6 +433,7 @@ export class CommandService {
 
     console.log("volume body", body);
 
+    this.commandInProgress = true;
     this.put(body).subscribe(
       data => {
         const event = new Event();
@@ -408,13 +450,19 @@ export class CommandService {
         event.Value = String(v);
 
         this.api.sendEvent(event);
+        this.commandInProgress = false;
         ret.emit(true);
       },
       err => {
         a.mixlevel = prev;
         ret.emit(false);
+        this.commandInProgress = false;
         this.dialog.open(ErrorDialogComponent, {
-          data: "Failed to set the mix level."
+          data: {
+            headerMessage: "Unable to set the mix level",
+            bodyMessage: "There is a problem and the mix level cannot be set. Technicians have been notified. Please feel free to continue to use the functioning parts of the system. Call our helpdesk at 801-422-7671 for more information.",
+            errorMessage: "Technical information: It done broke, I tell you what. " + err
+          }
         });
       }
     );
@@ -442,6 +490,7 @@ export class CommandService {
 
     console.log("mix mute body:", body);
 
+    this.commandInProgress = true;
     this.put(body).subscribe(
       data => {
         const event = new Event();
@@ -456,13 +505,19 @@ export class CommandService {
 
         this.api.sendEvent(event);
 
+        this.commandInProgress = false;
         ret.emit(true);
       },
       err => {
         a.mixmute = prev;
         ret.emit(false);
+        this.commandInProgress = false;
         this.dialog.open(ErrorDialogComponent, {
-          data: "Failed to mute the mix."
+          data: {
+            headerMessage: "Unable to mute the mix level",
+            bodyMessage: "There is a problem and the mix level cannot be muted. Technicians have been notified. Please feel free to continue to use the functioning parts of the system. Call our helpdesk at 801-422-7671 for more information.",
+            errorMessage: "Technical information: It done broke, I tell you what. " + err
+          }
         });
       }
     );
@@ -515,7 +570,7 @@ export class CommandService {
       }
     }
 
-    this.executeRequests(requests, 1, 20 * 1000).subscribe(success => {
+    this.executeRequests(requests, 1, 10 * 1000).subscribe(success => {
       if (!success) {
         this.dialog.open(ErrorDialogComponent, {
           data: {
@@ -544,6 +599,7 @@ export class CommandService {
     }
 
     console.info("executing requests: ", requests);
+    this.commandInProgress = true;
     const numRequests = requests.length;
     const mapToStatus: Map<Request, boolean> = new Map();
 
@@ -564,6 +620,7 @@ export class CommandService {
             }
           });
 
+          this.commandInProgress = false;
           ret.emit(allsuccessful);
           return;
         }
@@ -652,7 +709,18 @@ export class CommandService {
       }
     }
 
-    this.executeRequests(requests, 1, 20 * 1000).subscribe(success => {
+    this.commandInProgress = true;
+    this.executeRequests(requests, 1, 10 * 1000).subscribe(success => {
+      if (!success) {
+        this.dialog.open(ErrorDialogComponent, {
+          data: {
+            headerMessage: "System offline",
+            bodyMessage: "There is a problem and this room's system is offline. Technicians have been notified. Call our helpdesk at 801-422-7671 for more information.",
+            errorMessage: "Technical information: It done broke, I tell you what."
+          }
+        });
+      }
+      this.commandInProgress = false;
       ret.emit(success);
     });
 
@@ -664,11 +732,21 @@ export class CommandService {
 
     const body = { power: "standby" };
 
+    this.commandInProgress = true;
     this.put(body).subscribe(
       data => {
+        this.commandInProgress = false;
         ret.emit(true);
       },
       err => {
+        this.dialog.open(ErrorDialogComponent, {
+          data: {
+            headerMessage: "System offline",
+            bodyMessage: "There is a problem and this room's system is offline. Technicians have been notified. Call our helpdesk at 801-422-7671 for more information.",
+            errorMessage: "Technical information: It done broke, I tell you what. " + err
+          }
+        });
+        this.commandInProgress = false;
         ret.emit(false);
       }
     );

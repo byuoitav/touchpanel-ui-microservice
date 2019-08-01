@@ -1,3 +1,4 @@
+<mat-progress-bar *ngIf="command.commandInProgress" [mode]="'indeterminate'" color="primary"></mat-progress-bar>
 <mat-tab-group #tabs color="accent" class="mat-tab-label-darker" (selectedTabChange)="
     command.buttonPress('changed audio control tab to ' + $event.tab.textLabel)
   ">
@@ -245,3 +246,4 @@
         </mat-tab>
     </ng-container>
 </mat-tab-group>
+<mat-progress-bar *ngIf="command.commandInProgress" [mode]="'indeterminate'" color="primary"></mat-progress-bar>
