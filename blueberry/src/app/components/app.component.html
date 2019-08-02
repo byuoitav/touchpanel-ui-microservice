@@ -1,36 +1,29 @@
 <div class="basediv">
-  <management [enabled]="showManagement()"></management>
+    <management [enabled]="showManagement()"></management>
 
-  <ng-container>
-    <div
-      *ngIf="home?.wheel?.getPower() !== 'on'"
-      class="lock"
-      (click)="unlock(); command.buttonPress('power on')"
-      (press)="unlock(); command.buttonPress('long press power on')"
-    >
-      <ng-container *ngIf="!unlocking; else poweringOn">
-        <!-- byu logo -->
-        <object type="image/svg+xml" data="db/logo.svg" class="logo"> </object>
+    <ng-container>
+        <div *ngIf="home?.wheel?.getPower() !== 'on'" class="lock" (click)="unlock(); command.buttonPress('power on')" (press)="unlock(); command.buttonPress('long press power on')">
+            <ng-container *ngIf="!unlocking; else poweringOn">
+                <!-- byu logo -->
+                <object type="image/svg+xml" data="db/logo.svg" class="logo"> </object>
 
-        <!-- unlock text -->
-        <span class="text unlock"></span>
-      </ng-container>
+                <!-- unlock text -->
+                <span class="text unlock"></span>
+            </ng-container>
 
-      <ng-template #poweringOn>
-        <div class="logo"><mat-spinner color="primary"></mat-spinner></div>
-        <span class="text smaller">powering on, please wait...</span>
-      </ng-template>
-    </div>
-  </ng-container>
+            <ng-template #poweringOn>
+                <div class="logo">
+                    <mat-spinner color="primary"></mat-spinner>
+                </div>
+                <span class="text smaller">powering on, please wait...</span>
+            </ng-template>
+        </div>
+    </ng-container>
 
-  <home></home>
+    <home></home>
+    <mat-progress-bar *ngIf="command.commandInProgress" [mode]="'indeterminate'" color="primary" class="mpb"></mat-progress-bar>
 </div>
 
-<div
-  *ngIf="socket.screenoff"
-  id="screenoff"
-  (click)="socket.screenoff = false"
-  (press)="socket.screenoff = false"
->
-  press anywhere to start
+<div *ngIf="socket.screenoff" id="screenoff" (click)="socket.screenoff = false" (press)="socket.screenoff = false">
+    press anywhere to start
 </div>
