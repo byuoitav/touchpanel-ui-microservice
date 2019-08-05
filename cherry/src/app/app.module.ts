@@ -29,6 +29,7 @@ import { CommandService } from "./services/command.service";
 import { DataService } from "./services/data.service";
 import { GraphService } from "./services/graph.service";
 import { SocketService } from "./services/socket.service";
+import { ErrorService } from "./services/error.service";
 import { ManagementComponent } from "./components/management/management.component";
 
 @NgModule({
@@ -62,7 +63,8 @@ import { ManagementComponent } from "./components/management/management.componen
     CommandService,
     DataService,
     GraphService,
-    SocketService
+    SocketService,
+    ErrorService
   ],
   entryComponents: [HelpDialog, ConfirmHelpDialog, ViaDialog, ErrorDialogComponent],
   bootstrap: [AppComponent]
