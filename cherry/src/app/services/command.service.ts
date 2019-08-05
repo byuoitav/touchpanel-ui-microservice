@@ -19,6 +19,7 @@ import "rxjs/add/operator/map";
 import "rxjs/add/operator/timeout";
 import { deserialize } from "serializer.ts/Serializer";
 import { ErrorDialogComponent } from "../dialogs/error/error.component";
+import { ErrorService, SwitchInput, BlankDisplay, SetVolume, SetMute, MasterMute, MixLevel, MixMute, PowerOn, PowerOff } from "./error.service";
 
 const TIMEOUT = 12 * 1000;
 
@@ -32,7 +33,8 @@ export class CommandService {
     private http: Http,
     private data: DataService,
     public api: APIService,
-    public dialog: MatDialog
+    public dialog: MatDialog,
+    private es: ErrorService
   ) {
     const headers = new Headers();
     headers.append("content-type", "application/json");
@@ -135,13 +137,7 @@ export class CommandService {
       if (!success) {
         Display.setInput(prev, displays);
         Display.setBlank(prevBlank, displays);
-        this.dialog.open(ErrorDialogComponent, {
-          data: {
-            headerMessage: "Unable to change input",
-            bodyMessage: "There is a problem and the input cannot be changed. Technicians have been notified. Please feel free to continue to use the functioning parts of the system. Call our helpdesk at 801-422-7671 for more information.",
-            errorMessage: "Technical information: It done broke, I tell you what."
-          }
-        });
+        this.es.show(SwitchInput, "It done broke, I tell ya what.");
       }
 
       ret.emit(success);
@@ -173,13 +169,7 @@ export class CommandService {
         Display.setBlank(prev, displays);
         ret.emit(false);
         this.commandInProgress = false;
-        this.dialog.open(ErrorDialogComponent, {
-          data: {
-            headerMessage: "Unable to blank display",
-            bodyMessage: "There is a problem and the display cannot be blanked. Technicians have been notified. Please feel free to continue to use the functioning parts of the system. Call our helpdesk at 801-422-7671 for more information.",
-            errorMessage: "Technical information: It done broke, I tell you what. " + err
-          }
-        });
+        this.es.show(BlankDisplay, "It done broke, I tell ya what.");
       }
     );
 
@@ -214,13 +204,7 @@ export class CommandService {
         AudioDevice.setVolume(prev, audioDevices);
         ret.emit(false);
         this.commandInProgress = false;
-        this.dialog.open(ErrorDialogComponent, {
-          data: {
-            headerMessage: "Unable to set the volume",
-            bodyMessage: "There is a problem and the volume cannot be set. Technicians have been notified. Please feel free to continue to use the functioning parts of the system. Call our helpdesk at 801-422-7671 for more information.",
-            errorMessage: "Technical information: It done broke, I tell you what. " + err
-          }
-        });
+        this.es.show(SetVolume, "It done broke, I tell ya what.");
       }
     );
 
@@ -253,13 +237,7 @@ export class CommandService {
         AudioDevice.setMute(prev, audioDevices);
         ret.emit(false);
         this.commandInProgress = false;
-        this.dialog.open(ErrorDialogComponent, {
-          data: {
-            headerMessage: "Unable to mute the device(s)",
-            bodyMessage: "There is a problem and the device(s) could not be muted. Technicians have been notified. Please feel free to continue to use the functioning parts of the system. Call our helpdesk at 801-422-7671 for more information.",
-            errorMessage: "Technical information: It done broke, I tell you what. " + err
-          }
-        });
+        this.es.show(SetMute, "It done broke, I tell ya what.");
       }
     );
 
@@ -346,13 +324,7 @@ export class CommandService {
         preset.masterVolume = prev;
         ret.emit(false);
         this.commandInProgress = false;
-        this.dialog.open(ErrorDialogComponent, {
-          data: {
-            headerMessage: "Unable to set the volume",
-            bodyMessage: "There is a problem and the volume cannot be set. Technicians have been notified. Please feel free to continue to use the functioning parts of the system. Call our helpdesk at 801-422-7671 for more information.",
-            errorMessage: "Technical information: It done broke, I tell you what. " + err
-          }
-        });
+        this.es.show(SetVolume, "It done broke, I tell ya what.");
       }
     );
 
@@ -401,13 +373,7 @@ export class CommandService {
         preset.masterMute = prev;
         ret.emit(false);
         this.commandInProgress = false;
-        this.dialog.open(ErrorDialogComponent, {
-          data: {
-            headerMessage: "Unable to mute the system",
-            bodyMessage: "There is a problem and the system could not be muted. Technicians have been notified. Please feel free to continue to use the functioning parts of the system. Call our helpdesk at 801-422-7671 for more information.",
-            errorMessage: "Technical information: It done broke, I tell you what. " + err
-          }
-        });
+        this.es.show(MasterMute, "It done broke, I tell ya what.");
       }
     );
 
@@ -457,13 +423,7 @@ export class CommandService {
         a.mixlevel = prev;
         ret.emit(false);
         this.commandInProgress = false;
-        this.dialog.open(ErrorDialogComponent, {
-          data: {
-            headerMessage: "Unable to set the mix level",
-            bodyMessage: "There is a problem and the mix level cannot be set. Technicians have been notified. Please feel free to continue to use the functioning parts of the system. Call our helpdesk at 801-422-7671 for more information.",
-            errorMessage: "Technical information: It done broke, I tell you what. " + err
-          }
-        });
+        this.es.show(MixLevel, "It done broke, I tell ya what.");
       }
     );
 
@@ -512,13 +472,7 @@ export class CommandService {
         a.mixmute = prev;
         ret.emit(false);
         this.commandInProgress = false;
-        this.dialog.open(ErrorDialogComponent, {
-          data: {
-            headerMessage: "Unable to mute the mix level",
-            bodyMessage: "There is a problem and the mix level cannot be muted. Technicians have been notified. Please feel free to continue to use the functioning parts of the system. Call our helpdesk at 801-422-7671 for more information.",
-            errorMessage: "Technical information: It done broke, I tell you what. " + err
-          }
-        });
+        this.es.show(MixMute, "It done broke, I tell ya what.");
       }
     );
 
@@ -572,13 +526,7 @@ export class CommandService {
 
     this.executeRequests(requests, 1, 10 * 1000).subscribe(success => {
       if (!success) {
-        this.dialog.open(ErrorDialogComponent, {
-          data: {
-            headerMessage: "System offline",
-            bodyMessage: "There is a problem and this room's system is offline. Technicians have been notified. Call our helpdesk at 801-422-7671 for more information.",
-            errorMessage: "Technical information: It done broke, I tell you what."
-          }
-        });
+        this.es.show(PowerOn, "It done broke, I tell ya what.");
       }
       
       ret.emit(success);
@@ -712,13 +660,7 @@ export class CommandService {
     this.commandInProgress = true;
     this.executeRequests(requests, 1, 10 * 1000).subscribe(success => {
       if (!success) {
-        this.dialog.open(ErrorDialogComponent, {
-          data: {
-            headerMessage: "System offline",
-            bodyMessage: "There is a problem and this room's system is offline. Technicians have been notified. Call our helpdesk at 801-422-7671 for more information.",
-            errorMessage: "Technical information: It done broke, I tell you what."
-          }
-        });
+        this.es.show(PowerOff, "It done broke, I tell ya what.");
       }
       this.commandInProgress = false;
       ret.emit(success);
@@ -739,13 +681,7 @@ export class CommandService {
         ret.emit(true);
       },
       err => {
-        this.dialog.open(ErrorDialogComponent, {
-          data: {
-            headerMessage: "System offline",
-            bodyMessage: "There is a problem and this room's system is offline. Technicians have been notified. Call our helpdesk at 801-422-7671 for more information.",
-            errorMessage: "Technical information: It done broke, I tell you what. " + err
-          }
-        });
+        this.es.show(PowerOff, "It done broke, I tell ya what.");
         this.commandInProgress = false;
         ret.emit(false);
       }

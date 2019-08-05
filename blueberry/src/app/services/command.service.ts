@@ -19,7 +19,7 @@ import { WheelComponent } from "../components/wheel.component";
 import "rxjs/add/operator/map";
 import "rxjs/add/operator/timeout";
 import { deserialize } from "serializer.ts/Serializer";
-import { ErrorService, CommandType } from "./error.service";
+import { ErrorService, PowerOn, SwitchInput, BlankDisplay, SetVolume, SetMute, PowerOff, Share, Unshare, Mirror } from "./error.service";
 
 const TIMEOUT = 6 * 1000;
 
@@ -167,7 +167,7 @@ export class CommandService {
         Display.setPower(p, displays);
         ret.emit(false);
         this.commandInProgress = false;
-        this.es.show(CommandType.PowerOn, err);
+        this.es.show(PowerOn, err);
       }
     );
 
@@ -200,7 +200,7 @@ export class CommandService {
         Display.setInput(prev, displays);
         ret.emit(false);
         this.commandInProgress = false;
-        this.es.show(CommandType.SwitchInput, err);
+        this.es.show(SwitchInput, err);
       }
     );
 
@@ -231,7 +231,7 @@ export class CommandService {
         Display.setBlank(prev, displays);
         ret.emit(false);
         this.commandInProgress = false;
-        this.es.show(CommandType.BlankDisplay, err);
+        this.es.show(BlankDisplay, err);
       }
     );
 
@@ -265,7 +265,7 @@ export class CommandService {
         AudioDevice.setVolume(prev, devices);
         ret.emit(false);
         this.commandInProgress = false;
-        this.es.show(CommandType.SetVolume, err);
+        this.es.show(SetVolume, err);
       }
     );
 
@@ -297,7 +297,7 @@ export class CommandService {
         AudioDevice.setMute(prev, devices);
         ret.emit(false);
         this.commandInProgress = false;
-        this.es.show(CommandType.SetMute, err);
+        this.es.show(SetMute, err);
       }
     );
 
@@ -401,7 +401,7 @@ export class CommandService {
       err => {
         ret.emit(false);
         this.commandInProgress = false;
-        this.es.show(CommandType.PowerOff, err);
+        this.es.show(PowerOff, err);
       }
     );
 
@@ -479,7 +479,7 @@ export class CommandService {
       err => {
         ret.emit(false);
         this.commandInProgress = false;
-        this.es.show(CommandType.Share, err);
+        this.es.show(Share, err);
       }
     );
 
@@ -538,7 +538,7 @@ export class CommandService {
       err => {
         ret.emit(false);
         this.commandInProgress = false;
-        this.es.show(CommandType.Unshare, err);
+        this.es.show(Unshare, err);
       }
     );
 
@@ -573,7 +573,7 @@ export class CommandService {
         ret.emit(false);
         console.error(err);
         this.commandInProgress = false;
-        this.es.show(CommandType.Mirror, err);
+        this.es.show(Mirror, err);
       }
     );
 

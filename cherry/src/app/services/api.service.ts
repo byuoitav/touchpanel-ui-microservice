@@ -258,6 +258,13 @@ export class APIService {
       .map(res => deserialize<RoomStatus>(RoomStatus, res));
   }
 
+  public getErrorMessageConfig(): Observable<Object> {
+    console.log("trying to get error messages");
+    return this.http
+      .get(APIService.localurl + ":8888/cherry/db/error-messages.json")
+      .map(response => response.json());
+  }
+
   public sendEvent(event: Event) {
     const data = this.jsonConvert.serializeObject(event);
     console.log("sending event", data);
