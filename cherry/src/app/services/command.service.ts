@@ -528,7 +528,7 @@ export class CommandService {
       if (!success) {
         this.es.show(PowerOn, "It done broke, I tell ya what.");
       }
-      
+
       ret.emit(success);
     });
 
@@ -537,9 +537,8 @@ export class CommandService {
 
   private executeRequests(
     requests: Request[],
-    maxTries: number,
     timeout: number
-  ): EventEmitter<boolean> {
+  ): EventEmitter<Map<Request, Response> {
     const ret: EventEmitter<boolean> = new EventEmitter<boolean>();
     if (requests.length < 1) {
       setTimeout(() => ret.emit(false), 250);
@@ -548,43 +547,33 @@ export class CommandService {
 
     console.info("executing requests: ", requests);
     this.commandInProgress = true;
-    const numRequests = requests.length;
-    const mapToStatus: Map<Request, boolean> = new Map();
+    const mapToResp: Map<Request, Response> = new Map();
 
     for (const req of requests) {
-      this.executeRequest(req, maxTries, timeout).subscribe(success => {
-        mapToStatus.set(req, success);
+      this.executeRequest(req, maxTries, timeout).subscribe(resp => {
+        mapToResp.set(req, resp);
 
-        if (mapToStatus.size === numRequests) {
+        if (mapToResp.size === requests.length) {
           console.info(
             "finished all requests, requests => success:",
             mapToStatus
           );
 
-          let allsuccessful = true;
-          mapToStatus.forEach((v, k) => {
-            if (!v) {
-              allsuccessful = false;
-            }
-          });
-
           this.commandInProgress = false;
-          ret.emit(allsuccessful);
-          return;
+
+          ret.emit(mapToResp);
         }
       });
     }
 
     console.log("waiting for", requests.length, "responses...");
-
     return ret;
   }
 
   private executeRequest(
     req: Request,
-    maxTries: number,
     timeout: number
-  ): EventEmitter<boolean> {
+  ): EventEmitter<Response> {
     const ret: EventEmitter<boolean> = new EventEmitter<boolean>();
     console.log("executing request", req);
 
@@ -593,28 +582,10 @@ export class CommandService {
       .timeout(timeout)
       .subscribe(
         data => {
-          console.log("successfully executed request", req);
-          ret.emit(true);
-          return;
+          ret.emit(data);
         },
         err => {
-          maxTries--;
-
-          if (maxTries === 0) {
-            ret.emit(false);
-            console.error("request (" + req + ") failed. error:", err);
-            return;
-          }
-
-          // retry request
-          console.error(
-            "request (" + req + ") failed. error:",
-            err,
-            ". There are",
-            maxTries,
-            " remaining, retrying in 3 seconds..."
-          );
-          setTimeout(() => this.executeRequest(req, maxTries, timeout), 3000);
+          ret.emit(err);
         }
       );
 
