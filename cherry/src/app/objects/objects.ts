@@ -154,6 +154,7 @@ export class AudioConfig {
 export class IOConfiguration {
   name: string;
   icon: string;
+  displayname: string;
 }
 
 export class DeviceStatus {
