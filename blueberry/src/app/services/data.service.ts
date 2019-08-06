@@ -50,38 +50,31 @@ export class DataService {
   }
 
   private createInputs() {
-    APIService.room.config.devices
-      .filter(device => device.hasRole("VideoIn") || device.hasRole("AudioIn"))
-      .forEach(input => {
-        const inputConfiguration = APIService.room.uiconfig.inputConfiguration.find(
-          i => i.name === input.name
+    for (const config of APIService.room.uiconfig.inputConfiguration) {
+      const name = config.name.split("|")[0];
+      const input = APIService.room.config.devices.find(i => i.name === name);
+
+      if (input && input.hasRole("VideoIn")) {
+        const reachability = APIService.room.config.input_reachability[name];
+
+        if (!reachability) {
+          console.warn("no displays are reachable from input", name);
+          continue;
+        }
+
+        const dispname = config.displayname
+          ? config.displayname
+          : input.display_name;
+
+        this.inputs.push(
+          new Input(config.name, dispname, config.icon, reachability)
         );
-
-        // get input reachability graph
-        const reachability =
-          APIService.room.config.input_reachability[input.name];
-
-        if (reachability == null) {
-          console.warn(
-            "no displays are reachable from input",
-            input.name + "."
-          );
-          return;
-        }
-
-        if (inputConfiguration != null) {
-          const i = new Input(
-            input.name,
-            input.display_name,
-            inputConfiguration.icon,
-            reachability
-          );
-
-          this.inputs.push(i);
-        } else {
-          console.warn("No input configuration found for:", input);
-        }
-      });
+      } else {
+        console.warn(
+          "no input '" + name + "' found with role 'VideoIn', skipping it"
+        );
+      }
+    }
 
     console.info("Inputs", this.inputs);
   }

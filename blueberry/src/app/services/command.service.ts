@@ -392,7 +392,7 @@ export class CommandService {
     const input = from.displays[0].input;
 
     // displays i'm sharing to
-    const displays: Display[] = from.displays;
+    const displays: Display[] = from.displays.slice();
     to.forEach(p => displays.push(...p.displays));
 
     const body = { displays: [], audioDevices: [] };
@@ -512,11 +512,11 @@ export class CommandService {
 
   public mirror(minion: Preset, master: Preset): EventEmitter<boolean> {
     const ret: EventEmitter<boolean> = new EventEmitter<boolean>();
-    const body = { displays: [], audioDevices: [] };
+    const body = { displays: [] };
 
     const power = Display.getPower(master.displays);
     const input = Display.getInput(master.displays);
-    const blanked = Display.getInput(master.displays);
+    const blanked = Display.getBlank(master.displays);
 
     for (const d of minion.displays) {
       body.displays.push({
@@ -527,12 +527,15 @@ export class CommandService {
       });
     }
 
+    console.log("mirror body", body);
+
     this.put(body).subscribe(
       data => {
         ret.emit(true);
       },
       err => {
         ret.emit(false);
+        console.error(err);
       }
     );
 

@@ -4,6 +4,10 @@
 
 <div mat-dialog-actions class="items secondary-theme">
   <button
+    *ngIf="
+      data?.preset?.independentAudioDevices?.length > 0 &&
+      !data?.audio?.isShowing()
+    "
     mat-raised-button
     color="primary"
     (click)="data?.audio?.show(data?.preset)"

@@ -58,7 +58,7 @@ export class PowerOffAllModalComponent implements OnInit {
               event.AffectedRoom = new BasicRoomInfo(
                 APIService.building + "-" + APIService.roomName
               );
-              event.TargetDevice = new BasicDeviceInfo(undefined);
+              event.TargetDevice = new BasicDeviceInfo(APIService.piHostname);
               event.Key = POWER_OFF_ALL;
               event.Value = " ";
 

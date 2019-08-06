@@ -177,9 +177,7 @@ export class AudioDevice extends Output {
   // return average of all volumes
   public static getVolume(audioDevices: AudioDevice[]): number {
     let volume = 0;
-
     audioDevices.forEach(a => (volume += a.volume));
-
     return volume / audioDevices.length;
   }
 

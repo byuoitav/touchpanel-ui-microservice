@@ -19,6 +19,7 @@ import { environment } from "./environments/environment";
       "Logging is disabled. To enable, call log.enable(), or reload this page with the query parameter of 'log' set to true."
     );
 
+    window.console.debug = function() {};
     window.console.log = function() {};
     window.console.info = function() {};
   }

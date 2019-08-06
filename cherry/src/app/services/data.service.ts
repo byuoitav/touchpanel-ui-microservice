@@ -69,25 +69,24 @@ export class DataService {
 
   private createInputs() {
     // create real inputs
-    APIService.room.config.devices
-      .filter(device => device.hasRole("VideoIn") || device.hasRole("AudioIn"))
-      .forEach(input => {
-        const inputConfiguration = APIService.room.uiconfig.inputConfiguration.find(
-          i => i.name === input.name
-        );
-        if (inputConfiguration != null) {
-          const i = new Input(
-            input.name,
-            input.display_name,
-            inputConfiguration.icon
-          );
-          this.inputs.push(i);
-        } else {
-          console.warn("No input configuration found for:", input.name);
-        }
-      });
+    for (const config of APIService.room.uiconfig.inputConfiguration) {
+      const name = config.name.split("|")[0];
+      const input = APIService.room.config.devices.find(i => i.name === name);
 
-    console.info("Inputs", this.inputs);
+      if (input && input.hasRole("VideoIn")) {
+        const dispname = config.displayname
+          ? config.displayname
+          : input.display_name;
+
+        this.inputs.push(new Input(config.name, dispname, config.icon));
+      } else {
+        console.warn(
+          "no input '" + name + "' found with role 'VideoIn', skipping it"
+        );
+      }
+    }
+
+    console.info("inputs", this.inputs);
   }
 
   private createOutputs() {
@@ -245,10 +244,15 @@ export class DataService {
         this.audioDevices
       );
       const audioTypes = new Map<string, AudioDevice[]>();
-      independentAudioDevices.forEach(a => {
-        audioTypes.set(a.type, audioTypes.get(a.type) || []);
-        audioTypes.get(a.type).push(a);
-      });
+      // independentAudioDevices.forEach(a => {
+      //   audioTypes.set(a.type, audioTypes.get(a.type) || []);
+      //   audioTypes.get(a.type).push(a);
+      // });
+
+      for (const [key, group] of Object.entries(preset.audioGroups)) {
+        const groupDevices = Device.filterDevices(group, this.audioDevices);
+        audioTypes.set(key, groupDevices);
+      }
 
       const p = new Preset(
         preset.name,
@@ -394,40 +398,28 @@ export class DataService {
               break;
             }
             case "master-volume": {
-              const presetToChange = this.presets.find(
-                p => {
-                  if (p.name === split[2]) {
-                    return true;
-                  } else {
-                    if (p.volumeMatches != null) {
-                      return p.volumeMatches.includes(split[2]);
-                    } else {
-                      return false;
-                    }
+              for (const p of this.presets) {
+                if (p.name === e.Data) {
+                  p.masterVolume = parseInt(e.Value, 10);
+                  p.masterMute = false;
+                }
+                if (p.volumeMatches != null) {
+                  if (p.volumeMatches.includes(e.Data)) {
+                    p.masterVolume = parseInt(e.Value, 10);
+                    p.masterMute = false;
                   }
                 }
-              );
-              if (presetToChange != null) {
-                presetToChange.masterVolume = parseInt(e.Value, 10);
               }
               break;
             }
             case "master-mute": {
-              const presetToChange = this.presets.find(
-                p => {
-                  if (p.name === split[2]) {
-                    return true;
-                  } else {
-                    if (p.volumeMatches != null) {
-                      return p.volumeMatches.includes(split[2]);
-                    } else {
-                      return false;
-                    }
-                  }
+              for (const p of this.presets) {
+                if (p.name === e.Data) {
+                  p.masterMute = e.Value.toLowerCase() === "true";
                 }
-              );
-              if (presetToChange != null) {
-                presetToChange.masterMute = e.Value.toLowerCase() === "true";
+                if (p.volumeMatches != null) {
+                  p.masterMute = e.Value.toLowerCase() === "true";
+                }
               }
               break;
             }

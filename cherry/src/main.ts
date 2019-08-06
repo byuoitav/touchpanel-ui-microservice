@@ -21,6 +21,7 @@ import { environment } from "./environments/environment";
 
     window.console.log = function() {};
     window.console.info = function() {};
+    window.console.debug = function() {};
   }
 };
 

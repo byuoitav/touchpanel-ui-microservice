@@ -64,12 +64,15 @@ export class DisplayComponent {
   }
 
   public setMasterMute(muted) {
-    if (muted) {
-      this.preset.beforeMuteLevel = this.preset.masterVolume;
-      this.command.setMasterVolume(0, this.preset);
-    } else {
-      this.command.setMasterVolume(this.preset.beforeMuteLevel, this.preset);
-    }
+    // if (muted) {
+    //   this.preset.beforeMuteLevel = this.preset.masterVolume;
+    //   // this.command.setMasterVolume(0, this.preset);
+    //   this.command.setMasterMute(muted, this.preset);
+    // } else {
+    //   // this.command.setMasterVolume(this.preset.beforeMuteLevel, this.preset);
+    //   this.command.setMasterMute(muted)
+    // }
+    this.command.setMasterMute(muted, this.preset);
   }
 
   public inputUsed(i: Input): boolean {

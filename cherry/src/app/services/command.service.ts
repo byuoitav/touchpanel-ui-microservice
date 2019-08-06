@@ -7,7 +7,7 @@ import {
   Request
 } from "@angular/http";
 import { Observable } from "rxjs/Rx";
-import { MatSliderChange } from "@angular/material";
+import { MatSliderChange, MatDialog } from "@angular/material";
 
 import { APIService } from "./api.service";
 import { DataService } from "./data.service";
@@ -28,7 +28,8 @@ export class CommandService {
   constructor(
     private http: Http,
     private data: DataService,
-    public api: APIService
+    public api: APIService,
+    public dialog: MatDialog
   ) {
     const headers = new Headers();
     headers.append("content-type", "application/json");
@@ -267,7 +268,6 @@ export class CommandService {
     const prev = preset.masterVolume;
     preset.masterVolume = v;
 
-    
     const body = { audioDevices: [] };
     for (const a of preset.audioDevices) {
       const vol = a.mixlevel * (v / 100);
@@ -295,6 +295,7 @@ export class CommandService {
         );
         event.Key = "master-volume";
         event.Value = String(v);
+        event.Data = preset.name;
 
         this.api.sendEvent(event);
         ret.emit(true);
@@ -318,15 +319,8 @@ export class CommandService {
     const body = { audioDevices: [] };
     for (const a of preset.audioDevices) {
       body.audioDevices.push({
-        a: a.name,
+        name: a.name,
         muted: a.mixmute || m
-      });
-    }
-
-    for (const a of preset.independentAudioDevices) {
-      body.audioDevices.push({
-        a: a.name,
-        muted: a.mixmute
       });
     }
 
@@ -346,6 +340,7 @@ export class CommandService {
         );
         event.Key = "master-mute";
         event.Value = String(m);
+        event.Data = preset.name;
 
         this.api.sendEvent(event);
         ret.emit(true);
@@ -471,6 +466,8 @@ export class CommandService {
         volume: 30
       });
     }
+
+    preset.masterMute = false;
 
     console.log("sending power on default body", body);
 
@@ -598,7 +595,8 @@ export class CommandService {
     for (const d of preset.displays) {
       body.displays.push({
         name: d.name,
-        power: "standby"
+        power: "standby",
+        input: preset.inputs[0].name
       });
     }
 
