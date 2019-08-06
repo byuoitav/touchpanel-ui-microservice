@@ -133,14 +133,19 @@ export class CommandService {
     console.log("preset:", preset);
     console.log("executing requests:", requests);
 
-    this.executeRequests(requests, 1, 6 * 1000).subscribe(success => {
-      if (!success) {
-        Display.setInput(prev, displays);
-        Display.setBlank(prevBlank, displays);
-        this.es.show(SwitchInput, "It done broke, I tell ya what.");
-      }
+    this.executeRequests(requests, 6 * 1000).subscribe(answer => {
+      const rrMap: Map<Request, Response> = answer as Map<Request, Response>;
+      rrMap.forEach((v, k) => {
+        if (!v.ok) {
+          Display.setInput(prev, displays);
+          Display.setBlank(prevBlank, displays);
+          this.es.show(SwitchInput, v);
+          ret.emit(false);
+          return ret;
+        }
+      });
 
-      ret.emit(success);
+      ret.emit(true);
     });
 
     return ret;
@@ -524,12 +529,17 @@ export class CommandService {
       }
     }
 
-    this.executeRequests(requests, 1, 10 * 1000).subscribe(success => {
-      if (!success) {
-        this.es.show(PowerOn, "It done broke, I tell ya what.");
-      }
+    this.executeRequests(requests, 10 * 1000).subscribe(answer => {
+      const rrMap: Map<Request, Response> = answer as Map<Request, Response>;
+      rrMap.forEach((v, k) => {
+        if (!v.ok) {
+          this.es.show(PowerOn, v);
+          ret.emit(false);
+          return ret;
+        }
+      });
 
-      ret.emit(success);
+      ret.emit(true);
     });
 
     return ret;
@@ -538,25 +548,26 @@ export class CommandService {
   private executeRequests(
     requests: Request[],
     timeout: number
-  ): EventEmitter<Map<Request, Response> {
-    const ret: EventEmitter<boolean> = new EventEmitter<boolean>();
+  ): EventEmitter<Map<Request, Response>> {
+    const ret: EventEmitter<Map<Request, Response>> = new EventEmitter<Map<Request, Response>>();
+    const mapToResp: Map<Request, Response> = new Map();
     if (requests.length < 1) {
-      setTimeout(() => ret.emit(false), 250);
+      setTimeout(() => ret.emit(mapToResp), 250);
       return ret;
     }
 
     console.info("executing requests: ", requests);
     this.commandInProgress = true;
-    const mapToResp: Map<Request, Response> = new Map();
+    
 
     for (const req of requests) {
-      this.executeRequest(req, maxTries, timeout).subscribe(resp => {
+      this.executeRequest(req, timeout).subscribe(resp => {
         mapToResp.set(req, resp);
 
         if (mapToResp.size === requests.length) {
           console.info(
             "finished all requests, requests => success:",
-            mapToStatus
+            mapToResp
           );
 
           this.commandInProgress = false;
@@ -574,7 +585,7 @@ export class CommandService {
     req: Request,
     timeout: number
   ): EventEmitter<Response> {
-    const ret: EventEmitter<boolean> = new EventEmitter<boolean>();
+    const ret: EventEmitter<Response> = new EventEmitter<Response>();
     console.log("executing request", req);
 
     this.http
@@ -629,12 +640,18 @@ export class CommandService {
     }
 
     this.commandInProgress = true;
-    this.executeRequests(requests, 1, 10 * 1000).subscribe(success => {
-      if (!success) {
-        this.es.show(PowerOff, "It done broke, I tell ya what.");
-      }
-      this.commandInProgress = false;
-      ret.emit(success);
+    this.executeRequests(requests, 10 * 1000).subscribe(answer => {
+      const rrMap: Map<Request, Response> = answer as Map<Request, Response>;
+      rrMap.forEach((v, k) => {
+        if (!v.ok) {
+          this.es.show(PowerOff, v);
+          ret.emit(false);
+          this.commandInProgress = false;
+          return ret;
+        }
+      });
+
+      ret.emit(true);
     });
 
     return ret;
