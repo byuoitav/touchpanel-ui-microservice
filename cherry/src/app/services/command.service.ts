@@ -169,7 +169,7 @@ export class CommandService {
         Display.setBlank(prev, displays);
         ret.emit(false);
         this.commandInProgress = false;
-        this.es.show(BlankDisplay, "It done broke, I tell ya what.");
+        this.es.show(BlankDisplay, err);
       }
     );
 
@@ -204,7 +204,7 @@ export class CommandService {
         AudioDevice.setVolume(prev, audioDevices);
         ret.emit(false);
         this.commandInProgress = false;
-        this.es.show(SetVolume, "It done broke, I tell ya what.");
+        this.es.show(SetVolume, err);
       }
     );
 
@@ -237,7 +237,7 @@ export class CommandService {
         AudioDevice.setMute(prev, audioDevices);
         ret.emit(false);
         this.commandInProgress = false;
-        this.es.show(SetMute, "It done broke, I tell ya what.");
+        this.es.show(SetMute, err);
       }
     );
 
@@ -324,7 +324,7 @@ export class CommandService {
         preset.masterVolume = prev;
         ret.emit(false);
         this.commandInProgress = false;
-        this.es.show(SetVolume, "It done broke, I tell ya what.");
+        this.es.show(SetVolume, err);
       }
     );
 
@@ -373,7 +373,7 @@ export class CommandService {
         preset.masterMute = prev;
         ret.emit(false);
         this.commandInProgress = false;
-        this.es.show(MasterMute, "It done broke, I tell ya what.");
+        this.es.show(MasterMute, err);
       }
     );
 
@@ -423,7 +423,7 @@ export class CommandService {
         a.mixlevel = prev;
         ret.emit(false);
         this.commandInProgress = false;
-        this.es.show(MixLevel, "It done broke, I tell ya what.");
+        this.es.show(MixLevel, err);
       }
     );
 
@@ -472,7 +472,7 @@ export class CommandService {
         a.mixmute = prev;
         ret.emit(false);
         this.commandInProgress = false;
-        this.es.show(MixMute, "It done broke, I tell ya what.");
+        this.es.show(MixMute, err);
       }
     );
 
@@ -681,7 +681,7 @@ export class CommandService {
         ret.emit(true);
       },
       err => {
-        this.es.show(PowerOff, "It done broke, I tell ya what.");
+        this.es.show(PowerOff, err);
         this.commandInProgress = false;
         ret.emit(false);
       }
