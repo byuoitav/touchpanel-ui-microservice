@@ -18,7 +18,6 @@ import { Preset, AudioConfig, ConfigCommand } from "../objects/objects";
 import "rxjs/add/operator/map";
 import "rxjs/add/operator/timeout";
 import { deserialize } from "serializer.ts/Serializer";
-import { ErrorDialog } from "../dialogs/error.dialog";
 
 const TIMEOUT = 12 * 1000;
 
@@ -72,9 +71,6 @@ export class CommandService {
       err => {
         Display.setPower(p, displays);
         ret.emit(false);
-        this.dialog.open(ErrorDialog, {
-          data: "Failed to power on the system."
-        });
       }
     );
 
@@ -352,9 +348,6 @@ export class CommandService {
       err => {
         preset.masterMute = prev;
         ret.emit(false);
-        this.dialog.open(ErrorDialog, {
-          data: "Failed to mute master volume."
-        });
       }
     );
 
