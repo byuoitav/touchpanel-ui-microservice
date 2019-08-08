@@ -127,6 +127,7 @@ export class CommandService {
 
     this.executeRequests(requests, 1, 14 * 1000).subscribe(success => {
       if (!success) {
+        console.warn("cannot set input, reverting displays back to previous selection");
         Display.setInput(prev, displays);
         Display.setBlank(prevBlank, displays);
       }
