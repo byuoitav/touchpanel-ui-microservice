@@ -79,7 +79,6 @@ func main() {
 	router.GET("/hostname", handlers.GetHostname)
 	router.GET("/deviceinfo", handlers.GetDeviceInfo)
 	router.GET("/reboot", handlers.Reboot)
-	router.GET("/dockerstatus", handlers.GetDockerStatus)
 
 	router.GET("/uiconfig", uiconfig.GetUIConfig)
 	router.GET("/uipath", uiconfig.GetUIPath)

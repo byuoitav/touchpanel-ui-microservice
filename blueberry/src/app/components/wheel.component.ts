@@ -15,6 +15,8 @@ import { Display, Input, AudioDevice } from "../objects/status.objects";
 import { CommandService } from "../services/command.service";
 import { Event } from "../services/socket.service";
 import { APIService } from "../services/api.service";
+import { MatDialog } from "@angular/material";
+import { StreamModalComponent } from "app/modals/streammodal/streammodal.component";
 
 @Component({
   selector: "wheel",
@@ -54,7 +56,8 @@ export class WheelComponent implements AfterContentInit {
   constructor(
     public command: CommandService,
     private api: APIService,
-    public readonly swalTargets: SwalPartialTargets
+    public readonly swalTargets: SwalPartialTargets,
+    public dialog: MatDialog
   ) {}
 
   ngAfterContentInit() {
@@ -253,8 +256,6 @@ export class WheelComponent implements AfterContentInit {
     return AudioDevice.getMute(this.preset.audioDevices);
   }
 
-  private openInputModal(i: Input) {}
-
   public getDisplayNames(): string[] {
     const names: string[] = [];
 
@@ -267,5 +268,21 @@ export class WheelComponent implements AfterContentInit {
     }
 
     return names;
+  }
+
+  inputIsSelected(i: Input): boolean {
+    const currentInput = Display.getInput(this.preset.displays);
+
+    if (currentInput === i) {
+      return true;
+    }
+
+    if (i.subInputs !== undefined && i.subInputs.length > 0) {
+      for (const sub of i.subInputs) {
+        if (currentInput.name === sub.name) {
+          return true;
+        }
+      }
+    }
   }
 }

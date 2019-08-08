@@ -28,6 +28,7 @@ import { DataService } from "./services/data.service";
 import { GraphService } from "./services/graph.service";
 import { SocketService } from "./services/socket.service";
 import { ManagementComponent } from "./components/management/management.component";
+import { StreamModalComponent } from "./dialogs/streammodal/streammodal.component";
 
 @NgModule({
   declarations: [
@@ -36,10 +37,10 @@ import { ManagementComponent } from "./components/management/management.componen
     VolumeComponent,
     AudiocontrolComponent,
     ManagementComponent,
-
     HelpDialog,
     ConfirmHelpDialog,
-    ViaDialog
+    ViaDialog,
+    StreamModalComponent
   ],
   imports: [
     BrowserModule,
@@ -60,7 +61,7 @@ import { ManagementComponent } from "./components/management/management.componen
     GraphService,
     SocketService
   ],
-  entryComponents: [HelpDialog, ConfirmHelpDialog, ViaDialog],
+  entryComponents: [HelpDialog, ConfirmHelpDialog, ViaDialog, StreamModalComponent],
   bootstrap: [AppComponent]
 })
 export class AppModule {}

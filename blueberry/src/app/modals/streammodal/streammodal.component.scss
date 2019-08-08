@@ -1,0 +1,15 @@
+.row {
+    display: flex;
+    width: 50vw;
+    flex-flow: row wrap;
+    justify-content: space-evenly;
+    &.lower {
+        margin-top: 5vh;
+    }
+}
+
+.stream-button {
+    height: 10vh;
+    width: 14vw;
+    font-size: 14pt;
+}

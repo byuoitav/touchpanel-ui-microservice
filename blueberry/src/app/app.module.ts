@@ -34,6 +34,7 @@ import { AudioComponent } from "./components/audio/audio.component";
 import { VolumeComponent } from "./components/volume/volume.component";
 import { MirrorModalComponent } from "./modals/mirrormodal/mirrormodal.component";
 import { MessageModalComponent } from "./modals/messagemodal/messagemodal.component";
+import { StreamModalComponent } from "./modals/streammodal/streammodal.component";
 
 @NgModule({
   declarations: [
@@ -49,7 +50,8 @@ import { MessageModalComponent } from "./modals/messagemodal/messagemodal.compon
     AudioComponent,
     VolumeComponent,
     MirrorModalComponent,
-    MessageModalComponent
+    MessageModalComponent,
+    StreamModalComponent
   ],
   imports: [
     BrowserModule,
@@ -79,7 +81,8 @@ import { MessageModalComponent } from "./modals/messagemodal/messagemodal.compon
     PowerOffAllModalComponent,
     ShareModalComponent,
     MirrorModalComponent,
-    MessageModalComponent
+    MessageModalComponent,
+    StreamModalComponent
   ],
   bootstrap: [AppComponent]
 })

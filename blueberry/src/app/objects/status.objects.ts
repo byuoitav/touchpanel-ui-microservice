@@ -53,6 +53,7 @@ export class Input extends Device {
   icon: string;
   click: EventEmitter<null> = new EventEmitter();
   reachableDisplays: string[] = [];
+  subInputs: Input[] = [];
 
   public static getInput(name: string, inputs: Input[]): Input {
     return inputs.find(i => i.name === name);
@@ -62,11 +63,13 @@ export class Input extends Device {
     name: string,
     displayname: string,
     icon: string,
-    reachableDisplays: string[]
+    reachableDisplays: string[],
+    subs: Input[]
   ) {
     super(name, displayname);
     this.icon = icon;
     this.reachableDisplays = reachableDisplays;
+    this.subInputs = subs;
   }
 
   public isDisplayReachable(name: string): boolean {

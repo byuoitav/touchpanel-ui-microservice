@@ -78,7 +78,15 @@ export class DataService {
           ? config.displayname
           : input.display_name;
 
-        this.inputs.push(new Input(config.name, dispname, config.icon));
+          const subs: Input[] = [];
+        console.log("does the input have subInputs?", config);
+        if (config.subInputs !== undefined) {
+          for (const io of config.subInputs) {
+            subs.push(new Input(io.name, io.displayname, io.icon, []));
+          }
+        }
+
+        this.inputs.push(new Input(config.name, dispname, config.icon, subs));
       } else {
         console.warn(
           "no input '" + name + "' found with role 'VideoIn', skipping it"
