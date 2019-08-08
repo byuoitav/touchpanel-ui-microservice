@@ -66,8 +66,16 @@ export class DataService {
           ? config.displayname
           : input.display_name;
 
+        const subs: Input[] = [];
+        console.log("does the input have subInputs?", config);
+        if (config.subInputs !== undefined) {
+          for (const io of config.subInputs) {
+            subs.push(new Input(io.name, io.displayname, io.icon, reachability, []))
+          }
+        }
+
         this.inputs.push(
-          new Input(config.name, dispname, config.icon, reachability)
+          new Input(config.name, dispname, config.icon, reachability, subs)
         );
       } else {
         console.warn(

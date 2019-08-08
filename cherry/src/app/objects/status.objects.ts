@@ -71,9 +71,11 @@ export class Device {
 
 export class Input extends Device {
   click: EventEmitter<null> = new EventEmitter();
+  subInputs: Input[] = [];
 
-  constructor(name: string, displayname: string, icon: string) {
+  constructor(name: string, displayname: string, icon: string, subs: Input[]) {
     super(name, displayname, icon);
+    this.subInputs = subs;
   }
 
   public static getInput(name: string, inputs: Input[]): Input {
