@@ -7,6 +7,8 @@ import { ViaDialog } from "../../dialogs/via.dialog";
 
 import { Preset } from "../../objects/objects";
 import { Display, AudioDevice, Input } from "../../objects/status.objects";
+import { StreamModalComponent } from "../../dialogs/streammodal/streammodal.component";
+import { isUndefined } from "util";
 
 @Component({
   selector: "display",
@@ -44,13 +46,27 @@ export class DisplayComponent {
   }
 
   public changeInput(i: Input) {
-    this.command
+    if (i.subInputs !== undefined && i.subInputs.length > 0) {
+      this.dialog.open(StreamModalComponent, { data: i }).afterClosed().subscribe((theChosenOne) => {
+        if (theChosenOne !== undefined) {
+          const input = theChosenOne as Input;
+          this.command.setInput(this.preset, input, Array.from(this.selectedDisplays))
+          .subscribe(success => {
+            if (!success) {
+              console.warn("failed to change input");
+            }
+          });
+        }
+      });
+    } else {
+      this.command
       .setInput(this.preset, i, Array.from(this.selectedDisplays))
       .subscribe(success => {
         if (!success) {
           console.warn("failed to change input");
         }
       });
+    }
   }
 
   public blank() {
@@ -64,12 +80,15 @@ export class DisplayComponent {
   }
 
   public setMasterMute(muted) {
-    if (muted) {
-      this.preset.beforeMuteLevel = this.preset.masterVolume;
-      this.command.setMasterVolume(0, this.preset);
-    } else {
-      this.command.setMasterVolume(this.preset.beforeMuteLevel, this.preset);
-    }
+    // if (muted) {
+    //   this.preset.beforeMuteLevel = this.preset.masterVolume;
+    //   // this.command.setMasterVolume(0, this.preset);
+    //   this.command.setMasterMute(muted, this.preset);
+    // } else {
+    //   // this.command.setMasterVolume(this.preset.beforeMuteLevel, this.preset);
+    //   this.command.setMasterMute(muted)
+    // }
+    this.command.setMasterMute(muted, this.preset);
   }
 
   public inputUsed(i: Input): boolean {
@@ -83,6 +102,14 @@ export class DisplayComponent {
 
       if (d.input.name === i.name) {
         return true;
+      }
+
+      if (i.subInputs !== undefined && i.subInputs.length > 0) {
+        for (const sub of i.subInputs) {
+          if (d.input.name === sub.name) {
+            return true;
+          }
+        }
       }
     }
 
@@ -109,7 +136,8 @@ export class DisplayComponent {
         console.log("opening via control dialog for", i);
         const dialogRef = this.dialog.open(ViaDialog, {
           width: "50vw",
-          data: { via: i }
+          data: { via: i },
+          disableClose: true
         });
         break;
       default:

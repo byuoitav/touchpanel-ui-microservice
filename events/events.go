@@ -1,10 +1,10 @@
 package events
 
 import (
-	"log"
 	"time"
 
 	"github.com/byuoitav/central-event-system/messenger"
+	"github.com/byuoitav/common/log"
 	"github.com/byuoitav/common/v2/events"
 	"github.com/byuoitav/touchpanel-ui-microservice/socket"
 	"github.com/fatih/color"
@@ -18,6 +18,7 @@ type Message struct {
 func WriteEventsToSocket(m *messenger.Messenger) {
 	for {
 		event := m.ReceiveEvent()
+		log.L.Debugf("received event: %#v", event)
 
 		if events.ContainsAnyTags(event, events.CoreState, events.UICommunication, events.Error, events.RoomDivide) {
 			socket.H.WriteToSockets(event)
@@ -34,7 +35,7 @@ func SendRefresh(delay *time.Timer) {
 
 	<-delay.C
 	color.Set(color.FgYellow)
-	log.Printf("Refreshing...")
+	log.L.Infof("Refreshing...")
 
 	socket.H.WriteToSockets(Message{Message: "refresh"})
 }
@@ -43,7 +44,7 @@ func SendTest() {
 	defer color.Unset()
 
 	color.Set(color.FgYellow)
-	log.Printf("Sending event test...")
+	log.L.Infof("Sending event test...")
 
 	socket.H.WriteToSockets(Message{Message: "websocketTest"})
 }

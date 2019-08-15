@@ -1,0 +1,14 @@
+<h1 *ngIf="data?.title" mat-dialog-title class="text title">
+  {{ data?.title }}
+</h1>
+
+<div mat-dialog-content class="text content">
+  <p *ngIf="data?.message">{{ data?.message }}</p>
+  <mat-spinner *ngIf="data?.showSpinner" color="primary"></mat-spinner>
+</div>
+
+<div *ngIf="data?.closeText" mat-dialog-actions class="items secondary-theme">
+  <button mat-raised-button color="primary" (click)="close()" (press)="close()">
+    {{ data?.closeText }}
+  </button>
+</div>

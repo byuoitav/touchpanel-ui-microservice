@@ -1,11 +1,21 @@
+<audiocontrol #audio class="audio"></audiocontrol>
+
 <div class="buttons top">
   <button
     mat-fab
     class="power button"
     (click)="command.buttonPress('power off')"
-    (click)="data.panels.length > 1 ? poweroffall.show() : turnOff()"
+    (click)="
+      wheel?.preset?.shareablePresets?.length > 1
+        ? showPowerOffDialog()
+        : turnOff()
+    "
     (press)="command.buttonPress('long press power off')"
-    (press)="data.panels.length > 1 ? poweroffall.show() : turnOff()"
+    (press)="
+      wheel?.preset?.shareablePresets?.length > 1
+        ? showPowerOffDialog()
+        : turnOff()
+    "
   >
     <mat-icon>power_settings_new</mat-icon>
   </button>
@@ -13,8 +23,8 @@
   <button
     mat-fab
     class="help button"
-    (click)="help.show(); command.buttonPress('open help modal')"
-    (press)="help.show(); command.buttonPress('long press open help modal')"
+    (click)="showHelp(); command.buttonPress('open help modal')"
+    (press)="showHelp(); command.buttonPress('long press open help modal')"
   >
     <mat-icon>help</mat-icon>
   </button>
@@ -33,16 +43,21 @@
 </div>
 
 <div class="buttons bottom">
-  <ng-container *ngIf="data?.panel?.features.includes('share')">
+  <ng-container
+    *ngIf="
+      data?.panel?.features.includes('share') ||
+      wheel?.preset?.shareablePresets?.length == 1 ||
+      wheel?.preset?.shareablePresets?.length > 1
+    "
+  >
     <button
       mat-fab
       *ngIf="wheel?.preset == defaultPreset"
       class="dta button"
       [class.grey]="wheel?.getInput()?.reachableDisplays?.length <= 1"
-      (click)="selectdisplays.show(); command.buttonPress('open share modal')"
+      (click)="showShareModal(); command.buttonPress('open share modal')"
       (press)="
-        selectdisplays.show();
-        command.buttonPress('long press open share modal')
+        showShareModal(); command.buttonPress('long press open share modal')
       "
     >
       <mat-icon>screen_share</mat-icon>
@@ -54,15 +69,11 @@
       *ngIf="wheel?.preset != defaultPreset"
       class="dta button"
       (click)="
-        unShareDialog.show();
-        command.buttonPress('unshare', getPresetDisplayNames(wheel?.preset))
+        unshare(defaultPreset, mirroringMe); command.buttonPress('unshare')
       "
       (press)="
-        unShareDialog.show();
-        command.buttonPress(
-          'long press unshare',
-          getPresetDisplayNames(wheel?.preset)
-        )
+        unshare(defaultPreset, mirroringMe);
+        command.buttonPress('long press unshare')
       "
     >
       <mat-icon>stop_screen_share</mat-icon>
@@ -70,220 +81,19 @@
   </ng-container>
 </div>
 
-<div class="buttons top right">
+<div class="buttons bottom right" [class.corner]="wheel?.getPower() !== 'on'">
   <button
     mat-fab
-    *ngIf="defaultPreset?.independentAudioDevices?.length > 0"
+    *ngIf="
+      defaultPreset?.independentAudioDevices?.length > 0 && !audio.isShowing()
+    "
     class="independentAudio button"
-    (click)="audioDialog.show(); command.buttonPress('open audio modal')"
+    (click)="audio.show(defaultPreset); command.buttonPress('open audio modal')"
     (press)="
-      audioDialog.show(); command.buttonPress('long press open audio modal')
+      audio.show(defaultPreset);
+      command.buttonPress('long press open audio modal')
     "
   >
-    <mat-icon>mic</mat-icon>
+    <mat-icon class="rotate-90">tune</mat-icon>
   </button>
 </div>
-
-<!-- modal windows -->
-<swal #poweroffall>
-  <div *swalPartial="swalTargets.content">
-    <span>Would you like to turn off all displays or just this one?</span>
-    <button
-      type="button"
-      class="btn-neutral swal2-styled"
-      (click)="
-        poweroffall.nativeSwal.clickCancel();
-        command.buttonPress('close power off all modal')
-      "
-      (press)="
-        poweroffall.nativeSwal.clickCancel();
-        command.buttonPress('long press close power off all modal')
-      "
-    >
-      Cancel
-    </button>
-    <button
-      type="button"
-      class="btn-warn swal2-styled"
-      (click)="
-        powerOffType = 'this';
-        poweroffall.nativeSwal.clickConfirm();
-        command.buttonPress('power off')
-      "
-      (press)="
-        powerOffType = 'this';
-        poweroffall.nativeSwal.clickConfirm();
-        command.buttonPress('long press power off')
-      "
-    >
-      This display
-    </button>
-    <button
-      type="button"
-      class="btn-danger swal2-styled"
-      (click)="
-        powerOffType = 'all';
-        poweroffall.nativeSwal.clickConfirm();
-        command.buttonPress('power off all')
-      "
-      (press)="
-        powerOffType = 'all';
-        poweroffall.nativeSwal.clickConfirm();
-        command.buttonPress('long press power off all')
-      "
-    >
-      All displays
-    </button>
-  </div>
-</swal>
-
-<swal
-  #help
-  (confirm)="helpConfirmDialog.show()"
-  (cancel)="command.buttonPress('exit help modal')"
-  [showConfirmButton]="helpInfo?.showConfirm"
->
-  <div *swalPartial="swalTargets.content">
-    <span>{{ helpInfo?.msg }}</span>
-  </div>
-</swal>
-
-<swal
-  #helpConfirm
-  (cancel)="
-    api.help('cancel').subscribe(); command.buttonPress('cancel help request')
-  "
->
-  <div *swalPartial="swalTargets.content">
-    <span
-      >Your help request has been recieved. A technician is on their way.</span
-    >
-  </div>
-</swal>
-
-<swal
-  #selectdisplays
-  (open)="openedSelectDisplaysDialog()"
-  (cancel)="command.buttonPress('close share modal')"
->
-  <div *swalPartial="swalTargets.title">
-    <span *ngIf="wheel.getInput()?.reachableDisplays?.length > 1"
-      >Select displays to share {{ wheel.getInput()?.displayname }} with</span
-    >
-  </div>
-
-  <div *swalPartial="swalTargets.content" class="grid">
-    <ng-container *ngIf="wheel.getInput()?.reachableDisplays?.length > 1">
-      <div *ngFor="let d of shareableDisplays" class="item">
-        <button
-          mat-fab
-          class="share-display"
-          (click)="toggleSelected(d)"
-          (press)="toggleSelected(d)"
-        >
-          {{ d.name }}
-          <div *ngIf="isSelected(d)" class="badge">
-            <mat-icon>check</mat-icon>
-          </div>
-        </button>
-      </div>
-    </ng-container>
-  </div>
-</swal>
-
-<swal #unshare (open)="unShare(true)"> </swal>
-
-<!-- TODO test mirroring events -->
-<swal
-  #mirror
-  (confirm)="unMirror(true); command.buttonPress('unmirror', mirrorPresetName)"
-  (cancel)="
-    showAudioControl(mirrorDialog);
-    command.buttonPress('show audio control modal while mirroring')
-  "
-  [showCancelButton]="wheel?.preset?.independentAudioDevices?.length > 0"
->
-  <div *swalPartial="swalTargets.confirmButton" class="swal-button">
-    <span>Stop</span>
-  </div>
-
-  <div *swalPartial="swalTargets.cancelButton" class="swal-button">
-    <span>Audio Control</span>
-    <mat-icon>mic</mat-icon>
-  </div>
-
-  <div *swalPartial="swalTargets.title">
-    <span>Mirroring {{ mirrorPresetName }}</span>
-  </div>
-</swal>
-
-<!-- TODO test audio modal events-->
-<swal
-  #audio
-  (confirm)="command.buttonPress('close audio modal')"
-  (cancel)="command.buttonPress('close audio modal')"
->
-  <div *swalPartial="swalTargets.title"><span>Audio Control</span></div>
-
-  <div *swalPartial="swalTargets.content" class="independentAudioContent">
-    <div
-      *ngFor="let a of defaultPreset?.independentAudioDevices"
-      class="mic"
-      [class.muted]="a?.muted"
-    >
-      <span>{{ a?.displayname }}</span>
-      <mat-slider
-        vertical
-        [class.notouch]="a?.muted"
-        [disabled]="a?.muted"
-        [value]="a?.volume"
-        [step]="5"
-        [thumbLabel]="true"
-        (change)="
-          wheel.command.setVolume($event.value, [a]);
-          command.buttonPress('independent audio volume set', {
-            level: $event.value,
-            audioDevices: [a?.name]
-          })
-        "
-      ></mat-slider>
-      <button
-        mat-mini-fab
-        class="mute"
-        [class.muted]="a?.muted"
-        (click)="
-          wheel.command.setMute(!a.muted, [a]);
-          command.buttonPress(
-            'independent audio ' + (a.muted ? 'mute' : 'unmute'),
-            a?.name
-          )
-        "
-        (press)="
-          wheel.command.setMute(!a.muted, [a]);
-          command.buttonPress(
-            'long press independent audio ' + (a.muted ? 'mute' : 'unmute'),
-            a?.name
-          )
-        "
-      >
-        <mat-icon *ngIf="a?.muted">volume_off</mat-icon>
-        <mat-icon *ngIf="!a?.muted">volume_up</mat-icon>
-      </button>
-    </div>
-  </div>
-</swal>
-
-<swal #notRoutable>
-  <div *swalPartial="swalTargets.content">
-    <span>You must unshare before you can select this input.</span>
-  </div>
-</swal>
-
-<swal #notShareable>
-  <div *swalPartial="swalTargets.content">
-    <span
-      >{{ wheel.getInput()?.displayname }} can't be shared with any
-      displays.</span
-    >
-  </div>
-</swal>

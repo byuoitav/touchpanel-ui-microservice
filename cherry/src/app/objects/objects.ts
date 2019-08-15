@@ -124,6 +124,8 @@ export class PresetConfiguration {
   audioDevices: string[];
   inputs: string[];
   independentAudioDevices: string[];
+  volumeMatches: string[];
+  audioGroups: Map<string, string[]> = new Map();
   commands: ConfigCommands;
 }
 
@@ -152,6 +154,8 @@ export class AudioConfig {
 export class IOConfiguration {
   name: string;
   icon: string;
+  displayname: string;
+  subInputs: IOConfiguration[];
 }
 
 export class DeviceStatus {
@@ -179,9 +183,12 @@ export class Preset {
   shareableDisplays: string[];
   independentAudioDevices: AudioDevice[] = [];
 
+  volumeMatches: string[];
+
   audioTypes: Map<string, AudioDevice[]> = new Map();
 
   masterVolume: number;
+  masterMute: boolean;
   beforeMuteLevel: number;
 
   commands: ConfigCommands;
@@ -197,7 +204,8 @@ export class Preset {
     audioTypes: Map<string, AudioDevice[]>,
     masterVolume: number,
     beforeMuteLevel: number,
-    commands: ConfigCommands
+    commands: ConfigCommands,
+    matches: string[]
   ) {
     this.name = name;
     this.icon = icon;
@@ -210,6 +218,7 @@ export class Preset {
     this.masterVolume = masterVolume;
     this.beforeMuteLevel = beforeMuteLevel;
     this.commands = commands;
+    this.volumeMatches = matches;
   }
 }
 
