@@ -79,7 +79,18 @@ export class Input extends Device {
   }
 
   public static getInput(name: string, inputs: Input[]): Input {
-    return inputs.find(i => i.name === name);
+    for (const i of inputs) {
+      if (i.name === name) {
+        return i;
+      }
+      if (i.subInputs !== undefined && i.subInputs.length > 0) {
+        for (const sub of i.subInputs) {
+          if (sub.name === name) {
+            return sub;
+          }
+        }
+      }
+    }
   }
 }
 
