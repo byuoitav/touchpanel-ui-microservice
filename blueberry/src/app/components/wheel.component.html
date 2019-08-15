@@ -1,106 +1,67 @@
-<div
-  *ngIf="blur"
-  class="background"
-  [class.open]="circleOpen"
-  (click)="toggle()"
-></div>
+<div *ngIf="blur" class="background" [class.open]="circleOpen" (click)="toggle()"></div>
 
-<div
-  class="circle"
-  [ngStyle]="{
+<div class="circle" [ngStyle]="{
     'margin-top': top,
     'margin-left': right,
     'z-index': circleOpen ? 10 : 0,
     transform: circleOpen ? translate : 'translate(0,0)'
-  }"
->
-  <!-- wheel -->
-  <ul #wheel class="wheel" [class.open]="circleOpen">
-    <li
-      class="title-slice"
-      (click)="command.buttonPress('title slice')"
-      (press)="command.buttonPress('long press title slice')"
-    >
-      <div></div>
-    </li>
+  }">
+    <!-- wheel -->
+    <ul #wheel class="wheel" [class.open]="circleOpen">
+        <li class="title-slice" (click)="command.buttonPress('title slice')" (press)="command.buttonPress('long press title slice')">
+            <div></div>
+        </li>
 
-    <li
-      *ngFor="let i of preset.inputs"
-      class="input-slice"
-      [class.selected-input]="getInput() === i"
-      [class.grey]="sharing && i.reachableDisplays.length === 1"
-      (click)="
+        <li *ngFor="let i of preset.inputs" class="input-slice" [class.selected-input]="getInput() === i" [class.grey]="sharing && i.reachableDisplays.length === 1" (click)="
         i.click.emit();
         command.buttonPress('change input', {
           input: i?.name,
           displays: getDisplayNames()
         })
-      "
-      (press)="
+      " (press)="
         i.click.emit();
         command.buttonPress('long press change input', {
           input: i?.name,
           displays: getDisplayNames()
         })
-      "
-    >
-      <div class="input" [style.top]="topoffset" [style.right]="rightoffset">
-        <i class="material-icons">{{ i?.icon }}</i>
-        <span class="name">{{ i?.displayname }}</span>
-      </div>
-    </li>
+      ">
+            <div class="input" [style.top]="topoffset" [style.right]="rightoffset">
+                <i class="material-icons">{{ i?.icon }}</i>
+                <span class="name">{{ i?.displayname }}</span>
+            </div>
+        </li>
 
-    <li
-      *ngFor="let i of preset.extraInputs"
-      class="input-slice"
-      [class.selected-input]="getInput() === i"
-      (click)="i.click.emit(); command.buttonPress('remirror', i?.name)"
-      (press)="
+        <li *ngFor="let i of preset.extraInputs" class="input-slice" [class.selected-input]="getInput() === i" (click)="i.click.emit(); command.buttonPress('remirror', i?.name)" (press)="
         i.click.emit(); command.buttonPress('long press remirror', i?.name)
-      "
-    >
-      <div
-        class="input"
-        [class.grey]="sharing && i.reachableDisplays.length === 1"
-        [style.top]="topoffset"
-        [style.right]="rightoffset"
-      >
-        <i class="material-icons">{{ i?.icon }}</i>
-        <span class="name">{{ i?.displayname }}</span>
-      </div>
-    </li>
+      ">
+            <div class="input" [class.grey]="sharing && i.reachableDisplays.length === 1" [style.top]="topoffset" [style.right]="rightoffset">
+                <i class="material-icons">{{ i?.icon }}</i>
+                <span class="name">{{ i?.displayname }}</span>
+            </div>
+        </li>
 
-    <!-- lines -->
-    <li class="thin"><div class="line"></div></li>
+        <!-- lines -->
+        <li class="thin">
+            <div class="line"></div>
+        </li>
 
-    <li *ngFor="let i of preset.inputs" class="thin">
-      <div class="line"></div>
-    </li>
+        <li *ngFor="let i of preset.inputs" class="thin">
+            <div class="line"></div>
+        </li>
 
-    <li *ngFor="let i of preset.extraInputs" class="thin">
-      <div class="line"></div>
-    </li>
-  </ul>
+        <li *ngFor="let i of preset.extraInputs" class="thin">
+            <div class="line"></div>
+        </li>
+    </ul>
 
-  <div
-    class="center"
-    [class.open]="circleOpen"
-    [class.on]="getPower() == 'on'"
-    (click)="command.buttonPress('circle center')"
-    (press)="command.buttonPress('long press circle center')"
-  >
-    <span class="center-item name" [class.open]="circleOpen">{{
+    <div class="center" [class.open]="circleOpen" [class.on]="getPower() == 'on'" (click)="command.buttonPress('circle center')" (press)="command.buttonPress('long press circle center')">
+        <span class="center-item name" [class.open]="circleOpen">{{
       preset?.name
     }}</span>
-    <i
-      class="center-item material-icons icon"
-      [class.open]="circleOpen"
-      (click)="command.buttonPress('circle center'); $event.stopPropagation()"
-      (press)="
+        <i class="center-item material-icons icon" [class.open]="circleOpen" (click)="command.buttonPress('circle center'); $event.stopPropagation()" (press)="
         command.buttonPress('long press circle center');
         $event.stopPropagation()
-      "
-      >{{ preset?.icon }}</i
+      ">{{ preset?.icon }}</i
     >
     <span
       *ngIf="!getBlank()"

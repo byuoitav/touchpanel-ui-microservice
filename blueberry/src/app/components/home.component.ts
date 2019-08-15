@@ -37,6 +37,7 @@ import { AudioComponent } from "./audio/audio.component";
 import { MirrorModalComponent } from "../modals/mirrormodal/mirrormodal.component";
 import { MessageModalComponent } from "../modals/messagemodal/messagemodal.component";
 import { Action } from "./activity-button/activity-button.component";
+import { StreamModalComponent } from "app/modals/streammodal/streammodal.component";
 
 export const SHARE = "start_share";
 export const STOP_SHARE = "stop_share";
@@ -161,7 +162,19 @@ export class HomeComponent implements OnInit {
           );
           return;
         }
-        this.command.setInput(i, this.wheel.preset.displays);
+
+        if (i.subInputs !== undefined && i.subInputs.length > 0) {
+          this.dialog.open(StreamModalComponent, { data: i }).afterClosed().subscribe((theChosenOne) => {
+            if (theChosenOne !== undefined) {
+              const input = theChosenOne as Input;
+              this.command.setInput(input, this.wheel.preset.displays);
+            }
+            return;
+          })
+        } else {
+          console.log("no sub inputs");
+          this.command.setInput(i, this.wheel.preset.displays);
+        }
       });
     }
   }
@@ -378,7 +391,8 @@ export class HomeComponent implements OnInit {
         currInput.name,
         preset.name,
         currInput.icon,
-        currInput.reachableDisplays
+        currInput.reachableDisplays,
+        currInput.subInputs
       );
 
       input.click.subscribe(() => {
