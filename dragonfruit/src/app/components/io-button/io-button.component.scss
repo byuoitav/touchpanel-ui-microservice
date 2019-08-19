@@ -1,0 +1,22 @@
+.io-button {
+    .wrapper {
+        display: flex;
+        flex-flow: column nowrap;
+        width: 25vw;
+        height: 25vw;
+        justify-content: space-evenly;
+        align-items: center;
+        border: solid #757575 1.25px;
+        border-radius: 4vw;
+        color: #757575;
+        font-size: 14pt;
+        &.selected {
+            border: solid #1e88e5 2.5px;
+            color: #1e88e5;
+        }
+    }
+}
+
+.icon {
+    transform: scale(1.5);
+}

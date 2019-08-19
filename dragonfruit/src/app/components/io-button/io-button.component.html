@@ -1,0 +1,4 @@
+<span class="wrapper" (click)="do(click)" (press)="do(press)" [class.selected]="selected">
+    <button class="icon" mat-icon-button [disableRipple]=true><mat-icon>{{io?.icon}}</mat-icon></button>
+    <span>{{(io.displayName !== undefined) ? io.displayName : io.name}}</span>
+</span>
