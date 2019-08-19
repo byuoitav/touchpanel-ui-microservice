@@ -305,7 +305,7 @@ export class DataService {
     }
 
     this.http
-      .get<string>(
+      .get(
         "http://" +
           this.dividerSensor.address +
           ":10000/divider/preset/" +
@@ -313,7 +313,7 @@ export class DataService {
       )
       .subscribe(
         data => {
-          const body = data._body;
+          const body = (<any>data)._body;
           const preset = this.presets.find(
             p => p.name.toLowerCase() === body.toLowerCase()
           );
