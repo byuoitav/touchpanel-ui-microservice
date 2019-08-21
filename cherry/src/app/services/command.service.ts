@@ -18,18 +18,23 @@ import { Preset, AudioConfig, ConfigCommand } from "../objects/objects";
 import "rxjs/add/operator/map";
 import "rxjs/add/operator/timeout";
 import { deserialize } from "serializer.ts/Serializer";
+import { ErrorDialogComponent } from "../dialogs/error/error.component";
+import { ErrorService, SwitchInput, BlankDisplay, SetVolume, SetMute, MasterMute, MixLevel, MixMute, PowerOn, PowerOff } from "./error.service";
 
 const TIMEOUT = 12 * 1000;
 
 @Injectable()
 export class CommandService {
+  public commandInProgress = false;
+
   private options: RequestOptions;
 
   constructor(
     private http: Http,
     private data: DataService,
     public api: APIService,
-    public dialog: MatDialog
+    public dialog: MatDialog,
+    private es: ErrorService
   ) {
     const headers = new Headers();
     headers.append("content-type", "application/json");
@@ -71,6 +76,9 @@ export class CommandService {
       err => {
         Display.setPower(p, displays);
         ret.emit(false);
+        this.dialog.open(ErrorDialogComponent, {
+          data: "Failed to power on the system."
+        });
       }
     );
 
@@ -125,14 +133,19 @@ export class CommandService {
     console.log("preset:", preset);
     console.log("executing requests:", requests);
 
-    this.executeRequests(requests, 1, 14 * 1000).subscribe(success => {
-      if (!success) {
-        console.warn("cannot set input, reverting displays back to previous selection");
-        Display.setInput(prev, displays);
-        Display.setBlank(prevBlank, displays);
-      }
+    this.executeRequests(requests, 6 * 1000).subscribe(answer => {
+      const rrMap: Map<Request, Response> = answer as Map<Request, Response>;
+      rrMap.forEach((v, k) => {
+        if (!v.ok) {
+          Display.setInput(prev, displays);
+          Display.setBlank(prevBlank, displays);
+          this.es.show(SwitchInput, v);
+          ret.emit(false);
+          return ret;
+        }
+      });
 
-      ret.emit(success);
+      ret.emit(true);
     });
 
     return ret;
@@ -152,6 +165,7 @@ export class CommandService {
       });
     }
 
+    this.commandInProgress = true;
     this.put(body).subscribe(
       data => {
         ret.emit(true);
@@ -159,6 +173,8 @@ export class CommandService {
       err => {
         Display.setBlank(prev, displays);
         ret.emit(false);
+        this.commandInProgress = false;
+        this.es.show(BlankDisplay, err);
       }
     );
 
@@ -184,6 +200,7 @@ export class CommandService {
 
     console.log("volume body", body);
 
+    this.commandInProgress = true;
     this.put(body).subscribe(
       data => {
         ret.emit(true);
@@ -191,6 +208,8 @@ export class CommandService {
       err => {
         AudioDevice.setVolume(prev, audioDevices);
         ret.emit(false);
+        this.commandInProgress = false;
+        this.es.show(SetVolume, err);
       }
     );
 
@@ -214,6 +233,7 @@ export class CommandService {
       });
     }
 
+    this.commandInProgress = true;
     this.put(body).subscribe(
       data => {
         ret.emit(true);
@@ -221,6 +241,8 @@ export class CommandService {
       err => {
         AudioDevice.setMute(prev, audioDevices);
         ret.emit(false);
+        this.commandInProgress = false;
+        this.es.show(SetMute, err);
       }
     );
 
@@ -281,6 +303,7 @@ export class CommandService {
 
     console.log("volume body", body);
 
+    this.commandInProgress = true;
     this.put(body).subscribe(
       data => {
         // post master volume update
@@ -299,11 +322,14 @@ export class CommandService {
         event.Data = preset.name;
 
         this.api.sendEvent(event);
+        this.commandInProgress = false;
         ret.emit(true);
       },
       err => {
         preset.masterVolume = prev;
         ret.emit(false);
+        this.commandInProgress = false;
+        this.es.show(SetVolume, err);
       }
     );
 
@@ -327,6 +353,7 @@ export class CommandService {
 
     console.log("master mute body", body);
 
+    this.commandInProgress = true;
     this.put(body).subscribe(
       data => {
         const event = new Event();
@@ -344,11 +371,14 @@ export class CommandService {
         event.Data = preset.name;
 
         this.api.sendEvent(event);
+        this.commandInProgress = false;
         ret.emit(true);
       },
       err => {
         preset.masterMute = prev;
         ret.emit(false);
+        this.commandInProgress = false;
+        this.es.show(MasterMute, err);
       }
     );
 
@@ -374,6 +404,7 @@ export class CommandService {
 
     console.log("volume body", body);
 
+    this.commandInProgress = true;
     this.put(body).subscribe(
       data => {
         const event = new Event();
@@ -390,11 +421,14 @@ export class CommandService {
         event.Value = String(v);
 
         this.api.sendEvent(event);
+        this.commandInProgress = false;
         ret.emit(true);
       },
       err => {
         a.mixlevel = prev;
         ret.emit(false);
+        this.commandInProgress = false;
+        this.es.show(MixLevel, err);
       }
     );
 
@@ -421,6 +455,7 @@ export class CommandService {
 
     console.log("mix mute body:", body);
 
+    this.commandInProgress = true;
     this.put(body).subscribe(
       data => {
         const event = new Event();
@@ -435,11 +470,14 @@ export class CommandService {
 
         this.api.sendEvent(event);
 
+        this.commandInProgress = false;
         ret.emit(true);
       },
       err => {
         a.mixmute = prev;
         ret.emit(false);
+        this.commandInProgress = false;
+        this.es.show(MixMute, err);
       }
     );
 
@@ -491,61 +529,63 @@ export class CommandService {
       }
     }
 
-    this.executeRequests(requests, 1, 20 * 1000).subscribe(success => {
-      ret.emit(success);
+    this.executeRequests(requests, 10 * 1000).subscribe(answer => {
+      const rrMap: Map<Request, Response> = answer as Map<Request, Response>;
+      rrMap.forEach((v, k) => {
+        if (!v.ok) {
+          this.es.show(PowerOn, v);
+          ret.emit(false);
+          return ret;
+        }
+      });
+
+      ret.emit(true);
     });
+
     return ret;
   }
 
   private executeRequests(
     requests: Request[],
-    maxTries: number,
     timeout: number
-  ): EventEmitter<boolean> {
-    const ret: EventEmitter<boolean> = new EventEmitter<boolean>();
+  ): EventEmitter<Map<Request, Response>> {
+    const ret: EventEmitter<Map<Request, Response>> = new EventEmitter<Map<Request, Response>>();
+    const mapToResp: Map<Request, Response> = new Map();
     if (requests.length < 1) {
-      setTimeout(() => ret.emit(false), 250);
+      setTimeout(() => ret.emit(mapToResp), 250);
       return ret;
     }
 
     console.info("executing requests: ", requests);
-    const numRequests = requests.length;
-    const mapToStatus: Map<Request, boolean> = new Map();
+    this.commandInProgress = true;
+    
 
     for (const req of requests) {
-      this.executeRequest(req, maxTries, timeout).subscribe(success => {
-        mapToStatus.set(req, success);
+      this.executeRequest(req, timeout).subscribe(resp => {
+        mapToResp.set(req, resp);
 
-        if (mapToStatus.size === numRequests) {
+        if (mapToResp.size === requests.length) {
           console.info(
             "finished all requests, requests => success:",
-            mapToStatus
+            mapToResp
           );
 
-          let allsuccessful = true;
-          mapToStatus.forEach((v, k) => {
-            if (!v) {
-              allsuccessful = false;
-            }
-          });
+          this.commandInProgress = false;
 
-          ret.emit(allsuccessful);
-          return;
+          ret.emit(mapToResp);
         }
       });
     }
 
     console.log("waiting for", requests.length, "responses...");
-
     return ret;
   }
 
   private executeRequest(
     req: Request,
-    maxTries: number,
     timeout: number
-  ): EventEmitter<boolean> {
-    const ret: EventEmitter<boolean> = new EventEmitter<boolean>();
+  ): EventEmitter<Response> {
+    const ret: EventEmitter<Response> = new EventEmitter<Response>();
     console.log("executing request", req);
 
     this.http
@@ -553,27 +593,10 @@ export class CommandService {
       .timeout(timeout)
       .subscribe(
         data => {
-          console.log("successfully executed request", req);
-          ret.emit(true);
-          return;
+          ret.emit(data);
         },
         err => {
-          maxTries--;
-
-          if (maxTries === 0) {
-            ret.emit(false);
-            return;
-          }
-
-          // retry request
-          console.error(
-            "request (" + req + ") failed. error:",
-            err,
-            ". There are",
-            maxTries,
-            " remaining, retrying in 3 seconds..."
-          );
-          setTimeout(() => this.executeRequest(req, maxTries, timeout), 3000);
+          ret.emit(err);
         }
       );
 
@@ -616,8 +639,19 @@ export class CommandService {
       }
     }
 
-    this.executeRequests(requests, 1, 20 * 1000).subscribe(success => {
-      ret.emit(success);
+    this.commandInProgress = true;
+    this.executeRequests(requests, 10 * 1000).subscribe(answer => {
+      const rrMap: Map<Request, Response> = answer as Map<Request, Response>;
+      rrMap.forEach((v, k) => {
+        if (!v.ok) {
+          this.es.show(PowerOff, v);
+          ret.emit(false);
+          this.commandInProgress = false;
+          return ret;
+        }
+      });
+
+      ret.emit(true);
     });
 
     return ret;
@@ -628,11 +662,15 @@ export class CommandService {
 
     const body = { power: "standby" };
 
+    this.commandInProgress = true;
     this.put(body).subscribe(
       data => {
+        this.commandInProgress = false;
         ret.emit(true);
       },
       err => {
+        this.es.show(PowerOff, err);
+        this.commandInProgress = false;
         ret.emit(false);
       }
     );

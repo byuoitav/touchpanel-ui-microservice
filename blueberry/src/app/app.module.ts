@@ -10,7 +10,8 @@ import {
   MatDialogModule,
   MatGridListModule,
   MatChipsModule,
-  MatProgressSpinnerModule
+  MatProgressSpinnerModule,
+  MatProgressBarModule
 } from "@angular/material";
 import { UiSwitchModule } from "ngx-ui-switch";
 import { SweetAlert2Module } from "@toverux/ngx-sweetalert2";
@@ -34,6 +35,8 @@ import { AudioComponent } from "./components/audio/audio.component";
 import { VolumeComponent } from "./components/volume/volume.component";
 import { MirrorModalComponent } from "./modals/mirrormodal/mirrormodal.component";
 import { MessageModalComponent } from "./modals/messagemodal/messagemodal.component";
+import { ErrorModalComponent } from "./modals/errormodal/errormodal.component";
+import { ErrorService } from "./services/error.service";
 import { StreamModalComponent } from "./modals/streammodal/streammodal.component";
 
 @NgModule({
@@ -51,6 +54,7 @@ import { StreamModalComponent } from "./modals/streammodal/streammodal.component
     VolumeComponent,
     MirrorModalComponent,
     MessageModalComponent,
+    ErrorModalComponent,
     StreamModalComponent
   ],
   imports: [
@@ -65,6 +69,7 @@ import { StreamModalComponent } from "./modals/streammodal/streammodal.component
     MatGridListModule,
     MatChipsModule,
     MatProgressSpinnerModule,
+    MatProgressBarModule,
     UiSwitchModule,
     SweetAlert2Module.forRoot()
   ],
@@ -73,7 +78,8 @@ import { StreamModalComponent } from "./modals/streammodal/streammodal.component
     SocketService,
     CommandService,
     DataService,
-    GraphService
+    GraphService,
+    ErrorService
   ],
   entryComponents: [
     HelpModal,
@@ -82,6 +88,7 @@ import { StreamModalComponent } from "./modals/streammodal/streammodal.component
     ShareModalComponent,
     MirrorModalComponent,
     MessageModalComponent,
+    ErrorModalComponent,
     StreamModalComponent
   ],
   bootstrap: [AppComponent]

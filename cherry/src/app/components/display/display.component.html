@@ -93,3 +93,5 @@
 <ng-template #blankicon>
     <i class="material-icons">crop_landscape</i>
 </ng-template>
+
+<mat-progress-bar *ngIf="command.commandInProgress" [mode]="'indeterminate'" color="primary" class="mpb"></mat-progress-bar>

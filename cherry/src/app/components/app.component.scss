@@ -9,7 +9,6 @@
 }
 
 $buttonXOffset: .55rem;
-
 .mat-tab-group {
     height: 100%;
 }
@@ -18,13 +17,11 @@ $buttonXOffset: .55rem;
     .mat-slider-thumb {
         // default size of thumb
         $size: 30px;
-
         width: $size;
         height: $size;
         right: $size / -2;
         bottom: $size / -2;
     }
-
     &.cdk-focused {
         .mat-slider-thumb-label {
             // how much thumb grows on click
@@ -43,41 +40,33 @@ $buttonXOffset: .55rem;
 
 .lock {
     z-index: 1000;
-
     position: absolute;
     width: 100%;
     height: 100%;
     top: 0;
     left: 0;
-
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-
     * {
         pointer-events: none;
     }
-
     .progress {
         position: absolute;
         top: 0;
         width: 100%;
     }
-
     .logo {
         height: 70vh;
         width: 70vh;
-
         display: flex;
         justify-content: center;
         align-items: center;
     }
-
     .text {
         margin-top: 3%;
         font-size: 150%;
-
         &.smaller {
             transform: scale(.75);
         }
@@ -96,14 +85,12 @@ $buttonXOffset: .55rem;
 .power {
     @extend %button;
     @extend %top-button;
-
     left: $buttonXOffset;
 }
 
 .help {
     @extend %button;
     @extend %top-button;
-
     right: $buttonXOffset;
 }
 
@@ -111,7 +98,6 @@ $buttonXOffset: .55rem;
     position: absolute;
     height: 100%;
     width: 100%;
-
     display: flex;
     flex-direction: column;
     align-items: center;

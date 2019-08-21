@@ -207,3 +207,8 @@ export class Panel {
     this.features = features;
   }
 }
+
+export class ErrorMessage {
+  title: string;
+  body: string;
+}

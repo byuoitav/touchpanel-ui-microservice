@@ -7,6 +7,8 @@ import { CommandService } from "../services/command.service";
 import { GraphService } from "../services/graph.service";
 import { HelpDialog } from "../dialogs/help.dialog";
 import { Output } from "../objects/status.objects";
+import { APIService } from "../services/api.service";
+import { Event, BasicRoomInfo } from "../services/socket.service";
 
 const HIDDEN = "hidden";
 const QUERY = "query";
@@ -35,7 +37,8 @@ export class AppComponent {
   constructor(
     public data: DataService,
     public command: CommandService,
-    public dialog: MatDialog
+    public dialog: MatDialog,
+    private api: APIService
   ) {
     this.loaded = false;
     this.data.loaded.subscribe(() => {
@@ -57,6 +60,18 @@ export class AppComponent {
     this.command.powerOnDefault(this.data.panel.preset).subscribe(success => {
       if (!success) {
         console.warn("failed to turn on");
+        // const event = new Event();
+
+        //   event.User = APIService.piHostname;
+        //   event.EventTags = ["user-error"];
+        //   event.AffectedRoom = new BasicRoomInfo(
+        //     APIService.piHostname
+        // );
+        // event.Key = "user-error";
+        // event.Value = "failed to turn on";
+
+        // this.api.sendEvent(event);
+        // this.dialog.open(ErrorDialog, { data: "Failed to do the power on default."});
       } else {
         // switch direction of loading bar
         this.progressMode = LOADING;

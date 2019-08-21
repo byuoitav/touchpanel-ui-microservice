@@ -169,3 +169,7 @@ $buffer-size: 3vw;
     // flex-flow: row nowrap;
     align-items: stretch;
 }
+
+mat-progress-bar {
+    position: fixed;
+}

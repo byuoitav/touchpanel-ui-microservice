@@ -9,7 +9,8 @@ import {
   MatProgressBarModule,
   MatProgressSpinnerModule,
   MatDialogModule,
-  MatIconModule
+  MatIconModule,
+  MatDividerModule
 } from "@angular/material";
 import "hammerjs";
 
@@ -21,12 +22,14 @@ import { AudiocontrolComponent } from "./components/audiocontrol/audiocontrol.co
 import { HelpDialog } from "./dialogs/help.dialog";
 import { ConfirmHelpDialog } from "./dialogs/confirmhelp.dialog";
 import { ViaDialog } from "./dialogs/via.dialog";
+import { ErrorDialogComponent } from "./dialogs/error/error.component";
 
 import { APIService } from "./services/api.service";
 import { CommandService } from "./services/command.service";
 import { DataService } from "./services/data.service";
 import { GraphService } from "./services/graph.service";
 import { SocketService } from "./services/socket.service";
+import { ErrorService } from "./services/error.service";
 import { ManagementComponent } from "./components/management/management.component";
 import { StreamModalComponent } from "./dialogs/streammodal/streammodal.component";
 
@@ -40,6 +43,7 @@ import { StreamModalComponent } from "./dialogs/streammodal/streammodal.componen
     HelpDialog,
     ConfirmHelpDialog,
     ViaDialog,
+    ErrorDialogComponent,
     StreamModalComponent
   ],
   imports: [
@@ -52,16 +56,18 @@ import { StreamModalComponent } from "./dialogs/streammodal/streammodal.componen
     MatProgressBarModule,
     MatProgressSpinnerModule,
     MatDialogModule,
-    MatIconModule
+    MatIconModule,
+    MatDividerModule
   ],
   providers: [
     APIService,
     CommandService,
     DataService,
     GraphService,
-    SocketService
+    SocketService,
+    ErrorService
   ],
-  entryComponents: [HelpDialog, ConfirmHelpDialog, ViaDialog, StreamModalComponent],
+  entryComponents: [HelpDialog, ConfirmHelpDialog, ViaDialog, ErrorDialogComponent, StreamModalComponent],
   bootstrap: [AppComponent]
 })
 export class AppModule {}

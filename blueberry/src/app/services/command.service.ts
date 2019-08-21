@@ -19,17 +19,20 @@ import { WheelComponent } from "../components/wheel.component";
 import "rxjs/add/operator/map";
 import "rxjs/add/operator/timeout";
 import { deserialize } from "serializer.ts/Serializer";
+import { ErrorService, PowerOn, SwitchInput, BlankDisplay, SetVolume, SetMute, PowerOff, Share, Unshare, Mirror } from "./error.service";
 
-const TIMEOUT = 12 * 1000;
+const TIMEOUT = 6 * 1000;
 
 @Injectable()
 export class CommandService {
   private options: RequestOptions;
+  public commandInProgress = false;
 
   constructor(
     private http: Http,
     private data: DataService,
-    private api: APIService
+    private api: APIService,
+    private es: ErrorService
   ) {
     const headers = new Headers();
     headers.append("content-type", "application/json");
@@ -154,13 +157,17 @@ export class CommandService {
       });
     }
 
+    this.commandInProgress = true;
     this.put(body).subscribe(
       data => {
         ret.emit(true);
+        this.commandInProgress = false;
       },
       err => {
         Display.setPower(p, displays);
         ret.emit(false);
+        this.commandInProgress = false;
+        this.es.show(PowerOn, err);
       }
     );
 
@@ -183,13 +190,17 @@ export class CommandService {
       });
     }
 
+    this.commandInProgress = true;
     this.put(body).subscribe(
       data => {
         ret.emit(true);
+        this.commandInProgress = false;
       },
       err => {
         Display.setInput(prev, displays);
         ret.emit(false);
+        this.commandInProgress = false;
+        this.es.show(SwitchInput, err);
       }
     );
 
@@ -210,13 +221,17 @@ export class CommandService {
       });
     }
 
+    this.commandInProgress = true;
     this.put(body).subscribe(
       data => {
         ret.emit(true);
+        this.commandInProgress = false;
       },
       err => {
         Display.setBlank(prev, displays);
         ret.emit(false);
+        this.commandInProgress = false;
+        this.es.show(BlankDisplay, err);
       }
     );
 
@@ -240,13 +255,17 @@ export class CommandService {
 
     console.log("volume body", body);
 
+    this.commandInProgress = true;
     this.put(body).subscribe(
       data => {
         ret.emit(true);
+        this.commandInProgress = false;
       },
       err => {
         AudioDevice.setVolume(prev, devices);
         ret.emit(false);
+        this.commandInProgress = false;
+        this.es.show(SetVolume, err);
       }
     );
 
@@ -268,13 +287,17 @@ export class CommandService {
       });
     }
 
+    this.commandInProgress = true;
     this.put(body).subscribe(
       data => {
         ret.emit(true);
+        this.commandInProgress = false;
       },
       err => {
         AudioDevice.setMute(prev, devices);
         ret.emit(false);
+        this.commandInProgress = false;
+        this.es.show(SetMute, err);
       }
     );
 
@@ -317,7 +340,7 @@ export class CommandService {
       }
     }
 
-    this.executeRequests(requests, 1, 20 * 1000).subscribe(success => {
+    this.executeRequests(requests, 1, 10 * 1000).subscribe(success => {
       ret.emit(success);
     });
 
@@ -369,12 +392,16 @@ export class CommandService {
 
     const body = { power: "standby" };
 
+    this.commandInProgress = true;
     this.put(body).subscribe(
       data => {
         ret.emit(true);
+        this.commandInProgress = false;
       },
       err => {
         ret.emit(false);
+        this.commandInProgress = false;
+        this.es.show(PowerOff, err);
       }
     );
 
@@ -443,12 +470,16 @@ export class CommandService {
     }
 
     console.log("share body:", body);
+    this.commandInProgress = true;
     this.putWithCustomTimeout(body, 20 * 1000).subscribe(
       data => {
         ret.emit(true);
+        this.commandInProgress = false;
       },
       err => {
         ret.emit(false);
+        this.commandInProgress = false;
+        this.es.show(Share, err);
       }
     );
 
@@ -498,12 +529,16 @@ export class CommandService {
     }
 
     console.log("unshare body", body);
+    this.commandInProgress = true;
     this.putWithCustomTimeout(body, 20 * 1000).subscribe(
       data => {
         ret.emit(true);
+        this.commandInProgress = false;
       },
       err => {
         ret.emit(false);
+        this.commandInProgress = false;
+        this.es.show(Unshare, err);
       }
     );
 
@@ -528,14 +563,17 @@ export class CommandService {
     }
 
     console.log("mirror body", body);
-
+    this.commandInProgress = true;
     this.put(body).subscribe(
       data => {
         ret.emit(true);
+        this.commandInProgress = false;
       },
       err => {
         ret.emit(false);
         console.error(err);
+        this.commandInProgress = false;
+        this.es.show(Mirror, err);
       }
     );
 

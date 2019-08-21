@@ -26,6 +26,7 @@ import {
 } from "../objects/status.objects";
 import { HomeComponent } from "./home.component";
 import { AudioComponent } from "./audio/audio.component";
+import { ErrorService, PowerOn } from "app/services/error.service";
 
 @Component({
   selector: "app-root",
@@ -46,7 +47,8 @@ export class AppComponent {
     private api: APIService,
     public socket: SocketService,
     public command: CommandService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private es: ErrorService
   ) {}
 
   public unlock() {
@@ -58,6 +60,7 @@ export class AppComponent {
     this.home.turnOn().subscribe(success => {
       if (!success) {
         console.log("failed to turn on");
+        this.es.show(PowerOn, "");
       } else {
         setTimeout(() => (this.unlocking = false), 1000);
       }

@@ -266,6 +266,13 @@ export class APIService {
       .map(response => response.json());
   }
 
+  public getErrorMessageConfig(): Observable<Object> {
+    console.log("trying to get error messages");
+    return this.http
+      .get(APIService.localurl + ":8888/blueberry/db/error-messages.json")
+      .map(response => response.json());
+  }
+
   private getRoomConfig(): Observable<Object> {
     return this.http
       .get(APIService.apiurl + "/configuration")
