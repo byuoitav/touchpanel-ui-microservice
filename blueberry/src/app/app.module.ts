@@ -37,6 +37,7 @@ import { MirrorModalComponent } from "./modals/mirrormodal/mirrormodal.component
 import { MessageModalComponent } from "./modals/messagemodal/messagemodal.component";
 import { ErrorModalComponent } from "./modals/errormodal/errormodal.component";
 import { ErrorService } from "./services/error.service";
+import { StreamModalComponent } from "./modals/streammodal/streammodal.component";
 
 @NgModule({
   declarations: [
@@ -53,7 +54,8 @@ import { ErrorService } from "./services/error.service";
     VolumeComponent,
     MirrorModalComponent,
     MessageModalComponent,
-    ErrorModalComponent
+    ErrorModalComponent,
+    StreamModalComponent
   ],
   imports: [
     BrowserModule,
@@ -86,7 +88,8 @@ import { ErrorService } from "./services/error.service";
     ShareModalComponent,
     MirrorModalComponent,
     MessageModalComponent,
-    ErrorModalComponent
+    ErrorModalComponent,
+    StreamModalComponent
   ],
   bootstrap: [AppComponent]
 })

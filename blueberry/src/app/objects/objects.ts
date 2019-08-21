@@ -136,6 +136,7 @@ export class InputConfiguration {
   name: string;
   icon: string;
   displayname: string;
+  subInputs: InputConfiguration[];
 }
 
 export class DeviceStatus {

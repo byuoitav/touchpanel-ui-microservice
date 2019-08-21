@@ -78,7 +78,15 @@ export class DataService {
           ? config.displayname
           : input.display_name;
 
-        this.inputs.push(new Input(config.name, dispname, config.icon));
+        const subs: Input[] = [];
+        console.log("does the input have subInputs?", config);
+        if (config.subInputs !== undefined) {
+          for (const io of config.subInputs) {
+            subs.push(new Input(io.name, io.displayname, io.icon, []));
+          }
+        }
+
+        this.inputs.push(new Input(config.name, dispname, config.icon, subs));
       } else {
         console.warn(
           "no input '" + name + "' found with role 'VideoIn', skipping it"
@@ -291,7 +299,7 @@ export class DataService {
     console.info("Panel", this.panel);
   }
 
-  private setCurrentPreset() {
+  setCurrentPreset = () => {
     if (!this.panel.features.includes(PRESET_SWITCH)) {
       return;
     }
@@ -303,11 +311,11 @@ export class DataService {
           ":10000/divider/preset/" +
           APIService.piHostname
       )
-      .map(res => res.json())
       .subscribe(
         data => {
+          const body = (<any>data)._body;
           const preset = this.presets.find(
-            p => p.name.toLowerCase() === data.toLowerCase()
+            p => p.name.toLowerCase() === body.toLowerCase()
           );
 
           if (preset != null) {
@@ -327,7 +335,7 @@ export class DataService {
           setTimeout(this.setCurrentPreset, 5000);
         }
       );
-  }
+  };
 
   private update() {
     this.socket.getEventListener().subscribe(event => {

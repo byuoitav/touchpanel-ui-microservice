@@ -155,6 +155,7 @@ export class IOConfiguration {
   name: string;
   icon: string;
   displayname: string;
+  subInputs: IOConfiguration[];
 }
 
 export class DeviceStatus {

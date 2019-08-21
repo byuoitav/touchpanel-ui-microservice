@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"fmt"
-	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
@@ -39,25 +38,19 @@ func GetDeviceInfo(context echo.Context) error {
 
 func Reboot(context echo.Context) error {
 	log.Printf("[management] Rebooting pi")
-	http.Get("http://localhost:7010/reboot")
-	return nil
-}
+	req, _ := http.NewRequest(http.MethodPut, "http://localhost:10000/device/reboot", nil)
 
-func GetDockerStatus(context echo.Context) error {
-	log.Printf("[management] Getting docker status")
-	resp, err := http.Get("http://localhost:7010/dockerStatus")
-	log.Printf("docker status response: %v", resp)
+	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
-		return context.JSON(http.StatusBadRequest, err.Error())
+		return context.String(http.StatusInternalServerError, err.Error())
 	}
 	defer resp.Body.Close()
 
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return context.JSON(http.StatusBadRequest, err.Error())
+	if resp.StatusCode/100 == 2 {
+		return context.String(http.StatusOK, "rebooting")
 	}
 
-	return context.String(http.StatusOK, string(body))
+	return context.String(http.StatusInternalServerError, "unable to reboot")
 }
 
 // GenerateHelpFunction generates an echo handler that handles help requests.
