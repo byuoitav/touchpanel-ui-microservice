@@ -10,7 +10,8 @@ import {
   MatInputModule,
   MatIconModule,
   MatButtonToggleModule,
-  MatBottomSheetModule
+  MatBottomSheetModule,
+  MatToolbarModule
 } from '@angular/material';
 
 import { AppRoutingModule } from './app-routing.module';
@@ -21,6 +22,8 @@ import { DisplayComponent } from './components/display/display.component';
 import { MultiDisplayComponent } from './components/multi-display/multi-display.component';
 import { NumpadComponent } from './dialogs/numpad/numpad.component';
 import { IOButtonComponent } from './components/io-button/io-button.component';
+import { FooterComponent } from './components/footer/footer.component';
+import { FooterButtonComponent } from './components/footer-button/footer-button.component';
 
 @NgModule({
   declarations: [
@@ -29,7 +32,9 @@ import { IOButtonComponent } from './components/io-button/io-button.component';
     DisplayComponent,
     MultiDisplayComponent,
     NumpadComponent,
-    IOButtonComponent
+    IOButtonComponent,
+    FooterComponent,
+    FooterButtonComponent
   ],
   imports: [
     BrowserModule,
@@ -41,6 +46,7 @@ import { IOButtonComponent } from './components/io-button/io-button.component';
     MatInputModule,
     MatIconModule,
     MatButtonToggleModule,
+    MatToolbarModule,
     ReactiveFormsModule,
     MatBottomSheetModule,
     HttpClientModule
