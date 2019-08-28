@@ -11,7 +11,8 @@ import {
   MatIconModule,
   MatButtonToggleModule,
   MatBottomSheetModule,
-  MatToolbarModule
+  MatToolbarModule,
+  MatSliderModule
 } from '@angular/material';
 
 import { AppRoutingModule } from './app-routing.module';
@@ -24,6 +25,7 @@ import { NumpadComponent } from './dialogs/numpad/numpad.component';
 import { IOButtonComponent } from './components/io-button/io-button.component';
 import { FooterComponent } from './components/footer/footer.component';
 import { FooterButtonComponent } from './components/footer-button/footer-button.component';
+import { VolumeSliderComponent } from './components/volume-slider/volume-slider.component';
 
 @NgModule({
   declarations: [
@@ -34,7 +36,8 @@ import { FooterButtonComponent } from './components/footer-button/footer-button.
     NumpadComponent,
     IOButtonComponent,
     FooterComponent,
-    FooterButtonComponent
+    FooterButtonComponent,
+    VolumeSliderComponent
   ],
   imports: [
     BrowserModule,
@@ -47,6 +50,7 @@ import { FooterButtonComponent } from './components/footer-button/footer-button.
     MatIconModule,
     MatButtonToggleModule,
     MatToolbarModule,
+    MatSliderModule,
     ReactiveFormsModule,
     MatBottomSheetModule,
     HttpClientModule

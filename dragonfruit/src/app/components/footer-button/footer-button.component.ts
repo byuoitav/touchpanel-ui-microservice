@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, ElementRef } from '@angular/core';
+import { Component, OnInit, Input, ElementRef, EventEmitter, Output } from '@angular/core';
 import { InputAction } from '../io-button/io-button.component';
 import { ViewEncapsulation } from '@angular/compiler/src/core';
 import { FooterElement } from '../footer/footer.component';
@@ -15,10 +15,10 @@ class FooterButtonBase {
 })
 export class FooterButtonComponent extends FooterButtonBase implements OnInit {
   @Input() info: FooterElement;
+  @Output() selectedEvent = new EventEmitter<string>();
 
   @Input() click: InputAction;
   @Input() press: InputAction;
-  @Input() selected = false;
 
   constructor(elementRef: ElementRef) {
     super(elementRef);
@@ -27,16 +27,17 @@ export class FooterButtonComponent extends FooterButtonBase implements OnInit {
   ngOnInit() {
   }
 
-  toggleSelect = () => {
-    this.selected = !this.selected;
+  toggleSelect(): boolean {
+    if (!this.info.selected) {
+      this.info.selected = !this.info.selected;
+      return true;
+    }
+    return false;
   }
 
-  do(f: InputAction) {
-    this.toggleSelect();
-    if (!f) {
-      console.warn('no function for this action has been defined');
-      return;
+  buttonSelected() {
+    if (this.toggleSelect()) {
+      this.selectedEvent.emit(this.info.name);
     }
   }
-
 }

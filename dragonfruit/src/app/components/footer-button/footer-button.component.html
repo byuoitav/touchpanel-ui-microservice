@@ -1,4 +1,4 @@
-<span class="wrapper" (click)="do(click)" (press)="do(press)" [class.selected]="selected">
+<span class="wrapper" (click)="buttonSelected()" (press)="buttonSelected()" [class.selected]="info.selected">
     <mat-icon class="icon">{{ info.icon }}</mat-icon>
     <span>{{ info.name }}</span>
 </span>
