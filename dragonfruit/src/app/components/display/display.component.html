@@ -4,23 +4,46 @@
     <span class="title">{{roomID}}</span>
     <!-- <span class="fill-remaining-space">_</span> -->
   </div>
-  <!-- <div class="row">
-    <ng-container *ngFor="let io of uiConfig?.inputConfiguration">
-      <io-button [io]="io" [selected]="selectedInput === io" [click]="selectInput" [press]="selectInput"
-        class="io-button"></io-button>
-    </ng-container>
+  <div class="display-body" [ngSwitch]="page">
+    <div *ngSwitchCase="'Control'">
+      <div class="control-title">Display</div>
+      <div class="control-icon">
+        <mat-icon>tv</mat-icon>
+      </div>
+      <div class="inputs-container">
+        <div class="row">
+          <ng-container *ngFor="let io of uiConfig?.inputConfiguration">
+            <io-button [io]="io" [selected]="selectedInput === io" [click]="selectInput" [press]="selectInput"
+              class="io-button"></io-button>
+          </ng-container>
 
-  </div> -->
-  <div class="bottom-bar">
-    <app-footer></app-footer>
+        </div>
+      </div>
+      <volume-slider></volume-slider>
+    </div>
+
+    <div *ngSwitchCase="'Audio'">
+      <div class="audio-device">
+        <!-- <div class="audio-label">Main</div> -->
+        <label>Main</label>
+        <div class="slider-container">
+          <volume-slider></volume-slider>
+        </div>
+      </div>
+    </div>
+
+    <div *ngSwitchCase="'Present'">Present</div>
+
+    <div *ngSwitchCase="'Help'">
+      <p class="help-message">Please call AV Support at 801-422-7671 for help.</p>
+      <p class="help-message">You can request to have a technician sent to the room by clicking the link below:</p>
+      <div class="help-link-container">
+        <a class="help-link">Request Help</a>
+      </div>
+    </div>
   </div>
-  <div class="slider-container">
-    <volume-slider></volume-slider>
-    <volume-slider></volume-slider>
-    <volume-slider></volume-slider>
-    <volume-slider></volume-slider>
-    <volume-slider></volume-slider>
-    <volume-slider></volume-slider>
-    <volume-slider></volume-slider>
+
+  <div class="bottom-bar">
+    <app-footer (selectedPage)="changePage($event)"></app-footer>
   </div>
 </div>

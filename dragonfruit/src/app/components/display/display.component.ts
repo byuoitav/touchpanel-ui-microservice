@@ -3,6 +3,11 @@ import { BFFService } from 'src/app/services/bff.service';
 import { ActivatedRoute } from '@angular/router';
 import { Device, UIConfig, IOConfiguration } from 'src/app/objects/database';
 
+class Page {
+  name: string;
+  display: boolean;
+}
+
 @Component({
   selector: 'app-display',
   templateUrl: './display.component.html',
@@ -15,6 +20,8 @@ export class DisplayComponent implements OnInit {
 
   selectedInput: IOConfiguration;
 
+  page: string = 'Control';
+
   constructor(public bff: BFFService,
     public route: ActivatedRoute) {
     this.route.params.subscribe(params => {
@@ -22,7 +29,7 @@ export class DisplayComponent implements OnInit {
     });
 
     // Temporarily disable info getting
-    //this.getRoomInfo();
+    // this.getRoomInfo();
   }
 
   ngOnInit() {
@@ -42,6 +49,10 @@ export class DisplayComponent implements OnInit {
 
   selectInput() {
     console.log("Input button pressed!");
+  }
+
+  changePage(page: string) {
+    this.page = page;
   }
 
 }

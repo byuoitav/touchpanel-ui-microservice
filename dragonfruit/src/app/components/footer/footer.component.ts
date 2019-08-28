@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, EventEmitter, Output } from '@angular/core';
 
 export class FooterElement {
   name: string;
@@ -12,7 +12,7 @@ export class FooterElement {
   styleUrls: ['./footer.component.scss']
 })
 export class FooterComponent implements OnInit {
-
+  @Output() selectedPage = new EventEmitter<string>();
   footerButtons: FooterElement[] = [
     {
       name: "Control",
@@ -34,7 +34,7 @@ export class FooterComponent implements OnInit {
       icon: "help",
       selected: false
     }
-  ]
+  ];
 
   constructor() { }
 
@@ -48,6 +48,7 @@ export class FooterComponent implements OnInit {
       }
     }
     // Change the page
+    this.selectedPage.emit(button);
   }
 
 }
