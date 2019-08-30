@@ -22,6 +22,17 @@ export class DisplayComponent implements OnInit {
 
   page: string = 'Control';
 
+  roomOptions: string[] = [
+    "ITB-1101-VIA1 (Wireless Presentation)",
+    "ITB-1101-HDMI1 (HDMI Jack)"
+  ];
+
+  boxPresentations: string[] = [
+    "My Presentation",
+    "Another Presentation",
+    "A Third Presentation"
+  ];
+
   constructor(public bff: BFFService,
     public route: ActivatedRoute) {
     this.route.params.subscribe(params => {

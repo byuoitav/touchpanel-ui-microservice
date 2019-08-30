@@ -24,15 +24,54 @@
 
     <div *ngSwitchCase="'Audio'">
       <div class="audio-device">
-        <!-- <div class="audio-label">Main</div> -->
-        <label>Main</label>
+        <label class="audio-label">Display</label>
+        <div class="slider-container">
+          <volume-slider></volume-slider>
+        </div>
+      </div>
+      <div class="audio-device">
+        <label class="audio-label">Mic 1</label>
+        <div class="slider-container">
+          <volume-slider></volume-slider>
+        </div>
+      </div>
+      <div class="audio-device">
+        <label class="audio-label">Mic 2</label>
         <div class="slider-container">
           <volume-slider></volume-slider>
         </div>
       </div>
     </div>
 
-    <div *ngSwitchCase="'Present'">Present</div>
+    <div *ngSwitchCase="'Present'">
+
+      <div class="presentation-category">
+        <div class="category-text">Room Options</div>
+      </div>
+
+      <ng-container *ngFor="let present of roomOptions">
+        <div class="presentation">
+          <div class="presentation-title">{{ present }}</div>
+          <div class="arrow-container">
+            <mat-icon class="presentation-arrow">keyboard_arrow_right</mat-icon>
+          </div>
+        </div>
+      </ng-container>
+
+      <div class="presentation-category">
+        <div class="category-text">My Box Content</div>
+      </div>
+
+      <ng-container *ngFor="let present of boxPresentations">
+        <div class="presentation">
+          <div class="presentation-title">{{ present }}</div>
+          <div class="arrow-container">
+            <mat-icon class="presentation-arrow">keyboard_arrow_right</mat-icon>
+          </div>
+        </div>
+      </ng-container>
+
+    </div>
 
     <div *ngSwitchCase="'Help'">
       <p class="help-message">Please call AV Support at 801-422-7671 for help.</p>
