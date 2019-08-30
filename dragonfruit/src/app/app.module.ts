@@ -12,7 +12,8 @@ import {
   MatButtonToggleModule,
   MatBottomSheetModule,
   MatToolbarModule,
-  MatSliderModule
+  MatSliderModule,
+  MatDialogModule
 } from '@angular/material';
 
 import { AppRoutingModule } from './app-routing.module';
@@ -26,6 +27,7 @@ import { IOButtonComponent } from './components/io-button/io-button.component';
 import { FooterComponent } from './components/footer/footer.component';
 import { FooterButtonComponent } from './components/footer-button/footer-button.component';
 import { VolumeSliderComponent } from './components/volume-slider/volume-slider.component';
+import { DisplayDialogComponent } from './dialogs/display-dialog/display-dialog.component';
 
 @NgModule({
   declarations: [
@@ -37,7 +39,8 @@ import { VolumeSliderComponent } from './components/volume-slider/volume-slider.
     IOButtonComponent,
     FooterComponent,
     FooterButtonComponent,
-    VolumeSliderComponent
+    VolumeSliderComponent,
+    DisplayDialogComponent
   ],
   imports: [
     BrowserModule,
@@ -51,6 +54,7 @@ import { VolumeSliderComponent } from './components/volume-slider/volume-slider.
     MatButtonToggleModule,
     MatToolbarModule,
     MatSliderModule,
+    MatDialogModule,
     ReactiveFormsModule,
     MatBottomSheetModule,
     HttpClientModule
@@ -59,7 +63,8 @@ import { VolumeSliderComponent } from './components/volume-slider/volume-slider.
     BFFService
   ],
   entryComponents: [
-    NumpadComponent
+    NumpadComponent,
+    DisplayDialogComponent
   ],
   bootstrap: [AppComponent]
 })

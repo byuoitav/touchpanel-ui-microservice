@@ -20,27 +20,18 @@
         </div>
       </div>
       <volume-slider></volume-slider>
+      <button (click)="openDisplayDialog()">Test Dialog</button>
     </div>
 
     <div *ngSwitchCase="'Audio'">
-      <div class="audio-device">
-        <label class="audio-label">Display</label>
-        <div class="slider-container">
-          <volume-slider></volume-slider>
+      <ng-container *ngFor="let device of audioDevices">
+        <div class="audio-device">
+          <label class="audio-label">{{ device }}</label>
+          <div class="slider-container">
+            <volume-slider></volume-slider>
+          </div>
         </div>
-      </div>
-      <div class="audio-device">
-        <label class="audio-label">Mic 1</label>
-        <div class="slider-container">
-          <volume-slider></volume-slider>
-        </div>
-      </div>
-      <div class="audio-device">
-        <label class="audio-label">Mic 2</label>
-        <div class="slider-container">
-          <volume-slider></volume-slider>
-        </div>
-      </div>
+      </ng-container>
     </div>
 
     <div *ngSwitchCase="'Present'">
