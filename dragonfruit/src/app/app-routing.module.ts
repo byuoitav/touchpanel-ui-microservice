@@ -1,7 +1,8 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { LoginComponent } from './components/login/login.component';
-import { DisplayComponent } from './components/display/display.component';
+import { RoomControlComponent } from './components/room-control/room-control.component';
+import { SelectionComponent } from './components/selection/selection.component';
 
 const routes: Routes = [
   {
@@ -15,7 +16,11 @@ const routes: Routes = [
   },
   {
     path: 'room/:id',
-    component: DisplayComponent
+    component: SelectionComponent
+  },
+  {
+    path: 'room/:id/group/:index',
+    component: RoomControlComponent
   }
 ];
 

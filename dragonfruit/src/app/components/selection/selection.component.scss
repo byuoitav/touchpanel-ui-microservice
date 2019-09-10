@@ -1,0 +1,26 @@
+.row {
+    display: flex;
+    flex-flow: row wrap;
+    width: 100%;
+    justify-content: space-between;
+    align-items: center;
+    // border: solid 1px green;
+    &.header {
+        background-color: #dbdbdb;
+        // height: 40px;
+        padding: 5px;
+    }
+    &.options {
+        justify-content: space-evenly;
+        padding-top: 20px;
+    }
+}
+
+.room-title {
+    // font-weight: bold;
+    font-size: 14pt;
+}
+
+.empty-thing {
+    width: 35%;
+}

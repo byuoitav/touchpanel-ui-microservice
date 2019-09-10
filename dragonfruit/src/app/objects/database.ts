@@ -176,7 +176,7 @@ export class Person {
 }
 
 @JsonObject('Room')
-export class Room {
+export class DBRoom {
     @JsonProperty('_id', String)
     id: string = undefined;
 
@@ -203,6 +203,9 @@ export class Room {
 
     @JsonProperty('attributes', MapConverter, true)
     attributes: Map<string, any> = undefined;
+
+    @JsonProperty('input_reachability', MapConverter, true)
+    inputReachability: Map<string, string[]> = undefined;
 }
 
 @JsonObject('IOConfiguration')

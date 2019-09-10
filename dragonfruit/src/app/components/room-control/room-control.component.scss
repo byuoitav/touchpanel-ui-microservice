@@ -1,0 +1,51 @@
+$header-height: 5vh;
+$footer-height: 11vh;
+.row {
+    display: flex;
+    flex-flow: row wrap;
+    width: 100%;
+    justify-content: space-between;
+    align-items: center;
+    // border: solid 1px green;
+    &.header {
+        background-color: #dbdbdb;
+        height: $header-height;
+        padding: 5px;
+    }
+    &.footer {
+        background-color: #dbdbdb;
+        color: #aaaaaa;
+    }
+    &.options {
+        justify-content: space-evenly;
+        padding-top: 20px;
+    }
+}
+
+.room-title {
+    // font-weight: bold;
+    font-size: 12pt;
+}
+
+.empty-thing {
+    width: 35%;
+}
+
+.footer-button {
+    display: flex;
+    flex-flow: column nowrap;
+    height: $footer-height;
+    width: 25vw;
+    padding-top: 1vh;
+    padding-bottom: 1vh;
+    justify-content: space-between;
+    align-items: center;
+    .icon {
+        font-size: 34pt;
+        padding-right: 20px;
+    }
+}
+
+.main-body {
+    height: calc(97vh - #{$header-height} - #{$footer-height});
+}

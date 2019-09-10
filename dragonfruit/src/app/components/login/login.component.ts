@@ -48,7 +48,17 @@ export class LoginComponent implements OnInit {
 
   goToRoomControl = () => {
     // TODO: actually do something with the room code
-    const roomID = 'ITB-1101';
-    this.router.navigate(['/room/' + roomID]);
+    switch (this.roomCode) {
+      case '1101': {
+        this.router.navigate(['/room/ITB-1101']);
+        break;
+      }
+      case '1102': {
+        this.router.navigate(['/room/ITB-1101/group/0']);
+        break;
+      }
+      default:
+        break;
+    }
   }
 }

@@ -1,0 +1,8 @@
+<div class="wrapper" (click)="do(click)" (press)="do(press)" [class.selected]="selected">
+    <button *ngIf="showIcon" class="icon" mat-icon-button [disableRipple]=true><mat-icon>{{icon}}</mat-icon></button>
+    <span *ngIf="!showIcon">{{icon}}</span>
+    <span class="title">{{title}}</span>
+
+    <button *ngIf="subIcon" class="sub-icon" mat-icon-button [disableRipple]=true><mat-icon>{{subIcon}}</mat-icon></button>
+    <span *ngIf="subTitle" class="sub-title">{{subTitle}}</span>
+</div>

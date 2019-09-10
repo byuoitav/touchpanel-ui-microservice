@@ -1,4 +1,4 @@
-.io-button {
+.square-button {
     .wrapper {
         display: flex;
         flex-flow: column nowrap;
@@ -19,4 +19,17 @@
 
 .icon {
     transform: scale(1.5);
+}
+
+.title {
+    font-size: 10pt;
+    text-align: center;
+}
+
+.sub-icon {
+    font-size: 8pt;
+}
+
+.sub-title {
+    font-size: 8pt;
 }

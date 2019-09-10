@@ -20,27 +20,23 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { BFFService } from './services/bff.service';
 import { LoginComponent } from './components/login/login.component';
-import { DisplayComponent } from './components/display/display.component';
-import { MultiDisplayComponent } from './components/multi-display/multi-display.component';
 import { NumpadComponent } from './dialogs/numpad/numpad.component';
-import { IOButtonComponent } from './components/io-button/io-button.component';
-import { FooterComponent } from './components/footer/footer.component';
-import { FooterButtonComponent } from './components/footer-button/footer-button.component';
+import { SquareButtonComponent } from './components/square-button/square-button.component';
 import { VolumeSliderComponent } from './components/volume-slider/volume-slider.component';
 import { DisplayDialogComponent } from './dialogs/display-dialog/display-dialog.component';
+import { RoomControlComponent } from './components/room-control/room-control.component';
+import { SelectionComponent } from './components/selection/selection.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     LoginComponent,
-    DisplayComponent,
-    MultiDisplayComponent,
     NumpadComponent,
-    IOButtonComponent,
-    FooterComponent,
-    FooterButtonComponent,
+    SquareButtonComponent,
     VolumeSliderComponent,
-    DisplayDialogComponent
+    DisplayDialogComponent,
+    RoomControlComponent,
+    SelectionComponent
   ],
   imports: [
     BrowserModule,

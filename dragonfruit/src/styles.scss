@@ -2,11 +2,16 @@
 
 @import "./app/themes.scss";
 @import "../node_modules/material-design-icons/iconfont/material-icons.css";
+@import url("https://fonts.googleapis.com/icon?family=Material+Icons");
 body {
-  font-family: Arial, Helvetica, sans-serif;
-  margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    margin: 0;
+}
+
+mat-icon {
+    font-family: 'Material Icons' !important;
 }
 
 .dialog-no-padding .mat-dialog-container {
-  padding: 1vh;
+    padding: 1vh;
 }
