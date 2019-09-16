@@ -54,7 +54,7 @@ export class LoginComponent implements OnInit {
         break;
       }
       case '1102': {
-        this.router.navigate(['/room/ITB-1101/group/0']);
+        this.router.navigate(['/room/ITB-1101/group/0/tab/0']);
         break;
       }
       default:

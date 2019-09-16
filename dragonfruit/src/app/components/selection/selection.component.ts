@@ -34,7 +34,7 @@ export class SelectionComponent implements OnInit {
     return new Promise<boolean>(() => {
       const index = this.bff.room.controlGroups.indexOf(cg);
       this.bff.room.selectedGroup = cg.name;
-      this.router.navigate(['/room/' + this.roomID + '/group/' + index]);
+      this.router.navigate(['/room/' + this.roomID + '/group/' + index + '/tab/0']);
     });
   }
 }

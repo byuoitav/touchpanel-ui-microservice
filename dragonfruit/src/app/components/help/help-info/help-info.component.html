@@ -1,0 +1,21 @@
+<div class="column">
+    <h2 mat-dialog-title class="bold">Request Help</h2>
+    <ng-container *ngIf="!info">
+        <span>Please indicate what it is that you need help with</span>
+        <mat-dialog-content class="column">
+            <button mat-button color="primary" class="help-option" (click)="info = 'System frozen'">
+                            System frozen
+                        </button>
+            <button mat-button color="primary" class="help-option" (click)="info = 'Missing HDMI cable'">
+                            Missing HDMI Cable
+                        </button>
+            <button mat-button color="primary" class="help-option bold" (click)="info = 'Other'">
+                            Other
+                        </button>
+        </mat-dialog-content>
+    </ng-container>
+    <ng-container *ngIf="info">
+        <span>A technician has been dispatched to your room. They will arrive in a few minutes. Please wait in the room.</span>
+        <button mat-button color="primary" class="help-option bold" (click)="close()">Done</button>
+    </ng-container>
+</div>

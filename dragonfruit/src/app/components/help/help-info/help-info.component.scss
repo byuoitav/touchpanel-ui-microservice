@@ -1,0 +1,15 @@
+.column {
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: space-evenly;
+    align-items: center;
+    text-align: center;
+}
+
+.help-option {
+    margin-top: 2vh;
+}
+
+.bold {
+    font-weight: bold;
+}

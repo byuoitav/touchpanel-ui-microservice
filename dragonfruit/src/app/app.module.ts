@@ -14,7 +14,8 @@ import {
   MatToolbarModule,
   MatSliderModule,
   MatDialogModule,
-  MatTabsModule
+  MatTabsModule,
+  MatDividerModule
 } from '@angular/material';
 
 import { AppRoutingModule } from './app-routing.module';
@@ -32,6 +33,7 @@ import { PresentComponent } from './components/present/present.component';
 import { HelpComponent } from './components/help/help.component';
 import { SingleDisplayComponent } from './components/single-display/single-display.component';
 import { MultiDisplayComponent } from './components/multi-display/multi-display.component';
+import { HelpInfoComponent } from './components/help/help-info/help-info.component';
 
 @NgModule({
   declarations: [
@@ -47,7 +49,8 @@ import { MultiDisplayComponent } from './components/multi-display/multi-display.
     PresentComponent,
     HelpComponent,
     SingleDisplayComponent,
-    MultiDisplayComponent
+    MultiDisplayComponent,
+    HelpInfoComponent
   ],
   imports: [
     BrowserModule,
@@ -65,14 +68,16 @@ import { MultiDisplayComponent } from './components/multi-display/multi-display.
     ReactiveFormsModule,
     MatBottomSheetModule,
     HttpClientModule,
-    MatTabsModule
+    MatTabsModule,
+    MatDividerModule
   ],
   providers: [
     BFFService
   ],
   entryComponents: [
     NumpadComponent,
-    DisplayDialogComponent
+    DisplayDialogComponent,
+    HelpInfoComponent
   ],
   bootstrap: [AppComponent]
 })

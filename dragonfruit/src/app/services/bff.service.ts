@@ -2,7 +2,7 @@ import { Injectable, EventEmitter } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { JsonConvert } from 'json2typescript';
 import { Device, UIConfig, IOConfiguration, DBRoom, Preset } from '../objects/database';
-import { Room, ControlGroup, Display, Input, AudioDevice, AudioGroup } from '../objects/control';
+import { Room, ControlGroup, Display, Input, AudioDevice, AudioGroup, PresentGroup } from '../objects/control';
 
 @Injectable({
   providedIn: 'root'
@@ -53,10 +53,12 @@ export class BFFService {
             cg.displays = [];
             cg.inputs = [];
             cg.audioGroups = [];
+            cg.presentGroups = [];
 
             this._setupDisplays(cg, answer.devices, p, config);
             this._setupInputs(cg, answer.devices, p, config);
             this._setupAudioGroups(cg, answer.devices, p, config);
+            this._setupPresentGroups(cg);
             console.log(cg);
             this.room.controlGroups.push(cg);
           }
@@ -215,6 +217,38 @@ export class BFFService {
     }
 
     conGroup.audioGroups.push(indyAudioGroup);
+  }
+
+  private _setupPresentGroups(cg: ControlGroup) {
+    const pg1 = new PresentGroup();
+    pg1.id = 'Room Options';
+    pg1.name = 'Room Options';
+    pg1.items = [
+      {
+        id: 'ITB-1101-VIA1',
+        name: 'ITB-1101-VIA1 (Wireless Presentation)'
+      },
+      {
+        id: 'ITB-1101-HDMI1',
+        name: 'ITB-1101-HDMI1 (HDMI Jack)'
+      }
+    ];
+
+    const pg2 = new PresentGroup();
+    pg2.id = 'My Box Content';
+    pg2.name = 'My Box Content';
+    pg2.items = [
+      {
+        id: 'Ancient Greece Presentations',
+        name: 'Ancient Greece Presentations'
+      },
+      {
+        id: 'Lecture 2019-01-31.pptx',
+        name: 'Lecture 2019-01-31.pptx'
+      }
+    ];
+
+    cg.presentGroups.push(pg1, pg2);
   }
 
   setInput = (cg: ControlGroup, i: Input, selectedDisplays: string[]) => {

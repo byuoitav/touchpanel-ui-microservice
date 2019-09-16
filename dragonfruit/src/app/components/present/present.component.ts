@@ -1,4 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input as AngularInput } from '@angular/core';
+import { ControlGroup } from 'src/app/objects/control';
+import { BFFService } from 'src/app/services/bff.service';
 
 @Component({
   selector: 'app-present',
@@ -6,8 +8,11 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./present.component.scss']
 })
 export class PresentComponent implements OnInit {
+  @AngularInput() cg: ControlGroup;
 
-  constructor() { }
+  constructor(
+    private bff: BFFService
+  ) { }
 
   ngOnInit() {
   }

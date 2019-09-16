@@ -5,7 +5,7 @@
         <span class="empty-thing"></span>
     </div>
 
-    <mat-tab-group headerPosition='below' mat-stretch-tabs color="primary" (selectedTabChange)="tabChange($event)">
+    <mat-tab-group headerPosition='below' mat-stretch-tabs color="primary" [selectedIndex]="selectedTab" (selectedTabChange)="tabChange($event.index)">
         <mat-tab>
             <ng-template mat-tab-label class="footer-label">
                 <span class="footer-button"><mat-icon class="icon">filter_center_focus</mat-icon><span>Control</span></span>
@@ -29,7 +29,7 @@
                 <span class="footer-button"><mat-icon class="icon">present_to_all</mat-icon><span>Present</span></span>
             </ng-template>
             <div class="main-body">
-                <app-present></app-present>
+                <app-present [cg]="controlGroup"></app-present>
             </div>
         </mat-tab>
 
