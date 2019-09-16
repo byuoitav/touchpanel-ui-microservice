@@ -13,7 +13,8 @@ import {
   MatBottomSheetModule,
   MatToolbarModule,
   MatSliderModule,
-  MatDialogModule
+  MatDialogModule,
+  MatTabsModule
 } from '@angular/material';
 
 import { AppRoutingModule } from './app-routing.module';
@@ -26,6 +27,11 @@ import { VolumeSliderComponent } from './components/volume-slider/volume-slider.
 import { DisplayDialogComponent } from './dialogs/display-dialog/display-dialog.component';
 import { RoomControlComponent } from './components/room-control/room-control.component';
 import { SelectionComponent } from './components/selection/selection.component';
+import { AudioComponent } from './components/audio/audio.component';
+import { PresentComponent } from './components/present/present.component';
+import { HelpComponent } from './components/help/help.component';
+import { SingleDisplayComponent } from './components/single-display/single-display.component';
+import { MultiDisplayComponent } from './components/multi-display/multi-display.component';
 
 @NgModule({
   declarations: [
@@ -36,7 +42,12 @@ import { SelectionComponent } from './components/selection/selection.component';
     VolumeSliderComponent,
     DisplayDialogComponent,
     RoomControlComponent,
-    SelectionComponent
+    SelectionComponent,
+    AudioComponent,
+    PresentComponent,
+    HelpComponent,
+    SingleDisplayComponent,
+    MultiDisplayComponent
   ],
   imports: [
     BrowserModule,
@@ -53,7 +64,8 @@ import { SelectionComponent } from './components/selection/selection.component';
     MatDialogModule,
     ReactiveFormsModule,
     MatBottomSheetModule,
-    HttpClientModule
+    HttpClientModule,
+    MatTabsModule
   ],
   providers: [
     BFFService

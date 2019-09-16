@@ -32,7 +32,7 @@ export class SquareButtonComponent extends SquareButtonBase implements OnInit {
   }
 
   toggleSelect = () => {
-    this.selected = !this.selected;
+    // this.selected = !this.selected;
   }
 
   do(f: ButtonAction) {

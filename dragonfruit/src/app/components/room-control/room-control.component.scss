@@ -1,12 +1,11 @@
 $header-height: 5vh;
-$footer-height: 11vh;
+$footer-height: 16vh;
 .row {
     display: flex;
     flex-flow: row wrap;
     width: 100%;
     justify-content: space-between;
     align-items: center;
-    // border: solid 1px green;
     &.header {
         background-color: #dbdbdb;
         height: $header-height;
@@ -24,7 +23,7 @@ $footer-height: 11vh;
 
 .room-title {
     // font-weight: bold;
-    font-size: 12pt;
+    font-size: 14pt;
 }
 
 .empty-thing {
@@ -35,17 +34,32 @@ $footer-height: 11vh;
     display: flex;
     flex-flow: column nowrap;
     height: $footer-height;
-    width: 25vw;
-    padding-top: 1vh;
-    padding-bottom: 1vh;
-    justify-content: space-between;
+    justify-content: space-evenly;
     align-items: center;
     .icon {
-        font-size: 34pt;
-        padding-right: 20px;
+        font-size: 24pt;
+        padding-right: 8px;
     }
 }
 
-.main-body {
-    height: calc(97vh - #{$header-height} - #{$footer-height});
+::ng-deep .mat-tab-label {
+    min-height: 10vh !important;
+    background-color: #dbdbdb;
+    color: #aaaaaa;
+}
+
+::ng-deep .mat-tab-label-active {
+    color: #2196f3
+}
+
+.main-body,
+ ::ng-deep .mat-tab-body-content {
+    // height: calc(100vh - #{$header-height} - #{$footer-height});
+    height: 83.5vh;
+    max-height: 83.5vh;
+}
+
+.base {
+    max-height: 100%;
+    overflow: hidden;
 }

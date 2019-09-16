@@ -216,4 +216,85 @@ export class BFFService {
 
     conGroup.audioGroups.push(indyAudioGroup);
   }
+
+  setInput = (cg: ControlGroup, i: Input, selectedDisplays: string[]) => {
+    for (const d of selectedDisplays) {
+      for (const disp of cg.displays) {
+        if (disp.id === d) {
+          disp.input = i.id;
+          disp.blanked = false;
+        }
+      }
+    }
+
+    this._setRoomState(cg);
+  }
+
+  setBlank = (cg: ControlGroup, blanked: boolean, display: string) => {
+    const d = cg.displays.find(disp => {
+      return disp.id === display;
+    });
+    if (d.blanked !== blanked) {
+      d.blanked = blanked;
+
+      this._setRoomState(cg);
+    }
+  }
+
+  setVolume = (cg: ControlGroup, level: number, audioID: string) => {
+    const ad = cg.getAudioDevice(audioID);
+    ad.level = level;
+
+    this._setRoomState(cg);
+  }
+
+  setMute = (cg: ControlGroup, muted: boolean, audioID: string) => {
+    const ad = cg.getAudioDevice(audioID);
+    ad.muted = muted;
+
+    this._setRoomState(cg);
+  }
+
+  private _setRoomState(cg: ControlGroup) {
+    const body = {
+      displays: [],
+      audioDevices: []
+    };
+
+    for (const d of cg.displays) {
+      body.displays.push({
+        name: this._getNameFromID(d.id),
+        input: this._getNameFromID(d.input),
+        blanked: d.blanked
+      });
+    }
+
+    for (const g of cg.audioGroups) {
+      for (const ad of g.audioDevices) {
+        body.audioDevices.push({
+          name: this._getNameFromID(ad.id),
+          volume: ad.level,
+          muted: ad.muted
+        });
+      }
+    }
+
+    const bID = this.room.id.split('-')[0];
+    const rID = this.room.id.split('-')[1];
+
+    console.log('the body is', body);
+
+    try {
+      const data = this.http.put(this.apiURL + '/buildings/' + bID + '/rooms/' + rID, body, { headers: this.headers }).toPromise();
+    } catch (e) {
+      throw new Error('failed to set room state: ' + e);
+    }
+  }
+
+  private _getNameFromID(id: string): string {
+    if (id === undefined) {
+      return 'ATV1';
+    }
+    return id.split('-')[2];
+  }
 }

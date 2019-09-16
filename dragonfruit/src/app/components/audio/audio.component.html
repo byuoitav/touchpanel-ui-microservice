@@ -1,0 +1,14 @@
+<div *ngFor="let ag of cg?.audioGroups" class="audio-group">
+    <div class="group-label">
+        <span>{{ag.name}}</span>
+        <button mat-button color="primary" (click)="muteAll(ag)">
+            {{ag.allAreMuted() ? 'Unmute all' : 'Mute all'}}
+        </button>
+    </div>
+    <ng-container *ngFor="let ad of ag?.audioDevices">
+        <div class="audio-device">
+            <span class="device-name">{{ad.name}}</span>
+            <volume-slider [audioDevice]="ad" [muted]="ad.muted" [level]="ad.level" [levelChange]="setVolume" [muteChange]="setMute" class="shorter"></volume-slider>
+        </div>
+    </ng-container>
+</div>

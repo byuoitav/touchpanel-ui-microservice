@@ -35,6 +35,16 @@ export class ControlGroup {
             return toReturn;
         }
     }
+
+    public getAudioDevice(id: string): AudioDevice {
+        for (const g of this.audioGroups) {
+            for (const device of g.audioDevices) {
+                if (device.id === id) {
+                    return device;
+                }
+            }
+        }
+    }
 }
 
 export class AudioDevice {
@@ -49,6 +59,16 @@ export class AudioGroup {
     id: string;
     name: string;
     audioDevices: AudioDevice[];
+
+    public allAreMuted(): boolean {
+        for (const a of this.audioDevices) {
+            if (!a.muted) {
+                return false;
+            }
+        }
+
+        return true;
+    }
 }
 
 export class PresentGroup {

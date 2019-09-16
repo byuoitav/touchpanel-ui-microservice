@@ -1,0 +1,21 @@
+<!-- <p>single-display works!</p> -->
+<div class="base">
+    <div class="column">
+        <span class="mat-h1">{{display?.name}}</span>
+        <mat-icon class="large-icon">{{display?.icon}}</mat-icon>
+    </div>
+
+
+    <div class="row">
+        <square-button class="square-button input" *ngFor="let i of cg?.inputs" [data]="i" [icon]="i.icon" [title]="i.name" [selected]="!display?.blanked && display?.input === i.id" [click]="selectInput" [press]="selectInput">
+        </square-button>
+        <square-button class="square-button input" [icon]="'crop_landscape'" [title]="'Blank'" [selected]="display?.blanked" [click]="setBlank" [press]="setBlank">
+        </square-button>
+    </div>
+
+
+    <div class="volume">
+        <volume-slider [muted]="displayAudio?.muted" [level]="displayAudio?.level" [levelChange]="setVolume" [muteChange]="setMute"></volume-slider>
+    </div>
+
+</div>
