@@ -15,7 +15,7 @@ export class RoomControlComponent implements OnInit {
   groupIndex: number;
   roomID: string;
 
-  selectedTab: number;
+  selectedTab: string;
 
   constructor(
     public bff: BFFService,
@@ -25,7 +25,7 @@ export class RoomControlComponent implements OnInit {
     this.route.params.subscribe(params => {
       this.roomID = params['id'];
       this.groupIndex = params['index'];
-      this.selectedTab = +params['tabNum'];
+      this.selectedTab = params['tabName'];
       // console.log(this.roomID);
       if (this.bff.room === undefined) {
         this.bff.setupRoom(this.roomID);
@@ -49,10 +49,10 @@ export class RoomControlComponent implements OnInit {
     this.router.navigate(['/room/' + this.roomID]);
   }
 
-  tabChange(index: number) {
-    this.selectedTab = index;
+  tabChange(tabName: string) {
+    this.selectedTab = tabName;
     const currentURL = window.location.pathname;
-    const newURL = currentURL.substr(0, currentURL.length - 1) + (this.selectedTab);
+    const newURL = currentURL.substr(0, currentURL.lastIndexOf('/') + 1) + (this.selectedTab);
     this.router.navigate([newURL]);
   }
 }

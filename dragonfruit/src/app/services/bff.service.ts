@@ -168,6 +168,53 @@ export class BFFService {
 
       conGroup.inputs.push(input);
     }
+
+    if (conGroup.id === 'Third') {
+      conGroup.inputs.push(
+        {
+          id: 'ITB-1101-HDMI1',
+          name: 'HDMI1',
+          icon: 'settings_input_hdmi',
+          subInputs: []
+        },
+        {
+          id: 'ITB-1101-PC1',
+          name: 'PC1',
+          icon: 'desktop_windows',
+          subInputs: []
+        },
+        {
+          id: 'ITB-1101-PC2',
+          name: 'PC2',
+          icon: 'desktop_windows',
+          subInputs: []
+        },
+        {
+          id: 'ITB-1101-HDMI2',
+          name: 'HDMI2',
+          icon: 'settings_input_hdmi',
+          subInputs: []
+        },
+        {
+          id: 'ITB-1101-HDMI3',
+          name: 'HDMI3',
+          icon: 'settings_input_hdmi',
+          subInputs: []
+        },
+        {
+          id: 'ITB-1101-HDMI4',
+          name: 'HDMI4',
+          icon: 'settings_input_hdmi',
+          subInputs: []
+        },
+        {
+          id: 'ITB-1101-HDMI5',
+          name: 'HDMI5',
+          icon: 'settings_input_hdmi',
+          subInputs: []
+        }
+      )
+    }
   }
 
   private _setupAudioGroups(conGroup: ControlGroup, deviceList: Device[], preset: Preset, config: UIConfig) {

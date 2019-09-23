@@ -1,14 +1,15 @@
 import { Component, OnInit, Input as AngularInput } from '@angular/core';
-import { ControlGroup, AudioDevice, AudioGroup } from 'src/app/objects/control';
+import { ControlGroup, AudioDevice, AudioGroup, Input } from 'src/app/objects/control';
 import { BFFService } from 'src/app/services/bff.service';
+import { IControlTab } from '../control-tab/icontrol-tab';
 
 @Component({
   selector: 'app-audio',
   templateUrl: './audio.component.html',
   styleUrls: ['./audio.component.scss']
 })
-export class AudioComponent implements OnInit {
-  @AngularInput() cg: ControlGroup;
+export class AudioComponent implements OnInit, IControlTab {
+  @AngularInput() cg: ControlGroup = new ControlGroup();
 
   constructor(private bff: BFFService) {
     

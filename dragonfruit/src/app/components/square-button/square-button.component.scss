@@ -1,18 +1,25 @@
-.square-button {
+$side-length: 80px;
+square-button {
     .wrapper {
         display: flex;
         flex-flow: column nowrap;
-        width: 22vw;
-        height: 22vw;
+        min-width: $side-length;
+        // max-width: wrap;
+        width: wrap;
+        min-height: $side-length;
         justify-content: space-evenly;
+        text-align: center;
         align-items: center;
         border: solid #757575 1.25px;
-        border-radius: 4vw;
+        border-radius: 15px;
         color: #757575;
         font-size: 14pt;
         &.selected {
             border: solid #1e88e5 2.5px;
             color: #1e88e5;
+        }
+        &.multi {
+            min-width: 30vw;
         }
     }
 }
@@ -21,9 +28,22 @@
     transform: scale(1.5);
 }
 
+.icon-title {
+    display: flex;
+    flex-flow: row wrap;
+    font-size: 14pt;
+    width: 70px;
+    max-width: 70px;
+    justify-content: space-evenly;
+}
+
 .title {
+    display: flex;
+    flex-flow: row wrap;
     font-size: 10pt;
-    text-align: center;
+    width: 60px;
+    max-width: 60px;
+    justify-content: space-evenly;
 }
 
 .sub-icon {
@@ -31,5 +51,17 @@
 }
 
 .sub-title {
+    display: flex;
+    flex-flow: row wrap;
     font-size: 8pt;
+    width: 60px;
+    max-width: 60px;
+}
+
+@media (min-width: 768px) {
+    square-button {
+        .wrapper {
+            transform: scale(1.5);
+        }
+    }
 }

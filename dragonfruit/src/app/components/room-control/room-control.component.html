@@ -1,45 +1,14 @@
 <div class="base">
-    <div class="row header">
-        <button mat-button (click)="goBack()" color="primary" class="room-title">< {{roomID}}</button>
-        <span class="room-title">{{bff.room?.selectedGroup}}</span>
-        <span class="empty-thing"></span>
+    <div class="header">
+
     </div>
-
-    <mat-tab-group headerPosition='below' mat-stretch-tabs color="primary" [selectedIndex]="selectedTab" (selectedTabChange)="tabChange($event.index)">
-        <mat-tab>
-            <ng-template mat-tab-label class="footer-label">
-                <span class="footer-button"><mat-icon class="icon">filter_center_focus</mat-icon><span>Control</span></span>
-            </ng-template>
-            <div class="main-body">
-                <app-single-display *ngIf="controlGroup?.displays.length < 2" [cg]="controlGroup" [display]="controlGroup?.displays[0]" [displayAudio]="controlGroup?.getAudioDevice(controlGroup?.displays[0].id)"></app-single-display>
-                <app-multi-display *ngIf="controlGroup?.displays.length > 1"></app-multi-display>
-            </div>
-        </mat-tab>
-        <mat-tab>
-            <ng-template mat-tab-label class="footer-label">
-                <span class="footer-button"><mat-icon class="icon">volume_up</mat-icon><span>Audio</span></span>
-            </ng-template>
-            <div class="main-body">
-                <app-audio [cg]="controlGroup"></app-audio>
-            </div>
-        </mat-tab>
-
-        <mat-tab>
-            <ng-template mat-tab-label class="footer-label">
-                <span class="footer-button"><mat-icon class="icon">present_to_all</mat-icon><span>Present</span></span>
-            </ng-template>
-            <div class="main-body">
-                <app-present [cg]="controlGroup"></app-present>
-            </div>
-        </mat-tab>
-
-        <mat-tab>
-            <ng-template mat-tab-label class="footer-label">
-                <span class="footer-button"><mat-icon class="icon">help</mat-icon><span>Help</span></span>
-            </ng-template>
-            <div class="main-body">
-                <app-help></app-help>
-            </div>
-        </mat-tab>
-    </mat-tab-group>
+    <div class="body">
+        <control-tab [tab]="selectedTab" [controlGroup]="controlGroup"></control-tab>
+    </div>
+    <div class="footer">
+        <button mat-flat-button color="" class="tab-button" (click)="tabChange('Control')" [class.selected]="selectedTab === 'Control'" [disableRipple]=true><mat-icon class="tab-icon">filter_center_focus</mat-icon><br>Control</button>
+        <button mat-flat-button color="" class="tab-button" (click)="tabChange('Audio')" [class.selected]="selectedTab === 'Audio'" [disableRipple]=true><mat-icon class="tab-icon">volume_up</mat-icon><br>Audio</button>
+        <button mat-flat-button color="" class="tab-button" (click)="tabChange('Present')" [class.selected]="selectedTab === 'Present'" [disableRipple]=true><mat-icon class="tab-icon">present_to_all</mat-icon><br>Present</button>
+        <button mat-flat-button color="" class="tab-button" (click)="tabChange('Help')" [class.selected]="selectedTab === 'Help'" [disableRipple]=true><mat-icon class="tab-icon">help</mat-icon><br>Help</button>
+    </div>
 </div>

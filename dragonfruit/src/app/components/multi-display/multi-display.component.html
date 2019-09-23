@@ -1,1 +1,20 @@
-<p>multi-display works!</p>
+<!-- <div class="base">
+    <div class="row">
+        <ng-container *ngFor="let display of cg.displays">
+            <square-button class="display" [data]="display" [title]="display.name" [icon]="display.icon" [subTitle]="display.input" [subIcon]="getInputIcon(display.input)" [selected]="selectedDisplay === display" [click]="selectDisplay"></square-button>
+        </ng-container>
+
+    </div>
+    <mat-divider></mat-divider>
+    <div class="double-row">
+        <ng-container *ngFor="let input of cg.inputs">
+            <square-button class="input" [data]="input" [title]="input.name" [icon]="input.icon" [selected]="selectedDisplay?.input === input.id" [click]="selectInput"></square-button>
+        </ng-container>
+    </div>
+    <volume-slider></volume-slider>
+</div> -->
+
+<div class="base">
+    <ng-container *ngFor="let display of cg.displays">
+    </ng-container>
+</div>

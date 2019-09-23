@@ -34,6 +34,9 @@ import { HelpComponent } from './components/help/help.component';
 import { SingleDisplayComponent } from './components/single-display/single-display.component';
 import { MultiDisplayComponent } from './components/multi-display/multi-display.component';
 import { HelpInfoComponent } from './components/help/help-info/help-info.component';
+import { WideButtonComponent } from './components/wide-button/wide-button.component';
+import { ControlTabComponent } from './components/control-tab/control-tab.component';
+import { ControlTabDirective } from './components/control-tab/control-tab.directive';
 
 @NgModule({
   declarations: [
@@ -50,7 +53,10 @@ import { HelpInfoComponent } from './components/help/help-info/help-info.compone
     HelpComponent,
     SingleDisplayComponent,
     MultiDisplayComponent,
-    HelpInfoComponent
+    HelpInfoComponent,
+    WideButtonComponent,
+    ControlTabComponent,
+    ControlTabDirective
   ],
   imports: [
     BrowserModule,
@@ -77,7 +83,12 @@ import { HelpInfoComponent } from './components/help/help-info/help-info.compone
   entryComponents: [
     NumpadComponent,
     DisplayDialogComponent,
-    HelpInfoComponent
+    HelpInfoComponent,
+    SingleDisplayComponent,
+    MultiDisplayComponent,
+    AudioComponent,
+    PresentComponent,
+    HelpComponent
   ],
   bootstrap: [AppComponent]
 })

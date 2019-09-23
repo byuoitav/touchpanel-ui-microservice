@@ -19,7 +19,7 @@ const routes: Routes = [
     component: SelectionComponent
   },
   {
-    path: 'room/:id/group/:index/tab/:tabNum',
+    path: 'room/:id/group/:index/tab/:tabName',
     component: RoomControlComponent
   }
 ];

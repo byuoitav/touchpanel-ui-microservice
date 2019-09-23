@@ -108,3 +108,8 @@ export class Room {
         }
     }
 }
+
+export const CONTROL_TAB = 'Control';
+export const AUDIO_TAB = 'Audio';
+export const PRESENT_TAB = 'Present';
+export const HELP_TAB = 'Help';

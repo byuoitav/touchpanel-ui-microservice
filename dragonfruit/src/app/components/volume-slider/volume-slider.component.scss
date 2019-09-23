@@ -3,7 +3,7 @@
     flex-flow: row nowrap;
     justify-content: center;
     align-items: center;
-    width: 85%;
+    width: 90%;
     height: 6vh;
     background-color: #858585;
     color: white;
@@ -16,6 +16,7 @@
 .mute-button {
     display: flex;
     justify-items: center;
+    margin-right: 2vw;
 }
 
 .volume-icon {
@@ -25,7 +26,7 @@
 .volume-slider {
     width: 100%;
     margin-left: 10px;
-    margin-right: 5px;
+    margin-right: 10px;
 }
 
 ::ng-deep .mat-accent .mat-slider-thumb,

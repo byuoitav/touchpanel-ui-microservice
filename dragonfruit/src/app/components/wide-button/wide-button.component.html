@@ -1,0 +1,15 @@
+<div class="wrapper" (click)="do(click)" (press)="do(press)" [class.selected]="selected">
+    <div class="icon-row">
+        <div class="icon-&-title" *ngFor="let p of mainIcons">
+            <mat-icon class="icon">{{p.icon}}</mat-icon>
+            <span class="title">{{p.name}}</span>
+        </div>
+
+    </div>
+    <div class="sub-icon-row">
+        <div class="subIcon-&-subTitle" *ngFor="let s of subIcons">
+            <mat-icon class="sub-icon">{{s.icon}}</mat-icon>
+            <span class="sub-title">{{s.name}}</span>
+        </div>
+    </div>
+</div>
