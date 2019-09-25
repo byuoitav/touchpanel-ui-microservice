@@ -1,5 +1,5 @@
 <div *ngFor="let ag of cg?.audioGroups" class="audio-group">
-    <div class="group-label">
+    <div class="group-label" *ngIf="ag?.audioDevices.length > 1">
         <span>{{ag.name}}</span>
         <button mat-button color="primary" (click)="muteAll(ag)">
             {{ag.allAreMuted() ? 'Unmute all' : 'Mute all'}}

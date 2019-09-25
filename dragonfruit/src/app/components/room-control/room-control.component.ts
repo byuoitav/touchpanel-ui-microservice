@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, HostListener } from '@angular/core';
 import { BFFService } from 'src/app/services/bff.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Preset } from 'src/app/objects/database';
@@ -15,7 +15,17 @@ export class RoomControlComponent implements OnInit {
   groupIndex: number;
   roomID: string;
 
+  tabPosition = 'below';
   selectedTab: string;
+
+  @HostListener('window:resize', ['$event'])
+  onResize(event) {
+    if (window.innerWidth >= 768) {
+      this.tabPosition = 'above';
+    } else {
+      this.tabPosition = 'below';
+    }
+  }
 
   constructor(
     public bff: BFFService,
@@ -43,6 +53,11 @@ export class RoomControlComponent implements OnInit {
   }
 
   ngOnInit() {
+    if (window.innerWidth >= 768) {
+      this.tabPosition = 'above';
+    } else {
+      this.tabPosition = 'below';
+    }
   }
 
   goBack = () => {

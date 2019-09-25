@@ -1,14 +1,36 @@
 <div class="base">
-    <div class="header">
+    <div class="header"></div>
+    <mat-tab-group [headerPosition]="tabPosition" mat-stretch-tabs>
+        <mat-tab>
+            <ng-template mat-tab-label>
+                <span class="tab-button"><img src="../../../../assets/control_camera-24px.svg" class="tab-icon"><span>Control</span></span>
+            </ng-template>
+            <app-single-display *ngIf="controlGroup?.displays.length < 2" [cg]="controlGroup" [display]="controlGroup?.displays[0]" [displayAudio]="controlGroup?.getAudioDevice(controlGroup?.displays[0].id)"></app-single-display>
 
-    </div>
-    <div class="body">
-        <control-tab [tab]="selectedTab" [controlGroup]="controlGroup"></control-tab>
-    </div>
-    <div class="footer">
-        <button mat-flat-button color="" class="tab-button" (click)="tabChange('Control')" [class.selected]="selectedTab === 'Control'" [disableRipple]=true><mat-icon class="tab-icon">filter_center_focus</mat-icon><br>Control</button>
-        <button mat-flat-button color="" class="tab-button" (click)="tabChange('Audio')" [class.selected]="selectedTab === 'Audio'" [disableRipple]=true><mat-icon class="tab-icon">volume_up</mat-icon><br>Audio</button>
-        <button mat-flat-button color="" class="tab-button" (click)="tabChange('Present')" [class.selected]="selectedTab === 'Present'" [disableRipple]=true><mat-icon class="tab-icon">present_to_all</mat-icon><br>Present</button>
-        <button mat-flat-button color="" class="tab-button" (click)="tabChange('Help')" [class.selected]="selectedTab === 'Help'" [disableRipple]=true><mat-icon class="tab-icon">help</mat-icon><br>Help</button>
-    </div>
+        </mat-tab>
+        <mat-tab label="Tab Two">
+            <ng-template mat-tab-label>
+                <span class="tab-button"><mat-icon class="tab-icon">volume_up</mat-icon><span>Audio</span></span>
+            </ng-template>
+            <div class="inner">
+                Tab Two Content
+            </div>
+        </mat-tab>
+        <mat-tab label="Tab Two">
+            <ng-template mat-tab-label>
+                <span class="tab-button"><mat-icon class="tab-icon">present_to_all</mat-icon><span>Present</span></span>
+            </ng-template>
+            <div class="inner">
+                Tab Three Content
+            </div>
+        </mat-tab>
+        <mat-tab label="Tab Two">
+            <ng-template mat-tab-label>
+                <span class="tab-button"><mat-icon class="tab-icon">help</mat-icon><span>Help</span></span>
+            </ng-template>
+            <div class="inner">
+                Tab Four Content
+            </div>
+        </mat-tab>
+    </mat-tab-group>
 </div>

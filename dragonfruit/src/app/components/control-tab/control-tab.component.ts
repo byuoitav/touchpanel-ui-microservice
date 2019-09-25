@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, forwardRef, Input, ComponentFactoryResolver } from '@angular/core';
+import { Component, OnInit, ViewChild, forwardRef, Input, ComponentFactoryResolver, ViewContainerRef, AfterViewInit } from '@angular/core';
 import { ControlTabDirective } from './control-tab.directive';
 import { IControlTab } from './icontrol-tab';
 import { ControlGroup, CONTROL_TAB, AUDIO_TAB, PRESENT_TAB, HELP_TAB } from '../../objects/control';
@@ -13,8 +13,8 @@ import { HelpComponent } from '../help/help.component';
     templateUrl: './control-tab.component.html',
     styleUrls: ['./control-tab.component.scss']
 })
-export class ControlTabComponent implements OnInit {
-    @ViewChild(forwardRef(() => ControlTabDirective), {static: false}) direct: ControlTabDirective;
+export class ControlTabComponent implements OnInit, AfterViewInit {
+    @ViewChild(ControlTabDirective, {static: true}) direct: ControlTabDirective;
     @Input() controlGroup: ControlGroup;
     @Input() tab: string;
 
@@ -23,6 +23,10 @@ export class ControlTabComponent implements OnInit {
     ) {}
 
     ngOnInit() {
+        
+    }
+
+    ngAfterViewInit() {
         console.log('initializing the control tab component', this.controlGroup, this.tab);
         this.setUpComponent();
     }
