@@ -19,7 +19,18 @@ import { WheelComponent } from "../components/wheel.component";
 import "rxjs/add/operator/map";
 import "rxjs/add/operator/timeout";
 import { deserialize } from "serializer.ts/Serializer";
-import { ErrorService, PowerOn, SwitchInput, BlankDisplay, SetVolume, SetMute, PowerOff, Share, Unshare, Mirror } from "./error.service";
+import {
+  ErrorService,
+  PowerOn,
+  SwitchInput,
+  BlankDisplay,
+  SetVolume,
+  SetMute,
+  PowerOff,
+  Share,
+  Unshare,
+  Mirror
+} from "./error.service";
 
 const TIMEOUT = 6 * 1000;
 
@@ -510,6 +521,7 @@ export class CommandService {
       }
     }
 
+    /*
     for (const disp of from.displays) {
       body.displays.push({
         name: disp.name,
@@ -527,6 +539,7 @@ export class CommandService {
         muted: false
       });
     }
+    */
 
     console.log("unshare body", body);
     this.commandInProgress = true;
