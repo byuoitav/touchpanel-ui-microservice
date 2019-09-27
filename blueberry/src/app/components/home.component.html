@@ -45,9 +45,8 @@
 <div class="buttons bottom">
   <ng-container
     *ngIf="
-      data?.panel?.features.includes('share') ||
-      wheel?.preset?.shareablePresets?.length == 1 ||
-      wheel?.preset?.shareablePresets?.length > 1
+      data?.panel?.features.includes('share') &&
+      wheel?.preset?.shareablePresets?.length > 0
     "
   >
     <button

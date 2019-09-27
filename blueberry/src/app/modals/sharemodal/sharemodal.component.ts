@@ -14,7 +14,7 @@ import { Preset } from "../../objects/objects";
   styleUrls: ["./sharemodal.component.scss"]
 })
 export class ShareModalComponent implements OnInit {
-  public colMap = [0, 1, 2, 3, 4, 3, 3, 4, 4, 3, 4, 4, 4, 4, 4, 4, 4, 4, 4];
+  public colMap = [1, 1, 2, 3, 4, 3, 3, 4, 4, 3, 4, 4, 4, 4, 4, 4, 4, 4, 4];
 
   public selections: Preset[];
   public selected: Preset[];
@@ -28,7 +28,7 @@ export class ShareModalComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA)
     public data: {
       wheel: WheelComponent;
-      share: (from: Preset, to: Preset[]) => (() => Promise<boolean>);
+      share: (from: Preset, to: Preset[]) => () => Promise<boolean>;
     }
   ) {}
 
@@ -78,6 +78,12 @@ export class ShareModalComponent implements OnInit {
 
       this.selections.push(preset);
     });
+
+    if (this.selections.length === 0) {
+      setTimeout(() => {
+        this.ref.close();
+      }, 4000);
+    }
 
     // select all of the presets
     this.selected = this.selections.slice();
