@@ -479,6 +479,7 @@ export class CommandService {
       }
     }
 
+    /*
     for (const disp of from.displays) {
       body.displays.push({
         name: disp.name,
@@ -496,6 +497,7 @@ export class CommandService {
         muted: false
       });
     }
+    */
 
     console.log("unshare body", body);
     this.putWithCustomTimeout(body, 20 * 1000).subscribe(

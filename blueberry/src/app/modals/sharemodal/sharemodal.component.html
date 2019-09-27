@@ -1,72 +1,82 @@
+<ng-container *ngIf="selections?.length === 0">
+  <div mat-dialog-content class="text">There are no displays to share to.</div>
+</ng-container>
+
 <!-- invalid input -->
-<ng-container *ngIf="!data?.wheel?.getInput()">
+<ng-container *ngIf="selections?.length > 0 && !data?.wheel?.getInput()">
   <div mat-dialog-content class="text">Please select an input to share.</div>
 </ng-container>
 
-<!-- this weird case where the current input shouldn't ever be settable (probably something is configured wrong) -->
-<ng-container *ngIf="data?.wheel?.getInput()?.reachableDisplays?.length == 0">
-  <div mat-dialog-content class="text">
-    This room isn't configured correctly to share this input.
-  </div>
-</ng-container>
+<ng-container *ngIf="selections?.length > 0 && data?.wheel?.getInput()">
+  <!-- this weird case where the current input shouldn't ever be settable (probably something is configured wrong) -->
+  <ng-container *ngIf="data?.wheel?.getInput()?.reachableDisplays?.length == 0">
+    <div mat-dialog-content class="text">
+      This room isn't configured correctly to share this input.
+    </div>
+  </ng-container>
 
-<!-- valid input that can't be shared -->
-<ng-container *ngIf="data?.wheel?.getInput()?.reachableDisplays?.length == 1">
-  <div mat-dialog-content class="text">
-    {{ data?.wheel?.getInput()?.displayname }} can't be shared with any
-    displays.
-  </div>
-</ng-container>
+  <!-- valid input that can't be shared -->
+  <ng-container *ngIf="data?.wheel?.getInput()?.reachableDisplays?.length == 1">
+    <div mat-dialog-content class="text">
+      {{ data?.wheel?.getInput()?.displayname }} can't be shared with any
+      displays.
+    </div>
+  </ng-container>
 
-<!-- valid input that can be shared-->
-<ng-container *ngIf="data?.wheel?.getInput()?.reachableDisplays?.length > 1">
-  <h1 mat-dialog-title class="text title">
-    Select stations to share {{ data.wheel?.getInput()?.displayname }} with
-  </h1>
+  <!-- valid input that can be shared-->
+  <ng-container *ngIf="data?.wheel?.getInput()?.reachableDisplays?.length > 1">
+    <h1 mat-dialog-title class="text title">
+      Select stations to share {{ data.wheel?.getInput()?.displayname }} with
+    </h1>
 
-  <div mat-dialog-content class="">
-    <mat-grid-list [cols]="colMap[(selections?.length)]" rowHeight="75">
-      <mat-grid-tile
-        *ngFor="let p of selections"
-        [colspan]="1"
-        [rowspan]="1"
-        (click)="toggle(p)"
-        (press)="toggle(p)"
-      >
-        <button mat-raised-button *ngIf="selected?.includes(p)" color="accent">
-          {{ p?.name }}
-        </button>
-        <button
-          mat-raised-button
-          *ngIf="!selected?.includes(p)"
-          style="background-color: rgba(255, 255, 255, 0.12)"
+    <div mat-dialog-content class="">
+      <mat-grid-list [cols]="colMap[(selections?.length)]" rowHeight="75">
+        <mat-grid-tile
+          *ngFor="let p of selections"
+          [colspan]="1"
+          [rowspan]="1"
+          (click)="toggle(p)"
+          (press)="toggle(p)"
         >
-          {{ p?.name }}
-        </button>
-      </mat-grid-tile>
-    </mat-grid-list>
-  </div>
+          <button
+            mat-raised-button
+            *ngIf="selected?.includes(p)"
+            color="accent"
+          >
+            {{ p?.name }}
+          </button>
+          <button
+            mat-raised-button
+            *ngIf="!selected?.includes(p)"
+            style="background-color: rgba(255, 255, 255, 0.12)"
+          >
+            {{ p?.name }}
+          </button>
+        </mat-grid-tile>
+      </mat-grid-list>
+    </div>
 
-  <div mat-dialog-actions class="items secondary-theme">
-    <button
-      mat-raised-button
-      color="warn"
-      [disabled]="button?.resolving()"
-      (click)="cancel()"
-      (press)="cancel()"
-    >
-      Cancel
-    </button>
+    <div mat-dialog-actions class="items secondary-theme">
+      <button
+        mat-raised-button
+        color="warn"
+        [disabled]="button?.resolving()"
+        (click)="cancel()"
+        (press)="cancel()"
+      >
+        Cancel
+      </button>
 
-    <activity-button
-      #button
-      type="mat-raised-button"
-      color="primary"
-      spinnerColor="accent"
-      [click]="data?.share(data?.wheel?.preset, selected)"
-      [press]="data?.share(data?.wheel?.preset, selected)"
-      (success)="ref.close()"
-      >Share</activity-button
-    >
-  </div>
+      <activity-button
+        #button
+        type="mat-raised-button"
+        color="primary"
+        spinnerColor="accent"
+        [click]="data?.share(data?.wheel?.preset, selected)"
+        [press]="data?.share(data?.wheel?.preset, selected)"
+        (success)="ref.close()"
+        >Share</activity-button
+      >
+    </div>
+  </ng-container>
 </ng-container>
