@@ -14,7 +14,7 @@
 
 
     <div class="volume">
-        <volume-slider [muted]="displayAudio?.muted" [level]="displayAudio?.level" [levelChange]="setVolume" [muteChange]="setMute"></volume-slider>
+        <volume-slider class="master" [master]="true" [muted]="displayAudio?.muted" [level]="displayAudio?.level" [levelChange]="setVolume" [muteChange]="setMute"></volume-slider>
     </div>
 
 </div>

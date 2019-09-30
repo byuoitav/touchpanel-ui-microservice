@@ -20,6 +20,8 @@ export class VolumeSliderComponent implements OnInit {
 
   @AngularInput() audioDevice: AudioDevice;
 
+  @AngularInput() master = false;
+
   @ViewChild('slider', null) slider: MatSlider;
 
   constructor() { }

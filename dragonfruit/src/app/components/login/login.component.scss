@@ -33,14 +33,29 @@
     display: flex;
     flex-flow: row nowrap;
     justify-content: space-evenly;
-    width: 60vw;
+    width: 60%;
 }
 
 .code-char {
-    width: 6vw;
+    width: 20px;
     text-align: center;
 }
 
 :host ::ng-deep .mat-form-field-infix {
     padding-bottom: 0;
+}
+
+@media (min-width: 768px) {
+    .column {
+        max-width: 800px;
+        margin: auto;
+    }
+    .code-char {
+        width: 30px;
+        text-align: center;
+    }
+    .logo {
+        height: 20vh;
+        width: 20vh;
+    }
 }

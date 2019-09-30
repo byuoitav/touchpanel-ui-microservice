@@ -4,6 +4,9 @@
     <span class="empty-thing"></span>
 </div>
 
+<div class="row">
+    <h2>Select a station to control</h2>
+</div>
 <div class="row options">
     <square-button class="square-button" *ngFor="let cg of bff.room?.controlGroups" [data]="cg" [icon]="cg.name" [title]="cg.listDisplays()" [showIcon]="false" [click]="selectControlGroup" [press]="selectControlGroup"></square-button>
 </div>

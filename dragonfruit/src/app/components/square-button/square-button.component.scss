@@ -31,7 +31,7 @@ square-button {
 .icon-title {
     display: flex;
     flex-flow: row wrap;
-    font-size: 14pt;
+    font-size: 16pt;
     width: 70px;
     max-width: 70px;
     justify-content: space-evenly;
@@ -59,9 +59,22 @@ square-button {
 }
 
 @media (min-width: 768px) {
+    $side-length: 110px;
     square-button {
         .wrapper {
-            transform: scale(1.5);
+            // transform: scale(1.5);
+            width: $side-length;
+            height: $side-length;
         }
+    }
+    .button-icon {
+        transform: scale(1.75);
+    }
+    .title {
+        font-size: 14pt;
+    }
+    .icon-title {
+        width: 90px;
+        // height: 90px;
     }
 }

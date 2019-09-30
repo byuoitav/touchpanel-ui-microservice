@@ -2,7 +2,7 @@ import { Component, OnInit, HostListener } from '@angular/core';
 import { BFFService } from 'src/app/services/bff.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Preset } from 'src/app/objects/database';
-import { ControlGroup } from 'src/app/objects/control';
+import { ControlGroup, CONTROL_TAB, AUDIO_TAB, PRESENT_TAB, HELP_TAB } from 'src/app/objects/control';
 import { MatTabChangeEvent, MatTab } from '@angular/material';
 
 @Component({
@@ -16,7 +16,7 @@ export class RoomControlComponent implements OnInit {
   roomID: string;
 
   tabPosition = 'below';
-  selectedTab: string;
+  selectedTab: number;
 
   @HostListener('window:resize', ['$event'])
   onResize(event) {
@@ -35,8 +35,7 @@ export class RoomControlComponent implements OnInit {
     this.route.params.subscribe(params => {
       this.roomID = params['id'];
       this.groupIndex = params['index'];
-      this.selectedTab = params['tabName'];
-      // console.log(this.roomID);
+      this.selectedTab = +params['tabName'];
       if (this.bff.room === undefined) {
         this.bff.setupRoom(this.roomID);
       } else {
@@ -64,8 +63,8 @@ export class RoomControlComponent implements OnInit {
     this.router.navigate(['/room/' + this.roomID]);
   }
 
-  tabChange(tabName: string) {
-    this.selectedTab = tabName;
+  tabChange(index: number) {
+    this.selectedTab = index;
     const currentURL = window.location.pathname;
     const newURL = currentURL.substr(0, currentURL.lastIndexOf('/') + 1) + (this.selectedTab);
     this.router.navigate([newURL]);

@@ -21,6 +21,11 @@ export class ControlGroup {
     inputs: Input[];
     audioGroups: AudioGroup[];
     presentGroups: PresentGroup[];
+    helpRequested: boolean;
+
+    constructor() {
+        this.helpRequested = false;
+    }
 
     public listDisplays(): string {
         let toReturn = '';

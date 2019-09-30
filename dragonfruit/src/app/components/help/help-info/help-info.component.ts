@@ -1,5 +1,6 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
+import { ControlGroup } from 'src/app/objects/control';
 
 @Component({
   selector: 'app-help-info',
@@ -10,7 +11,8 @@ export class HelpInfoComponent implements OnInit {
   info: string;
 
   constructor(
-    public dialogRef: MatDialogRef<HelpInfoComponent>
+    public dialogRef: MatDialogRef<HelpInfoComponent>,
+    @Inject(MAT_DIALOG_DATA) public cg: ControlGroup
   ) { }
 
   ngOnInit() {

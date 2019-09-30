@@ -1,13 +1,18 @@
+@import "../square-button/square-button.component.scss";
+$main-width: calc(4.5 * #{$side-length});
 .column {
     display: flex;
     flex-flow: column nowrap;
-    width: 100%;
+    width: $main-width;
     justify-content: space-around;
     align-items: center;
     padding-top: 2vh;
+    margin-left: auto;
+    margin-right: auto;
     margin-bottom: 5vh;
     color: #757575;
     max-height: 25%;
+    height: 15%;
 }
 
 .large-icon {
@@ -33,9 +38,11 @@
 .base {
     display: flex;
     flex-flow: column nowrap;
-    width: 100%;
+    width: $main-width;
     height: 100%;
+    max-width: 1024px;
     justify-content: space-evenly;
+    margin: auto;
     // margin-top: 5%;
     // margin-bottom: 5%;
 }
@@ -46,13 +53,17 @@
 }
 
 @media (min-width: 768px) {
-    // .display-title {
-    //     font-size: 34pt;
+    .display-title {
+        font-size: 24pt;
+    }
+    .large-icon {
+        transform: scale(2.5);
+    }
+    // .column {
+    //     transform: scale(1.75);
     // }
-    // .large-icon {
-    //     transform: scale(3);
-    // }
-    .column {
-        transform: scale(1.75);
+    $main-width: calc(6.5 * #{$side-length}) !important;
+    .base {
+        width: $main-width;
     }
 }
