@@ -127,8 +127,10 @@ export class BFFService {
       });
 
       display.id = device.id;
-      display.name = device.displayName;
-      display.icon = io.icon;
+      display.outputs = [{
+        name: device.displayName,
+        icon: io.icon
+      }];
       display.allowedInputs = [];
 
       this.inputReach.forEach((v, k) => {
@@ -152,16 +154,20 @@ export class BFFService {
       });
 
       input.id = device.id;
-      input.name = device.displayName;
-      input.icon = io.icon;
+      input.iconPair = {
+        name: device.displayName,
+        icon: io.icon
+      };
       input.subInputs = [];
 
       if (io.subInputs !== undefined && io.subInputs.length > 0) {
         for (const subI of io.subInputs) {
           const si = new Input();
           si.id = subI.name;
-          si.name = subI.displayName;
-          si.icon = subI.icon;
+          si.iconPair = {
+            name: subI.displayName,
+            icon: subI.icon
+          };
           input.subInputs.push(si);
         }
       }
@@ -169,51 +175,72 @@ export class BFFService {
       conGroup.inputs.push(input);
     }
 
-    if (conGroup.id === 'Third') {
+    if (conGroup.id === 'Third' || conGroup.id === 'The Cube') {
       conGroup.inputs.push(
         {
           id: 'ITB-1101-HDMI1',
-          name: 'HDMI1',
-          icon: 'settings_input_hdmi',
-          subInputs: []
+          iconPair: {
+            name: 'HDMI1',
+            icon: 'settings_input_hdmi',
+          },
+          subInputs: [],
+          disabled: false
         },
         {
           id: 'ITB-1101-PC1',
-          name: 'PC1',
+          iconPair: {
+            name: 'PC1',
           icon: 'desktop_windows',
-          subInputs: []
+          },
+          subInputs: [],
+          disabled: false
         },
         {
           id: 'ITB-1101-PC2',
-          name: 'PC2',
-          icon: 'desktop_windows',
-          subInputs: []
+          iconPair: {
+            name: 'PC2',
+            icon: 'desktop_windows',
+          },
+          subInputs: [],
+          disabled: false
         },
         {
           id: 'ITB-1101-HDMI2',
-          name: 'HDMI2',
+          iconPair: {
+            name: 'HDMI2',
           icon: 'settings_input_hdmi',
-          subInputs: []
+          },
+          subInputs: [],
+          disabled: false
         },
         {
           id: 'ITB-1101-HDMI3',
-          name: 'HDMI3',
+          iconPair: {
+            name: 'HDMI3',
           icon: 'settings_input_hdmi',
-          subInputs: []
+          },
+          subInputs: [],
+          disabled: false
         },
         {
           id: 'ITB-1101-HDMI4',
-          name: 'HDMI4',
+          iconPair: {
+            name: 'HDMI4',
           icon: 'settings_input_hdmi',
-          subInputs: []
+          },
+          subInputs: [],
+          disabled: false
         },
-        {
-          id: 'ITB-1101-HDMI5',
-          name: 'HDMI5',
-          icon: 'settings_input_hdmi',
-          subInputs: []
-        }
-      )
+        // {
+        //   id: 'ITB-1101-HDMI5',
+        //   iconPair: {
+        //     name: 'HDMI5',
+        //   icon: 'settings_input_hdmi',
+        //   },
+        //   subInputs: [],
+        //   disabled: false
+        // }
+      );
     }
   }
 
@@ -301,7 +328,7 @@ export class BFFService {
   setInput = (cg: ControlGroup, i: Input, selectedDisplays: string[]) => {
     for (const d of selectedDisplays) {
       for (const disp of cg.displays) {
-        if (disp.id === d) {
+        if (disp.id.includes(d)) {
           disp.input = i.id;
           disp.blanked = false;
         }

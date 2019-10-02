@@ -1,6 +1,6 @@
 <div class="base">
     <div class="header">
-        <button mat-button color="primary" class="exit-button" (click)="goBack()"><mat-icon class="exit-icon">exit_to_app</mat-icon>Exit Room</button>
+        <button mat-button color="primary" class="exit-button" (click)="goBack()"><mat-icon class="exit-icon">exit_to_app</mat-icon>{{bff.room?.controlGroups?.length > 1 ? "Select Group" : "Exit Room"}}</button>
         <span class="room-title">{{controlGroup?.name}}</span>
         <div class="empty-thing"></div>
     </div>

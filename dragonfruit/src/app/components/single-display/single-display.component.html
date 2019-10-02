@@ -1,15 +1,19 @@
 <div class="base">
     <div class="column">
-        <span class="mat-h1 display-title">{{display?.name}}</span>
-        <mat-icon class="large-icon">{{display?.icon}}</mat-icon>
+        <span class="mat-h1 display-title">{{display?.outputs[0].name}}</span>
+        <mat-icon class="large-icon">{{display?.outputs[0].icon}}</mat-icon>
     </div>
 
 
-    <div class="row">
-        <square-button class="square-button input" *ngFor="let i of cg?.inputs" [data]="i" [icon]="i.icon" [title]="i.name" [selected]="!display?.blanked && display?.input === i.id" [click]="selectInput" [press]="selectInput">
+    <div class="input-column" (swipe)="onSwipe($event)">
+        <square-button class="square-button input" *ngFor="let i of cg?.inputs; let j = index;" [id]="'input' + (j)" [data]="i" [icon]="i.iconPair.icon" [title]="i.iconPair.name" [selected]="!display?.blanked && display?.input === i.id" [click]="selectInput"
+            [press]="selectInput">
         </square-button>
         <square-button class="square-button input" [icon]="'crop_landscape'" [title]="'Blank'" [selected]="display?.blanked" [click]="setBlank" [press]="setBlank">
         </square-button>
+        <square-button [id]="'input' + (cg?.inputs.length)" class="input" [empty]="true"></square-button>
+        <square-button [id]="'input' + (cg?.inputs.length + 1)" class="input" [empty]="true"></square-button>
+        <square-button [id]="'input' + (cg?.inputs.length + 2)" class="input" [empty]="true"></square-button>
     </div>
 
 

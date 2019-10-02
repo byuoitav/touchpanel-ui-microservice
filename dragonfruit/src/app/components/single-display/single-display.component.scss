@@ -19,6 +19,22 @@ $main-width: calc(4.5 * #{$side-length});
     transform: scale(1.75);
 }
 
+.input-column {
+    display: flex;
+    flex-flow: column wrap;
+    height: 35%;
+    max-height: 35%;
+    justify-content: flex-start;
+    align-items: center;
+    width: $main-width;
+    max-width: $main-width;
+    overflow: auto;
+    // padding: 5px;
+    &::-webkit-scrollbar {
+        display: none;
+    }
+}
+
 .row {
     display: flex;
     flex-flow: row wrap;
@@ -31,8 +47,11 @@ $main-width: calc(4.5 * #{$side-length});
 }
 
 .input {
-    margin-left: 3%;
-    margin-right: 3%;
+    margin-top: 7px;
+    margin-bottom: 7px;
+    margin-left: 18px;
+    margin-right: 18px;
+    scroll-snap-align: center;
 }
 
 .base {

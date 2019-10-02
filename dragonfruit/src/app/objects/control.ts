@@ -1,17 +1,29 @@
 export class Display {
     id: string;
-    name: string;
-    icon: string;
+    outputs: IconPair[];
     input: string;
     blanked: boolean;
     allowedInputs: string[];
+
+    getOutputNameList(): string[] {
+        const toReturn: string[] = [];
+        for (const o of this.outputs) {
+            toReturn.push(o.name);
+        }
+        return toReturn;
+    }
 }
+
+export class IconPair {
+    icon: string;
+    name: string;
+  }
 
 export class Input {
     id: string;
-    name: string;
-    icon: string;
+    iconPair: IconPair;
     subInputs: Input[];
+    disabled: boolean;
 }
 
 export class ControlGroup {
@@ -22,6 +34,7 @@ export class ControlGroup {
     audioGroups: AudioGroup[];
     presentGroups: PresentGroup[];
     helpRequested: boolean;
+    helpMessage: string;
 
     constructor() {
         this.helpRequested = false;

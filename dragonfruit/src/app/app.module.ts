@@ -75,7 +75,7 @@ import { ControlTabDirective } from './components/control-tab/control-tab.direct
     MatBottomSheetModule,
     HttpClientModule,
     MatTabsModule,
-    MatDividerModule
+    MatDividerModule,
   ],
   providers: [
     BFFService

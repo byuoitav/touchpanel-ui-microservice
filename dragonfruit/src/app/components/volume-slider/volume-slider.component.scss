@@ -69,6 +69,13 @@
     .wrapper {
         &.master {
             height: 50px;
+            width: 85%;
+             ::ng-deep .mat-slider .mat-slider-thumb {
+                width: 38px;
+                height: 38px;
+                right: -16px;
+                bottom: -19px;
+            }
         }
     }
     .volume-icon {

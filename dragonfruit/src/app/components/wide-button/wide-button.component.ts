@@ -1,13 +1,9 @@
 import { Component, OnInit, ElementRef, ViewEncapsulation, Input } from '@angular/core';
 import { ButtonAction } from '../square-button/square-button.component';
+import { IconPair } from 'src/app/objects/control';
 
 class WideButtonBase {
   constructor(public _elementRef: ElementRef) {}
-}
-
-export class IconPair {
-  icon: string;
-  name: string;
 }
 
 @Component({
@@ -21,8 +17,8 @@ export class WideButtonComponent extends WideButtonBase implements OnInit {
   @Input() click: ButtonAction;
   @Input() press: ButtonAction;
   @Input() selected = false;
-  @Input() mainIcons: IconPair[];
-  @Input() subIcons: IconPair[];
+  @Input() outputs: IconPair[];
+  @Input() input: IconPair;
   @Input() showIcons = true;
   @Input() multiple = false;
 

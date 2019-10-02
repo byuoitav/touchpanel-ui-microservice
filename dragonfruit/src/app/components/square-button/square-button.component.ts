@@ -23,7 +23,7 @@ export class SquareButtonComponent extends SquareButtonBase implements OnInit {
   @Input() subIcon: string;
   @Input() subTitle: string;
   @Input() showIcon = true;
-  @Input() multiple = false;
+  @Input() empty = false;
 
   constructor(elementRef: ElementRef) {
     super(elementRef);

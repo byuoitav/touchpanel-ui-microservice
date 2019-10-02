@@ -1,24 +1,17 @@
-<!-- <div class="base">
-    <div class="row">
-        <ng-container *ngFor="let display of cg.displays">
-            <square-button class="display" [data]="display" [title]="display.name" [icon]="display.icon" [subTitle]="display.input" [subIcon]="getInputIcon(display.input)" [selected]="selectedDisplay === display" [click]="selectDisplay"></square-button>
-        </ng-container>
-
+<div class="base">
+    <div class="row outputs">
+        <!-- <ng-container *ngFor="let display of cg?.displays">
+            <wide-button></wide-button>
+        </ng-container> -->
+        <wide-button [data]="cg?.displays[0]" [outputs]="cg?.displays[0].outputs" [input]="getInputInfo(cg?.displays[0].input)" [click]="selectDisplay" [press]="selectDisplay" [selected]="selectedDisplay === cg?.displays[0]"></wide-button>
     </div>
     <mat-divider></mat-divider>
-    <div class="double-row">
-        <ng-container *ngFor="let input of cg.inputs">
-            <square-button class="input" [data]="input" [title]="input.name" [icon]="input.icon" [selected]="selectedDisplay?.input === input.id" [click]="selectInput"></square-button>
-        </ng-container>
+    <div class="input-container">
+        <div class="column inputs">
+            <square-button class="square-button input" *ngFor="let i of cg?.inputs" [data]="i" [icon]="i.iconPair.icon" [title]="i.iconPair.name" [selected]="!selectedDisplay?.blanked && selectedDisplay?.input === i.id" [click]="selectInput" [press]="selectInput">
+            </square-button>
+        </div>
     </div>
-    <volume-slider></volume-slider>
-</div> -->
 
-<div class="base">
-    <div class="row">
-        <ng-container *ngFor="let display of cg?.displays">
-            <wide-button></wide-button>
-        </ng-container>
-    </div>
 
 </div>
