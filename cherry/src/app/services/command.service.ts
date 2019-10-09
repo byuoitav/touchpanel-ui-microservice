@@ -21,6 +21,21 @@ import { deserialize } from "serializer.ts/Serializer";
 
 const TIMEOUT = 12 * 1000;
 
+class CommandRequest {
+  req: Request;
+  delay: number;
+
+  constructor(req: Request, delay?: number) {
+    this.req = req;
+
+    if (delay) {
+      this.delay = delay;
+    } else {
+      this.delay = 0;
+    }
+  }
+}
+
 @Injectable()
 export class CommandService {
   private options: RequestOptions;
@@ -102,13 +117,15 @@ export class CommandService {
       });
     }
 
-    const changeInputReq = new Request({
-      method: "PUT",
-      url: APIService.apiurl,
-      body: body
-      // TODO add some kind of 'do this based on the response' function
-    });
-    const requests: Request[] = [changeInputReq];
+    const changeInputReq = new CommandRequest(
+      new Request({
+        method: "PUT",
+        url: APIService.apiurl,
+        body: body
+        // TODO add some kind of 'do this based on the response' function
+      })
+    );
+    const requests: CommandRequest[] = [changeInputReq];
 
     const commandsToUse = preset.displays.some(
       d => d.input && d.input.name !== i.name
@@ -127,7 +144,9 @@ export class CommandService {
 
     this.executeRequests(requests, 1, 14 * 1000).subscribe(success => {
       if (!success) {
-        console.warn("cannot set input, reverting displays back to previous selection");
+        console.warn(
+          "cannot set input, reverting displays back to previous selection"
+        );
         Display.setInput(prev, displays);
         Display.setBlank(prevBlank, displays);
       }
@@ -472,12 +491,14 @@ export class CommandService {
 
     console.log("sending power on default body", body);
 
-    const powerOnReq = new Request({
-      method: "PUT",
-      url: APIService.apiurl,
-      body: body
-    });
-    const requests: Request[] = [powerOnReq];
+    const powerOnReq = new CommandRequest(
+      new Request({
+        method: "PUT",
+        url: APIService.apiurl,
+        body: body
+      })
+    );
+    const requests: CommandRequest[] = [powerOnReq];
 
     if (preset.commands.powerOn != null) {
       for (const cmd of preset.commands.powerOn) {
@@ -498,7 +519,7 @@ export class CommandService {
   }
 
   private executeRequests(
-    requests: Request[],
+    requests: CommandRequest[],
     maxTries: number,
     timeout: number
   ): EventEmitter<boolean> {
@@ -510,7 +531,7 @@ export class CommandService {
 
     console.info("executing requests: ", requests);
     const numRequests = requests.length;
-    const mapToStatus: Map<Request, boolean> = new Map();
+    const mapToStatus: Map<CommandRequest, boolean> = new Map();
 
     for (const req of requests) {
       this.executeRequest(req, maxTries, timeout).subscribe(success => {
@@ -541,52 +562,57 @@ export class CommandService {
   }
 
   private executeRequest(
-    req: Request,
+    req: CommandRequest,
     maxTries: number,
     timeout: number
   ): EventEmitter<boolean> {
     const ret: EventEmitter<boolean> = new EventEmitter<boolean>();
     console.log("executing request", req);
 
-    this.http
-      .request(req)
-      .timeout(timeout)
-      .subscribe(
-        data => {
-          console.log("successfully executed request", req);
-          ret.emit(true);
-          return;
-        },
-        err => {
-          maxTries--;
-
-          if (maxTries === 0) {
-            ret.emit(false);
+    setTimeout(() => {
+      this.http
+        .request(req.req)
+        .timeout(timeout)
+        .subscribe(
+          data => {
+            console.log("successfully executed request", req);
+            ret.emit(true);
             return;
-          }
+          },
+          err => {
+            maxTries--;
 
-          // retry request
-          console.error(
-            "request (" + req + ") failed. error:",
-            err,
-            ". There are",
-            maxTries,
-            " remaining, retrying in 3 seconds..."
-          );
-          setTimeout(() => this.executeRequest(req, maxTries, timeout), 3000);
-        }
-      );
+            if (maxTries === 0) {
+              ret.emit(false);
+              return;
+            }
+
+            // retry request
+            console.error(
+              "request (" + req + ") failed. error:",
+              err,
+              ". There are",
+              maxTries,
+              " remaining, retrying in 3 seconds..."
+            );
+            setTimeout(() => this.executeRequest(req, maxTries, timeout), 3000);
+          }
+        );
+    }, req.delay);
 
     return ret;
   }
 
-  private buildRequest(cmd: ConfigCommand): Request {
+  private buildRequest(cmd: ConfigCommand): CommandRequest {
     // if we needed logic to create a request, it would be right here!!
-    return new Request({
-      method: cmd.method,
-      url: APIService.apihost + ":" + cmd.port + "/" + cmd.endpoint,
-      body: cmd.body
-    });
+    return new CommandRequest(
+      new Request({
+        method: cmd.method,
+        url: APIService.apihost + ":" + cmd.port + "/" + cmd.endpoint,
+        body: cmd.body
+      }),
+      cmd.delay
+    );
   }
 
   public powerOff(preset: Preset): EventEmitter<boolean> {
@@ -603,12 +629,14 @@ export class CommandService {
 
     console.log("sending power off body", body);
 
-    const powerOffReq = new Request({
-      method: "PUT",
-      url: APIService.apiurl,
-      body: body
-    });
-    const requests: Request[] = [powerOffReq];
+    const powerOffReq = new CommandRequest(
+      new Request({
+        method: "PUT",
+        url: APIService.apiurl,
+        body: body
+      })
+    );
+    const requests: CommandRequest[] = [powerOffReq];
 
     if (preset.commands.powerOff != null) {
       for (const cmd of preset.commands.powerOff) {

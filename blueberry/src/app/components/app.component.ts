@@ -58,6 +58,7 @@ export class AppComponent {
     this.home.turnOn().subscribe(success => {
       if (!success) {
         console.log("failed to turn on");
+        this.unlocking = false;
       } else {
         setTimeout(() => (this.unlocking = false), 1000);
       }
