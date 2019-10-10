@@ -1,17 +1,43 @@
-<div class="base">
-    <div class="row outputs">
-        <!-- <ng-container *ngFor="let display of cg?.displays">
-            <wide-button></wide-button>
-        </ng-container> -->
-        <wide-button [data]="cg?.displays[0]" [outputs]="cg?.displays[0].outputs" [input]="getInputInfo(cg?.displays[0].input)" [click]="selectDisplay" [press]="selectDisplay" [selected]="selectedDisplay === cg?.displays[0]"></wide-button>
-    </div>
-    <mat-divider></mat-divider>
-    <div class="input-container">
-        <div class="column inputs">
-            <square-button class="square-button input" *ngFor="let i of cg?.inputs" [data]="i" [icon]="i.iconPair.icon" [title]="i.iconPair.name" [selected]="!selectedDisplay?.blanked && selectedDisplay?.input === i.id" [click]="selectInput" [press]="selectInput">
-            </square-button>
+<!-- <div class="row">
+    <wide-button [data]="cg?.displays[0]" [outputs]="cg?.displays[0].outputs.concat(cg?.displays[1].outputs, cg?.displays[2].outputs)" [input]="{name: cg?.inputs[1].name, icon: cg?.inputs[1].icon}"></wide-button>
+    <wide-button [data]="cg?.displays[1]" [outputs]="cg?.displays[1].outputs" [input]="{name: cg?.inputs[1].name, icon: cg?.inputs[1].icon}"></wide-button>
+</div> -->
+
+<div class="display-section">
+    <div class="page-column" (swipe)="onSwipe($event)">
+        <div *ngFor="let p of displayPages; let i = index;">
+            <ng-container [ngSwitch]="p.pageOption">
+                <div *ngSwitchCase="'111'" [id]="'page' + i" class="display-row 111">
+                    <wide-button [data]="p?.displays[0]" [outputs]="p?.displays[0].outputs" [input]="getInputInfo(p?.displays[0].input)"></wide-button>
+                    <wide-button [data]="p?.displays[1]" [outputs]="p?.displays[1].outputs" [input]="getInputInfo(p?.displays[1].input)"></wide-button>
+                    <wide-button [data]="p?.displays[2]" [outputs]="p?.displays[2].outputs" [input]="getInputInfo(p?.displays[2].input)"></wide-button>
+                </div>
+                <div *ngSwitchCase="'21'" [id]="'page' + i" class="display-row 21">
+                    <wide-button class="double-wide" [data]="p?.displays[0]" [outputs]="p?.displays[0].outputs" [input]="getInputInfo(p?.displays[0].input)"></wide-button>
+                    <wide-button [data]="p?.displays[1]" [outputs]="p?.displays[1].outputs" [input]="getInputInfo(p?.displays[1].input)"></wide-button>
+                </div>
+                <div *ngSwitchCase="'31'" [id]="'page' + i" class="display-row 31">
+                    <wide-button class="triple-wide" [data]="p?.displays[0]" [outputs]="p?.displays[0].outputs" [input]="getInputInfo(p?.displays[0].input)"></wide-button>
+                    <wide-button [data]="p?.displays[1]" [outputs]="p?.displays[1].outputs" [input]="getInputInfo(p?.displays[1].input)"></wide-button>
+                </div>
+                <div *ngSwitchCase="'22'" [id]="'page' + i" class="display-row 22">
+                    <wide-button class="double-wide" [data]="p?.displays[0]" [outputs]="p?.displays[0].outputs" [input]="getInputInfo(p?.displays[0].input)"></wide-button>
+                    <wide-button class="double-wide" [data]="p?.displays[1]" [outputs]="p?.displays[1].outputs" [input]="getInputInfo(p?.displays[1].input)"></wide-button>
+                </div>
+                <div *ngSwitchCase="'3'" [id]="'page' + i" class="display-row 3">
+                    <wide-button class="triple-wide" [data]="p?.displays[0]" [outputs]="p?.displays[0].outputs" [input]="getInputInfo(p?.displays[0].input)"></wide-button>
+                </div>
+                <div *ngSwitchCase="'4'" [id]="'page' + i" class="display-row 4">
+                    <wide-button class="triple-wide" [data]="p?.displays[0]" [outputs]="p?.displays[0].outputs" [input]="getInputInfo(p?.displays[0].input)"></wide-button>
+                </div>
+                <div *ngSwitchCase="'11'" [id]="'page' + i" class="display-row 11">
+                    <wide-button [data]="p?.displays[0]" [outputs]="p?.displays[0].outputs" [input]="getInputInfo(p?.displays[0].input)"></wide-button>
+                    <wide-button [data]="p?.displays[1]" [outputs]="p?.displays[1].outputs" [input]="getInputInfo(p?.displays[1].input)"></wide-button>
+                </div>
+                <div *ngSwitchCase="'1'" [id]="'page' + i" class="display-row 1">
+                    <wide-button [data]="p?.displays[0]" [outputs]="p?.displays[0].outputs" [input]="getInputInfo(p?.displays[0].input)"></wide-button>
+                </div>
+            </ng-container>
         </div>
     </div>
-
-
 </div>

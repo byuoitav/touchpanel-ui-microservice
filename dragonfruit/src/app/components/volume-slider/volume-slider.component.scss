@@ -68,8 +68,11 @@
 @media (min-width: 768px) {
     .wrapper {
         &.master {
+            margin-left: 30px;
+            padding-left: 10px;
+            padding-right: 5px;
             height: 50px;
-            width: 85%;
+            width: 87%;
              ::ng-deep .mat-slider .mat-slider-thumb {
                 width: 38px;
                 height: 38px;

@@ -11,7 +11,7 @@ import { IControlTab } from '../control-tab/icontrol-tab';
 export class SingleDisplayComponent implements OnInit, IControlTab {
   @AngularInput() cg: ControlGroup;
   @AngularInput() display: Display;
-  @AngularInput() displayAudio: AudioDevice;
+  // @AngularInput() displayAudio: AudioDevice;
 
   pages: number[] = [];
   curPage = 0;
@@ -24,33 +24,42 @@ export class SingleDisplayComponent implements OnInit, IControlTab {
   ngOnInit() {
     if (this.cg) {
       this.display = this.cg.displays[0];
-      this.displayAudio = this.cg.getAudioDevice(this.display.id);
+      // this.displayAudio = this.cg.getAudioDevice(this.display.id);
     }
   }
 
   ngOnChanges() {
     if (this.cg) {
-      const pages = Math.ceil(this.cg.inputs.length / 6);
-      this.pages = new Array(pages).fill(undefined).map((x, i) => i);
-      console.log('pages:', this.pages.length);
+      this.cg.inputs.push(...this.cg.inputs);
+      const fullPages = Math.floor(this.cg.inputs.length / 6);
+      const remainderPage = this.cg.inputs.length % 6;
+
+      for (let pageIndex = 0; pageIndex < fullPages; pageIndex++) {
+        this.pages.push(6);
+      }
+
+      this.pages.push(remainderPage);
+      // const pages = Math.ceil(this.cg.inputs.length / 6);
+      // this.pages = new Array(pages).fill(undefined).map((x, i) => i);
+      // console.log('pages:', this.pages.length);
       this.curPage = 0;
     }
   }
 
   selectInput = (input: Input) => {
-    this.bff.setInput(this.cg, input, [this.display.id]);
+    // this.bff.setInput(this.cg, input, [this.display.id]);
   }
 
   setBlank = () => {
-    this.bff.setBlank(this.cg, true, this.display.id);
+    // this.bff.setBlank(this.cg, true, this.display.id);
   }
 
   setVolume = (level: number) => {
-    this.bff.setVolume(this.cg, level, this.displayAudio.id);
+    // this.bff.setVolume(this.cg, level, this.displayAudio.id);
   }
 
   setMute = (muted: boolean) => {
-    this.bff.setMute(this.cg, muted, this.displayAudio.id);
+    // this.bff.setMute(this.cg, muted, this.displayAudio.id);
   }
 
   onSwipe(evt) {
@@ -60,11 +69,11 @@ export class SingleDisplayComponent implements OnInit, IControlTab {
     console.log(x, y);
 
     if (x === 'right' && this.canPageLeft()) {
-      console.log('paging left...');
+      // console.log('paging left...');
       this.pageLeft();
     }
     if (x === 'left' && this.canPageRight()) {
-      console.log('paging right...');
+      // console.log('paging right...');
       this.pageRight();
     }
   }
@@ -72,23 +81,23 @@ export class SingleDisplayComponent implements OnInit, IControlTab {
   pageLeft = () => {
     if (this.canPageLeft()) {
       this.curPage--;
-      console.log('going to page ', this.curPage);
+      // console.log('going to page ', this.curPage);
     }
 
     // scroll to the bottom of the page
-    const idx = (6 * this.curPage) + 2;
-    document.querySelector('#input' + idx).scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' });
+    const idx = this.curPage;
+    document.querySelector('#page' + idx).scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
   }
 
   pageRight = () => {
     if (this.canPageRight()) {
       this.curPage++;
-      console.log('going to page ', this.curPage);
+      // console.log('going to page ', this.curPage);
     }
 
     // scroll to the top of the page
-    const idx = (6 * this.curPage) + 2;
-    document.querySelector('#input' + idx).scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' });
+    const idx = this.curPage;
+    document.querySelector('#page' + idx).scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
   }
 
   canPageLeft = (): boolean => {

@@ -26,7 +26,7 @@ export class HelpComponent implements OnInit, IControlTab {
   sendForHelp = () => {
     this.dialog.open(HelpInfoComponent, {data: this.cg}).afterClosed().subscribe((info) => {
       if (info) {
-        this.helpHasBeenSent = true;
+        this.cg.support.helpRequested = true;
       }
     });
   }

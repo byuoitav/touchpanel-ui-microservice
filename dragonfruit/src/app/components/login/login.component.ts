@@ -2,6 +2,7 @@ import { Component, OnInit, EventEmitter } from '@angular/core';
 import { MatBottomSheet } from '@angular/material';
 import { NumpadComponent } from '../../dialogs/numpad/numpad.component';
 import { Router } from '@angular/router';
+import { BFFService } from 'src/app/services/bff.service';
 
 @Component({
   selector: 'app-login',
@@ -15,7 +16,8 @@ export class LoginComponent implements OnInit {
 
   constructor(
     private bottomSheet: MatBottomSheet,
-    private router: Router) {
+    private router: Router,
+    private bff: BFFService) {
     this.keyboardEmitter = new EventEmitter<string>();
     this.keyboardEmitter.subscribe((s) => {
       this.roomCode = s;
@@ -48,17 +50,20 @@ export class LoginComponent implements OnInit {
 
   goToRoomControl = () => {
     // TODO: actually do something with the room code
-    switch (this.roomCode) {
-      case '1101': {
-        this.router.navigate(['/room/ITB-1101']);
-        break;
-      }
-      case '1102': {
-        this.router.navigate(['/room/ITB-1101/group/0/tab/0']);
-        break;
-      }
-      default:
-        break;
-    }
+    this.bff.connectToRoom('ITB-' + this.roomCode);
+    // switch (this.roomCode) {
+    //   case '1101': {
+      this.bff.done.subscribe(e => {
+        this.router.navigate(['/room/ITB-' + this.roomCode]);
+      });
+    //     break;
+    //   }
+    //   case '1102': {
+    //     this.router.navigate(['/room/ITB-1101/group/0/tab/0']);
+    //     break;
+    //   }
+    //   default:
+    //     break;
+    // }
   }
 }

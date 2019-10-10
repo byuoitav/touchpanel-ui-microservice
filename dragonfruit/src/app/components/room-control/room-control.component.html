@@ -1,6 +1,6 @@
 <div class="base">
     <div class="header">
-        <button mat-button color="primary" class="exit-button" (click)="goBack()"><mat-icon class="exit-icon">exit_to_app</mat-icon>{{bff.room?.controlGroups?.length > 1 ? "Select Group" : "Exit Room"}}</button>
+        <button mat-button color="primary" class="exit-button" (click)="goBack()"><mat-icon class="exit-icon">exit_to_app</mat-icon>{{bff.room?.controlGroups?.size > 1 ? "Select Group" : "Exit Room"}}</button>
         <span class="room-title">{{controlGroup?.name}}</span>
         <div class="empty-thing"></div>
     </div>
@@ -12,14 +12,14 @@
                     <span>Control</span>
                 </span>
             </ng-template>
-            <app-single-display *ngIf="controlGroup?.displays.length < 2" [cg]="controlGroup" [display]="controlGroup?.displays[0]" [displayAudio]="controlGroup?.getAudioDevice(controlGroup?.displays[0].id)"></app-single-display>
+            <app-single-display *ngIf="controlGroup?.displays.length < 2" [cg]="controlGroup" [display]="controlGroup?.displays[0]"></app-single-display>
             <app-multi-display *ngIf="controlGroup?.displays.length > 1" [cg]="controlGroup"></app-multi-display>
         </mat-tab>
         <mat-tab (click)="tabChange('Audio')">
             <ng-template mat-tab-label>
                 <span class="tab-button" [class.selected]="selectedTab === 1"><mat-icon class="tab-icon">volume_up</mat-icon><span>Audio</span></span>
             </ng-template>
-            <app-audio [cg]="controlGroup"></app-audio>
+            <app-audio *ngIf="controlGroup?.audioGroups" [cg]="controlGroup"></app-audio>
         </mat-tab>
         <mat-tab label="Tab Two">
             <ng-template mat-tab-label>

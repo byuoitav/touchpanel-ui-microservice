@@ -18,7 +18,7 @@ export class SelectionComponent implements OnInit {
     this.route.params.subscribe(params => {
       this.roomID = params['id'];
       if (this.bff.room === undefined) {
-        this.bff.setupRoom(this.roomID);
+        this.bff.connectToRoom(this.roomID);
       }
     });
   }
@@ -32,9 +32,9 @@ export class SelectionComponent implements OnInit {
 
   selectControlGroup = (cg: ControlGroup): Promise<boolean> => {
     return new Promise<boolean>(() => {
-      const index = this.bff.room.controlGroups.indexOf(cg);
-      this.bff.room.selectedGroup = cg.name;
-      this.router.navigate(['/room/' + this.roomID + '/group/' + index + '/tab/Control']);
+      const index = cg.id;
+      this.bff.room.selectedControlGroup = cg.id;
+      this.router.navigate(['/room/' + this.roomID + '/group/' + index + '/tab/0']);
     });
   }
 }

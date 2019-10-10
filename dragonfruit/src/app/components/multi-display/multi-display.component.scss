@@ -1,0 +1,9 @@
+.row {
+    display: flex;
+    flex-flow: row nowrap;
+    height: 20%;
+    max-height: 20%;
+    width: 100%;
+    justify-content: space-evenly;
+    padding-top: 10px;
+}

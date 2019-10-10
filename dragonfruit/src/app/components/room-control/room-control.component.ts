@@ -12,7 +12,7 @@ import { MatTabChangeEvent, MatTab } from '@angular/material';
 })
 export class RoomControlComponent implements OnInit {
   controlGroup: ControlGroup;
-  groupIndex: number;
+  groupIndex: string;
   roomID: string;
 
   tabPosition = 'below';
@@ -37,18 +37,221 @@ export class RoomControlComponent implements OnInit {
       this.groupIndex = params['index'];
       this.selectedTab = +params['tabName'];
       if (this.bff.room === undefined) {
-        this.bff.setupRoom(this.roomID);
+        this.bff.connectToRoom(this.roomID);
+
+        this.bff.done.subscribe(e => {
+          this.controlGroup = this.bff.room.controlGroups[this.groupIndex];
+          this.setExtraDisplays();
+        });
       } else {
         this.controlGroup = this.bff.room.controlGroups[this.groupIndex];
+        this.setExtraDisplays();
       }
 
-      this.bff.done.subscribe(() => {
-        this.controlGroup = this.bff.room.controlGroups[this.groupIndex];
-        if (this.bff.room.selectedGroup === undefined) {
-          this.bff.room.selectedGroup = this.controlGroup.name;
-        }
-      });
+      // this.bff.done.subscribe(() => {
+      //   this.controlGroup = this.bff.room.controlGroups[this.groupIndex];
+      //   if (this.bff.room.selectedGroup === undefined) {
+      //     this.bff.room.selectedGroup = this.controlGroup.name;
+      //   }
+      // });
     });
+  }
+
+  // for testing only
+  setExtraDisplays() {
+    this.controlGroup.displays = [
+      {
+        id: '111 - A',
+        input: 'VIA1',
+        blanked: false,
+        outputs: [
+          {
+            name: 'D1',
+            icon: 'tv'
+          }
+        ]
+      },
+      {
+        id: '111 - B',
+        input: 'VIA1',
+        blanked: false,
+        outputs: [
+          {
+            name: 'D2',
+            icon: 'tv'
+          }
+        ]
+      },
+      {
+        id: '111 - C',
+        input: 'VIA1',
+        blanked: false,
+        outputs: [
+          {
+            name: 'D3',
+            icon: 'tv'
+          }
+        ]
+      },
+      {
+        id: '21 - A',
+        input: 'VIA1',
+        blanked: false,
+        outputs: [
+          {
+            name: 'D4',
+            icon: 'tv'
+          },
+          {
+            name: 'D5',
+            icon: 'tv'
+          }
+        ]
+      },
+      {
+        id: '21 - B',
+        input: 'VIA1',
+        blanked: false,
+        outputs: [
+          {
+            name: 'D6',
+            icon: 'tv'
+          }
+        ]
+      },
+      {
+        id: '31 - A',
+        input: 'VIA1',
+        blanked: false,
+        outputs: [
+          {
+            name: 'D11',
+            icon: 'videocam'
+          },
+          {
+            name: 'D12',
+            icon: 'videocam'
+          },
+          {
+            name: 'D13',
+            icon: 'videocam'
+          }
+        ]
+      },
+      {
+        id: '31 - B',
+        input: 'VIA1',
+        blanked: false,
+        outputs: [
+          {
+            name: 'D6',
+            icon: 'tv'
+          }
+        ]
+      },
+      {
+        id: '22 - A',
+        input: 'VIA1',
+        blanked: false,
+        outputs: [
+          {
+            name: 'D7',
+            icon: 'tv'
+          },
+          {
+            name: 'D8',
+            icon: 'tv'
+          }
+        ]
+      },
+      {
+        id: '22 - B',
+        input: 'VIA1',
+        blanked: false,
+        outputs: [
+          {
+            name: 'D9',
+            icon: 'tv'
+          },
+          {
+            name: 'D10',
+            icon: 'tv'
+          }
+        ]
+      },
+      {
+        id: '3 wide',
+        input: 'VIA1',
+        blanked: false,
+        outputs: [
+          {
+            name: 'D11',
+            icon: 'tv'
+          },
+          {
+            name: 'D12',
+            icon: 'tv'
+          },
+          {
+            name: 'D13',
+            icon: 'tv'
+          }
+        ]
+      },
+      {
+        id: '4+',
+        input: 'VIA1',
+        blanked: false,
+        outputs: [
+          {
+            name: 'D14',
+            icon: 'tv'
+          },
+          {
+            name: 'D15',
+            icon: 'tv'
+          },
+          {
+            name: 'D16',
+            icon: 'tv'
+          },
+          {
+            name: 'D17',
+            icon: 'tv'
+          },
+          {
+            name: 'D18',
+            icon: 'tv'
+          },
+          {
+            name: 'D19',
+            icon: 'tv'
+          }
+        ]
+      },
+      {
+        id: 'End 2 - A',
+        input: 'VIA1',
+        blanked: false,
+        outputs: [
+          {
+            name: 'D20',
+            icon: 'tv'
+          }
+        ]
+      },
+      {
+        id: 'End 2 - B',
+        input: 'VIA1',
+        blanked: false,
+        outputs: [
+          {
+            name: 'D21',
+            icon: 'tv'
+          }
+        ]
+      }
+    ];
   }
 
   ngOnInit() {
@@ -65,7 +268,7 @@ export class RoomControlComponent implements OnInit {
 
   tabChange(index: number) {
     this.selectedTab = index;
-    const currentURL = window.location.pathname;
+    const currentURL = decodeURI(window.location.pathname);
     const newURL = currentURL.substr(0, currentURL.lastIndexOf('/') + 1) + (this.selectedTab);
     this.router.navigate([newURL]);
   }
