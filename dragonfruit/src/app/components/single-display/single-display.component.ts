@@ -38,10 +38,10 @@ export class SingleDisplayComponent implements OnInit, IControlTab {
         this.pages.push(6);
       }
 
-      this.pages.push(remainderPage);
-      // const pages = Math.ceil(this.cg.inputs.length / 6);
-      // this.pages = new Array(pages).fill(undefined).map((x, i) => i);
-      // console.log('pages:', this.pages.length);
+      if (remainderPage !== 0) {
+        this.pages.push(remainderPage);
+      }
+
       this.curPage = 0;
     }
   }
@@ -66,7 +66,7 @@ export class SingleDisplayComponent implements OnInit, IControlTab {
     const x = Math.abs(evt.deltaX) > 40 ? (evt.deltaX > 0 ? 'right' : 'left') : '';
     const y = Math.abs(evt.deltaY) > 40 ? (evt.deltaY > 0 ? 'down' : 'up') : '';
 
-    console.log(x, y);
+    // console.log(x, y);
 
     if (x === 'right' && this.canPageLeft()) {
       // console.log('paging left...');

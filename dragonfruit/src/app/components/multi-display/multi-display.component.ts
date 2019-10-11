@@ -24,6 +24,9 @@ export class MultiDisplayComponent implements OnInit, IControlTab {
   @AngularInput() cg: ControlGroup;
   selectedDisplay: Display;
   displayPages: Page[];
+  curDisplayPage = 0;
+  inputPages: number[] = [];
+  curInputPage = 0;
 
   constructor(
     private bff: BFFService
@@ -37,6 +40,21 @@ export class MultiDisplayComponent implements OnInit, IControlTab {
   ngOnChanges() {
     if (this.cg !== undefined) {
       this.generatePages();
+
+      this.cg.inputs.push(...this.cg.inputs);
+      this.cg.inputs.push(...this.cg.inputs);
+      const fullPages = Math.floor(this.cg.inputs.length / 6);
+      const remainderPage = this.cg.inputs.length % 6;
+
+      for (let pageIndex = 0; pageIndex < fullPages; pageIndex++) {
+        this.inputPages.push(6);
+      }
+
+      if (remainderPage !== 0) {
+        this.inputPages.push(remainderPage);
+      }
+
+      this.curInputPage = 0;
     }
   }
 
@@ -96,19 +114,93 @@ export class MultiDisplayComponent implements OnInit, IControlTab {
     console.log(this.displayPages);
   }
 
-  onSwipe(evt) {
+  onSwipe(evt, section: string) {
     const x = Math.abs(evt.deltaX) > 40 ? (evt.deltaX > 0 ? 'right' : 'left') : '';
     const y = Math.abs(evt.deltaY) > 40 ? (evt.deltaY > 0 ? 'down' : 'up') : '';
 
-    console.log(x, y);
+    // console.log(x, y);
 
-    // if (x === 'right' && this.canPageLeft()) {
-    //   // console.log('paging left...');
-    //   this.pageLeft();
-    // }
-    // if (x === 'left' && this.canPageRight()) {
-    //   // console.log('paging right...');
-    //   this.pageRight();
-    // }
+    if (x === 'right' && this.canPageLeft(section)) {
+      // console.log('paging left...');
+      this.pageLeft(section);
+    }
+    if (x === 'left' && this.canPageRight(section)) {
+      // console.log('paging right...');
+      this.pageRight(section);
+    }
+  }
+
+  pageLeft = (section: string) => {
+    let idx = 0;
+    if (this.canPageLeft(section)) {
+      if (section === 'display') {
+        this.curDisplayPage--;
+        idx = this.curDisplayPage;
+      }
+      if (section === 'input') {
+        this.curInputPage--;
+        idx = this.curInputPage;
+      }
+      // console.log('going to page ', this.curPage);
+    } else {
+      return;
+    }
+
+    // scroll to the bottom of the page
+    document.querySelector('#' + section + '-page' + idx).scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
+  }
+
+  pageRight = (section: string) => {
+    let idx = 0;
+    if (this.canPageRight(section)) {
+      if (section === 'display') {
+        this.curDisplayPage++;
+        idx = this.curDisplayPage;
+      }
+      if (section === 'input') {
+        this.curInputPage++;
+        idx = this.curInputPage;
+      }
+      // console.log('going to page ', this.curPage);
+    } else {
+      return;
+    }
+
+    // scroll to the bottom of the page
+    document.querySelector('#' + section + '-page' + idx).scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
+  }
+
+  canPageLeft = (section: string): boolean => {
+    if (section === 'display') {
+      if (this.curDisplayPage <= 0) {
+        return false;
+      }
+
+      return true;
+    }
+    if (section === 'input') {
+      if (this.curInputPage <= 0) {
+        return false;
+      }
+
+      return true;
+    }
+  }
+
+  canPageRight = (section: string): boolean => {
+    if (section === 'display') {
+      if (this.curDisplayPage + 1 >= this.displayPages.length) {
+        return false;
+      }
+
+      return true;
+    }
+    if (section === 'input') {
+      if (this.curInputPage + 1 >= this.inputPages.length) {
+        return false;
+      }
+
+      return true;
+    }
   }
 }

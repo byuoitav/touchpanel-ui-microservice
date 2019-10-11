@@ -2,6 +2,7 @@ $width-value: 80px;
 $height-value: 100px;
 $double-width: calc(2 * #{$width-value});
 $triple-width: calc(3 * #{$width-value});
+$full-width: calc(4 * #{$width-value});
 wide-button {
     .wrapper {
         display: flex;
@@ -26,6 +27,9 @@ wide-button {
         &.triple {
             width: $triple-width;
         }
+        &.full {
+            width: $full-width;
+        }
     }
 }
 
@@ -34,6 +38,10 @@ wide-button {
     .icon {
         transform: scale(1.5);
     }
+}
+
+.ellipse {
+    margin-top: 15px;
 }
 
 $output-ht: calc(#{$height-value} * 0.55);
