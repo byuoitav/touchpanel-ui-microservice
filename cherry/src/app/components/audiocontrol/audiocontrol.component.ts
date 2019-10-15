@@ -34,9 +34,7 @@ export class AudiocontrolComponent implements AfterViewInit, OnChanges {
 
   audioTypes: string[]; // used to do optimize change detection (mostly at the beginning)
 
-  constructor(public command: CommandService, private ref: ChangeDetectorRef) {
-
-  }
+  constructor(public command: CommandService, private ref: ChangeDetectorRef) {}
 
   ngAfterViewInit() {
     if (!this.audioGroups) {
@@ -48,8 +46,6 @@ export class AudiocontrolComponent implements AfterViewInit, OnChanges {
     this.tabs._elementRef.nativeElement.getElementsByClassName(
       "mat-tab-labels"
     )[0].style.justifyContent = "flex-start";
-
-
   }
 
   ngOnChanges(changes) {
@@ -60,64 +56,26 @@ export class AudiocontrolComponent implements AfterViewInit, OnChanges {
     }
 
     if (this.preset != null) {
-      // this.preset.independentAudioDevices.push(
-      //   new AudioDevice(
-      //     "MIC7",
-      //     "Mic 7",
-      //     "on",
-      //     null,
-      //     false,
-      //     30,
-      //     "mic",
-      //     "Microphone",
-      //     100
-      //   ),
-      //   new AudioDevice(
-      //     "MIC8",
-      //     "Mic 8",
-      //     "on",
-      //     null,
-      //     false,
-      //     30,
-      //     "mic",
-      //     "Microphone",
-      //     100
-      //   )
-      // );
-      // this.preset.audioDevices.push(
-      //   new AudioDevice(
-      //     "D3",
-      //     "Display 3",
-      //     "on",
-      //     null,
-      //     false,
-      //     30,
-      //     "videocam",
-      //     "ADCP Sony VPL",
-      //     100
-      //   ),
-      //   new AudioDevice(
-      //     "D4",
-      //     "Display 4",
-      //     "on",
-      //     null,
-      //     false,
-      //     30,
-      //     "videocam",
-      //     "ADCP Sony VPL",
-      //     100
-      //   )
-      // );
       const pages = Math.ceil(this.preset.independentAudioDevices.length / 4);
       this.pages = new Array(pages).fill(undefined).map((x, i) => i);
 
-      console.log("mics:", this.preset.independentAudioDevices.length, "pages:", this.pages);
+      console.log(
+        "mics:",
+        this.preset.independentAudioDevices.length,
+        "pages:",
+        this.pages
+      );
       this.curPage = 0;
 
       const dispPages = Math.ceil(this.preset.audioDevices.length / 3);
       this.displayPages = new Array(dispPages).fill(undefined).map((x, i) => i);
 
-      console.log("displays:", this.preset.audioDevices.length, "pages:", this.displayPages);
+      console.log(
+        "displays:",
+        this.preset.audioDevices.length,
+        "pages:",
+        this.displayPages
+      );
       this.curDisplayPage = 0;
     }
   }
@@ -133,7 +91,12 @@ export class AudiocontrolComponent implements AfterViewInit, OnChanges {
             const tempPages = new Array(p).fill(undefined).map((x, i) => i);
             this.groupPages.set(type, tempPages);
 
-            console.log("audio group ", type, "pages:", this.groupPages.get(type));
+            console.log(
+              "audio group ",
+              type,
+              "pages:",
+              this.groupPages.get(type)
+            );
             this.groupCurPage.set(type, 0);
           }
         }
@@ -157,8 +120,12 @@ export class AudiocontrolComponent implements AfterViewInit, OnChanges {
 
     // scroll to the bottom of the page
     const idx = 4 * this.curPage;
-    document.querySelector("#device" + idx).scrollIntoView({ behavior: "smooth", block: "nearest", inline: "start" });
-  }
+    document.querySelector("#device" + idx).scrollIntoView({
+      behavior: "smooth",
+      block: "nearest",
+      inline: "start"
+    });
+  };
 
   pageRight = () => {
     if (this.canPageRight()) {
@@ -167,8 +134,12 @@ export class AudiocontrolComponent implements AfterViewInit, OnChanges {
 
     // scroll to the top of the page
     const idx = 4 * this.curPage;
-    document.querySelector("#device" + idx).scrollIntoView({ behavior: "smooth", block: "nearest", inline: "start" });
-  }
+    document.querySelector("#device" + idx).scrollIntoView({
+      behavior: "smooth",
+      block: "nearest",
+      inline: "start"
+    });
+  };
 
   canPageLeft = (): boolean => {
     if (this.curPage <= 0) {
@@ -176,7 +147,7 @@ export class AudiocontrolComponent implements AfterViewInit, OnChanges {
     }
 
     return true;
-  }
+  };
 
   canPageRight = (): boolean => {
     if (this.curPage + 1 >= this.pages.length) {
@@ -184,7 +155,7 @@ export class AudiocontrolComponent implements AfterViewInit, OnChanges {
     }
 
     return true;
-  }
+  };
 
   pageDispLeft = () => {
     if (this.canPageDispLeft()) {
@@ -193,8 +164,12 @@ export class AudiocontrolComponent implements AfterViewInit, OnChanges {
 
     // scroll to the bottom of the page
     const idx = 3 * this.curDisplayPage;
-    document.querySelector("#display" + idx).scrollIntoView({ behavior: "smooth", block: "nearest", inline: "start" });
-  }
+    document.querySelector("#display" + idx).scrollIntoView({
+      behavior: "smooth",
+      block: "nearest",
+      inline: "start"
+    });
+  };
 
   pageDispRight = () => {
     if (this.canPageDispRight()) {
@@ -203,8 +178,12 @@ export class AudiocontrolComponent implements AfterViewInit, OnChanges {
 
     // scroll to the top of the page
     const idx = 3 * this.curDisplayPage;
-    document.querySelector("#display" + idx).scrollIntoView({ behavior: "smooth", block: "nearest", inline: "start" });
-  }
+    document.querySelector("#display" + idx).scrollIntoView({
+      behavior: "smooth",
+      block: "nearest",
+      inline: "start"
+    });
+  };
 
   canPageDispLeft = (): boolean => {
     if (this.curDisplayPage <= 0) {
@@ -212,7 +191,7 @@ export class AudiocontrolComponent implements AfterViewInit, OnChanges {
     }
 
     return true;
-  }
+  };
 
   canPageDispRight = (): boolean => {
     if (this.curDisplayPage + 1 >= this.displayPages.length) {
@@ -220,16 +199,15 @@ export class AudiocontrolComponent implements AfterViewInit, OnChanges {
     }
 
     return true;
-  }
+  };
 
   onMasterVolumeLevelChange(v: number, preset: Preset) {
     this.command.setMasterVolume(v, preset);
     if (preset.masterMute) {
       this.command.setMasterMute(false, preset);
     }
-    this.command.buttonPress("master volume set", {level: v});
+    this.command.buttonPress("master volume set", { level: v });
   }
-
 
   groupPageLeft(groupName: string) {
     if (this.groupCanPageLeft(groupName)) {
@@ -240,7 +218,11 @@ export class AudiocontrolComponent implements AfterViewInit, OnChanges {
 
     // scroll to the bottom of the page
     const idx = 5 * this.groupCurPage.get(groupName);
-    document.querySelector("#" + groupName + idx).scrollIntoView({ behavior: "smooth", block: "nearest", inline: "start" });
+    document.querySelector("#" + groupName + idx).scrollIntoView({
+      behavior: "smooth",
+      block: "nearest",
+      inline: "start"
+    });
   }
 
   groupPageRight(groupName: string) {
@@ -252,7 +234,11 @@ export class AudiocontrolComponent implements AfterViewInit, OnChanges {
 
     // scroll to the bottom of the page
     const idx = 5 * this.groupCurPage.get(groupName);
-    document.querySelector("#" + groupName + idx).scrollIntoView({ behavior: "smooth", block: "nearest", inline: "start" });
+    document.querySelector("#" + groupName + idx).scrollIntoView({
+      behavior: "smooth",
+      block: "nearest",
+      inline: "start"
+    });
   }
 
   groupCanPageLeft(groupName: string): boolean {
@@ -264,7 +250,10 @@ export class AudiocontrolComponent implements AfterViewInit, OnChanges {
   }
 
   groupCanPageRight(groupName: string): boolean {
-    if (this.groupCurPage.get(groupName) + 1 >= this.groupPages.get(groupName).length) {
+    if (
+      this.groupCurPage.get(groupName) + 1 >=
+      this.groupPages.get(groupName).length
+    ) {
       return false;
     }
 
