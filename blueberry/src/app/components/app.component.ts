@@ -61,6 +61,7 @@ export class AppComponent {
       if (!success) {
         console.log("failed to turn on");
         this.es.show(PowerOn, "");
+        this.unlocking = false;
       } else {
         setTimeout(() => (this.unlocking = false), 1000);
       }

@@ -90,6 +90,7 @@ export class ConfigCommand {
   port: number;
   endpoint: string;
   body: Object;
+  delay: number;
 }
 
 export class PanelConfiguration {

@@ -19,9 +19,35 @@ import "rxjs/add/operator/map";
 import "rxjs/add/operator/timeout";
 import { deserialize } from "serializer.ts/Serializer";
 import { ErrorDialogComponent } from "../dialogs/error/error.component";
-import { ErrorService, SwitchInput, BlankDisplay, SetVolume, SetMute, MasterMute, MixLevel, MixMute, PowerOn, PowerOff } from "./error.service";
+import {
+  ErrorService,
+  SwitchInput,
+  BlankDisplay,
+  SetVolume,
+  SetMute,
+  MasterMute,
+  MixLevel,
+  MixMute,
+  PowerOn,
+  PowerOff
+} from "./error.service";
 
 const TIMEOUT = 12 * 1000;
+
+class CommandRequest {
+  req: Request;
+  delay: number;
+
+  constructor(req: Request, delay?: number) {
+    this.req = req;
+
+    if (delay) {
+      this.delay = delay;
+    } else {
+      this.delay = 0;
+    }
+  }
+}
 
 @Injectable()
 export class CommandService {
@@ -110,13 +136,15 @@ export class CommandService {
       });
     }
 
-    const changeInputReq = new Request({
-      method: "PUT",
-      url: APIService.apiurl,
-      body: body
-      // TODO add some kind of 'do this based on the response' function
-    });
-    const requests: Request[] = [changeInputReq];
+    const changeInputReq = new CommandRequest(
+      new Request({
+        method: "PUT",
+        url: APIService.apiurl,
+        body: body
+        // TODO add some kind of 'do this based on the response' function
+      })
+    );
+    const requests: CommandRequest[] = [changeInputReq];
 
     const commandsToUse = preset.displays.some(
       d => d.input && d.input.name !== i.name
@@ -130,22 +158,23 @@ export class CommandService {
       }
     }
 
-    console.log("preset:", preset);
     console.log("executing requests:", requests);
 
     this.executeRequests(requests, 6 * 1000).subscribe(answer => {
       const rrMap: Map<Request, Response> = answer as Map<Request, Response>;
+
+      let success = true;
+
       rrMap.forEach((v, k) => {
-        if (!v.ok) {
+        if (!v.ok && success) {
+          success = false;
           Display.setInput(prev, displays);
           Display.setBlank(prevBlank, displays);
           this.es.show(SwitchInput, v);
-          ret.emit(false);
-          return ret;
         }
       });
 
-      ret.emit(true);
+      ret.emit(success);
     });
 
     return ret;
@@ -510,12 +539,14 @@ export class CommandService {
 
     console.log("sending power on default body", body);
 
-    const powerOnReq = new Request({
-      method: "PUT",
-      url: APIService.apiurl,
-      body: body
-    });
-    const requests: Request[] = [powerOnReq];
+    const powerOnReq = new CommandRequest(
+      new Request({
+        method: "PUT",
+        url: APIService.apiurl,
+        body: body
+      })
+    );
+    const requests: CommandRequest[] = [powerOnReq];
 
     if (preset.commands.powerOn != null) {
       for (const cmd of preset.commands.powerOn) {
@@ -546,11 +577,11 @@ export class CommandService {
   }
 
   private executeRequests(
-    requests: Request[],
+    requests: CommandRequest[],
     timeout: number
-  ): EventEmitter<Map<Request, Response>> {
-    const ret: EventEmitter<Map<Request, Response>> = new EventEmitter<Map<Request, Response>>();
-    const mapToResp: Map<Request, Response> = new Map();
+  ): EventEmitter<Map<CommandRequest, Response>> {
+    const ret = new EventEmitter<Map<CommandRequest, Response>>();
+    const mapToResp: Map<CommandRequest, Response> = new Map();
     if (requests.length < 1) {
       setTimeout(() => ret.emit(mapToResp), 250);
       return ret;
@@ -558,7 +589,9 @@ export class CommandService {
 
     console.info("executing requests: ", requests);
     this.commandInProgress = true;
-    
+
+    const numRequests = requests.length;
+    const mapToStatus: Map<CommandRequest, boolean> = new Map();
 
     for (const req of requests) {
       this.executeRequest(req, timeout).subscribe(resp => {
@@ -582,34 +615,39 @@ export class CommandService {
   }
 
   private executeRequest(
-    req: Request,
+    req: CommandRequest,
     timeout: number
   ): EventEmitter<Response> {
     const ret: EventEmitter<Response> = new EventEmitter<Response>();
     console.log("executing request", req);
 
-    this.http
-      .request(req)
-      .timeout(timeout)
-      .subscribe(
-        data => {
-          ret.emit(data);
-        },
-        err => {
-          ret.emit(err);
-        }
-      );
+    setTimeout(() => {
+      this.http
+        .request(req.req)
+        .timeout(timeout)
+        .subscribe(
+          data => {
+            ret.emit(data);
+          },
+          err => {
+            ret.emit(err);
+          }
+        );
+    }, req.delay);
 
     return ret;
   }
 
-  private buildRequest(cmd: ConfigCommand): Request {
+  private buildRequest(cmd: ConfigCommand): CommandRequest {
     // if we needed logic to create a request, it would be right here!!
-    return new Request({
-      method: cmd.method,
-      url: APIService.apihost + ":" + cmd.port + "/" + cmd.endpoint,
-      body: cmd.body
-    });
+    return new CommandRequest(
+      new Request({
+        method: cmd.method,
+        url: APIService.apihost + ":" + cmd.port + "/" + cmd.endpoint,
+        body: cmd.body
+      }),
+      cmd.delay
+    );
   }
 
   public powerOff(preset: Preset): EventEmitter<boolean> {
@@ -626,12 +664,14 @@ export class CommandService {
 
     console.log("sending power off body", body);
 
-    const powerOffReq = new Request({
-      method: "PUT",
-      url: APIService.apiurl,
-      body: body
-    });
-    const requests: Request[] = [powerOffReq];
+    const powerOffReq = new CommandRequest(
+      new Request({
+        method: "PUT",
+        url: APIService.apiurl,
+        body: body
+      })
+    );
+    const requests: CommandRequest[] = [powerOffReq];
 
     if (preset.commands.powerOff != null) {
       for (const cmd of preset.commands.powerOff) {

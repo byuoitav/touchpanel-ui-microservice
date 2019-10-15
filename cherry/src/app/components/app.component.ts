@@ -59,6 +59,7 @@ export class AppComponent {
 
     this.command.powerOnDefault(this.data.panel.preset).subscribe(success => {
       if (!success) {
+        this.reset();
         console.warn("failed to turn on");
         // const event = new Event();
 
