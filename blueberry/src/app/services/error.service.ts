@@ -17,6 +17,7 @@ export const Mirror = "mirror-fail";
 
 @Injectable()
 export class ErrorService {
+  errorAlreadyShowing = false;
 
   private _errorMessages: Map<string, ErrorMessage>;
 
@@ -28,12 +29,17 @@ export class ErrorService {
   }
 
   public show = (cmdType: string, errDetails: any) => {
-    this.dialog.open(ErrorModalComponent, {
-      data: {
-        headerMessage: this._errorMessages[cmdType].title,
-        bodyMessage: this._errorMessages[cmdType].body,
-        errorMessage: errDetails
-      }});
+    if (!this.errorAlreadyShowing) {
+      this.errorAlreadyShowing = true;
+      this.dialog.open(ErrorModalComponent, {
+        data: {
+          headerMessage: this._errorMessages[cmdType].title,
+          bodyMessage: this._errorMessages[cmdType].body,
+          errorMessage: errDetails
+        }}).afterClosed().subscribe(() => {
+          this.errorAlreadyShowing = false;
+        });
+    }
 
       // TODO: send event to SMEE
   }
