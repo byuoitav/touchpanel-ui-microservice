@@ -41,11 +41,15 @@ export class RoomControlComponent implements OnInit {
 
         this.bff.done.subscribe(e => {
           this.controlGroup = this.bff.room.controlGroups[this.groupIndex];
-          this.setExtraDisplays();
+          if (this.controlGroup.id === 'Third') {
+            this.setExtraDisplays();
+          }
         });
       } else {
         this.controlGroup = this.bff.room.controlGroups[this.groupIndex];
-        this.setExtraDisplays();
+        if (this.controlGroup.id === 'Third') {
+          this.setExtraDisplays();
+        }
       }
 
       // this.bff.done.subscribe(() => {

@@ -67,4 +67,14 @@ $input-ht: calc(#{$height-value} - #{$output-ht});
     align-items: center;
 }
 
-@media (min-width: 768px) {}
+@media (min-width: 768px) {
+    $height-value: 150px;
+    $width-value: 110px;
+    wide-button {
+        .wrapper {
+            min-height: $height-value;
+            min-width: $width-value;
+            width: $width-value;
+        }
+    }
+}

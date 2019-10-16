@@ -4,6 +4,7 @@
 </div> -->
 
 <div class="display-section">
+    <button mat-icon-button class="page-button left" [disableRipple]=true (click)="pageLeft('display')" [class.blank]="!canPageLeft('display')"><mat-icon>keyboard_arrow_left</mat-icon></button>
     <div class="page-column" (swipe)="onSwipe($event, 'display')">
         <div *ngFor="let p of displayPages; let i = index;">
             <ng-container [ngSwitch]="p.pageOption">
@@ -40,12 +41,15 @@
             </ng-container>
         </div>
     </div>
+    <button mat-icon-button class="page-button right" [disableRipple]=true (click)="pageRight('display')" [class.blank]="!canPageRight('display')"><mat-icon>keyboard_arrow_right</mat-icon></button>
     <div class="page-indicator" [class.blank]="displayPages.length <= 1">
-        <span *ngFor="let p of displayPages; let i = index;" class="dot" [class.selected]="i === curDisplayPage"></span>
+        <span *ngFor="let p of displayPages; let i = index;" class="dot" [class.selected]="i === curDisplayPage" (click)="pageToNumber('display', i)"></span>
     </div>
     <mat-divider></mat-divider>
 </div>
 <div class="input-section">
+    <button mat-icon-button class="page-button left" [disableRipple]=true (click)="pageLeft('input')" [class.blank]="!canPageLeft('input')"><mat-icon>keyboard_arrow_left</mat-icon></button>
+
     <div class="input-column" (swipe)="onSwipe($event, 'input')">
         <div *ngFor="let p of inputPages; let i = index;">
             <ng-container [ngSwitch]="p">
@@ -88,7 +92,9 @@
         </div>
 
     </div>
+    <button mat-icon-button class="page-button right" [disableRipple]=true (click)="pageRight('input')" [class.blank]="!canPageRight('input')"><mat-icon>keyboard_arrow_right</mat-icon></button>
+
     <div class="page-indicator" [class.blank]="cg?.inputs.length <= 6">
-        <span *ngFor="let p of inputPages; let i = index;" class="dot" [class.selected]="i === curInputPage"></span>
+        <span *ngFor="let p of inputPages; let i = index;" class="dot" [class.selected]="i === curInputPage" (click)="pageToNumber('input', i)"></span>
     </div>
 </div>

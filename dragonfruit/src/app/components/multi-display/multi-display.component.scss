@@ -1,4 +1,5 @@
 @import "../square-button/square-button.component.scss";
+@import "../wide-button/wide-button.component.scss";
 $main-width: calc(4.6 * #{$side-length});
 $double-width: calc(#{$side-length} * 3);
 $triple-width: calc(#{$side-length} * 4);
@@ -17,6 +18,10 @@ $full-width: calc(#{$side-length} * 5);
 }
 
 .display-section {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: space-evenly;
+    align-items: center;
     height: 30%;
     max-height: 30%;
     width: 100%;
@@ -61,6 +66,7 @@ $row-width: calc(#{$main-width} - 5px);
     flex-direction: row;
     justify-content: center;
     align-items: center;
+    align-self: flex-start;
     height: 30px;
     width: 100%;
     margin-bottom: 5px;
@@ -93,6 +99,10 @@ $row-width: calc(#{$main-width} - 5px);
 }
 
 .input-section {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: space-evenly;
+    align-items: center;
     height: 35%;
     max-height: 35%;
     width: 100%;
@@ -139,4 +149,50 @@ $row-width: calc(#{$main-width} - 5px);
     margin-bottom: 7px;
     margin-left: 7px;
     margin-right: 7px;
+}
+
+.page-button {
+    display: none;
+}
+
+@media (min-width: 768px) {
+    $main-width: calc(1.25 * (4.6 * #{$width-value}));
+    .base {
+        width: $main-width;
+    }
+    .page-column {
+        width: 100%;
+        max-width: $main-width;
+        min-width: $main-width;
+        // border: solid 1px purple;
+    }
+    .display-row {
+        width: $main-width;
+        min-width: $main-width;
+        max-width: $main-width;
+    }
+    .input-column {
+        width: $main-width;
+        max-width: $main-width;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    .display-section {
+        height: 25%;
+        margin-top: 5%;
+    }
+    .input-section {
+        height: 30%;
+    }
+    .page-button {
+        display: block;
+        transform: scale(2);
+        color: #757575;
+        &.left {
+            margin-left: 15%;
+        }
+        &.right {
+            margin-right: 15%;
+        }
+    }
 }

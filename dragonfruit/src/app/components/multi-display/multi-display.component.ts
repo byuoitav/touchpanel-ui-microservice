@@ -170,6 +170,17 @@ export class MultiDisplayComponent implements OnInit, IControlTab {
     document.querySelector('#' + section + '-page' + idx).scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
   }
 
+  pageToNumber(section: string, pageNum: number) {
+    if (section === 'display') {
+      this.curDisplayPage = pageNum;
+    }
+    if (section === 'input') {
+      this.curInputPage = pageNum;
+    }
+
+    document.querySelector('#' + section + '-page' + pageNum).scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
+  }
+
   canPageLeft = (section: string): boolean => {
     if (section === 'display') {
       if (this.curDisplayPage <= 0) {
