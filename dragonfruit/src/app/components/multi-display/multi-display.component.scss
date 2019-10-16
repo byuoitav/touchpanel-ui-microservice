@@ -11,10 +11,8 @@ $full-width: calc(#{$side-length} * 5);
     width: $main-width;
     height: 99%;
     max-width: 1024px;
-    justify-content: space-evenly;
+    justify-content: flex-start;
     margin: auto;
-    // margin-top: 5%;
-    // margin-bottom: 5%;
 }
 
 .display-section {
@@ -107,6 +105,8 @@ $row-width: calc(#{$main-width} - 5px);
     max-height: 35%;
     width: 100%;
     max-width: 100%;
+    margin-top: 5%;
+    margin-bottom: 5%;
 }
 
 .input-column {
@@ -155,16 +155,22 @@ $row-width: calc(#{$main-width} - 5px);
     display: none;
 }
 
+.volume {
+    margin-top: 10%;
+    // margin-bottom: 5%;
+}
+
 @media (min-width: 768px) {
-    $main-width: calc(1.25 * (4.6 * #{$width-value}));
+    $main-width: calc(1.25 * (4.6 * #{$width-value})) !important;
+    $base-width: calc(1.5 * (4.6 * #{$width-value})) !important;
     .base {
-        width: $main-width;
+        width: $base-width;
+        // border: solid 1px purple;
     }
     .page-column {
         width: 100%;
         max-width: $main-width;
         min-width: $main-width;
-        // border: solid 1px purple;
     }
     .display-row {
         width: $main-width;
@@ -180,19 +186,21 @@ $row-width: calc(#{$main-width} - 5px);
     .display-section {
         height: 25%;
         margin-top: 5%;
+        // border: solid 1px red;
     }
     .input-section {
         height: 30%;
+        // border: solid 1px green;
     }
     .page-button {
         display: block;
         transform: scale(2);
         color: #757575;
         &.left {
-            margin-left: 15%;
+            // margin-left: 15%;
         }
         &.right {
-            margin-right: 15%;
+            // margin-right: 15%;
         }
     }
 }

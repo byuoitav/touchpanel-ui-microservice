@@ -214,4 +214,12 @@ export class MultiDisplayComponent implements OnInit, IControlTab {
       return true;
     }
   }
+
+  setVolume = (level: number) => {
+    // this.bff.setVolume(this.cg, level, this.displayAudio.id);
+  }
+
+  setMute = (muted: boolean) => {
+    // this.bff.setMute(this.cg, muted, this.displayAudio.id);
+  }
 }
