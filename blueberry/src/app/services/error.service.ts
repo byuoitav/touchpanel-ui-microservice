@@ -3,6 +3,7 @@ import { APIService } from "./api.service";
 import { MatDialog } from "@angular/material";
 import { ErrorModalComponent } from "app/modals/errormodal/errormodal.component";
 import { ErrorMessage } from "app/objects/objects";
+import { Event, BasicRoomInfo, BasicDeviceInfo } from "./socket.service";
 
 
 export const PowerOn = "power-on";
@@ -30,6 +31,8 @@ export class ErrorService {
 
   public show = (cmdType: string, errDetails: any) => {
     if (!this.errorAlreadyShowing) {
+      // send shown error
+      this._sendErrEvent(true, cmdType, errDetails);
       this.errorAlreadyShowing = true;
       this.dialog.open(ErrorModalComponent, {
         data: {
@@ -39,8 +42,33 @@ export class ErrorService {
         }}).afterClosed().subscribe(() => {
           this.errorAlreadyShowing = false;
         });
+    } else {
+      // send hidden error
+      this._sendErrEvent(false, cmdType, errDetails);
     }
+  }
 
-      // TODO: send event to SMEE
+  private _sendErrEvent(shown: boolean, cmdType: string, errDetails: any) {
+    const event = new Event();
+
+    event.EventTags = ["ui-event", "blueberry-ui"];
+
+    event.AffectedRoom = new BasicRoomInfo(
+      APIService.building + "-" + APIService.roomName
+    );
+    event.TargetDevice = new BasicDeviceInfo(APIService.piHostname);
+    event.GeneratingSystem = APIService.piHostname;
+    event.Timestamp = new Date();
+    event.User = "";
+    event.Data = errDetails;
+
+    if (shown) {
+      event.Key = "user-sys-err-shown";
+    } else {
+      event.Key = "user-sys-err-hidden";
+    }
+    event.Value = cmdType;
+
+    this.api.sendEvent(event);
   }
 }
