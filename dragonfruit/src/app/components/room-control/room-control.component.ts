@@ -66,7 +66,7 @@ export class RoomControlComponent implements OnInit {
     this.controlGroup.displays = [
       {
         id: '111 - A',
-        input: 'VIA1',
+        input: this.roomID + '-VIA1',
         blanked: false,
         outputs: [
           {
@@ -77,7 +77,7 @@ export class RoomControlComponent implements OnInit {
       },
       {
         id: '111 - B',
-        input: 'VIA1',
+        input: this.roomID + '-VIA1',
         blanked: false,
         outputs: [
           {
@@ -88,7 +88,7 @@ export class RoomControlComponent implements OnInit {
       },
       {
         id: '111 - C',
-        input: 'VIA1',
+        input: this.roomID + '-VIA1',
         blanked: false,
         outputs: [
           {
@@ -99,7 +99,7 @@ export class RoomControlComponent implements OnInit {
       },
       {
         id: '21 - A',
-        input: 'VIA1',
+        input: this.roomID + '-VIA1',
         blanked: false,
         outputs: [
           {
@@ -114,7 +114,7 @@ export class RoomControlComponent implements OnInit {
       },
       {
         id: '21 - B',
-        input: 'VIA1',
+        input: this.roomID + '-VIA1',
         blanked: false,
         outputs: [
           {
@@ -125,7 +125,7 @@ export class RoomControlComponent implements OnInit {
       },
       {
         id: '31 - A',
-        input: 'VIA1',
+        input: this.roomID + '-VIA1',
         blanked: false,
         outputs: [
           {
@@ -144,7 +144,7 @@ export class RoomControlComponent implements OnInit {
       },
       {
         id: '31 - B',
-        input: 'VIA1',
+        input: this.roomID + '-VIA1',
         blanked: false,
         outputs: [
           {
@@ -155,7 +155,7 @@ export class RoomControlComponent implements OnInit {
       },
       {
         id: '22 - A',
-        input: 'VIA1',
+        input: this.roomID + '-VIA1',
         blanked: false,
         outputs: [
           {
@@ -170,7 +170,7 @@ export class RoomControlComponent implements OnInit {
       },
       {
         id: '22 - B',
-        input: 'VIA1',
+        input: this.roomID + '-VIA1',
         blanked: false,
         outputs: [
           {
@@ -185,7 +185,7 @@ export class RoomControlComponent implements OnInit {
       },
       {
         id: '3 wide',
-        input: 'VIA1',
+        input: this.roomID + '-VIA1',
         blanked: false,
         outputs: [
           {
@@ -204,7 +204,7 @@ export class RoomControlComponent implements OnInit {
       },
       {
         id: '4+',
-        input: 'VIA1',
+        input: this.roomID + '-VIA1',
         blanked: false,
         outputs: [
           {
@@ -235,7 +235,7 @@ export class RoomControlComponent implements OnInit {
       },
       {
         id: 'End 2 - A',
-        input: 'VIA1',
+        input: this.roomID + '-VIA1',
         blanked: false,
         outputs: [
           {
@@ -246,7 +246,7 @@ export class RoomControlComponent implements OnInit {
       },
       {
         id: 'End 2 - B',
-        input: 'VIA1',
+        input: this.roomID + '-VIA1',
         blanked: false,
         outputs: [
           {

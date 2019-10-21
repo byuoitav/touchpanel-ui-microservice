@@ -215,6 +215,11 @@ export class MultiDisplayComponent implements OnInit, IControlTab {
     }
   }
 
+  setInput = (input: Input) => {
+    this.selectedDisplay.input = input.id;
+    this.bff.setInput(this.selectedDisplay, input);
+  }
+
   setVolume = (level: number) => {
     // this.bff.setVolume(this.cg, level, this.displayAudio.id);
   }

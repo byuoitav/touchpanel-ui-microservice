@@ -12,9 +12,6 @@ export class AudioComponent implements OnInit, IControlTab {
   @AngularInput() cg: ControlGroup;
 
   constructor(private bff: BFFService) {
-    setTimeout(() => {
-
-    }, 1000);
   }
 
   ngOnInit() {
@@ -23,12 +20,12 @@ export class AudioComponent implements OnInit, IControlTab {
 
   setVolume = (level: number, device: any) => {
     const audioDevice = device as AudioDevice;
-    // this.bff.setVolume(this.cg, level, audioDevice.id);
+    this.bff.setVolume(audioDevice, level);
   }
 
   setMute = (muted: boolean, device: any) => {
     const audioDevice = device as AudioDevice;
-    // this.bff.setMute(this.cg, muted, audioDevice.id);
+    this.bff.setMuted(audioDevice, muted);
   }
 
   muteAll = (ag: AudioGroup) => {
