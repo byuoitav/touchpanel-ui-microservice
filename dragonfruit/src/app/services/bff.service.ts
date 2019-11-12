@@ -1,15 +1,29 @@
-import { Injectable, EventEmitter } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Injectable, EventEmitter } from "@angular/core";
+import { HttpClient, HttpHeaders } from "@angular/common/http";
 import {
   $WebSocket,
   WebSocketConfig
-} from 'angular2-websocket/angular2-websocket';
-import { JsonConvert } from 'json2typescript';
-import { Device, UIConfig, IOConfiguration, DBRoom, Preset } from '../objects/database';
-import { Room, ControlGroup, Display, Input, AudioDevice, AudioGroup, PresentGroup } from '../objects/control';
+} from "angular2-websocket/angular2-websocket";
+import { JsonConvert } from "json2typescript";
+import {
+  Device,
+  UIConfig,
+  IOConfiguration,
+  DBRoom,
+  Preset
+} from "../objects/database";
+import {
+  Room,
+  ControlGroup,
+  Display,
+  Input,
+  AudioDevice,
+  AudioGroup,
+  PresentGroup
+} from "../objects/control";
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: "root"
 })
 export class BFFService {
   room: Room;
@@ -22,29 +36,30 @@ export class BFFService {
   }
 
   connectToRoom(controlKey: string) {
-    const endpoint = 'ws://' + window.location.hostname + ':88/ws/' + controlKey;
+    const endpoint =
+      "ws://" + window.location.hostname + ":8080/ws/" + controlKey;
     this.ws = new WebSocket(endpoint);
 
     this.ws.onmessage = event => {
-      console.log('ws event', event);
+      console.log("ws event", event);
       this.room = JSON.parse(event.data);
       // this.room = Object.assign(new Room(), JSON.parse(event.data));
 
-      console.log('Websocket data:', this.room);
+      console.log("Websocket data:", this.room);
 
       this.done.emit(true);
     };
 
     this.ws.onerror = event => {
-      console.error('Websocket error', event);
+      console.error("Websocket error", event);
     };
   }
 
   setInput(display: Display, input: Input) {
     const kv = {
-      'setInput': {
-        display: display,
-        input: input
+      setInput: {
+        display: display.id,
+        input: input.id
       }
     };
 
@@ -54,8 +69,8 @@ export class BFFService {
 
   setVolume(ad: AudioDevice, level: number) {
     const kv = {
-      'setVolume': {
-        audioDevice: ad,
+      setVolume: {
+        audioDevice: ad.id,
         level: level
       }
     };
@@ -66,7 +81,7 @@ export class BFFService {
 
   setMuted(ad: AudioDevice, m: boolean) {
     const kv = {
-      'setMuted': {
+      setMuted: {
         audioDevice: ad,
         muted: m
       }
