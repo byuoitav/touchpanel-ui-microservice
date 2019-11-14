@@ -24,7 +24,7 @@ export class RoomConfiguration {
 export class DeviceConfiguration {
   _id: string;
   name: string;
-  display_name: string;
+  displayname: string;
   address: string;
 
   @Type(() => DeviceTypeConfiguration)
@@ -115,6 +115,7 @@ export class PanelConfiguration {
   uipath: string;
   features: string[];
   preset: string;
+  projectorPreset: string;
 }
 
 export class PresetConfiguration {
@@ -169,6 +170,23 @@ export class DeviceStatus {
 
   match(n: string) {
     return n === this.name;
+  }
+}
+
+export class ProjectorPreset {
+  name: string;
+  icon: string;
+  displays: Display[] = [];
+
+  constructor(
+    name: string,
+    icon: string,
+    displays: Display[]
+  )
+  {
+    this.name = name;
+    this.icon = icon;
+    this.displays = displays;
   }
 }
 
@@ -227,6 +245,7 @@ export class Panel {
   hostname: string;
   uipath: string;
   preset: Preset;
+  projectorPreset: ProjectorPreset;
   features: string[] = [];
 
   render = false;
@@ -235,11 +254,13 @@ export class Panel {
     hostname: string,
     uipath: string,
     preset: Preset,
+    projectorPreset: ProjectorPreset,
     features: string[]
   ) {
     this.hostname = hostname;
     this.uipath = uipath;
     this.preset = preset;
+    this.projectorPreset = projectorPreset;
     this.features = features;
   }
 }

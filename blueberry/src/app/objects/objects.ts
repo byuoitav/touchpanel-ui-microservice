@@ -107,6 +107,7 @@ export class PresetConfiguration {
   shareablePresets: string[];
   audioDevices: string[];
   inputs: string[];
+  screens: string[];
   independentAudioDevices: string[];
   commands: ConfigCommands;
 }
@@ -161,6 +162,7 @@ export class Preset {
   audioDevices: AudioDevice[] = [];
   inputs: Input[] = [];
   extraInputs: Input[] = [];
+  screens: DeviceConfiguration[];
 
   shareablePresets: string[];
   independentAudioDevices: AudioDevice[] = [];
@@ -173,6 +175,7 @@ export class Preset {
     displays: Display[],
     audioDevices: AudioDevice[],
     inputs: Input[],
+    screens: DeviceConfiguration[],
     shareablePresets: string[],
     independentAudioDevices: AudioDevice[],
     commands: ConfigCommands
@@ -182,6 +185,7 @@ export class Preset {
     this.displays = displays;
     this.audioDevices = audioDevices;
     this.inputs = inputs;
+    this.screens = screens;
     this.shareablePresets = shareablePresets;
     this.independentAudioDevices = independentAudioDevices;
     this.commands = commands;
