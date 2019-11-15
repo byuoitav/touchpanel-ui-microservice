@@ -262,12 +262,16 @@ export class DataService {
         audioTypes.set(key, groupDevices);
       }
 
+      const screens = APIService.room.config.devices.filter(oneDevice => preset.screens.some(one => one == oneDevice.name));
+
+
       const p = new Preset(
         preset.name,
         preset.icon,
         displays,
         audioDevices,
         inputs,
+        screens,
         preset.shareableDisplays,
         independentAudioDevices,
         audioTypes,

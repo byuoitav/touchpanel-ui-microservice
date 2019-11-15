@@ -125,6 +125,7 @@ export class PresetConfiguration {
   shareableDisplays: string[];
   audioDevices: string[];
   inputs: string[];
+  screens: string[];
   independentAudioDevices: string[];
   volumeMatches: string[];
   audioGroups: Map<string, string[]> = new Map();
@@ -173,27 +174,11 @@ export class DeviceStatus {
   }
 }
 
-export class ProjectorPreset {
-  name: string;
-  icon: string;
-  displays: Display[] = [];
-
-  constructor(
-    name: string,
-    icon: string,
-    displays: Display[]
-  )
-  {
-    this.name = name;
-    this.icon = icon;
-    this.displays = displays;
-  }
-}
-
 export class Preset {
   name: string;
   icon: string;
 
+  screens: DeviceConfiguration[];
   displays: Display[] = [];
   audioDevices: AudioDevice[] = [];
   inputs: Input[] = [];
@@ -218,6 +203,7 @@ export class Preset {
     displays: Display[],
     audioDevices: AudioDevice[],
     inputs: Input[],
+    screens: DeviceConfiguration[],
     shareableDisplays: string[],
     independentAudioDevices: AudioDevice[],
     audioTypes: Map<string, AudioDevice[]>,
@@ -231,6 +217,7 @@ export class Preset {
     this.displays = displays;
     this.audioDevices = audioDevices;
     this.inputs = inputs;
+    this.screens = screens;
     this.shareableDisplays = shareableDisplays;
     this.independentAudioDevices = independentAudioDevices;
     this.audioTypes = audioTypes;
@@ -245,7 +232,6 @@ export class Panel {
   hostname: string;
   uipath: string;
   preset: Preset;
-  projectorPreset: ProjectorPreset;
   features: string[] = [];
 
   render = false;
@@ -254,13 +240,11 @@ export class Panel {
     hostname: string,
     uipath: string,
     preset: Preset,
-    projectorPreset: ProjectorPreset,
     features: string[]
   ) {
     this.hostname = hostname;
     this.uipath = uipath;
     this.preset = preset;
-    this.projectorPreset = projectorPreset;
     this.features = features;
   }
 }

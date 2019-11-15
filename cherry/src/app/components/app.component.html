@@ -54,10 +54,13 @@
                     </audiocontrol>
                 </mat-tab>
 
-                <mat-tab label="Projector Control">
-                    <audiocontrol *ngIf="selectedTabIndex == 2" [@delay] [preset]="data?.panel?.preset">
-                    </audiocontrol>
-                </mat-tab>
+                <ng-container *ngIf="data?.panel?.preset?.screens?.length > 0">
+                    <mat-tab label="Projector Control">
+                        <!-- projector control -->
+                        <projectorcontrol [@delay] [preset]="data?.panel?.preset">
+                        </projectorcontrol>
+                    </mat-tab>
+                </ng-container>
             </mat-tab-group>
         </ng-container>
 
@@ -70,11 +73,13 @@
                     </audiocontrol>
                 </mat-tab>
 
-                <mat-tab label="Projector Control">
-                    <!-- projector control -->
-                    <audiocontrol [@delay] [preset]="data?.panel?.preset">
-                    </audiocontrol>
-                </mat-tab>
+                <ng-container *ngIf="data?.panel?.preset?.screens?.length > 0">
+                    <mat-tab label="Projector Control">
+                        <!-- projector control -->
+                        <projectorcontrol [@delay] [preset]="data?.panel?.preset">
+                        </projectorcontrol>
+                    </mat-tab>
+                </ng-container>
             </mat-tab-group>
         </ng-container>
     </ng-template>

@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { MatTabGroup } from "@angular/material/tabs";
-import { ProjectorPreset } from "../../objects/objects";
+import { Preset } from "../../objects/objects";
 import {
   Input,
   ViewChild,
@@ -16,7 +16,16 @@ export class ProjectorcontrolComponent implements OnInit {
   @ViewChild("tabs")
   tabs: MatTabGroup;
   @Input()
-  projectorPreset: ProjectorPreset;
+  preset: Preset;
+  @Input()
+  pages: number[] = [];
+  curPage: number;
+  displayPages: number[] = [];
+  curDisplayPage: number;
+
+  groupPages: Map<string, number[]> = new Map();
+  groupCurPage: Map<string, number> = new Map();
+  
   constructor() { }
 
   ngOnInit() {
