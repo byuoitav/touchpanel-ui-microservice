@@ -43,7 +43,7 @@ export class APIService {
     if (APIService.options == null) {
       const headers = new Headers();
       headers.append("content-type", "application/json");
-      APIService.options = new RequestOptions({ headers: headers });
+      APISepervice.options = new RequestOptions({ headers: headers });
 
       const base = location.origin.split(":");
       APIService.localurl = base[0] + ":" + base[1];
