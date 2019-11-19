@@ -32,7 +32,7 @@ import { SocketService } from "./services/socket.service";
 import { ErrorService } from "./services/error.service";
 import { ManagementComponent } from "./components/management/management.component";
 import { StreamModalComponent } from "./dialogs/streammodal/streammodal.component";
-import { ProjectorcontrolComponent } from './components/projectorcontrol/projectorcontrol.component';
+import { ProjectorControlComponent } from "./components/projectorcontrol/projectorcontrol.component";
 
 @NgModule({
   declarations: [
@@ -46,7 +46,7 @@ import { ProjectorcontrolComponent } from './components/projectorcontrol/project
     ViaDialog,
     ErrorDialogComponent,
     StreamModalComponent,
-    ProjectorcontrolComponent
+    ProjectorControlComponent
   ],
   imports: [
     BrowserModule,
