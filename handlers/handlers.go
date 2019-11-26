@@ -27,6 +27,15 @@ func GetPiHostname(context echo.Context) error {
 	return context.JSON(http.StatusOK, hostname)
 }
 
+func GetControlKey(context echo.Context) error {
+	preset := context.Param("preset")
+	controlKey, err := helpers.GetControlKeyHelper(preset)
+	if err != nil {
+		return context.JSON(http.StatusInternalServerError, err.Error())
+	}
+	return context.JSON(http.StatusOK, controlKey)
+}
+
 func GetDeviceInfo(context echo.Context) error {
 	di, err := helpers.GetDeviceInfo()
 	if err != nil {

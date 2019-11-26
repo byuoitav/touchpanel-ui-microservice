@@ -55,7 +55,7 @@ export class AppComponent {
 
   public getCode() {
    this.http
-      .get("http://localhost:8029/" + APIService.building + "-" + APIService.roomName +
+      .get("https://control-keys.avs.byu.edu/" + APIService.building + "-" + APIService.roomName +
         "%20" + this.data.panel.preset.name + "/getControlKey")
       .map(response => response.json()).subscribe(
         data => {

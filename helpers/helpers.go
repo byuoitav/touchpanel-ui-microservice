@@ -1,7 +1,11 @@
 package helpers
 
 import (
+	"encoding/json"
+	"fmt"
+	"io/ioutil"
 	"log"
+	"net/http"
 	"os/exec"
 	"strings"
 )
@@ -40,6 +44,15 @@ type Action struct {
 	Value string `json:"value"`
 }
 
+type preset struct {
+	roomID     string `json:"RoomID"`
+	presetName string `json:"PresetName"`
+}
+
+type controlKey struct {
+	ControlKey string `json:"ControlKey"`
+}
+
 func GetDeviceInfo() (DeviceInfo, error) {
 	log.Printf("getting device info")
 	hn, err := exec.Command("sh", "-c", "hostname").Output()
@@ -57,4 +70,24 @@ func GetDeviceInfo() (DeviceInfo, error) {
 	di.IPAddress = strings.TrimSpace(string(ip[:]))
 
 	return di, nil
+}
+func GetControlKeyHelper(preset string) (string, error) {
+	var resp controlKey
+	url := fmt.Sprintf("control-keys.avs.byu.edu/%s/getControlKey", preset)
+	req, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		return "", fmt.Errorf("An error occured while making the call: %w", err)
+	}
+	res, gerr := http.DefaultClient.Do(req)
+	if gerr != nil {
+		return "", fmt.Errorf("error when making call: %w", gerr)
+	}
+	defer res.Body.Close()
+	body, err := ioutil.ReadAll(res.Body)
+	err = json.Unmarshal([]byte(body), &resp)
+	if err != nil {
+		fmt.Printf("%s/n", body)
+		return "", fmt.Errorf("error when unmarshalling the response: %w", err)
+	}
+	return resp.ControlKey, nil
 }
