@@ -19,8 +19,6 @@ const MONITOR_TIMEOUT = 30 * 1000;
 
 @Injectable()
 export class APIService {
-  public loaded: EventEmitter<boolean>;
-  private jsonConvert: JsonConvert;
 
   public static building: string;
   public static roomName: string;
@@ -33,6 +31,10 @@ export class APIService {
   public static apihost: string;
   private static localurl: string;
   private static options: RequestOptions;
+
+
+  public loaded: EventEmitter<boolean>;
+  private jsonConvert: JsonConvert;
 
   constructor(private http: Http) {
     this.loaded = new EventEmitter<boolean>();
