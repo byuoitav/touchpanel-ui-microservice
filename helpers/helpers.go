@@ -74,8 +74,8 @@ func GetControlKeyHelper(preset string) (string, error) {
 	if len(systemIDSplit) != 3 {
 		return "", fmt.Errorf("invalid System ID: %s", systemID)
 	}
-
-	url := fmt.Sprintf("https://control-keys.avs.byu.edu/%s-%s %s/getControlKey", systemIDSplit[0], systemIDSplit[1], preset)
+	controlKeyUrl := os.Getenv("CONTROL_KEY_URL")
+	url := fmt.Sprintf("%s/%s-%s %s/getControlKey", controlKeyUrl, systemIDSplit[0], systemIDSplit[1], preset)
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		return "", fmt.Errorf("An error occured while making the call: %w", err)
