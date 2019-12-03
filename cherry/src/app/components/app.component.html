@@ -7,10 +7,14 @@
             <ng-container *ngIf="!unlocking; else poweringOn">
                 <!-- byu logo -->
                 <object type="image/svg+xml" data="./assets/byu_medallion_white.svg" class="logo">
-        </object>
+                </object>
 
                 <!-- unlock text -->
                 <span class="text">Touch anywhere to start</span>
+                <div class="unlock-code">
+                    <div> Control Key:</div>
+                    <div> {{controlKey}} </div>
+                </div>
             </ng-container>
 
             <ng-template #poweringOn>
