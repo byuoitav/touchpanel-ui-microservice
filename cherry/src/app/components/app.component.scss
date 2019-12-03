@@ -108,8 +108,9 @@ $buttonXOffset: .55rem;
 
 .unlock-code {
     position: absolute;
-    left: 30%;
-    top: 50%;
+    left: 5%;
+    top: 80%;
+    font-size: 25px;
     display: grid;
     grid-template-rows: auto, auto;
 }

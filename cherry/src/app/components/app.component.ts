@@ -32,7 +32,7 @@ export class AppComponent {
   public loaded: boolean;
   public unlocking = false;
   public progressMode: string = QUERY;
-  public unlockCode: string;
+  public controlKey: string;
 
   public selectedTabIndex: number;
 
@@ -54,16 +54,13 @@ export class AppComponent {
   }
 
   public getCode() {
-   this.http
-      .get("https://control-keys.avs.byu.edu/" + APIService.building + "-" + APIService.roomName +
-        "%20" + this.data.panel.preset.name + "/getControlKey")
-      .map(response => response.json()).subscribe(
-        data => {
-          this.unlockCode = data.ControlKey;
-        }, err => {
-          console.log("ERR::::::::", err);
-        }
-      );
+    const preset = this.data.presets[0].name;
+    this.api.getControlKey(preset).subscribe(data => {
+      this.controlKey = data["ControlKey"];
+    }, err => {
+      console.warn("Unable to get Control Key: " + err);
+    });
+
   }
 
   public isPoweredOff(): boolean {

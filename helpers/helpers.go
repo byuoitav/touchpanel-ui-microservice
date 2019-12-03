@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"os"
 	"os/exec"
 	"strings"
 )
@@ -44,11 +45,6 @@ type Action struct {
 	Value string `json:"value"`
 }
 
-type preset struct {
-	roomID     string `json:"RoomID"`
-	presetName string `json:"PresetName"`
-}
-
 type controlKey struct {
 	ControlKey string `json:"ControlKey"`
 }
@@ -73,21 +69,40 @@ func GetDeviceInfo() (DeviceInfo, error) {
 }
 func GetControlKeyHelper(preset string) (string, error) {
 	var resp controlKey
-	url := fmt.Sprintf("control-keys.avs.byu.edu/%s/getControlKey", preset)
+	systemID := os.Getenv("SYSTEM_ID")
+	systemIDSplit := strings.Split(systemID, "-")
+	if len(systemIDSplit) != 3 {
+		return "", fmt.Errorf("invalid System ID: %s", systemID)
+	}
+
+	url := fmt.Sprintf("https://control-keys.avs.byu.edu/%s-%s %s/getControlKey", systemIDSplit[0], systemIDSplit[1], preset)
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		return "", fmt.Errorf("An error occured while making the call: %w", err)
 	}
+
 	res, gerr := http.DefaultClient.Do(req)
 	if gerr != nil {
 		return "", fmt.Errorf("error when making call: %w", gerr)
 	}
 	defer res.Body.Close()
+
 	body, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		return "", fmt.Errorf("failure to read response %w", err)
+	}
+
+	switch res.StatusCode {
+	case http.StatusNotFound:
+		return "", fmt.Errorf("control Key is not found: %s", body)
+	case http.StatusInternalServerError:
+		return "", fmt.Errorf("error occured: %s", body)
+	}
+
 	err = json.Unmarshal([]byte(body), &resp)
 	if err != nil {
-		fmt.Printf("%s/n", body)
-		return "", fmt.Errorf("error when unmarshalling the response: %w", err)
+		return "", fmt.Errorf("error when unmarshalling the response: %w.\nBody: %s", err, body)
 	}
+
 	return resp.ControlKey, nil
 }

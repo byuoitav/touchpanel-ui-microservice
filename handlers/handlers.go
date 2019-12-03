@@ -28,6 +28,7 @@ func GetPiHostname(context echo.Context) error {
 }
 
 func GetControlKey(context echo.Context) error {
+	fmt.Println("-------------GETTING CONTROL KEY--------------")
 	preset := context.Param("preset")
 	controlKey, err := helpers.GetControlKeyHelper(preset)
 	if err != nil {
