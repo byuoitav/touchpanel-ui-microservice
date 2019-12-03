@@ -335,7 +335,7 @@ export class DataService {
           setTimeout(this.setCurrentPreset, 5000);
         }
       );
-  };
+  }
 
   private update() {
     this.socket.getEventListener().subscribe(event => {

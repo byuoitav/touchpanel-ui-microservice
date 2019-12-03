@@ -8,6 +8,8 @@
     overflow: hidden !important;
 }
 
+
+
 $buttonXOffset: .55rem;
 .mat-tab-group {
     height: 100%;
@@ -102,4 +104,13 @@ $buttonXOffset: .55rem;
     flex-direction: column;
     align-items: center;
     justify-content: space-evenly;
+}
+
+.unlock-code {
+    position: absolute;
+    left: 5%;
+    top: 80%;
+    font-size: 25px;
+    display: grid;
+    grid-template-rows: auto, auto;
 }

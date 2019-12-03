@@ -1,6 +1,7 @@
 import { Component, ViewEncapsulation, ViewChild } from "@angular/core";
 import { MatTabChangeEvent, MatDialog } from "@angular/material";
 import { trigger, style, animate, transition } from "@angular/animations";
+import { Http } from "@angular/http";
 
 import { DataService } from "../services/data.service";
 import { CommandService } from "../services/command.service";
@@ -31,6 +32,7 @@ export class AppComponent {
   public loaded: boolean;
   public unlocking = false;
   public progressMode: string = QUERY;
+  public controlKey: string;
 
   public selectedTabIndex: number;
 
@@ -38,12 +40,27 @@ export class AppComponent {
     public data: DataService,
     public command: CommandService,
     public dialog: MatDialog,
-    private api: APIService
+    private api: APIService,
+    private http: Http
   ) {
     this.loaded = false;
     this.data.loaded.subscribe(() => {
+      this.getCode();
+      setInterval( () => {
+        this.getCode();
+      }, 300000);
       this.loaded = true;
     });
+  }
+
+  public getCode() {
+    const preset = this.data.presets[0].name;
+    this.api.getControlKey(preset).subscribe(data => {
+      this.controlKey = data["ControlKey"];
+    }, err => {
+      console.warn("Unable to get Control Key: " + err);
+    });
+
   }
 
   public isPoweredOff(): boolean {
