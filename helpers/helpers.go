@@ -76,10 +76,12 @@ func GetControlKey(ctx context.Context, preset string) (string, error) {
 	url := fmt.Sprintf("%s/%s-%s %s/getControlKey", os.Getenv("CODE_SERVICE_URL"), split[0], split[1], preset)
 	log.Printf("Getting control key for preset %q from %q", preset, url)
 
-	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
+	req, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
 		return "", fmt.Errorf("unable to build http request: %w", err)
 	}
+
+	req.Context = ctx
 
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
