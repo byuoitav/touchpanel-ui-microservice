@@ -81,7 +81,7 @@ func GetControlKey(ctx context.Context, preset string) (string, error) {
 		return "", fmt.Errorf("unable to build http request: %w", err)
 	}
 
-	req.Context = ctx
+	req = req.WithContext(ctx)
 
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
