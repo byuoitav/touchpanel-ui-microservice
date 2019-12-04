@@ -13,26 +13,29 @@ import { JsonConvert, OperationMode, ValueCheckingMode } from "json2typescript";
 import "rxjs/add/operator/map";
 import "rxjs/add/operator/timeout";
 import { deserialize } from "serializer.ts/Serializer";
+import { promise } from "protractor";
 
 const RETRY_TIMEOUT = 5 * 1000;
 const MONITOR_TIMEOUT = 30 * 1000;
 
 @Injectable()
 export class APIService {
-  public loaded: EventEmitter<boolean>;
-  private jsonConvert: JsonConvert;
 
   public static building: string;
   public static roomName: string;
   public static piHostname: string;
   public static hostname: string;
   public static apiurl: string;
-
+  public static controlKey: string;
   public static room: Room;
 
   public static apihost: string;
   private static localurl: string;
   private static options: RequestOptions;
+
+
+  public loaded: EventEmitter<boolean>;
+  private jsonConvert: JsonConvert;
 
   constructor(private http: Http) {
     this.loaded = new EventEmitter<boolean>();
@@ -212,11 +215,19 @@ export class APIService {
       .map(response => response.json());
   }
 
+
   private getPiHostname(): Observable<Object> {
     return this.http
       .get(APIService.localurl + ":8888/pihostname")
       .map(response => response.json());
   }
+  public getControlKey(preset: string): Observable<Object> {
+    console.log("RUNNINGGGGGGG");
+    return this.http
+      .get(APIService.localurl + ":8888/code/" + preset)
+      .map(response => response.json());
+  }
+
 
   private getAPIUrl(): Observable<Object> {
     return this.http
@@ -273,6 +284,7 @@ export class APIService {
       .post(APIService.localurl + ":8888/publish", data, APIService.options)
       .subscribe();
   }
+  
 
   public help(type: string): Observable<Object> {
     const body = { building: APIService.building, room: APIService.roomName };

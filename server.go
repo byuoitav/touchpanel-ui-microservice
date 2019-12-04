@@ -6,8 +6,6 @@ import (
 	"os"
 	"time"
 
-	"github.com/labstack/echo/middleware"
-
 	"github.com/byuoitav/central-event-system/hub/base"
 	"github.com/byuoitav/central-event-system/messenger"
 	"github.com/byuoitav/common"
@@ -19,6 +17,7 @@ import (
 	"github.com/byuoitav/touchpanel-ui-microservice/socket"
 	"github.com/byuoitav/touchpanel-ui-microservice/uiconfig"
 	"github.com/labstack/echo"
+	"github.com/labstack/echo/middleware"
 )
 
 func main() {
@@ -79,6 +78,7 @@ func main() {
 	router.GET("/hostname", handlers.GetHostname)
 	router.GET("/deviceinfo", handlers.GetDeviceInfo)
 	router.GET("/reboot", handlers.Reboot)
+	router.GET("/code/:preset", handlers.GetControlKey)
 
 	router.GET("/uiconfig", uiconfig.GetUIConfig)
 	router.GET("/uipath", uiconfig.GetUIPath)
