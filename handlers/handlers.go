@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"net/http"
@@ -27,14 +28,18 @@ func GetPiHostname(context echo.Context) error {
 	return context.JSON(http.StatusOK, hostname)
 }
 
-func GetControlKey(context echo.Context) error {
-	fmt.Println("-------------GETTING CONTROL KEY--------------")
-	preset := context.Param("preset")
-	controlKey, err := helpers.GetControlKeyHelper(preset)
+func GetControlKey(c echo.Context) error {
+	preset := c.Param("preset")
+
+	ctx, cancel := context.WithTimeout(c.Request().Context(), 8*time.Second)
+	defer cancel()
+
+	key, err := helpers.GetControlKey(ctx, preset)
 	if err != nil {
-		return context.JSON(http.StatusInternalServerError, err.Error())
+		return c.String(http.StatusInternalServerError, err.Error())
 	}
-	return context.JSON(http.StatusOK, controlKey)
+
+	return c.JSON(http.StatusOK, key)
 }
 
 func GetDeviceInfo(context echo.Context) error {
