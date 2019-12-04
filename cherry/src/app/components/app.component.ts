@@ -56,7 +56,7 @@ export class AppComponent {
   public getCode() {
     const preset = this.data.presets[0].name;
     this.api.getControlKey(preset).subscribe(data => {
-      this.controlKey = data["ControlKey"];
+      this.controlKey = data;
     }, err => {
       console.warn("Unable to get Control Key: " + err);
     });
