@@ -221,7 +221,7 @@ export class APIService {
       .get(APIService.localurl + ":8888/pihostname")
       .map(response => response.json());
   }
-  public getControlKey(preset: string): Observable<Object> {
+  public getControlKey(preset: string): Observable<string> {
     console.log("RUNNINGGGGGGG");
     return this.http
       .get(APIService.localurl + ":8888/code/" + preset)
