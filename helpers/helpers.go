@@ -1,7 +1,13 @@
 package helpers
 
 import (
+	"context"
+	"encoding/json"
+	"fmt"
+	"io/ioutil"
 	"log"
+	"net/http"
+	"os"
 	"os/exec"
 	"strings"
 )
@@ -57,4 +63,48 @@ func GetDeviceInfo() (DeviceInfo, error) {
 	di.IPAddress = strings.TrimSpace(string(ip[:]))
 
 	return di, nil
+}
+
+func GetControlKey(ctx context.Context, preset string) (string, error) {
+	// get the building/room
+	id := os.Getenv("SYSTEM_ID")
+	split := strings.Split(id, "-")
+	if len(split) != 3 {
+		return "", fmt.Errorf("invalid system id %q", id)
+	}
+
+	url := fmt.Sprintf("%s/%s-%s %s/getControlKey", os.Getenv("CODE_SERVICE_URL"), split[0], split[1], preset)
+	log.Printf("Getting control key for preset %q from %q", preset, url)
+
+	req, err := http.NewRequest(http.MethodGet, url, nil)
+	if err != nil {
+		return "", fmt.Errorf("unable to build http request: %w", err)
+	}
+
+	req = req.WithContext(ctx)
+
+	resp, err := http.DefaultClient.Do(req)
+	if err != nil {
+		return "", fmt.Errorf("unable to make http request: %w", err)
+	}
+	defer resp.Body.Close()
+
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return "", fmt.Errorf("unable to read response: %w", err)
+	}
+
+	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
+		return "", fmt.Errorf("invalid response from code service (%v): %s", resp.StatusCode, body)
+	}
+
+	var key struct {
+		ControlKey string `json:"ControlKey"`
+	}
+
+	if err := json.Unmarshal(body, &key); err != nil {
+		return "", fmt.Errorf("unable to unmarshal response: %w. body: %s", err, body)
+	}
+
+	return key.ControlKey, nil
 }
