@@ -35,6 +35,8 @@ export class DataService {
   public audioConfig: Map<Display, AudioConfig> = new Map();
   public presets: Preset[] = [];
   public panels: Panel[] = [];
+  public roomControlUrl: string;
+  public controlKey: string;
 
   public dividerSensor: DeviceConfiguration;
 
@@ -52,6 +54,10 @@ export class DataService {
 
       this.createPresets();
       this.createPanels();
+      this.getCode()
+      setInterval(() => {
+        this.getCode();
+      }, 30000);
 
       // set divider sensor
       this.dividerSensor = APIService.room.config.devices.find(d =>
@@ -74,9 +80,10 @@ export class DataService {
       const input = APIService.room.config.devices.find(i => i.name === name);
 
       if (input && input.hasRole("VideoIn")) {
+        
         const dispname = config.displayname
           ? config.displayname
-          : input.displayname;
+          : input.display_name;
 
         const subs: Input[] = [];
         console.log("does the input have subInputs?", config);
@@ -118,7 +125,7 @@ export class DataService {
           if (deviceConfig != null) {
             const d = new Display(
               status.name,
-              config.displayname,
+              config.display_name,
               status.power,
               Input.getInput(status.input, this.inputs),
               status.blanked,
@@ -153,7 +160,7 @@ export class DataService {
           if (deviceConfig != null) {
             const a = new AudioDevice(
               status.name,
-              config.displayname,
+              config.display_name,
               status.power,
               Input.getInput(status.input, this.inputs),
               status.muted,
@@ -264,8 +271,10 @@ export class DataService {
       
       // if (preset.screens === undefined) {
       //   preset.screens = ["SCR1"];
-      // }
-      const screens = APIService.room.config.devices.filter(oneDevice => preset.screens.some(one => one == oneDevice.name));
+      // }      
+      const screens = preset.screens === undefined || preset.screens === null ?
+        [] :
+        APIService.room.config.devices.filter(oneDevice => preset.screens.some(one => one == oneDevice.name));
 
 
       const p = new Preset(
@@ -505,5 +514,16 @@ export class DataService {
         return device;
       }
     }
+  }
+
+  public getCode() {
+    this.api.getControlKey(this.panel.preset.name).subscribe(data => {
+      
+      this.controlKey = data["controlKey"];
+      this.roomControlUrl = data["url"];
+    }, err => {
+      console.warn("Unable to get Control Key: " + err);
+    });
+
   }
 }
