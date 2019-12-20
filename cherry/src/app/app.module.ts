@@ -33,6 +33,9 @@ import { ErrorService } from "./services/error.service";
 import { ManagementComponent } from "./components/management/management.component";
 import { StreamModalComponent } from "./dialogs/streammodal/streammodal.component";
 import { ProjectorControlComponent } from "./components/projectorcontrol/projectorcontrol.component";
+import { MobileControlComponent } from './components/mobilecontrol/mobilecontrol.component';
+import { NgxQRCodeModule } from 'ngx-qrcode2';
+
 
 @NgModule({
   declarations: [
@@ -46,7 +49,8 @@ import { ProjectorControlComponent } from "./components/projectorcontrol/project
     ViaDialog,
     ErrorDialogComponent,
     StreamModalComponent,
-    ProjectorControlComponent
+    ProjectorControlComponent,
+    MobileControlComponent
   ],
   imports: [
     BrowserModule,
@@ -59,7 +63,8 @@ import { ProjectorControlComponent } from "./components/projectorcontrol/project
     MatProgressSpinnerModule,
     MatDialogModule,
     MatIconModule,
-    MatDividerModule
+    MatDividerModule,
+    NgxQRCodeModule
   ],
   providers: [
     APIService,
@@ -69,7 +74,7 @@ import { ProjectorControlComponent } from "./components/projectorcontrol/project
     SocketService,
     ErrorService
   ],
-  entryComponents: [HelpDialog, ConfirmHelpDialog, ViaDialog, ErrorDialogComponent, StreamModalComponent],
+  entryComponents: [HelpDialog, ConfirmHelpDialog, ViaDialog, ErrorDialogComponent, StreamModalComponent, MobileControlComponent],
   bootstrap: [AppComponent]
 })
 export class AppModule {}

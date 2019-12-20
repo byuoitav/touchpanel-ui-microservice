@@ -172,10 +172,19 @@ $duration: 0.4s;
   border-color: rgb(170, 170, 170);
 }
 
-.control-key-info {
-  // margin-top: 2.5vw;
-  // margin-left: 3.7vw;
+.control-key-button {
+  width: 5vw;
   padding-top: 10px;
-  width: 19vw;
-  text-align: center;
+}
+
+.control-key-info {
+  width: 1vw;
+  word-break: keep-all;
+  text-align: left;
+  font-size: 14pt;
+  padding: 0;
+  // position: absolute;
+  // height: 5vw;
+  // justify-content: center;
+  // padding-left: 10px;
 }

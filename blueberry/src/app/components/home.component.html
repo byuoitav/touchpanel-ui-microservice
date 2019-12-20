@@ -30,17 +30,22 @@
     <mat-icon>help</mat-icon>
   </button>
 
-  <div *ngIf="controlKey" class="control-key-info">
-    <div>
-      <!-- rooms.byu.edu -->
-      {{roomControlUrl}}
-    </div>
-    <div>
-      Key: {{controlKey}}
-    </div>
+  
+  <div *ngIf="data.controlKey" class="control-key-button">
+      <button
+      mat-button
+      disableRipple
+      class="control-key-info"
+      (click)="showMobileControl(); command.buttonPress('open room control modal')"
+      (press)="showMobileControl(); command.buttonPress('open room control modal')"
+    >
+    {{data.roomControlUrl}}<br />
+    Key: {{data.controlKey}}
+    </button>
   </div>
 
 </div>
+
 
 <div *ngIf="data.panel?.render">
   <wheel

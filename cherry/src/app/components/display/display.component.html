@@ -3,6 +3,13 @@
   <div>Key: {{data.controlKey}}</div>
 </div> -->
 
+<!-- <div class="secondary-theme">
+  <button mat-raised-button class="room-control-info" color="accent" (click)="openMobileControlDialog(); command.buttonPress('open mobile control modal')" (press)="
+    openMobileControlDialog(); command.buttonPress('long press open mobile control modal')">
+    Mobile Control
+  </button>
+</div> -->
+
 <div class="outputs">
     <!--
         As outputs get closer to the sides of the screen,
@@ -40,6 +47,18 @@
 </div>
 
 <div class="inputs">
+  <ng-container *ngIf="data?.room-control-info != null">
+      <div class="room-control-info">
+          <button mat-button
+          disableRipple
+          (click)="openMobileControlDialog(); command.buttonPress('open mobile control modal')" 
+          (press)="openMobileControlDialog(); command.buttonPress('long press open mobile control modal')">
+          {{data.roomControlUrl}} Key: {{data.controlKey}}
+          <!-- rooms.byu.edu -->
+        </button>
+      </div>  
+  </ng-container>
+    
     <!-- blank button -->
     <div>
         <button mat-button class="input mat-elevation-z7" [color]="isOneBlanked() ? 'accent' : ''" (click)="blank(); command.buttonPress('blank', getSelectedDisplayNames())" (press)="
