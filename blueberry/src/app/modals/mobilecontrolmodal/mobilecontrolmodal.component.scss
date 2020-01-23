@@ -6,6 +6,11 @@
     &.title {
       font-size: 1.7em;
     }
+
+    &.room-info {
+      margin-top: -10px;
+      line-height: 55px;
+    }
   }
   
   .items {
@@ -13,6 +18,7 @@
     flex-direction: row;
     justify-content: center;
     align-items: center;
+    margin-top: 20px;
   }
   
   // to space things correctly

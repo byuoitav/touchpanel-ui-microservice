@@ -30,6 +30,18 @@
     <mat-icon>help</mat-icon>
   </button>
 
+  <!-- <div>
+      <button
+      mat-fab
+      class="help button"
+      (click)="showMobileControl(); command.buttonPress('open room control modal')"
+      (press)="showMobileControl(); command.buttonPress('open room control modal')"
+    >
+      <mat-icon>phone_iphone</mat-icon>
+    </button>
+  </div> -->
+  
+
   
   <div *ngIf="data.controlKey" class="control-key-button">
       <button
@@ -96,36 +108,34 @@
       <mat-icon>stop_screen_share</mat-icon>
     </button>
   </ng-container>
-  <ng-container
-  *ngIf="wheel?.preset?.screens?.length > 0"
-  >
+  <ng-container *ngIf="wheel?.preset?.screens?.length > 0">
     <button
       mat-fab
       class="dta button"
       (click)="screen.show(defaultPreset); command.buttonPress('open projector modal')"
-      (press)="
-        screen.show(defaultPreset);
-        command.buttonPress('long press open projector modal')
-      "
+      (press)="screen.show(defaultPreset); command.buttonPress('long press open projector modal')"
     >
     <mat-icon>unfold_more</mat-icon>
     </button>
   </ng-container>
 </div>
 
-<div class="buttons bottom right" [class.corner]="wheel?.getPower() !== 'on'">
-  <button
-    mat-fab
-    *ngIf="
-      defaultPreset?.independentAudioDevices?.length > 0 && !audio.isShowing()
-    "
-    class="independentAudio button"
-    (click)="audio.show(defaultPreset); command.buttonPress('open audio modal')"
-    (press)="
-      audio.show(defaultPreset);
-      command.buttonPress('long press open audio modal')
-    "
-  >
-    <mat-icon class="rotate-90">tune</mat-icon>
-  </button>
-</div>
+<ng-container *ngIf="wheel?.getPower() === 'on'">
+  <div class="buttons bottom right" [class.corner]="wheel?.getPower() !== 'on'">
+    <button
+      mat-fab
+      *ngIf="
+        defaultPreset?.independentAudioDevices?.length > 0 && !audio.isShowing()
+      "
+      class="independentAudio button"
+      (click)="audio.show(defaultPreset); command.buttonPress('open audio modal')"
+      (press)="
+        audio.show(defaultPreset);
+        command.buttonPress('long press open audio modal')
+      "
+    >
+      <mat-icon class="rotate-90">tune</mat-icon>
+    </button>
+  </div>
+</ng-container>
+

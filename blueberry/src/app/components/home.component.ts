@@ -904,8 +904,6 @@ export class HomeComponent implements OnInit {
   public showMobileControl() {
     const ref = this.dialog.open(MobileControlModal, {
       width: "80vw",
-      data: this.helpInfo,
-      disableClose: true
     });
   }
 }

@@ -13,11 +13,11 @@ import { Preset } from "../../objects/objects";
 import { AudioDevice } from "../../objects/status.objects";
 
 @Component({
-  selector: "audiocontrol",
-  templateUrl: "./audiocontrol.component.html",
-  styleUrls: ["./audiocontrol.component.scss"]
+  selector: "lock-screen-audio",
+  templateUrl: './lockscreenaudio.component.html',
+  styleUrls: ['./lockscreenaudio.component.scss']
 })
-export class AudiocontrolComponent implements AfterViewInit, OnChanges {
+export class LockScreenAudioComponent implements OnInit {
   @ViewChild("tabs")
   tabs: MatTabGroup;
   @Input()
@@ -31,6 +31,8 @@ export class AudiocontrolComponent implements AfterViewInit, OnChanges {
 
   groupPages: Map<string, number[]> = new Map();
   groupCurPage: Map<string, number> = new Map();
+
+  _show = false;
 
   audioTypes: string[]; // used to do optimize change detection (mostly at the beginning)
 
@@ -111,6 +113,15 @@ export class AudiocontrolComponent implements AfterViewInit, OnChanges {
       );
       this.curDisplayPage = 0;
     }
+    this._show = true;
+  }
+
+  hide() {
+    this._show = false;
+  }
+
+  isShowing() {
+    return this._show;
   }
 
   private updateAudioTypes() {
