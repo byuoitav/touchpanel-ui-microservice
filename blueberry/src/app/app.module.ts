@@ -42,6 +42,7 @@ import { ProjectorComponent } from './components/projector/projector.component';
 import { MobileControlModal } from './modals/mobilecontrolmodal/mobilecontrolmodal.component';
 import { NgxQRCodeModule } from 'ngx-qrcode2';
 
+
 @NgModule({
   declarations: [
     AppComponent,

@@ -13,7 +13,6 @@ import { MobileControlComponent } from "./mobilecontrol/mobilecontrol.component"
 import { AudiocontrolComponent } from "./audiocontrol/audiocontrol.component";
 import { ProjectorControlComponent } from "./projectorcontrol/projectorcontrol.component";
 import { MatDialogModule } from '@angular/material';
-import { LockScreenComponent } from "../dialogs/lockscreenmodal/lockscreenmodal.component";
 import { LockScreenAudioComponent } from "./lockscreenaudio/lockscreenaudio.component";
 import { LockScreenScreenControlComponent } from "./lockscreenscreencontrol/lockscreenscreencontrol.component";
 
@@ -149,25 +148,5 @@ export class AppComponent {
       width: "70vw",
       height: "52.5vw"
     });
-  }
-
-  public openScreenControlDialog() {
-    const dialogRef = this.dialog.open(LockScreenComponent, {
-      width: "70vw",
-      data: {
-        data: this.data,
-        type: "screen"
-    }});
-  }
-
-  public openAudioControlDialog() {
-    const dialogRef = this.dialog.open(LockScreenComponent, {
-      // width: "180vw",
-      height: "100%",
-      width: "80vw",
-      data: {
-        data: this.data,
-        type: "audio"
-    }});
   }
 }

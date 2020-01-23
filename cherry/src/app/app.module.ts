@@ -35,7 +35,6 @@ import { StreamModalComponent } from "./dialogs/streammodal/streammodal.componen
 import { ProjectorControlComponent } from "./components/projectorcontrol/projectorcontrol.component";
 import { MobileControlComponent } from './components/mobilecontrol/mobilecontrol.component';
 import { NgxQRCodeModule } from 'ngx-qrcode2';
-import { LockScreenComponent } from './dialogs/lockscreenmodal/lockscreenmodal.component';
 import { LockScreenAudioComponent } from './components/lockscreenaudio/lockscreenaudio.component';
 import { LockScreenScreenControlComponent } from './components/lockscreenscreencontrol/lockscreenscreencontrol.component';
 
@@ -54,7 +53,6 @@ import { LockScreenScreenControlComponent } from './components/lockscreenscreenc
     StreamModalComponent,
     ProjectorControlComponent,
     MobileControlComponent,
-    LockScreenComponent,
     LockScreenAudioComponent,
     LockScreenScreenControlComponent
   ],
@@ -80,7 +78,7 @@ import { LockScreenScreenControlComponent } from './components/lockscreenscreenc
     SocketService,
     ErrorService
   ],
-  entryComponents: [HelpDialog, ConfirmHelpDialog, ViaDialog, ErrorDialogComponent, StreamModalComponent, MobileControlComponent, LockScreenComponent],
+  entryComponents: [HelpDialog, ConfirmHelpDialog, ViaDialog, ErrorDialogComponent, StreamModalComponent, MobileControlComponent],
   bootstrap: [AppComponent]
 })
 export class AppModule {}

@@ -10,7 +10,7 @@ import { DataService } from 'app/services/data.service';
   styleUrls: ['./mobilecontrolmodal.component.scss']
 })
 export class MobileControlModal implements OnInit {
-  public value: string;
+  public qrcode: string;
   public elementType: 'url';
 
   constructor(
@@ -20,7 +20,7 @@ export class MobileControlModal implements OnInit {
     public api: APIService,
     public command: CommandService,
   ) {
-    this.value = data.roomControlUrl + "/key/" + data.controlKey;
+    this.qrcode = data.roomControlUrl + "/key/" + data.controlKey;
    }
 
   ngOnInit() {
