@@ -1,15 +1,3 @@
-<!-- <div class = "room-control-info">
-  <div>{{data.roomControlUrl}}</div>
-  <div>Key: {{data.controlKey}}</div>
-</div> -->
-
-<!-- <div class="secondary-theme">
-  <button mat-raised-button class="room-control-info" color="accent" (click)="openMobileControlDialog(); command.buttonPress('open mobile control modal')" (press)="
-    openMobileControlDialog(); command.buttonPress('long press open mobile control modal')">
-    Mobile Control
-  </button>
-</div> -->
-
 <div class="outputs">
     <!--
         As outputs get closer to the sides of the screen,
@@ -47,16 +35,15 @@
 </div>
 
 <div class="inputs">
+
+  <!-- to open up the mobile control qr code -->
   <ng-container *ngIf="data?.room-control-info != null">
-      <div class="room-control-info">
-          <button mat-button
-          disableRipple
-          (click)="openMobileControlDialog(); command.buttonPress('open mobile control modal')" 
-          (press)="openMobileControlDialog(); command.buttonPress('long press open mobile control modal')">
-          {{data.roomControlUrl}} Key: {{data.controlKey}}
-          <!-- rooms.byu.edu -->
-        </button>
-      </div>  
+
+      <div class="room-control-info" (click)="openMobileControlDialog(); command.buttonPress('open mobile control modal')" 
+      (press)="openMobileControlDialog(); command.buttonPress('long press open mobile control modal')">
+        <div> {{data.roomControlUrl}} </div>
+        <div> Key: {{data.controlKey}} </div>
+      </div>
   </ng-container>
     
     <!-- blank button -->
