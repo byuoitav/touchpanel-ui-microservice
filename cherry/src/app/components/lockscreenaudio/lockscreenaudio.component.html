@@ -1,8 +1,17 @@
-<mat-progress-bar
+<div class="container primary-background" [class.show]="_show">
+
+<!-- <mat-progress-bar
   *ngIf="command.commandInProgress"
   [mode]="'indeterminate'"
   color="primary"
-></mat-progress-bar>
+></mat-progress-bar> -->
+<button mat-raised-button
+  color="primary"
+  class="power"
+  (click)="hide()"
+  (press)="hide()">
+  BACK
+</button>
 <mat-tab-group
   #tabs
   color="accent"
@@ -172,7 +181,7 @@
           class="device slider-container"
           [id]="'device' + i"
         >
-          <span>{{ a.displayname }}</span>
+          <span class="volume-label">{{ a.displayname }}</span>
           <i class="material-icons">{{ a.icon }}</i>
           <volume
             class="volume"
@@ -215,7 +224,7 @@
               class="device slider-container"
               [id]="'device' + i"
             >
-              <span>{{ a.displayname }}</span>
+              <span class="volume-label">{{ a.displayname }}</span>
               <i class="material-icons">{{ a.icon }}</i>
               <volume
                 class="volume"
@@ -299,7 +308,7 @@
           class="device slider-container"
           [id]="label + i"
         >
-          <span>{{ a.displayname }}</span>
+          <span class="volume-label">{{ a.displayname }}</span>
           <i class="material-icons">{{ a.icon }}</i>
           <volume
             class="volume"
@@ -342,7 +351,7 @@
               class="device slider-container"
               [id]="label + i"
             >
-              <span>{{ a.displayname }}</span>
+              <span class="volume-label">{{ a.displayname }}</span>
               <i class="material-icons">{{ a.icon }}</i>
               <volume
                 class="volume"
@@ -417,9 +426,11 @@
       </div>
     </mat-tab>
   </ng-container>
+  
 </mat-tab-group>
 <mat-progress-bar
   *ngIf="command.commandInProgress"
   [mode]="'indeterminate'"
   color="primary"
 ></mat-progress-bar>
+</div>

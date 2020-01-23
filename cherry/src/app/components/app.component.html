@@ -27,17 +27,17 @@
                 <!-- screen/audio/mobile control buttons -->
                 <div class="optional-buttons">
                     <!-- Screen Control -->
-                    <!-- <ng-container *ngIf="data?.panel?.preset?.screens?.length > 0"> -->
+                    <ng-container *ngIf="data?.panel?.preset?.screens?.length > 0">
                         <button mat-stroked-button class="lock-screen-button screen-button"
                         (click)="screen.show(data?.panel?.preset); command.buttonPress('open screen control modal')"
                         (press)="screen.show(data?.panel?.preset); command.buttonPress('long press open screen control modal')">
                             <mat-icon class="screen-control-icon">unfold_more</mat-icon>
                             <div class="button-text">Screen Control</div>
                         </button>
-                    <!-- </ng-container> -->
+                    </ng-container>
 
                     <!-- Mobile Control -->
-                    <!-- <ng-container *ngIf="data.controlKey"> -->
+                    <ng-container *ngIf="data.controlKey">
                         <button mat-stroked-button
                         class="lock-screen-button mobile-control"
                         (click)="openMobileControlDialog(); command.buttonPress('open mobile control modal')"
@@ -45,17 +45,17 @@
                         <mat-icon class="screen-control-icon">phone_iphone</mat-icon>
                         <div class="button-text">Key: {{data.controlKey}}</div>
                         </button>
-                    <!-- </ng-container> -->
+                    </ng-container>
     
                     <!-- Audio Control -->
-                    <!-- <ng-container *ngIf="data?.panel?.preset?.audioDevices?.length > 0"> -->
+                    <ng-container *ngIf="data?.panel?.preset?.audioDevices?.length > 0">
                         <button mat-stroked-button class="lock-screen-button audio-button"
-                        (click)="audio.show(data?.panel?.preset); command.buttonPress('open audio control modal')"
-                        (press)="audio.show(data?.panel?.preset); command.buttonPress('long press open audio control modal')">
+                        (click)="lockaudio.show(data?.panel?.preset); command.buttonPress('open audio control modal')"
+                        (press)="lockaudio.show(data?.panel?.preset); command.buttonPress('long press open audio control modal')">
                             <mat-icon class="rotate-90">tune</mat-icon>
                             <div class="button-text">Audio Control</div>
                         </button>
-                    <!-- </ng-container> -->
+                    </ng-container>
                 </div>
             </ng-container>
 
@@ -71,8 +71,8 @@
     <ng-template #home>
         <ng-container *ngIf="data?.panel?.preset?.displays?.length > 0">
             <button mat-raised-button color="warn" class="power" (click)="powerOff(); command.buttonPress('power off')" (press)="powerOff(); command.buttonPress('long press power off')">
-        Power Off
-      </button>
+                Power Off
+            </button>
         </ng-container>
 
         <div class="secondary-theme">

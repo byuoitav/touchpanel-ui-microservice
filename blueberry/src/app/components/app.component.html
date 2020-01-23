@@ -25,7 +25,7 @@
                 </div>
                 <!-- <span class="text unlock" (click)="unlock(); command.buttonPress('power on')" (press)="unlock(); command.buttonPress('long press power on')"></span> -->
                 <div  class="optional-buttons">
-                    <!-- <ng-container *ngIf="data?.panel?.preset?.screens?.length > 0"> -->
+                    <ng-container *ngIf="data?.panel?.preset?.screens?.length > 0">
                         <button
                             mat-stroked
                             class="lock-screen-button"
@@ -35,9 +35,9 @@
                         <mat-icon>unfold_more</mat-icon>
                         <div class="button-text">Screen Control</div>
                         </button>
-                    <!-- </ng-container> -->
+                    </ng-container>
                     
-                    <!-- <ng-container *ngIf="controlKey"> -->
+                    <ng-container *ngIf="controlKey">
                         <button
                             mat-stroked
                             class="lock-screen-button"
@@ -47,10 +47,10 @@
                         <mat-icon>phone_iphone</mat-icon>
                         <div class="button-text">Key: {{data.controlKey}}</div>
                         </button>
-                    <!-- </ng-container> -->
+                    </ng-container>
 
 
-                    <!-- <ng-container *ngIf="data?.panel?.preset?.independentAudioDevices?.length > 0 && !audio.isShowing()"> -->
+                    <ng-container *ngIf="data?.panel?.preset?.independentAudioDevices?.length > 0 && !audio.isShowing()">
                         <button
                             mat-stroked
                             class="lock-screen-button"
@@ -60,7 +60,7 @@
                         <mat-icon class="rotate-90">tune</mat-icon>
                         <div class="button-text">Audio Control</div>
                         </button>
-                    <!-- </ng-container> -->
+                    </ng-container>
                 </div>
             </ng-container>
 

@@ -38,7 +38,7 @@ export class LockScreenAudioComponent implements OnInit {
 
   constructor(public command: CommandService, private ref: ChangeDetectorRef) {}
   
-  ngAfterViewInit() {
+  ngOnInit() {
     if (!this.audioGroups) {
       console.info("not showing audio groups");
     }
@@ -47,7 +47,7 @@ export class LockScreenAudioComponent implements OnInit {
     // but, it moves the second line of tabs to be left aligned
     this.tabs._elementRef.nativeElement.getElementsByClassName(
       "mat-tab-labels"
-    )[0].style.justifyContent = "flex-start";
+    )[0].style.justifyContent = "center";
   }
 
   ngOnChanges(changes) {

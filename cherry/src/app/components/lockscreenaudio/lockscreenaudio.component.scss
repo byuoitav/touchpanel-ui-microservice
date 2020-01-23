@@ -22,7 +22,6 @@ $buffer-size: 3vw;
 }
 
 .devices {
-    background-color: black;
     @extend %align-horiz;
     justify-content: space-around;
     max-width: $devices-width - (2 * $button-width);
@@ -163,6 +162,7 @@ $buffer-size: 3vw;
     width: 12vw;
     text-align: center;
     font-size: 10.5pt;
+    color: white;
 }
 
 .stretch {
@@ -173,4 +173,60 @@ $buffer-size: 3vw;
 
 mat-progress-bar {
     position: fixed;
+    bottom: 0;
+    // margin-bottom: 200px;
+}
+
+.material-icons {
+    color: white !important;
+}
+
+.container {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    top: 0;
+    left: 0;
+  
+    display: none;
+  
+    &.show {
+      background-color: #263238;
+      display: unset;
+      z-index: 10000;
+    }
+}
+
+.back-button {
+    // color: white;
+    border-color: #666666 !important; 
+    text-align: center;
+    font-size: 12pt;
+    border-radius: 10px !important;
+    min-height: 83px;
+    width: 180px;
+    margin-left: 30px !important;
+    margin-right: 30px !important;
+    position: fixed;
+    z-index: 10000;
+}
+
+$buttonXOffset: .55rem;
+.mat-tab-group {
+    height: 100%;
+}
+
+%button {
+    z-index: 1000;
+    position: absolute !important;
+}
+
+%top-button {
+    top: .35rem;
+}
+
+.power {
+    @extend %button;
+    @extend %top-button;
+    left: $buttonXOffset;
 }
