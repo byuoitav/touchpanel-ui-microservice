@@ -37,7 +37,7 @@
 <div class="inputs">
 
   <!-- to open up the mobile control qr code -->
-  <ng-container *ngIf="data?.room-control-info != null">
+  <ng-container *ngIf="data?.controlKey != null">
 
       <div class="room-control-info" (click)="openMobileControlDialog(); command.buttonPress('open mobile control modal')" 
       (press)="openMobileControlDialog(); command.buttonPress('long press open mobile control modal')">

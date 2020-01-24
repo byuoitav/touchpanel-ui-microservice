@@ -22,7 +22,7 @@ export class DisplayComponent {
   selectedDisplays: Set<Display> = new Set();
 
   constructor(
-    private data: DataService,
+    public data: DataService,
     public command: CommandService,
     private dialog: MatDialog
   ) {
