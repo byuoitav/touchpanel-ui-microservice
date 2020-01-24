@@ -17,7 +17,7 @@ import { AudioDevice } from "../../objects/status.objects";
   templateUrl: './lockscreenaudio.component.html',
   styleUrls: ['./lockscreenaudio.component.scss']
 })
-export class LockScreenAudioComponent implements OnInit {
+export class LockScreenAudioComponent {
   @ViewChild("tabs")
   tabs: MatTabGroup;
   @Input()
