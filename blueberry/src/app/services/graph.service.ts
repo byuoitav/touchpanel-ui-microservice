@@ -142,8 +142,11 @@ export class GraphService {
   }
 
   private getNodeByPresets(list: Set<string>): Node {
-    const l = JSON.stringify(Array.from(list));
-    return this.nodes.find(n => JSON.stringify(Array.from(n.presets)) === l);
+    for (const node of this.nodes) {
+      if (node.matches(list)) {
+        return node;
+      }
+    }
   }
 
   private connect(s: string): boolean {
@@ -161,14 +164,14 @@ export class GraphService {
       lnode = new Node(left);
       this.nodes.push(lnode);
 
-      console.log("created a new node", lnode, ". nodes:", this.nodes);
+      console.log("created a new left node", lnode, ". nodes:", this.nodes);
     }
 
     if (rnode == null) {
       rnode = new Node(right);
       this.nodes.push(rnode);
 
-      console.log("created a new node", rnode, ". nodes:", this.nodes);
+      console.log("created a new right node", rnode, ". nodes:", this.nodes);
     }
 
     if (!lnode.children.includes(rnode)) {
