@@ -1,18 +1,18 @@
-import { Injectable, EventEmitter } from "@angular/core";
-import { Http, Response, Headers, RequestOptions } from "@angular/http";
-import { Observable } from "rxjs/Rx";
+import {Injectable, EventEmitter} from "@angular/core";
+import {Http, Response, Headers, RequestOptions} from "@angular/http";
+import {Observable} from "rxjs/Rx";
 import {
   UIConfiguration,
   Room,
   RoomConfiguration,
   RoomStatus
 } from "../objects/objects";
-import { Event } from "./socket.service";
-import { JsonConvert, OperationMode, ValueCheckingMode } from "json2typescript";
+import {Event} from "./socket.service";
+import {JsonConvert, OperationMode, ValueCheckingMode} from "json2typescript";
 
 import "rxjs/add/operator/map";
 import "rxjs/add/operator/timeout";
-import { deserialize } from "serializer.ts/Serializer";
+import {deserialize} from "serializer.ts/Serializer";
 
 const RETRY_TIMEOUT = 5 * 1000;
 const MONITOR_TIMEOUT = 30 * 1000;
@@ -42,10 +42,9 @@ export class APIService {
     if (APIService.options == null) {
       const headers = new Headers();
       headers.append("content-type", "application/json");
-      APIService.options = new RequestOptions({ headers: headers });
+      APIService.options = new RequestOptions({headers: headers});
 
-      const base = location.origin.split(":");
-      APIService.localurl = base[0] + ":" + base[1];
+      APIService.localurl = window.location.protocol + "//" + window.location.host;
 
       APIService.room = new Room();
 
@@ -98,7 +97,9 @@ export class APIService {
 
     this.getAPIUrl().subscribe(
       data => {
-        APIService.apihost = "http://" + location.hostname;
+        // TODO change back 
+        // APIService.apihost = "http://" + location.hostname;
+        APIService.apihost = "http://" + "itb-1006-cp1.byu.edu";
         if (!data["hostname"].includes("localhost")) {
           APIService.apihost = "http://" + data["hostname"];
         }
@@ -208,19 +209,19 @@ export class APIService {
 
   private getHostname(): Observable<Object> {
     return this.http
-      .get(APIService.localurl + ":8888/hostname")
+      .get(APIService.localurl + "/hostname")
       .map(response => response.json());
   }
 
   private getPiHostname(): Observable<Object> {
     return this.http
-      .get(APIService.localurl + ":8888/pihostname")
+      .get(APIService.localurl + "/pihostname")
       .map(response => response.json());
   }
 
   private getAPIUrl(): Observable<Object> {
     return this.http
-      .get(APIService.localurl + ":8888/api")
+      .get(APIService.localurl + "/api")
       .map(response => response.json());
   }
 
@@ -233,13 +234,13 @@ export class APIService {
 
   private getNextAPIUrl(): Observable<Object> {
     return this.http
-      .get(APIService.localurl + ":8888/nextapi")
+      .get(APIService.localurl + "/nextapi")
       .map(response => response.json());
   }
 
   private getUIConfig(): Observable<Object> {
     return this.http
-      .get(APIService.localurl + ":8888/uiconfig")
+      .get(APIService.localurl + "/uiconfig")
       .map(response => response.json())
       .map(res => deserialize<UIConfiguration>(UIConfiguration, res));
   }
@@ -263,29 +264,29 @@ export class APIService {
     console.log("sending event", data);
 
     this.http
-      .post(APIService.localurl + ":8888/publish", data, APIService.options)
+      .post(APIService.localurl + "/publish", data, APIService.options)
       .subscribe();
   }
 
   public help(type: string): Observable<Object> {
-    const body = { building: APIService.building, room: APIService.roomName };
+    const body = {building: APIService.building, room: APIService.roomName};
 
     switch (type) {
       case "help":
         return this.http.post(
-          APIService.localurl + ":8888/help",
+          APIService.localurl + "/help",
           body,
           APIService.options
         );
       case "confirm":
         return this.http.post(
-          APIService.localurl + ":8888/confirmhelp",
+          APIService.localurl + "/confirmhelp",
           body,
           APIService.options
         );
       case "cancel":
         return this.http.post(
-          APIService.localurl + ":8888/cancelhelp",
+          APIService.localurl + "/cancelhelp",
           body,
           APIService.options
         );

@@ -1,5 +1,5 @@
-import { Type } from "serializer.ts/Decorators";
-import { Device, Display, AudioDevice, Input } from "./status.objects";
+import {Type} from "serializer.ts/Decorators";
+import {Device, Display, AudioDevice, Input} from "./status.objects";
 
 export class Room {
   config: RoomConfiguration;
@@ -82,7 +82,26 @@ export class UIConfiguration {
   @Type(() => PseudoInput)
   pseudoInputs: PseudoInput[];
 
+  @Type(() => Camera)
+  cameras: Camera[];
+
   Api: string[];
+}
+
+export class Camera {
+  displayName: string;
+  panLeft: string;
+  panUp: string;
+  panDown: string;
+  panRight: string;
+  stopPan: string;
+
+  presets: CameraPreset[];
+}
+
+export class CameraPreset {
+  displayName: string;
+  setPreset: string;
 }
 
 export class ConfigCommands {
