@@ -1,30 +1,22 @@
-<mat-tab-group #tabs color="accent" class="mat-tab-label-darker">
-	<mat-tab *ngFor="let camera of cameras" [label]="camera?.displayName">
+<mat-tab-group color="accent" class="mat-tab-label-darker">
+	<mat-tab *ngFor="let cam of cameras" [label]="cam?.displayName">
 		<div class="camera-container">
 			<!-- d pad on left -->
 			<div class="movement-container">
 				<div class="d-pad-container">
 					<nav class="d-pad">
-						<a class="up" href="camera?.panUp"></a>
-						<a class="right" href="camera?.panRight"></a>
-						<a class="down" href="camera?.panDown"></a>
-						<a class="left" href="camera?.panLeft"></a>
+						<a class="up" (pointerdown)="tiltUp(cam)" (pointerup)="panTiltStop(cam)"></a>
+						<a class="right" (pointerdown)="panRight(cam)" (pointerup)="panTiltStop(cam)"></a>
+						<a class="down" (pointerdown)="tiltDown(cam)" (pointerup)="panTiltStop(cam)"></a>
+						<a class="left" (pointerdown)="panLeft(cam)" (pointerup)="panTiltStop(cam)"></a>
 					</nav>
 				</div>
 
 				<div class="zoom">
-					<!--
-					<button mat-stroked-button color="accent">
+					<button (pointerdown)="zoomOut(cam)" (pointerup)="zoomStop(cam)" mat-flat-button>
 						<mat-icon>zoom_out</mat-icon>
 					</button>
-					<button mat-stroked-button color="accent">
-						<mat-icon>zoom_in</mat-icon>
-					</button>
-					-->
-					<button mat-flat-button>
-						<mat-icon>zoom_out</mat-icon>
-					</button>
-					<button mat-flat-button>
+					<button (pointerdown)="zoomIn(cam)" (pointerup)="zoomStop(cam)" mat-flat-button>
 						<mat-icon>zoom_in</mat-icon>
 					</button>
 				</div>
@@ -35,8 +27,8 @@
 				<h2>Presets</h2>
 
 				<mat-grid-list class="presets" cols="2" rowHeight="fit">
-					<mat-grid-tile class="preset" *ngFor="let preset of camera?.presets">
-						<button mat-flat-button>{{preset?.displayName}}</button>
+					<mat-grid-tile class="preset" *ngFor="let preset of cam?.presets">
+						<button (pointerup)="selectPreset(preset)" mat-flat-button>{{preset?.displayName}}</button>
 					</mat-grid-tile>
 				</mat-grid-list>
 			</div>

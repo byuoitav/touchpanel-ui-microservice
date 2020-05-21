@@ -59,10 +59,11 @@
 					</audiocontrol>
 				</mat-tab>
 
-				<mat-tab label="Camera Control">
+				<mat-tab label="Camera Control" *ngIf="data?.panel?.preset?.cameras?.length > 0">
 					<!-- camera control -->
 					<!-- requires weird trick (*ngIf) to make animations work when the tab is opened -->
-					<camera-control *ngIf="selectedTabIndex == 2" [@delay]></camera-control>
+					<camera-control *ngIf="selectedTabIndex == 2" [@delay] [cameras]="data?.panel?.preset?.cameras">
+					</camera-control>
 				</mat-tab>
 			</mat-tab-group>
 		</ng-container>

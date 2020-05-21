@@ -31,7 +31,7 @@
 		"logLevel": "debug"
 	},
 	"/uiconfig": {
-		"target": "http://itb-1010-cp1:8888",
+		"target": "http://alp.byu.edu:8888",
 		"secure": false,
 		"logLevel": "debug"
 	},
