@@ -97,9 +97,7 @@ export class APIService {
 
     this.getAPIUrl().subscribe(
       data => {
-        // TODO change back 
-        // APIService.apihost = "http://" + location.hostname;
-        APIService.apihost = "http://" + "itb-1006-cp1.byu.edu";
+        APIService.apihost = "http://" + location.hostname;
         if (!data["hostname"].includes("localhost")) {
           APIService.apihost = "http://" + data["hostname"];
         }
