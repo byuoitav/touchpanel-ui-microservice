@@ -1,5 +1,5 @@
-import { Type } from "serializer.ts/Decorators";
-import { Device, Display, AudioDevice, Input } from "./status.objects";
+import {Type} from "serializer.ts/Decorators";
+import {Device, Display, AudioDevice, Input} from "./status.objects";
 
 export class Room {
   config: RoomConfiguration;
@@ -85,6 +85,29 @@ export class UIConfiguration {
   Api: string[];
 }
 
+export class Camera {
+  displayName: string;
+
+  tiltUp: string;
+  tiltDown: string;
+  panLeft: string;
+  panRight: string;
+  panTiltStop: string;
+
+  zoomIn: string;
+  zoomOut: string;
+  zoomStop: string;
+
+  memoryRecall: string;
+
+  presets: CameraPreset[];
+}
+
+export class CameraPreset {
+  displayName: string;
+  setPreset: string;
+}
+
 export class ConfigCommands {
   powerOn: ConfigCommand[];
   powerOff: ConfigCommand[];
@@ -128,6 +151,7 @@ export class PresetConfiguration {
   volumeMatches: string[];
   audioGroups: Map<string, string[]> = new Map();
   commands: ConfigCommands;
+  cameras: Camera[];
 }
 
 export class AudioConfiguration {
@@ -194,6 +218,8 @@ export class Preset {
 
   commands: ConfigCommands;
 
+  cameras: Camera[];
+
   constructor(
     name: string,
     icon: string,
@@ -206,7 +232,8 @@ export class Preset {
     masterVolume: number,
     beforeMuteLevel: number,
     commands: ConfigCommands,
-    matches: string[]
+    matches: string[],
+    cameras: Camera[]
   ) {
     this.name = name;
     this.icon = icon;
@@ -220,6 +247,7 @@ export class Preset {
     this.beforeMuteLevel = beforeMuteLevel;
     this.commands = commands;
     this.volumeMatches = matches;
+    this.cameras = cameras;
   }
 }
 

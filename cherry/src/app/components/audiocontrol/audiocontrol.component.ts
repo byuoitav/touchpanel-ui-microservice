@@ -6,11 +6,11 @@ import {
   OnChanges,
   ChangeDetectorRef
 } from "@angular/core";
-import { MatTabGroup } from "@angular/material/tabs";
+import {MatTabGroup} from "@angular/material/tabs";
 
-import { CommandService } from "../../services/command.service";
-import { Preset } from "../../objects/objects";
-import { AudioDevice } from "../../objects/status.objects";
+import {CommandService} from "../../services/command.service";
+import {Preset} from "../../objects/objects";
+import {AudioDevice} from "../../objects/status.objects";
 
 @Component({
   selector: "audiocontrol",
@@ -157,7 +157,7 @@ export class AudiocontrolComponent implements AfterViewInit, OnChanges {
 
     // scroll to the bottom of the page
     const idx = 4 * this.curPage;
-    document.querySelector("#device" + idx).scrollIntoView({ behavior: "smooth", block: "nearest", inline: "start" });
+    document.querySelector("#device" + idx).scrollIntoView({behavior: "smooth", block: "nearest", inline: "start"});
   }
 
   pageRight = () => {
@@ -167,7 +167,7 @@ export class AudiocontrolComponent implements AfterViewInit, OnChanges {
 
     // scroll to the top of the page
     const idx = 4 * this.curPage;
-    document.querySelector("#device" + idx).scrollIntoView({ behavior: "smooth", block: "nearest", inline: "start" });
+    document.querySelector("#device" + idx).scrollIntoView({behavior: "smooth", block: "nearest", inline: "start"});
   }
 
   canPageLeft = (): boolean => {
@@ -193,7 +193,7 @@ export class AudiocontrolComponent implements AfterViewInit, OnChanges {
 
     // scroll to the bottom of the page
     const idx = 3 * this.curDisplayPage;
-    document.querySelector("#display" + idx).scrollIntoView({ behavior: "smooth", block: "nearest", inline: "start" });
+    document.querySelector("#display" + idx).scrollIntoView({behavior: "smooth", block: "nearest", inline: "start"});
   }
 
   pageDispRight = () => {
@@ -203,7 +203,7 @@ export class AudiocontrolComponent implements AfterViewInit, OnChanges {
 
     // scroll to the top of the page
     const idx = 3 * this.curDisplayPage;
-    document.querySelector("#display" + idx).scrollIntoView({ behavior: "smooth", block: "nearest", inline: "start" });
+    document.querySelector("#display" + idx).scrollIntoView({behavior: "smooth", block: "nearest", inline: "start"});
   }
 
   canPageDispLeft = (): boolean => {
@@ -240,7 +240,7 @@ export class AudiocontrolComponent implements AfterViewInit, OnChanges {
 
     // scroll to the bottom of the page
     const idx = 5 * this.groupCurPage.get(groupName);
-    document.querySelector("#" + groupName + idx).scrollIntoView({ behavior: "smooth", block: "nearest", inline: "start" });
+    document.querySelector("#" + groupName + idx).scrollIntoView({behavior: "smooth", block: "nearest", inline: "start"});
   }
 
   groupPageRight(groupName: string) {
@@ -252,7 +252,7 @@ export class AudiocontrolComponent implements AfterViewInit, OnChanges {
 
     // scroll to the bottom of the page
     const idx = 5 * this.groupCurPage.get(groupName);
-    document.querySelector("#" + groupName + idx).scrollIntoView({ behavior: "smooth", block: "nearest", inline: "start" });
+    document.querySelector("#" + groupName + idx).scrollIntoView({behavior: "smooth", block: "nearest", inline: "start"});
   }
 
   groupCanPageLeft(groupName: string): boolean {

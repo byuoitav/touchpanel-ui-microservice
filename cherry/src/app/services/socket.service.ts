@@ -1,5 +1,5 @@
-import { Injectable, EventEmitter } from "@angular/core";
-import { Http } from "@angular/http";
+import {Injectable, EventEmitter} from "@angular/core";
+import {Http} from "@angular/http";
 import {
   $WebSocket,
   WebSocketConfig
@@ -34,7 +34,7 @@ export class SocketService {
   public screenoff: boolean;
 
   public constructor() {
-    this.url = "ws://" + location.hostname + ":8888/websocket";
+    this.url = "ws://" + window.location.host + "/websocket";
     this.socket = new $WebSocket(this.url, null, this.webSocketConfig);
     this.listener = new EventEmitter();
     this.screenoff = false;
@@ -59,20 +59,20 @@ export class SocketService {
           const event = jsonConvert.deserialize(data, Event);
 
           console.debug("received event", event);
-          this.listener.emit({ type: MESSAGE, data: event });
+          this.listener.emit({type: MESSAGE, data: event});
         }
       },
-      { autoApply: false }
+      {autoApply: false}
     );
 
     this.socket.onOpen(msg => {
       console.log("Websocket opened with", this.url, ":", msg);
-      this.listener.emit({ type: OPEN });
+      this.listener.emit({type: OPEN});
     });
 
     this.socket.onError(msg => {
       console.log("websocket closed.", msg);
-      this.listener.emit({ type: CLOSE });
+      this.listener.emit({type: CLOSE});
     });
 
     this.socket.onClose(msg => {

@@ -1,8 +1,8 @@
-import { Injectable, EventEmitter } from "@angular/core";
-import { Http } from "@angular/http";
+import {Injectable, EventEmitter} from "@angular/core";
+import {Http} from "@angular/http";
 
-import { APIService } from "./api.service";
-import { SocketService, MESSAGE, Event } from "./socket.service";
+import {APIService} from "./api.service";
+import {SocketService, MESSAGE, Event} from "./socket.service";
 import {
   Preset,
   Panel,
@@ -274,7 +274,8 @@ export class DataService {
         30,
         30,
         preset.commands,
-        preset.volumeMatches
+        preset.volumeMatches,
+        preset.cameras
       );
       this.presets.push(p);
     }
@@ -307,9 +308,9 @@ export class DataService {
     this.http
       .get(
         "http://" +
-          this.dividerSensor.address +
-          ":10000/divider/preset/" +
-          APIService.piHostname
+        this.dividerSensor.address +
+        ":10000/divider/preset/" +
+        APIService.piHostname
       )
       .subscribe(
         data => {

@@ -1,7 +1,7 @@
-import { BrowserModule } from "@angular/platform-browser";
-import { NgModule } from "@angular/core";
-import { HttpModule } from "@angular/http";
-import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
+import {BrowserModule} from "@angular/platform-browser";
+import {NgModule} from "@angular/core";
+import {HttpModule} from "@angular/http";
+import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
 import {
   MatTabsModule,
   MatSliderModule,
@@ -9,26 +9,28 @@ import {
   MatProgressBarModule,
   MatProgressSpinnerModule,
   MatDialogModule,
-  MatIconModule
+  MatIconModule,
+  MatGridListModule,
 } from "@angular/material";
 import "hammerjs";
 
-import { AppComponent } from "./components/app.component";
-import { DisplayComponent } from "./components/display/display.component";
-import { VolumeComponent } from "./components/volume/volume.component";
-import { AudiocontrolComponent } from "./components/audiocontrol/audiocontrol.component";
+import {AppComponent} from "./components/app.component";
+import {DisplayComponent} from "./components/display/display.component";
+import {VolumeComponent} from "./components/volume/volume.component";
+import {AudiocontrolComponent} from "./components/audiocontrol/audiocontrol.component";
 
-import { HelpDialog } from "./dialogs/help.dialog";
-import { ConfirmHelpDialog } from "./dialogs/confirmhelp.dialog";
-import { ViaDialog } from "./dialogs/via.dialog";
+import {HelpDialog} from "./dialogs/help.dialog";
+import {ConfirmHelpDialog} from "./dialogs/confirmhelp.dialog";
+import {ViaDialog} from "./dialogs/via.dialog";
 
-import { APIService } from "./services/api.service";
-import { CommandService } from "./services/command.service";
-import { DataService } from "./services/data.service";
-import { GraphService } from "./services/graph.service";
-import { SocketService } from "./services/socket.service";
-import { ManagementComponent } from "./components/management/management.component";
-import { StreamModalComponent } from "./dialogs/streammodal/streammodal.component";
+import {APIService} from "./services/api.service";
+import {CommandService} from "./services/command.service";
+import {DataService} from "./services/data.service";
+import {GraphService} from "./services/graph.service";
+import {SocketService} from "./services/socket.service";
+import {ManagementComponent} from "./components/management/management.component";
+import {StreamModalComponent} from "./dialogs/streammodal/streammodal.component";
+import {CameraControlComponent} from './components/camera-control/camera-control.component';
 
 @NgModule({
   declarations: [
@@ -40,7 +42,8 @@ import { StreamModalComponent } from "./dialogs/streammodal/streammodal.componen
     HelpDialog,
     ConfirmHelpDialog,
     ViaDialog,
-    StreamModalComponent
+    StreamModalComponent,
+    CameraControlComponent
   ],
   imports: [
     BrowserModule,
@@ -52,7 +55,8 @@ import { StreamModalComponent } from "./dialogs/streammodal/streammodal.componen
     MatProgressBarModule,
     MatProgressSpinnerModule,
     MatDialogModule,
-    MatIconModule
+    MatIconModule,
+    MatGridListModule,
   ],
   providers: [
     APIService,
