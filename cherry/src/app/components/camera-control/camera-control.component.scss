@@ -69,8 +69,13 @@ $d-pad-arrow-move: 35%;
 
 .preset {
 	button {
-		height: 48%;
+		height: 87%;
 		width: 57%;
+		white-space: normal;
+		line-height: unset;
+
+		max-height: 5em;
+		font-size: .8em;
 	}
 }
 
