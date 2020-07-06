@@ -1,6 +1,6 @@
 <mat-tab-group color="accent" class="mat-tab-label-darker">
 	<mat-tab *ngFor="let cam of cameras" [label]="cam?.displayName">
-		<div class="camera-container">
+		<div class="camera-container" (pointercancel)="panTiltStop(cam); zoomStop(cam)">
 			<!-- d pad on left -->
 			<div class="movement-container">
 				<div class="d-pad-container">
