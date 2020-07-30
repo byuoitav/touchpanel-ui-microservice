@@ -84,6 +84,7 @@ func main() {
 	router.GET("/uipath", uiconfig.GetUIPath)
 	router.GET("/api", uiconfig.GetAPI)
 	router.GET("/nextapi", uiconfig.NextAPI)
+	router.GET("/control-key/:room/:controlGroup", handlers.GetControlKey)
 
 	router.POST("/help", handlers.GenerateHelpFunction("request", messenger))
 	router.POST("/confirmhelp", handlers.GenerateHelpFunction("confirm", messenger))

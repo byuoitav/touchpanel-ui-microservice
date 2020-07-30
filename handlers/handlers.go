@@ -1,7 +1,10 @@
 package handlers
 
 import (
+	"context"
+	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
@@ -78,4 +81,48 @@ func GenerateHelpFunction(value string, messenger *messenger.Messenger) func(ctx
 
 		return ctx.String(http.StatusOK, fmt.Sprintf("Help has been %sed", value))
 	}
+}
+
+func GetControlKey(c echo.Context) error {
+	room := c.Param("room")
+	group := c.Param("controlGroup")
+	keyServiceAddr := os.Getenv("KEY_SERVICE_ADDR")
+
+	if keyServiceAddr == "" {
+		return c.NoContent(http.StatusInternalServerError)
+	}
+
+	url := fmt.Sprintf("https://%s/%s %s/getControlKey", keyServiceAddr, room, group)
+	ctx, cancel := context.WithTimeout(c.Request().Context(), 3*time.Second)
+	defer cancel()
+
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
+	if err != nil {
+		return c.String(http.StatusInternalServerError, fmt.Sprintf("unable to build request: %s", err))
+	}
+
+	resp, err := http.DefaultClient.Do(req)
+	if err != nil {
+		return c.String(http.StatusInternalServerError, fmt.Sprintf("unable to make request: %s", err))
+	}
+	defer resp.Body.Close()
+
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return c.String(http.StatusInternalServerError, fmt.Sprintf("unable to read response: %s", err))
+	}
+
+	if resp.StatusCode/100 != 2 {
+		return c.String(http.StatusInternalServerError, fmt.Sprintf("error from key service: %s", body))
+	}
+
+	var key struct {
+		ControlKey string `json:"ControlKey"`
+	}
+
+	if err := json.Unmarshal(body, &key); err != nil {
+		return c.String(http.StatusInternalServerError, fmt.Sprintf("unable to parse response: %s", err))
+	}
+
+	return c.JSON(http.StatusOK, key)
 }
