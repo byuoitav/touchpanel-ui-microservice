@@ -2,7 +2,8 @@ import {Component, OnInit, Input, AfterViewInit, ViewChild} from '@angular/core'
 import {Http} from "@angular/http";
 import {MatTabGroup} from "@angular/material/tabs";
 
-import {Camera, CameraPreset} from "../../objects/objects";
+import {Camera, CameraPreset, Preset} from "../../objects/objects";
+import { APIService } from '../../services/api.service';
 
 @Component({
   selector: 'camera-control',
@@ -10,15 +11,21 @@ import {Camera, CameraPreset} from "../../objects/objects";
   styleUrls: ['./camera-control.component.scss']
 })
 export class CameraControlComponent implements OnInit, AfterViewInit {
-  @Input() cameras: Camera[];
+  @Input() preset: Preset;
 
   @ViewChild(MatTabGroup)
   private _tabs: MatTabGroup;
+  code: string;
+  room = APIService.building + "-" + APIService.roomName;
 
   constructor(private http: Http) {}
 
   ngOnInit() {
-    console.log("cameras", this.cameras);
+    console.log("cameras", this.preset.cameras);
+    this.getControlKey();
+    setInterval(() => {
+      this.getControlKey();
+    }, 120000)
   }
 
   ngAfterViewInit() {
@@ -144,5 +151,15 @@ export class CameraControlComponent implements OnInit, AfterViewInit {
     }, err => {
       console.warn("err", err);
     });
+  }
+
+  getControlKey = () => {
+    this.http
+    .get(window.location.protocol + "//" + window.location.host +"/control-key/" + this.room + "/" + this.preset.name)
+    .map(response => response.json()).subscribe(
+      data => {
+        this.code = data.ControlKey;
+      }
+    )
   }
 }

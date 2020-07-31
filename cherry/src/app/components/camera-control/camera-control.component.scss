@@ -26,7 +26,7 @@ $d-pad-arrow-move: 35%;
 	justify-content: center;
 }
 
-.zoom {
+.zoom-without-code {
 	display: flex;
 	flex-direction: row;
 	justify-content: space-around;
@@ -36,6 +36,28 @@ $d-pad-arrow-move: 35%;
 	button {
 		width: 28%;
 		height: 67%;
+		background-color: #ddd;
+
+		mat-icon {
+			color: #777;
+			transform: scale(3);
+			height: unset;
+			width: unset;
+			font-size: unset;
+		}
+	}
+}
+
+.zoom-with-code {
+	display: flex;
+	flex-direction: row;
+	justify-content: space-around;
+
+	height: 20%; 
+
+	button {
+		width: 28%;
+		height: 100%;
 		background-color: #ddd;
 
 		mat-icon {
@@ -289,6 +311,11 @@ $d-pad-arrow-move: 35%;
 .d-pad.left a.left:before { border-right-color: #333; }
 .d-pad.right a.right:before { border-left-color: #333; }
 
-.presets-container {
-
+.code-text {
+  display: flex;
+  text-align: center;
+  margin-bottom: 2%;
+  margin-top: 2%;
+  justify-content: center;
+  font-size: .9em;
 }

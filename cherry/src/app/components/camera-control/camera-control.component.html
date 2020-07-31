@@ -1,5 +1,5 @@
 <mat-tab-group color="accent" class="mat-tab-label-darker">
-	<mat-tab *ngFor="let cam of cameras" [label]="cam?.displayName">
+	<mat-tab *ngFor="let cam of preset?.cameras" [label]="cam?.displayName">
 		<div class="camera-container" (pointercancel)="panTiltStop(cam); zoomStop(cam)">
 			<!-- d pad on left -->
 			<div class="movement-container">
@@ -12,7 +12,7 @@
 					</nav>
 				</div>
 
-				<div class="zoom">
+				<div *ngIf="code?.length < 1" class="zoom-without-code">
 					<button (pointerdown)="zoomOut(cam)" (pointerup)="zoomStop(cam)" mat-flat-button>
 						<mat-icon>zoom_out</mat-icon>
 					</button>
@@ -20,6 +20,17 @@
 						<mat-icon>zoom_in</mat-icon>
 					</button>
 				</div>
+
+				<div *ngIf="code?.length > 0" class="zoom-with-code">
+					<button (pointerdown)="zoomOut(cam)" (pointerup)="zoomStop(cam)" mat-flat-button>
+						<mat-icon>zoom_out</mat-icon>
+					</button>
+					<button (pointerdown)="zoomIn(cam)" (pointerup)="zoomStop(cam)" mat-flat-button>
+						<mat-icon>zoom_in</mat-icon>
+					</button>
+				</div>
+
+				<div *ngIf="code?.length > 0" class="code-text">For room control, go to cameras.av.byu.edu <br> Enter code: {{code}}</div>
 			</div>
 
 			<!-- presets on right -->
