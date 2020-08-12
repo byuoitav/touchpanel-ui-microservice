@@ -35,6 +35,7 @@ export class DataService {
   public audioConfig: Map<Display, AudioConfig> = new Map();
   public presets: Preset[] = [];
   public panels: Panel[] = [];
+  public inputReachability: Map<string, string[]> = new Map();
 
   public dividerSensor: DeviceConfiguration;
 
@@ -52,6 +53,7 @@ export class DataService {
 
       this.createPresets();
       this.createPanels();
+      this.inputReachability = APIService.room.config.input_reachability;
 
       // set divider sensor
       this.dividerSensor = APIService.room.config.devices.find(d =>
@@ -292,6 +294,7 @@ export class DataService {
       );
     }
 
+    console.info("pi hostname", APIService.piHostname);
     console.info("Panels", this.panels);
 
     this.panel = this.panels.find(p => p.hostname === APIService.piHostname);

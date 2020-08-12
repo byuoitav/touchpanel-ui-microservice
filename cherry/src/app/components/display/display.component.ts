@@ -1,11 +1,11 @@
-import { Component, Input as AngularInput } from "@angular/core";
+import { Component, Input as AngularInput, AfterViewInit } from "@angular/core";
 import { MatDialog } from "@angular/material";
 
 import { DataService } from "../../services/data.service";
 import { CommandService } from "../../services/command.service";
 import { ViaDialog } from "../../dialogs/via.dialog";
 
-import { Preset } from "../../objects/objects";
+import { Preset, Panel } from "../../objects/objects";
 import { Display, AudioDevice, Input } from "../../objects/status.objects";
 import { StreamModalComponent } from "../../dialogs/streammodal/streammodal.component";
 import { isUndefined } from "util";
@@ -16,9 +16,10 @@ import { isUndefined } from "util";
   styleUrls: ["./display.component.scss"]
 })
 export class DisplayComponent {
-  @AngularInput() preset: Preset;
+  @AngularInput() panel: Panel;
 
   selectedDisplays: Set<Display> = new Set();
+  inputs: Input[];
 
   constructor(
     private data: DataService,
@@ -27,15 +28,19 @@ export class DisplayComponent {
   ) {
     // default to the first display being selected
     setTimeout(() => {
-      if (this.preset.displays.length > 0) {
-        this.selectedDisplays.add(this.preset.displays[0]);
+      if (this.panel.preset.displays.length > 0) {
+        this.selectedDisplays.add(this.panel.preset.displays[0]);
+        this.getInputsForDisplay(this.panel.preset.displays[0])
       }
     }, 0);
+
   }
+
 
   public toggleDisplay(d: Display) {
     this.selectedDisplays.clear();
     this.selectedDisplays.add(d);
+    this.getInputsForDisplay(d);
 
     /* This code makes it so that the displays toggle
         if (this.selectedDisplays.has(d))
@@ -50,7 +55,7 @@ export class DisplayComponent {
       this.dialog.open(StreamModalComponent, { data: i }).afterClosed().subscribe((theChosenOne) => {
         if (theChosenOne !== undefined) {
           const input = theChosenOne as Input;
-          this.command.setInput(this.preset, input, Array.from(this.selectedDisplays))
+          this.command.setInput(this.panel.preset, input, Array.from(this.selectedDisplays))
           .subscribe(success => {
             if (!success) {
               console.warn("failed to change input");
@@ -60,7 +65,7 @@ export class DisplayComponent {
       });
     } else {
       this.command
-      .setInput(this.preset, i, Array.from(this.selectedDisplays))
+      .setInput(this.panel.preset, i, Array.from(this.selectedDisplays))
       .subscribe(success => {
         if (!success) {
           console.warn("failed to change input");
@@ -88,7 +93,7 @@ export class DisplayComponent {
     //   // this.command.setMasterVolume(this.preset.beforeMuteLevel, this.preset);
     //   this.command.setMasterMute(muted)
     // }
-    this.command.setMasterMute(muted, this.preset);
+    this.command.setMasterMute(muted, this.panel.preset);
   }
 
   public inputUsed(i: Input): boolean {
@@ -153,5 +158,21 @@ export class DisplayComponent {
     });
 
     return displays;
+  }
+
+  public separateInputs(p: Panel): boolean {
+    return p.features.includes("displaysSeparateInputs")
+  }
+
+  public getInputsForDisplay(d: Display) {
+    var tempInputs = new Array<Input>();
+
+    for (const [key, value] of Object.entries(this.data.inputReachability)) {
+      if (value.includes(d.name)) {
+        tempInputs.push(this.panel.preset.inputs.find(x => x.name == key))
+      }
+    }
+
+    this.inputs = tempInputs;
   }
 }

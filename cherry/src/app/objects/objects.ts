@@ -16,6 +16,8 @@ export class RoomConfiguration {
   @Type(() => DeviceConfiguration)
   devices: DeviceConfiguration[];
 
+  input_reachability: Map<string, string[]> = new Map();
+
   match(n: string) {
     return n === this.name;
   }
