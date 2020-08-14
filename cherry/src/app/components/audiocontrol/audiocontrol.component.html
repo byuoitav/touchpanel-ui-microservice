@@ -95,80 +95,82 @@
         </mat-tab>
     </ng-container>
 
-    <mat-tab label="Microphones">
+    <ng-container *ngIf="preset?.independentAudioDevices?.length > 0">
+        <mat-tab label="Microphones">
 
-        <!-- If there aren't enough to make 2 pages -->
-        <div class="devices less" *ngIf="preset?.independentAudioDevices.length <= 4">
-            <div *ngFor="let a of preset?.independentAudioDevices; let i = index;" class="device slider-container" [id]="'device' + i">
-                <span>{{ a.displayname }}</span>
-                <i class="material-icons">{{ a.icon }}</i>
-                <volume class="volume" [level]="a?.volume" [mute]="a?.muted" (levelChange)="
-                      command.setVolume($event, [a]);
-                      command.setMute(false, [a]);
-                      command.buttonPress('independent audio volume set', {
-                        level: $event,
-                        audioDevices: [a?.name]
-                      })
-                    " (muteChange)="
-                      command.setMute($event.muted, [a]);
-                      command.buttonPress(
-                        'independent audio ' + ($event.muted ? 'mute' : 'unmute'),
-                        a?.name
-                      )
-                    ">
-                </volume>
-            </div>
-        </div>
-
-        <div class="devices" *ngIf="preset?.independentAudioDevices.length > 4">
-            <div class="button left" (click)="pageLeft()" [class.blank]="!canPageLeft() || preset.independentAudioDevices.length <= 4">
-                <mat-icon style="transform: scale(3)">keyboard_arrow_left</mat-icon>
-            </div>
-            <div class="mixers">
-                <div class="sliders">
-                    <div *ngFor="let a of preset?.independentAudioDevices; let i = index;" class="device slider-container" [id]="'device' + i">
-                        <span>{{ a.displayname }}</span>
-                        <i class="material-icons">{{ a.icon }}</i>
-                        <volume class="volume" [level]="a?.volume" [mute]="a?.muted" (levelChange)="
-                      command.setVolume($event, [a]);
-                      command.setMute(false, [a]);
-                      command.buttonPress('independent audio volume set', {
-                        level: $event,
-                        audioDevices: [a?.name]
-                      })
-                    " (muteChange)="
-                      command.setMute($event.muted, [a]);
-                      command.buttonPress(
-                        'independent audio ' + ($event.muted ? 'mute' : 'unmute'),
-                        a?.name
-                      )
-                    ">
-                        </volume>
-                    </div>
-                    <div [id]="'device' + preset?.independentAudioDevices.length" class="slider-container">
-                        <div class="volume"></div>
-                    </div>
-                    <div [id]="'device' + (preset?.independentAudioDevices.length + 1)" class="slider-container">
-                        <div class="volume"></div>
-                    </div>
-                    <div [id]="'device' + (preset?.independentAudioDevices.length + 2)" class="slider-container">
-                        <div class="volume"></div>
-                    </div>
-                    <!-- <div [id]="'device' + (preset?.independentAudioDevices.length + 3)" class="slider-container">
-                        <div class="volume"></div>
-                    </div> -->
-                </div>
-                <div class="page-indicator" *ngIf="preset != null" [class.blank]="preset?.independentAudioDevices.length <= 4">
-                    <span *ngFor="let i of pages" class="dot" [class.selected]="i === curPage"></span>
+            <!-- If there aren't enough to make 2 pages -->
+            <div class="devices less" *ngIf="preset?.independentAudioDevices.length <= 4">
+                <div *ngFor="let a of preset?.independentAudioDevices; let i = index;" class="device slider-container" [id]="'device' + i">
+                    <span>{{ a.displayname }}</span>
+                    <i class="material-icons">{{ a.icon }}</i>
+                    <volume class="volume" [level]="a?.volume" [mute]="a?.muted" (levelChange)="
+                        command.setVolume($event, [a]);
+                        command.setMute(false, [a]);
+                        command.buttonPress('independent audio volume set', {
+                            level: $event,
+                            audioDevices: [a?.name]
+                        })
+                        " (muteChange)="
+                        command.setMute($event.muted, [a]);
+                        command.buttonPress(
+                            'independent audio ' + ($event.muted ? 'mute' : 'unmute'),
+                            a?.name
+                        )
+                        ">
+                    </volume>
                 </div>
             </div>
 
-            <div class="button right" (click)="pageRight()" [class.blank]="!canPageRight() || preset.independentAudioDevices.length <= 4">
-                <mat-icon style="transform: scale(3)">keyboard_arrow_right</mat-icon>
-            </div>
-        </div>
+            <div class="devices" *ngIf="preset?.independentAudioDevices.length > 4">
+                <div class="button left" (click)="pageLeft()" [class.blank]="!canPageLeft() || preset.independentAudioDevices.length <= 4">
+                    <mat-icon style="transform: scale(3)">keyboard_arrow_left</mat-icon>
+                </div>
+                <div class="mixers">
+                    <div class="sliders">
+                        <div *ngFor="let a of preset?.independentAudioDevices; let i = index;" class="device slider-container" [id]="'device' + i">
+                            <span>{{ a.displayname }}</span>
+                            <i class="material-icons">{{ a.icon }}</i>
+                            <volume class="volume" [level]="a?.volume" [mute]="a?.muted" (levelChange)="
+                        command.setVolume($event, [a]);
+                        command.setMute(false, [a]);
+                        command.buttonPress('independent audio volume set', {
+                            level: $event,
+                            audioDevices: [a?.name]
+                        })
+                        " (muteChange)="
+                        command.setMute($event.muted, [a]);
+                        command.buttonPress(
+                            'independent audio ' + ($event.muted ? 'mute' : 'unmute'),
+                            a?.name
+                        )
+                        ">
+                            </volume>
+                        </div>
+                        <div [id]="'device' + preset?.independentAudioDevices.length" class="slider-container">
+                            <div class="volume"></div>
+                        </div>
+                        <div [id]="'device' + (preset?.independentAudioDevices.length + 1)" class="slider-container">
+                            <div class="volume"></div>
+                        </div>
+                        <div [id]="'device' + (preset?.independentAudioDevices.length + 2)" class="slider-container">
+                            <div class="volume"></div>
+                        </div>
+                        <!-- <div [id]="'device' + (preset?.independentAudioDevices.length + 3)" class="slider-container">
+                            <div class="volume"></div>
+                        </div> -->
+                    </div>
+                    <div class="page-indicator" *ngIf="preset != null" [class.blank]="preset?.independentAudioDevices.length <= 4">
+                        <span *ngFor="let i of pages" class="dot" [class.selected]="i === curPage"></span>
+                    </div>
+                </div>
 
-    </mat-tab>
+                <div class="button right" (click)="pageRight()" [class.blank]="!canPageRight() || preset.independentAudioDevices.length <= 4">
+                    <mat-icon style="transform: scale(3)">keyboard_arrow_right</mat-icon>
+                </div>
+            </div>
+
+        </mat-tab>
+    </ng-container>
 
     <ng-container *ngIf="audioTypes?.length > 0">
         <mat-tab *ngFor="let label of audioTypes" [label]="label">
