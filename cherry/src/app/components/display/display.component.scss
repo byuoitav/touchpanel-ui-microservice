@@ -48,7 +48,7 @@ $inputs-height: 40vh;
     height: $outputs-height;
     margin-top: $outputs-height / 8;
     margin-bottom: $outputs-height / 8;
-    flex-wrap: nowrap;
+    flex-wrap: wrap;
     text-align: center;
     .output {
         @extend %io-button;
