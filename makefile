@@ -21,7 +21,6 @@ GOBUILD=$(GOCMD) build
 GOCLEAN=$(GOCMD) clean
 GOTEST=$(GOCMD) test
 GOGET=$(GOCMD) get
-VENDOR=gvt fetch -branch $(BRANCH)
 
 # docker 
 DOCKER=docker
@@ -74,19 +73,12 @@ run: $(NAME)-bin $(NG2)-dist
 deps:
 	npm config set unsafe-perm true
 	$(NPM_INSTALL) -g @angular/cli@6.0.8
-	$(GOGET) -d -v
-ifneq "$(BRANCH)" "master"
-	# put vendored packages in here
-	# e.g. $(VENDOR) github.com/byuoitav/event-router-microservice
-	gvt fetch -tag v3.3.10 github.com/labstack/echo
-	$(VENDOR) github.com/byuoitav/common
-	$(VENDOR) github.com/byuoitav/central-event-system
-endif
+	go mod tidy
 
 docker: docker-x86 docker-arm
 
 docker-x86: $(NAME)-bin $(NG2)-dist
-ifeq "$(BRANCH)" "master"
+ifeq "$(BRANCH)" "main"
 	$(eval BRANCH=development)
 endif
 ifeq "$(BRANCH)" "production"
@@ -100,11 +92,11 @@ ifeq "$(BRANCH)" "latest"
 	$(eval BRANCH=production)
 endif
 ifeq "$(BRANCH)" "development"
-	$(eval BRANCH=master)
+	$(eval BRANCH=main)
 endif
 
 docker-arm: $(NAME)-arm $(NG2)-dist
-ifeq "$(BRANCH)" "master"
+ifeq "$(BRANCH)" "main"
 	$(eval BRANCH=development)
 endif
 ifeq "$(BRANCH)" "production"
@@ -118,7 +110,7 @@ ifeq "$(BRANCH)" "latest"
 	$(eval BRANCH=production)
 endif
 ifeq "$(BRANCH)" "development"
-	$(eval BRANCH=master)
+	$(eval BRANCH=main)
 endif
 
 ### deps

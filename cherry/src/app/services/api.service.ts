@@ -44,7 +44,8 @@ export class APIService {
       headers.append("content-type", "application/json");
       APIService.options = new RequestOptions({headers: headers});
 
-      APIService.localurl = window.location.protocol + "//" + window.location.host;
+      // APIService.localurl = window.location.protocol + "//" + window.location.host;
+      APIService.localurl = window.location.protocol + "//itb-1102-cp1.byu.edu:8888";
 
       APIService.room = new Room();
 
@@ -97,7 +98,8 @@ export class APIService {
 
     this.getAPIUrl().subscribe(
       data => {
-        APIService.apihost = "http://" + location.hostname;
+        // APIService.apihost = "http://" + location.hostname;
+        APIService.apihost = "http://itb-1102-cp1.byu.edu"
         if (!data["hostname"].includes("localhost")) {
           APIService.apihost = "http://" + data["hostname"];
         }
