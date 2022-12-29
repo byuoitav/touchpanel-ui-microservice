@@ -96,6 +96,10 @@
   </ng-container>
 </div>
 
+<div class="recording" *ngIf="this.panel.preset?.recording?.start">
+  <recording [recording]="this.panel.preset?.recording"></recording>
+</div>
+
 <!-- Display component only controls the audioDevices in the "audioDevices" array of the UIConfig -->
 <div class="volume-label">Master Display Volume</div>
 <div class="volume">

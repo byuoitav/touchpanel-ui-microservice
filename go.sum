@@ -4,8 +4,8 @@ github.com/Microsoft/go-winio v0.6.0/go.mod h1:cTAf44im0RAYeL23bpB+fzCyDH2MJiz2B
 github.com/benbjohnson/clock v1.1.0 h1:Q92kusRqC1XV2MjkWETPvjJVqKetz1OzxZB7mHJLju8=
 github.com/byuoitav/central-event-system v0.0.1 h1:jY+Wp1UDSBVxnhCc+DBJI3OAKhAYmO2HiBbRqkYj+gY=
 github.com/byuoitav/central-event-system v0.0.1/go.mod h1:+KCvx75wISCCkCrgIWRdlJxRXlA2yxQvR4HHgU/TdpU=
-github.com/byuoitav/common v0.0.0-20200521193927-1fdf4e0a4271 h1:3bUfk879CvOFb+HDPugqk0GFy7oyJDU7t/r9zC2c7j8=
-github.com/byuoitav/common v0.0.0-20200521193927-1fdf4e0a4271/go.mod h1:YTDTFEmez7HU3oyCIWjU3RfQ/P6v24LEzH5YUebph7I=
+github.com/byuoitav/common v0.0.0-20221228210338-28a784e6f9f8 h1:POC6sfp8PUvEeHtTtdUUA4k3yGtZtc8Au0QimbgBhqM=
+github.com/byuoitav/common v0.0.0-20221228210338-28a784e6f9f8/go.mod h1:YTDTFEmez7HU3oyCIWjU3RfQ/P6v24LEzH5YUebph7I=
 github.com/byuoitav/device-monitoring v0.0.0-20200602195839-5385bce20db9 h1:gR3ogq1HQc4zKrmgwfblmk0WNNZ92wsx29UF2amB6j8=
 github.com/byuoitav/device-monitoring v0.0.0-20200602195839-5385bce20db9/go.mod h1:n9PY4PhVKyrO15/M9rPsHSQFo/62Zsanvp0ZT6D2fbg=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=

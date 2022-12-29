@@ -1,0 +1,14 @@
+.recording-wrapper {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: left;
+
+    span {
+        margin: auto, 0, auto, 0;
+        padding-left: 3vw;
+        display: flex;
+        align-items: center;
+    }
+}

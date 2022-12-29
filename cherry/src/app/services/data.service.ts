@@ -277,7 +277,8 @@ export class DataService {
         30,
         preset.commands,
         preset.volumeMatches,
-        preset.cameras
+        preset.cameras,
+        preset.recording
       );
       this.presets.push(p);
     }

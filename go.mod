@@ -4,7 +4,7 @@ go 1.19
 
 require (
 	github.com/byuoitav/central-event-system v0.0.1
-	github.com/byuoitav/common v0.0.0-20200521193927-1fdf4e0a4271
+	github.com/byuoitav/common v0.0.0-20221228210338-28a784e6f9f8
 	github.com/byuoitav/device-monitoring v0.0.0-20200602195839-5385bce20db9
 	github.com/fatih/color v1.13.0
 	github.com/gorilla/websocket v1.5.0
