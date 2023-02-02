@@ -5,7 +5,7 @@
         
         And then users can swipe left/right to access more displays if there are more
     -->
-    <div *ngFor="let d of panel?.preset?.displays">
+    <div *ngFor="let d of displays">
         <button mat-button class="output mat-elevation-z15" [color]="selectedDisplays.has(d) ? 'accent' : ''" (click)="
         toggleDisplay(d); command.buttonPress('selected display', d?.name)
       " (press)="

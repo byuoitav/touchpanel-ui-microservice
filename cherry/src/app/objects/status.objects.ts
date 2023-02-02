@@ -169,6 +169,7 @@ export class Output extends Device {
 
 export class Display extends Output {
   blanked: boolean;
+  hidden: boolean;
 
   public static getDisplayListFromNames(
     names: string[],
@@ -183,10 +184,12 @@ export class Display extends Output {
     power: string,
     input: Input,
     blanked: boolean,
-    icon: string
+    icon: string,
+    hidden: boolean
   ) {
     super(name, displayname, power, input, icon);
     this.blanked = blanked;
+    this.hidden = hidden;
   }
 
   // returns true iff all are blanked

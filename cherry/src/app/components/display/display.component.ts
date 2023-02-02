@@ -20,6 +20,7 @@ export class DisplayComponent {
 
   selectedDisplays: Set<Display> = new Set();
   inputs: Input[];
+  displays: Display[] = [];
 
   constructor(
     private data: DataService,
@@ -27,13 +28,23 @@ export class DisplayComponent {
     private dialog: MatDialog
   ) {
     // default to the first display being selected
+  }
+
+  ngOnInit() {
+    if (this.panel && this.panel.preset) {
+      this.panel.preset.displays.forEach(display => {
+        if (!display.hidden) {
+          this.displays.push(display);
+        }
+      });
+    }
+
     setTimeout(() => {
       if (this.panel.preset.displays.length > 0) {
-        this.selectedDisplays.add(this.panel.preset.displays[0]);
-        this.getInputsForDisplay(this.panel.preset.displays[0])
+        this.selectedDisplays.add(this.displays[0]);
+        this.getInputsForDisplay(this.displays[0])
       }
     }, 0);
-
   }
 
 
