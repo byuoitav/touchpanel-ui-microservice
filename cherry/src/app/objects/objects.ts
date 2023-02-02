@@ -113,6 +113,7 @@ export class CameraPreset {
 export class Recording {
   start: string;
   stop: string;
+  maxTime: number; // max recording time in minutes
 }
 
 export class ConfigCommands {

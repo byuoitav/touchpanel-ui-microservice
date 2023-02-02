@@ -1,5 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Http } from '@angular/http';
+import { catchError, retry } from 'rxjs/operators';
 import { Recording } from '../../objects/objects';
 
 @Component({
@@ -10,59 +11,79 @@ import { Recording } from '../../objects/objects';
 export class RecordingComponent implements OnInit {
   @Input() recording: Recording;
 
-  status: boolean = false;
+  isRecording: boolean = false;
+  waiting: boolean = false;
   recordTime = 0;
   recordTimer: any;
-  
 
-  constructor(private http: Http) { }
+  constructor(private http: Http) {}
 
   ngOnInit() {
+    if (this.recording != undefined && this.recording.maxTime === undefined) {
+      this.recording.maxTime = 120; // default maxTime to 120
+    }
   }
 
   onClick() {
-    if (this.status) {
+    if (this.isRecording) {
       this.stopRecording(this.recording);
-      clearInterval(this.recordTimer);
     } else {
       this.startRecording(this.recording);
-      this.recordTime = 0;
-      this.recordTimer = setInterval(() => {
-        this.recordTime++;
-      }, 1000);
     }
-    this.status = !this.status;
   }
 
   startRecording = (rec: Recording) => {
     console.log("starting recording");
     if (!rec.start) {
-      console.log("none");
+      console.log("no url target to start recording");
       return false;
     }
 
-    this.http.get(rec.start).subscribe(resp => {
+    this.http.get(rec.start).pipe(
+      retry(2),
+      catchError(err => {
+        throw "failed to start recording. " + err
+      })
+    ).subscribe(resp => {
+
       console.log("recording started");
-      return true;
+      this.recordTime = 0;
+
+      this.recordTimer = setInterval(() => {
+        this.recordTime++;
+        if (this.recordTime >= 60 * this.recording.maxTime) {
+          this.stopRecording(this.recording);
+        }
+      }, 1000);
+
+      this.isRecording = true;
+
     }, err => {
-      console.log("couldn't start recording", err);
-      return false;
+      console.log(err);
     });
   }
 
   stopRecording = (rec: Recording) => {
     console.log("stopping recording");
     if (!rec.stop) {
-      console.log("none");
+      console.log("no url target to stop recording");
       return false;
     }
 
-    this.http.get(rec.stop).subscribe(resp => {
+    this.http.get(rec.stop).pipe(
+      retry(2),
+      catchError(err => {
+        throw "failed to stop recording. " + err
+      })
+    ).subscribe(resp => {
+
       console.log("recording stopped");
-      return true;
+      clearInterval(this.recordTimer);
+
+      this.isRecording = false;
+
     }, err => {
-      console.log("couldn't stop recording", err);
-      return false;
+      console.log(err);
     });
   }
 
