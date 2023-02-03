@@ -1,124 +1,107 @@
-# vars
-ORG=$(shell echo $(CIRCLE_PROJECT_USERNAME))
-BRANCH=$(shell echo $(CIRCLE_BRANCH))
-NAME=$(shell echo $(CIRCLE_PROJECT_REPONAME))
+NAME := touchpanel-ui-microservice
+OWNER := byuoitav
+PKG := github.com/${OWNER}/${NAME}
+DOCKER_URL := docker.pkg.github.com
+DOCKER_PKG := ${DOCKER_URL}/${OWNER}/${NAME}
 
-ifeq ($(NAME),)
-NAME := $(shell basename "$(PWD)")
+# version:
+# use the git tag, if this commit
+# doesn't have a tag, use the git hash
+COMMIT_HASH := $(shell git rev-parse --short HEAD)
+TAG := $(shell git rev-parse --short HEAD)
+ifneq ($(shell git describe --exact-match --tags HEAD 2> /dev/null),)
+	TAG = $(shell git describe --exact-match --tags HEAD)
 endif
 
-ifeq ($(ORG),)
-ORG=byuoitav
-endif
+PRD_TAG_REGEX := "v[0-9]+\.[0-9]+\.[0-9]+"
+DEV_TAG_REGEX := "v[0-9]+\.[0-9]+\.[0-9]+-.+"
 
-ifeq ($(BRANCH),)
-BRANCH:= $(shell git rev-parse --abbrev-ref HEAD)
-endif
+# go stuff
+PKG_LIST := $(shell go list ${PKG}/...)
 
-# go
-GOCMD=go
-GOBUILD=$(GOCMD) build
-GOCLEAN=$(GOCMD) clean
-GOTEST=$(GOCMD) test
-GOGET=$(GOCMD) get
+.PHONY: all deps build test test-cov clean
 
-# docker 
-DOCKER=docker
-DOCKER_BUILD=$(DOCKER) build
-DOCKER_LOGIN=$(DOCKER) login -u $(UNAME) -p $(PASS)
-DOCKER_PUSH=$(DOCKER) push
-DOCKER_FILE=dockerfile
-DOCKER_FILE_ARM=dockerfile-arm
+all: clean build
 
-UNAME=$(shell echo $(DOCKER_USERNAME))
-EMAIL=$(shell echo $(DOCKER_EMAIL))
-PASS=$(shell echo $(DOCKER_PASSWORD))
+test: deps
+	@go test -v ${PKG_LIST}
 
-# angular
-NPM=npm
-NPM_INSTALL=$(NPM) install
-NG_BUILD=ng build --prod --aot --build-optimizer 
-NG1=blueberry
-NG2=cherry
+test-cov: deps
+	@go test -coverprofile=coverage.txt -covermode=atomic ${PKG_LIST}
 
-build: build-x86 build-arm build-web
-
-build-x86:
-	env GOOS=linux CGO_ENABLED=0 $(GOBUILD) -o $(NAME)-bin -v
-
-build-arm: 
-	env GOOS=linux GOARCH=arm $(GOBUILD) -o $(NAME)-arm -v
-
-build-web: $(NG1) $(NG2)
-	# ng1
-	cd $(NG1) && $(NPM_INSTALL) && $(NG_BUILD) --base-href="./$(NG1)/"
-	mv $(NG1)/dist $(NG1)-dist
-	# ng2
-	cd $(NG2) && $(NPM_INSTALL) && $(NG_BUILD) --base-href="./$(NG2)/"
-	mv $(NG2)/dist $(NG2)-dist
-
-test: 
-	$(GOTEST) -v -race $(go list ./... | grep -v /vendor/) 
-
-clean: 
-	$(GOCLEAN)
-	rm -f $(NAME)-bin
-	rm -f $(NAME)-arm
-	rm -rf $(NG1)-dist
-	rm -rf $(NG2)-dist
-
-run: $(NAME)-bin $(NG2)-dist
-	./$(NAME)-bin
+lint: deps
+	@golangci-lint run --test=false
 
 deps:
-	npm config set unsafe-perm true
-	$(NPM_INSTALL) -g @angular/cli@6.0.8
-	go mod tidy
+	@echo Downloading dependencies...
+	@go mod download
+	
+	@echo Setting Up Node
+	@cd blueberry && npm install -g @angular/cli@6.0.8
+	@cd cherry && npm install -g @angular/cli@6.0.8
 
-docker: docker-x86 docker-arm
+build: deps
+	@mkdir -p dist
+	@cp redirect.html dist/redirect.html
+	@cp version.txt dist/version.txt
 
-docker-x86: $(NAME)-bin $(NG2)-dist
-ifeq "$(BRANCH)" "main"
-	$(eval BRANCH=development)
-endif
-ifeq "$(BRANCH)" "production"
-	$(eval BRANCH=latest)
-endif
-	$(DOCKER_BUILD) --build-arg NAME=$(NAME) -f $(DOCKER_FILE) -t $(ORG)/$(NAME):$(BRANCH) .
-	@echo logging in to dockerhub...
-	@$(DOCKER_LOGIN)
-	$(DOCKER_PUSH) $(ORG)/$(NAME):$(BRANCH)
-ifeq "$(BRANCH)" "latest"
-	$(eval BRANCH=production)
-endif
-ifeq "$(BRANCH)" "development"
-	$(eval BRANCH=main)
+	@echo
+	@echo Building touchpanel microservice for linux-amd64
+	@env CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -v -o dist/${NAME}-bin
+
+	@echo
+	@echo Building touchpanel microservice for linux-arm
+	@env CGO_ENABLED=0 GOOS=linux GOARCH=arm go build -v -o dist/${NAME}-arm
+
+	@echo
+	@echo Building blueberry
+	@cd blueberry/ && ng build --prod --aot --build-optimizer --base-href="./blueberry/"
+	@mv blueberry/dist dist/blueberry-dist
+
+	@echo
+	@echo Building cherry
+	@cd cherry/ && ng build --prod --aot --build-optimizer --base-href="./cherry/"
+	@mv cherry/dist dist/cherry-dist
+
+clean:
+	@go clean
+	@rm -rf dist/
+
+docker: clean build
+ifeq (${COMMIT_HASH}, ${TAG})
+	@echo Building dev containers with tag ${COMMIT_HASH}
+
+	@echo Building container ${DOCKER_PKG}/${NAME}-dev:${COMMIT_HASH}
+	@docker build -f dockerfile --build-arg NAME=${NAME}-arm -t ${DOCKER_PKG}/${NAME}-dev:${COMMIT_HASH} dist
+else ifneq ($(shell echo ${TAG} | grep -x -E ${DEV_TAG_REGEX}),)
+	@echo Building dev containers with tag ${TAG}
+
+	@echo Building container ${DOCKER_PKG}/${NAME}-dev:${TAG}
+	@docker build -f dockerfile --build-arg NAME=${NAME}-arm -t ${DOCKER_PKG}/${NAME}-dev:${TAG} dist
+else ifneq ($(shell echo ${TAG} | grep -x -E ${PRD_TAG_REGEX}),)
+	@echo Building prd containers with tag ${TAG}
+
+	@echo Building container ${DOCKER_PKG}/${NAME}:${TAG}
+	@docker build -f dockerfile --build-arg NAME=${NAME}-arm -t ${DOCKER_PKG}/${NAME}:${TAG} dist
 endif
 
-docker-arm: $(NAME)-arm $(NG2)-dist
-ifeq "$(BRANCH)" "main"
-	$(eval BRANCH=development)
-endif
-ifeq "$(BRANCH)" "production"
-	$(eval BRANCH=latest)
-endif
-	$(DOCKER_BUILD) --build-arg NAME=$(NAME) -f $(DOCKER_FILE_ARM) -t $(ORG)/rpi-$(NAME):$(BRANCH) .
-	@echo logging in to dockerhub...
-	@$(DOCKER_LOGIN)
-	$(DOCKER_PUSH) $(ORG)/rpi-$(NAME):$(BRANCH)
-ifeq "$(BRANCH)" "latest"
-	$(eval BRANCH=production)
-endif
-ifeq "$(BRANCH)" "development"
-	$(eval BRANCH=main)
-endif
+deploy: docker
+	@echo Logging into Github Package Registry
+	@docker login ${DOCKER_URL} -u ${DOCKER_USERNAME} -p ${DOCKER_PASSWORD}
 
-### deps
-$(NAME)-bin:
-	$(MAKE) build-x86
+ifeq (${COMMIT_HASH}, ${TAG})
+	@echo Pushing dev containers with tag ${COMMIT_HASH}
 
-$(NAME)-arm:
-	$(MAKE) build-arm
+	@echo Pushing container ${DOCKER_PKG}/${NAME}-dev:${COMMIT_HASH}
+	@docker push ${DOCKER_PKG}/${NAME}-dev:${COMMIT_HASH}
+else ifneq ($(shell echo ${TAG} | grep -x -E ${DEV_TAG_REGEX}),)
+	@echo Pushing dev containers with tag ${TAG}
 
-$(NG1)-dist $(NG2)-dist:
-	$(MAKE) build-web
+	@echo Pushing container ${DOCKER_PKG}/${NAME}-dev:${TAG}
+	@docker push ${DOCKER_PKG}/${NAME}-dev:${TAG}
+else ifneq ($(shell echo ${TAG} | grep -x -E ${PRD_TAG_REGEX}),)
+	@echo Pushing prd containers with tag ${TAG}
+
+	@echo Pushing container ${DOCKER_PKG}/${NAME}:${TAG}
+	@docker push ${DOCKER_PKG}/${NAME}:${TAG}
+endif
