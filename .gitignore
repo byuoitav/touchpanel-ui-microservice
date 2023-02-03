@@ -1,1 +1,6 @@
 ui-config.json
+blueberry-dist/
+cherry-dist/
+touchpanel-ui-microservice-arm
+touchpanel-ui-microservice-bin
+dist/

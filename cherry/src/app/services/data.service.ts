@@ -118,13 +118,18 @@ export class DataService {
 
         if (config != null) {
           if (deviceConfig != null) {
+            let hidden = false;
+            if (config.hasRole("hidden")) {
+              hidden = true;
+            }
             const d = new Display(
               status.name,
               config.display_name,
               status.power,
               Input.getInput(status.input, this.inputs),
               status.blanked,
-              deviceConfig.icon
+              deviceConfig.icon,
+              hidden
             );
             this.displays.push(d);
           } else {
@@ -277,7 +282,8 @@ export class DataService {
         30,
         preset.commands,
         preset.volumeMatches,
-        preset.cameras
+        preset.cameras,
+        preset.recording
       );
       this.presets.push(p);
     }

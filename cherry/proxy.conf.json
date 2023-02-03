@@ -1,82 +1,82 @@
 {
 	"/websocket": {
-		"target": "ws://itb-1010-cp1:8888",
+		"target": "ws://itb-1106-cp1:8888",
 		"secure": false,
 		"logLevel": "debug",
 		"ws": true
 	},
 	"/pihostname": {
-		"target": "http://itb-1010-cp1:8888",
+		"target": "http://itb-1106-cp1:8888",
 		"secure": false,
 		"logLevel": "debug"
 	},
 	"/hostname": {
-		"target": "http://itb-1010-cp1:8888",
+		"target": "http://itb-1106-cp1:8888",
 		"secure": false,
 		"logLevel": "debug"
 	},
 	"/deviceinfo": {
-		"target": "http://itb-1010-cp1:8888",
+		"target": "http://itb-1106-cp1:8888",
 		"secure": false,
 		"logLevel": "debug"
 	},
 	"/publish": {
-		"target": "http://itb-1010-cp1:8888",
+		"target": "http://itb-1106-cp1:8888",
 		"secure": false,
 		"logLevel": "debug"
 	},
 	"/code/*": {
-		"target": "http://itb-1010-cp1:8888",
+		"target": "http://itb-1106-cp1:8888",
 		"secure": false,
 		"logLevel": "debug"
 	},
 	"/uiconfig": {
-		"target": "http://alp.byu.edu:8888",
+		"target": "http://itb-1106-cp1:8888",
 		"secure": false,
 		"logLevel": "debug"
 	},
 	"/uipath": {
-		"target": "http://itb-1010-cp1:8888",
+		"target": "http://itb-1106-cp1:8888",
 		"secure": false,
 		"logLevel": "debug"
 	},
 	"/api": {
-		"target": "http://itb-1010-cp1:8888",
+		"target": "http://itb-1106-cp1:8888",
 		"secure": false,
 		"logLevel": "debug"
 	},
 	"/nextapi": {
-		"target": "http://itb-1010-cp1:8888",
+		"target": "http://itb-1106-cp1:8888",
 		"secure": false,
 		"logLevel": "debug"
 	},
 	"/help": {
-		"target": "http://itb-1010-cp1:8888",
+		"target": "http://itb-1106-cp1:8888",
 		"secure": false,
 		"logLevel": "debug"
 	},
 	"/confirmhelp": {
-		"target": "http://itb-1010-cp1:8888",
+		"target": "http://itb-1106-cp1:8888",
 		"secure": false,
 		"logLevel": "debug"
 	},
 	"/cancelhelp": {
-		"target": "http://itb-1010-cp1:8888",
+		"target": "http://itb-1106-cp1:8888",
 		"secure": false,
 		"logLevel": "debug"
 	},
 	"/cherry/*": {
-		"target": "http://itb-1010-cp1:8888",
+		"target": "http://itb-1106-cp1:8888",
 		"secure": false,
 		"logLevel": "debug"
 	},
 	"/buildings/*": {
-		"target": "http://itb-1010-cp1:8000",
+		"target": "http://itb-1106-cp1:8000",
 		"secure": false,
 		"logLevel": "debug"
 	},
 	"/control-key/*": {
-		"target": "http://itb-1010-cp1:8888",
+		"target": "http://itb-1106-cp1:8888",
 		"secure": false,
 		"logLevel": "debug"
 	}

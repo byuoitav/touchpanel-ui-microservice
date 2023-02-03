@@ -31,6 +31,7 @@ import {SocketService} from "./services/socket.service";
 import {ManagementComponent} from "./components/management/management.component";
 import {StreamModalComponent} from "./dialogs/streammodal/streammodal.component";
 import {CameraControlComponent} from './components/camera-control/camera-control.component';
+import { RecordingComponent } from './components/recording/recording.component';
 
 @NgModule({
   declarations: [
@@ -43,7 +44,8 @@ import {CameraControlComponent} from './components/camera-control/camera-control
     ConfirmHelpDialog,
     ViaDialog,
     StreamModalComponent,
-    CameraControlComponent
+    CameraControlComponent,
+    RecordingComponent
   ],
   imports: [
     BrowserModule,

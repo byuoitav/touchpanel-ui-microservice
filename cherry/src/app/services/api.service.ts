@@ -43,7 +43,6 @@ export class APIService {
       const headers = new Headers();
       headers.append("content-type", "application/json");
       APIService.options = new RequestOptions({headers: headers});
-
       APIService.localurl = window.location.protocol + "//" + window.location.host;
 
       APIService.room = new Room();
@@ -139,6 +138,7 @@ export class APIService {
   private setupUIConfig() {
     this.getUIConfig().subscribe(
       data => {
+        console.info("ui-config:", data);
         APIService.room.uiconfig = new UIConfiguration();
         Object.assign(APIService.room.uiconfig, data);
         console.info("UI Configuration:", APIService.room.uiconfig);

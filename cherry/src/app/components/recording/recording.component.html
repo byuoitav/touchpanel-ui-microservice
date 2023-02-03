@@ -1,0 +1,12 @@
+<div class="recording-wrapper">
+  <div>
+    <button mat-mini-fab [color]="isRecording ? 'warn' : 'primary'" (click)="onClick()">
+      <ng-container *ngIf="!isRecording"><mat-icon color="warn">fiber_manual_record</mat-icon></ng-container>
+      <ng-container *ngIf="isRecording"><mat-icon>stop</mat-icon></ng-container>
+    </button>
+  </div>
+  <span>
+    <ng-container *ngIf="isRecording"> {{ recordTime*1000 | date:'HH : mm : ss':'UTC' }}</ng-container>
+    <ng-container *ngIf="!isRecording">Record</ng-container>
+  </span>
+</div>

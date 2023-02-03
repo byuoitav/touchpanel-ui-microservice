@@ -82,6 +82,14 @@ $inputs-height: 40vh;
     }
 }
 
+.recording {
+    position: absolute;
+    bottom: 0;
+    left: 1%;
+    height: 10%;
+    width: $max-width;
+}
+
 .volume {
     position: absolute;
     //overflow-y: hidden;

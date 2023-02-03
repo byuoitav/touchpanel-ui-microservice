@@ -110,6 +110,12 @@ export class CameraPreset {
   setPreset: string;
 }
 
+export class Recording {
+  start: string;
+  stop: string;
+  maxTime: number; // max recording time in minutes
+}
+
 export class ConfigCommands {
   powerOn: ConfigCommand[];
   powerOff: ConfigCommand[];
@@ -154,6 +160,7 @@ export class PresetConfiguration {
   audioGroups: Map<string, string[]> = new Map();
   commands: ConfigCommands;
   cameras: Camera[];
+  recording: Recording;
 }
 
 export class AudioConfiguration {
@@ -222,6 +229,8 @@ export class Preset {
 
   cameras: Camera[];
 
+  recording: Recording;
+
   constructor(
     name: string,
     icon: string,
@@ -235,7 +244,8 @@ export class Preset {
     beforeMuteLevel: number,
     commands: ConfigCommands,
     matches: string[],
-    cameras: Camera[]
+    cameras: Camera[],
+    recording: Recording
   ) {
     this.name = name;
     this.icon = icon;
@@ -250,6 +260,7 @@ export class Preset {
     this.commands = commands;
     this.volumeMatches = matches;
     this.cameras = cameras;
+    this.recording = recording;
   }
 }
 

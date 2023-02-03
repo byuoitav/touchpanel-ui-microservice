@@ -5,7 +5,7 @@
         
         And then users can swipe left/right to access more displays if there are more
     -->
-    <div *ngFor="let d of panel?.preset?.displays">
+    <div *ngFor="let d of displays">
         <button mat-button class="output mat-elevation-z15" [color]="selectedDisplays.has(d) ? 'accent' : ''" (click)="
         toggleDisplay(d); command.buttonPress('selected display', d?.name)
       " (press)="
@@ -94,6 +94,10 @@
       </button>
     </div>
   </ng-container>
+</div>
+
+<div class="recording" *ngIf="this.panel.preset?.recording?.start">
+  <recording [recording]="this.panel.preset?.recording"></recording>
 </div>
 
 <!-- Display component only controls the audioDevices in the "audioDevices" array of the UIConfig -->
