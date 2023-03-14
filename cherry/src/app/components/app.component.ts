@@ -120,13 +120,4 @@ export class AppComponent {
       data: dialogData
     });
   }
-
-  public test(event: MouseEvent) {
-    event.preventDefault();
-    event.stopPropagation();
-  }
-
-  public log(s: string) {
-    console.log(s);
-  }
 }
