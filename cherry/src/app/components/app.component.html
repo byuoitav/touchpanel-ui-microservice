@@ -5,6 +5,7 @@
 	<ng-container *ngIf="loaded; else loading">
 		<div *ngIf="isPoweredOff(); else home" class="lock" (click)="unlock(); command.buttonPress('power on')"
 			(press)="unlock(); command.buttonPress('long press power on')">
+			<!-- unlock(); command.buttonPress() -->
 			<ng-container *ngIf="!unlocking; else poweringOn">
 				<!-- byu logo -->
 				<object type="image/svg+xml" data="./assets/byu_medallion_white.svg" class="logo">
@@ -20,6 +21,18 @@
 				</div>
 				<span class="text smaller">powering on, please wait...</span>
 			</ng-template>
+		</div>
+
+		<div class="buttons bottom corner" *ngIf="isPoweredOff() && !unlocking && this.data.preset?.independentAudioDevices?.length > 0">
+			<button
+				mat-fab
+				class="independentAudio button"
+				(click)="openAudio()"
+				(press)="openAudio()"
+				color="audio-button"
+			>
+				<mat-icon>volume_up</mat-icon>
+			</button>
 		</div>
 	</ng-container>
 

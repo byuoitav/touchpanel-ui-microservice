@@ -1,4 +1,7 @@
 // center the tab labels
+@import '../cherry.theme.scss';
+$byu-logo-color: #bec2ba;
+
 .mat-tab-labels {
     justify-content: center;
 }
@@ -77,6 +80,7 @@ $buttonXOffset: .55rem;
     .text {
         margin-top: 3%;
         font-size: 150%;
+        color: $byu-logo-color;
 
         &.smaller {
             transform: scale(.75);
@@ -116,4 +120,40 @@ $buttonXOffset: .55rem;
     flex-direction: column;
     align-items: center;
     justify-content: space-evenly;
+}
+
+.buttons {
+    position: absolute;
+    margin-left: 3vw;
+
+    .button {
+        margin-right: 3vw;
+        width: 8vw;
+        height: 8vw;
+        .mat-icon {
+            margin-top: -1.1vh;
+            font-size: 5vw;
+            height: 5vw;
+            width: 5vw;
+            color: mat-color($primary, darker);
+        }
+    }
+
+    &.bottom {
+        bottom: 3.9vh;
+
+        &.corner {
+            margin-right: 0vw;
+            right: 0vw;
+        }
+    }
+}
+
+.independentAudio {
+    z-index: 2000;
+    margin-right: 0;
+}
+
+.mat-audio-button {
+    background-color: $byu-logo-color;
 }

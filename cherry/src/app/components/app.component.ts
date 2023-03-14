@@ -7,6 +7,8 @@ import {CommandService} from "../services/command.service";
 import {GraphService} from "../services/graph.service";
 import {HelpDialog} from "../dialogs/help.dialog";
 import {Output} from "../objects/status.objects";
+import { AudiocontrolComponent } from "./audiocontrol/audiocontrol.component";
+import { AudioDialog } from "../dialogs/audio.dialog";
 
 const HIDDEN = "hidden";
 const QUERY = "query";
@@ -101,5 +103,30 @@ export class AppComponent {
       width: "70vw",
       disableClose: true
     });
+  }
+
+  public openAudio() {
+    let dialogData = {};
+    if (this.data && this.data.panel) {
+      dialogData['preset'] = this.data.panel.preset;
+    }
+    if (this.data && this.data.panel && this.data.panel.features) {
+      dialogData['audioGroups'] = !this.data.panel.features.includes('no-audio-groups');
+    }
+
+    const dialogRef = this.dialog.open(AudioDialog, {
+      height: '480px',
+      width: '800px',
+      data: dialogData
+    });
+  }
+
+  public test(event: MouseEvent) {
+    event.preventDefault();
+    event.stopPropagation();
+  }
+
+  public log(s: string) {
+    console.log(s);
   }
 }

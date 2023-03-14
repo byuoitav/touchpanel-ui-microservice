@@ -22,6 +22,7 @@ import {AudiocontrolComponent} from "./components/audiocontrol/audiocontrol.comp
 import {HelpDialog} from "./dialogs/help.dialog";
 import {ConfirmHelpDialog} from "./dialogs/confirmhelp.dialog";
 import {ViaDialog} from "./dialogs/via.dialog";
+import { AudioDialog } from "./dialogs/audio.dialog";
 
 import {APIService} from "./services/api.service";
 import {CommandService} from "./services/command.service";
@@ -45,7 +46,8 @@ import { RecordingComponent } from './components/recording/recording.component';
     ViaDialog,
     StreamModalComponent,
     CameraControlComponent,
-    RecordingComponent
+    RecordingComponent,
+    AudioDialog
   ],
   imports: [
     BrowserModule,
@@ -67,7 +69,7 @@ import { RecordingComponent } from './components/recording/recording.component';
     GraphService,
     SocketService
   ],
-  entryComponents: [HelpDialog, ConfirmHelpDialog, ViaDialog, StreamModalComponent],
+  entryComponents: [HelpDialog, ConfirmHelpDialog, ViaDialog, StreamModalComponent, AudioDialog],
   bootstrap: [AppComponent]
 })
 export class AppModule {}
