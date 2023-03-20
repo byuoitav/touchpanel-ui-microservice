@@ -10,6 +10,10 @@ html {
 //    font-family: 'Source Sans Pro', sans-serif !important;
 }
 
+.mat-dialog-container {
+    background-color: mat-color($primary, darker) !important;
+}
+
 /*
 .mat-button {
     font-family: 'Source Sans Pro', sans-serif !important;
