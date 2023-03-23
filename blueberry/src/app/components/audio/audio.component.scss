@@ -32,14 +32,10 @@ $button-width: 5vw;
 .audiodevices {
   height: 100%;
   width: 100%;
-  opacity: 0;
+  opacity: 1;
   display: unset;
 
   transition: 0.3s opacity ease-in-out;
-
-  &.loaded {
-    opacity: 1;
-  }
 }
 
 .text {
