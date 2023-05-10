@@ -162,7 +162,7 @@ export class HomeComponent implements OnInit {
           );
           return;
         }
-
+        // choose stream from the list of subinputs if there are any
         if (i.subInputs !== undefined && i.subInputs.length > 0) {
           this.dialog.open(StreamModalComponent, { data: i }).afterClosed().subscribe((theChosenOne) => {
             if (theChosenOne !== undefined) {
