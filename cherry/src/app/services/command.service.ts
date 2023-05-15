@@ -58,6 +58,13 @@ export class CommandService {
       .map(res => res.json());
   }
 
+  private get(): Observable<Object> {
+    return this.http
+      .get(APIService.apiurl, this.options)
+      .timeout(TIMEOUT)
+      .map(res => res.json());
+  }
+
   private putWithCustomTimeout(data: any, timeout: number): Observable<Object> {
     return this.http
       .put(APIService.apiurl, data, this.options)
@@ -544,7 +551,7 @@ export class CommandService {
           );
 
           let allsuccessful = true;
-          mapToStatus.forEach((v, k) => {
+          displays   mapToStatus.forEach((v, k) => {
             if (!v) {
               allsuccessful = false;
             }
