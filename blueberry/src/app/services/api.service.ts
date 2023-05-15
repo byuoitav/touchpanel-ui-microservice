@@ -94,7 +94,7 @@ export class APIService {
         err => {
           setTimeout(() => this.setupAPIUrl(next), RETRY_TIMEOUT);
         }
-      );
+      );  
     }
 
     this.getAPIUrl().subscribe(
