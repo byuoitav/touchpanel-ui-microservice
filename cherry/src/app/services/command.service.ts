@@ -512,6 +512,24 @@ export class CommandService {
       }
     }
 
+    if (preset.cameras != null) {
+      for (const camera of preset.cameras) {
+        if (camera.presets[0].setPreset != null) {/*if preset 0 exists recall preset 0*/
+          console.log(camera.presets[0].setPreset)
+          // this.http.get(camera.presets[0].setPreset);
+
+          const camPreset = new CommandRequest(
+            new Request({
+              method: "GET",
+              url: camera.presets[0].setPreset,
+              body: null
+            })
+          );
+          requests.push(camPreset);
+        }
+      }
+    }
+
     this.executeRequests(requests, 1, 20 * 1000).subscribe(success => {
       ret.emit(success);
     });
