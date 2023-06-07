@@ -1,11 +1,6 @@
 import { Injectable, EventEmitter, ViewChild, ElementRef } from "@angular/core";
-import {
-  Http,
-  Response,
-  Headers,
-  RequestOptions,
-  Request
-} from "@angular/http";
+import { HttpClient, HttpRequest } from "@angular/common/http";
+
 import { Observable } from "rxjs/Rx";
 import { MatSliderChange } from "@angular/material";
 
@@ -39,16 +34,17 @@ class CommandRequest {
 
 @Injectable()
 export class CommandService {
-  private options: RequestOptions;
+  private options: HttpRequest<any>;
 
   constructor(
-    private http: Http,
+    private http: HttpClient,
     private data: DataService,
     private api: APIService
   ) {
     const headers = new Headers();
     headers.append("content-type", "application/json");
-    this.options = new RequestOptions({ headers: headers });
+    this.options = new HttpRequest<any>("GET", "", {
+      headers: headers });
   }
 
   private executeRequests(

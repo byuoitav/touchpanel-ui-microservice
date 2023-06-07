@@ -1,5 +1,5 @@
 import { Injectable, EventEmitter } from "@angular/core";
-import { Http } from "@angular/http";
+import { HttpClient } from "@angular/common/http";
 import {
   $WebSocket,
   WebSocketConfig
@@ -25,7 +25,7 @@ export class SocketService {
 
   private socket: $WebSocket;
   private listener: EventEmitter<any>;
-  private http: Http;
+  private http: HttpClient;
   private webSocketConfig: WebSocketConfig = {
     initialTimeout: 100,
     maxTimeout: 500,

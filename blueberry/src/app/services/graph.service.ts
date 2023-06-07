@@ -1,5 +1,5 @@
 import { Injectable, EventEmitter } from "@angular/core";
-import { Http } from "@angular/http";
+import { HttpClient } from "@angular/common/http";
 
 import { DeviceConfiguration } from "../objects/objects";
 import { APIService } from "./api.service";
@@ -40,7 +40,7 @@ export class GraphService {
   constructor(
     private data: DataService,
     private socket: SocketService,
-    private http: Http
+    private http: HttpClient
   ) {
     this.presetList = new EventEmitter<Set<string>>();
 
