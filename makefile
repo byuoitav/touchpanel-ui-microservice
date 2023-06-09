@@ -64,6 +64,7 @@ build: deps
 	@mv cherry/dist dist/cherry-dist
 
 clean:
+	@echo clean
 	@go clean
 	@rm -rf dist/
 

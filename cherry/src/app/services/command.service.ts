@@ -138,7 +138,7 @@ export class CommandService {
         requests.push(this.buildRequest(cmd));
       }
     }
-
+    
     console.log("preset:", preset);
     console.log("executing requests:", requests);
 
@@ -529,7 +529,7 @@ export class CommandService {
         }
       }
     }
-    
+
     this.executeRequests(requests, 1, 20 * 1000).subscribe(success => {
       ret.emit(success);
     });
