@@ -512,12 +512,11 @@ export class CommandService {
       }
     }
 
+    //recall preset0 for all cameras in the room
     if (preset.cameras != null) {
       for (const camera of preset.cameras) {
         if (camera.presets[0].setPreset != null) {/*if preset 0 exists recall preset 0*/
-          console.log(camera.presets[0].setPreset)
-          // this.http.get(camera.presets[0].setPreset);
-
+          console.log("Recalling camera preset0", camera.presets[0].setPreset)
           const camPreset = new CommandRequest(
             new Request({
               method: "GET",
@@ -659,6 +658,23 @@ export class CommandService {
     if (preset.commands.powerOff != null) {
       for (const cmd of preset.commands.powerOff) {
         requests.push(this.buildRequest(cmd));
+      }
+    }
+
+    //recall preset0 for all cameras in the room
+    if (preset.cameras != null) {
+      for (const camera of preset.cameras) {
+        if (camera.presets[0].setPreset != null) {/*if preset 0 exists recall preset 0*/
+          console.log("Recalling camera preset0", camera.presets[0].setPreset)
+          const camPreset = new CommandRequest(
+            new Request({
+              method: "GET",
+              url: camera.presets[0].setPreset,
+              body: null
+            })
+          );
+          requests.push(camPreset);
+        }
       }
     }
 
