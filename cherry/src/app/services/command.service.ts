@@ -138,7 +138,7 @@ export class CommandService {
         requests.push(this.buildRequest(cmd));
       }
     }
-
+    
     console.log("preset:", preset);
     console.log("executing requests:", requests);
 
@@ -512,6 +512,23 @@ export class CommandService {
       }
     }
 
+    //recall preset0 for all cameras in the room
+    if (preset.cameras != null) {
+      for (const camera of preset.cameras) {
+        if (camera.presets[0].setPreset != null) {/*if preset 0 exists recall preset 0*/
+          console.log("Recalling camera preset0", camera.presets[0].setPreset)
+          const camPreset = new CommandRequest(
+            new Request({
+              method: "GET",
+              url: camera.presets[0].setPreset,
+              body: null
+            })
+          );
+          requests.push(camPreset);
+        }
+      }
+    }
+
     this.executeRequests(requests, 1, 20 * 1000).subscribe(success => {
       ret.emit(success);
     });
@@ -641,6 +658,23 @@ export class CommandService {
     if (preset.commands.powerOff != null) {
       for (const cmd of preset.commands.powerOff) {
         requests.push(this.buildRequest(cmd));
+      }
+    }
+
+    //recall preset0 for all cameras in the room
+    if (preset.cameras != null) {
+      for (const camera of preset.cameras) {
+        if (camera.presets[0].setPreset != null) {/*if preset 0 exists recall preset 0*/
+          console.log("Recalling camera preset0", camera.presets[0].setPreset)
+          const camPreset = new CommandRequest(
+            new Request({
+              method: "GET",
+              url: camera.presets[0].setPreset,
+              body: null
+            })
+          );
+          requests.push(camPreset);
+        }
       }
     }
 
