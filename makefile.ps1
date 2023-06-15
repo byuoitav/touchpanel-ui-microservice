@@ -178,7 +178,7 @@ function Deploy {
             Write-Output "Pushing prd containers with tag $TAG"
     
             Write-Output "Pushing container $DOCKER_PKG/${NAME}:$TAG"
-            Invoke-Expression "docker push $DOCKER_PKG/${NAME}:$COMMIT_HASH"
+            Invoke-Expression "docker push $DOCKER_PKG/${NAME}:$TAG"
         } else {
             Write-Output "Deploy function quit unexpectedly. Commit Hash: $COMMIT_HASH     Tag: $TAG"
         }
