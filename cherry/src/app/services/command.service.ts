@@ -646,6 +646,16 @@ export class CommandService {
 
     console.log("sending power off body", body);
 
+    for (const a of preset.audioDevices) {
+      body.audioDevices.push({
+        name: a.name,
+        muted: false,
+        volume: 30
+      });
+    }
+
+    preset.masterMute = false;
+    
     const powerOffReq = new CommandRequest(
       new Request({
         method: "PUT",
