@@ -1,5 +1,5 @@
-import { Component, OnInit, Inject } from "@angular/core";
-import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from "@angular/material";
+import { Component, OnInit } from "@angular/core";
+import { MatDialog, MatDialogRef } from "@angular/material/dialog";
 
 import { APIService } from "../../services/api.service";
 import { CommandService } from "../../services/command.service";
@@ -24,32 +24,36 @@ export class ConfirmHelpModal implements OnInit {
   cancelHelp = async (): Promise<boolean> => {
     this.command.buttonPress("cancel help request");
 
+    //uddate the return to use the new subscribe convention from rxjs
     return new Promise<boolean>((resolve, reject) => {
-      this.api.help("cancel").subscribe(
-        data => {
+      this.api.help("cancel").subscribe({
+        next: data => {
           resolve(true);
         },
-        err => {
+        error: err => {
           console.error("failed to cancel help:", err);
           resolve(false);
         }
-      );
+      });
     });
+
   };
 
   confirmHelp = async (): Promise<boolean> => {
     this.command.buttonPress("confirm help request");
 
+    //uddate the return to use the new subscribe convention from rxjs
+
     return new Promise<boolean>((resolve, reject) => {
-      this.api.help("confirm").subscribe(
-        data => {
+      this.api.help("confirm").subscribe({
+        next: data => {
           resolve(true);
         },
-        err => {
+        error: err => {
           console.error("failed to cancel help:", err);
           resolve(false);
         }
-      );
+      });
     });
   };
 }

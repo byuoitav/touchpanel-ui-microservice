@@ -1,5 +1,5 @@
 import { Type } from "serializer.ts/Decorators";
-import { Device, Display, AudioDevice, Input } from "./status.objects";
+import { Display, AudioDevice, Input } from "./status.objects";
 
 export class Room {
   config: RoomConfiguration;

@@ -1,5 +1,6 @@
 import { Component, OnInit, Inject } from "@angular/core";
-import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from "@angular/material";
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from "@angular/material/dialog";
+
 
 import { APIService } from "../../services/api.service";
 import { CommandService } from "../../services/command.service";
@@ -34,16 +35,17 @@ export class HelpModal implements OnInit {
   requestHelp = async (): Promise<boolean> => {
     this.command.buttonPress("request help");
 
+    // TODO: update the return to use the new subscribe convention from rxjs
     return new Promise<boolean>((resolve, reject) => {
-      this.api.help("help").subscribe(
-        data => {
+      this.api.help("help").subscribe({
+        next: data => {
           resolve(true);
         },
-        err => {
+        error: err => {
           console.error("failed to request help", err);
           resolve(false);
         }
-      );
+      });
     });
   };
 

@@ -1,8 +1,6 @@
 import { Component, OnInit, Inject } from "@angular/core";
-import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from "@angular/material";
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from "@angular/material/dialog";
 
-import { APIService } from "../../services/api.service";
-import { CommandService } from "../../services/command.service";
 import { Input } from "../../objects/status.objects";
 import { Preset } from "../../objects/objects";
 import { AudioComponent } from "../../components/audio/audio.component";
