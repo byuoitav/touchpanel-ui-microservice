@@ -1,6 +1,6 @@
 import { Injectable, EventEmitter } from "@angular/core";
 import { HttpClient, HttpHeaders, HttpRequest } from "@angular/common/http";
-import { Observable} from "rxjs/Rx";
+import { from, Observable } from "rxjs";
 import { of } from "rxjs";
 import {
   UIConfiguration,
@@ -255,6 +255,7 @@ export class APIService {
     return this.http.get(APIService.localurl + ":8888/uiconfig").pipe(
       tap(data => console.log("got ui config", data)),
       map(res => deserialize<UIConfiguration>(UIConfiguration, res)),
+      map(res => UIConfiguration),
       catchError(this.handleError('getUIConfig', []))
     );
   }

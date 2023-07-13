@@ -3,7 +3,7 @@ import { HttpClient, HttpRequest } from "@angular/common/http";
 import {tap, catchError, timeout} from 'rxjs/operators';
 import { of } from "rxjs";
 
-import { Observable } from "rxjs/Rx";
+import { from, Observable } from "rxjs";
 import { Request, Response } from "express";
 
 import { APIService } from "./api.service";
