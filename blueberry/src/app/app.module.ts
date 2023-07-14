@@ -13,7 +13,7 @@ import { MatChipsModule } from "@angular/material/chips";
 import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 
 import { UiSwitchModule } from "ngx-ui-switch";
-import { SweetAlert2Module } from "@toverux/ngx-sweetalert2";
+import { SweetAlert2Module } from "@sweetalert2/ngx-sweetalert2";
 import "hammerjs";
 
 import { AppComponent } from "./components/app.component";

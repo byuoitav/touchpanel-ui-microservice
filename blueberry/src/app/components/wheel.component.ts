@@ -7,8 +7,9 @@ import {
   ViewChild,
   EventEmitter
 } from "@angular/core";
-import swal, { SweetAlertOptions } from "sweetalert2";
-import { SwalComponent, SwalPartialTargets } from "@toverux/ngx-sweetalert2";
+import Swal from 'sweetalert2/dist/sweetalert2.js'; 
+import { SwalComponent } from "@sweetalert2/ngx-sweetalert2";
+import { SwalPartialTargets } from "@sweetalert2/ngx-sweetalert2";
 
 import { Preset, AudioConfig } from "../objects/objects";
 import { Display, Input, AudioDevice } from "../objects/status.objects";
