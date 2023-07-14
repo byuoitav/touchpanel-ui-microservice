@@ -1,10 +1,9 @@
 import { Injectable, EventEmitter } from "@angular/core";
 import { HttpClient, HttpRequest } from "@angular/common/http";
-import {tap, catchError, timeout} from 'rxjs/operators';
-import { of } from "rxjs";
-
-import { from, Observable } from "rxjs";
-import { Request, Response } from "express";
+import {catchError, timeout} from 'rxjs/operators';
+import {Observable } from "rxjs/Observable";
+import { of } from "rxjs/observable/of";
+import { Request } from "express";
 
 import { APIService } from "./api.service";
 import { DataService } from "./data.service";
