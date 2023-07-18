@@ -1,8 +1,8 @@
 import { Injectable, EventEmitter } from "@angular/core";
 import { HttpClient, HttpRequest } from "@angular/common/http";
 import {catchError, timeout} from 'rxjs/operators';
-import {Observable } from "rxjs/Observable";
-import { of } from "rxjs/observable/of";
+import {Observable } from "rxjs";
+import { of } from "rxjs";
 import { Request } from "express";
 
 import { APIService } from "./api.service";
@@ -17,10 +17,10 @@ import "rxjs/add/operator/timeout";
 const TIMEOUT = 12 * 1000;
 
 class CommandRequest {
-  req: Request;
+  req: HttpRequest<any>;
   delay: number;
 
-  constructor(req: Request, delay?: number) {
+  constructor(req: HttpRequest<any>, delay?: number) {
     this.req = req;
 
     if (delay) {
@@ -134,9 +134,7 @@ export class CommandService {
   private buildRequest(cmd: ConfigCommand): CommandRequest {
     // if we needed logic to create a request, it would be right here!!
     return new CommandRequest(
-      new Request({
-        method: cmd.method,
-        url: APIService.apihost + ":" + cmd.port + "/" + cmd.endpoint,
+      new HttpRequest<any>(cmd.method, APIService.apihost + ":" + cmd.port + "/" + cmd.endpoint, {
         body: cmd.body
       }),
       cmd.delay
@@ -322,11 +320,8 @@ export class CommandService {
     }
 
     const powerOnReq = new CommandRequest(
-      new Request({
-        method: "PUT",
-        url: APIService.apiurl,
-        body: body
-      })
+      new HttpRequest("PUT", APIService.apiurl, body)
+
     );
     const requests: CommandRequest[] = [powerOnReq];
 
@@ -364,11 +359,7 @@ export class CommandService {
     console.log("sending power off body", body);
 
     const powerOffReq = new CommandRequest(
-      new Request({
-        method: "PUT",
-        url: APIService.apiurl,
-        body: body
-      })
+      new HttpRequest("PUT", APIService.apiurl, body)
     );
     const requests: CommandRequest[] = [powerOffReq];
 

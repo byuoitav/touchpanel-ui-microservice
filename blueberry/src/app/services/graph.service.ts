@@ -4,7 +4,7 @@ import { HttpClient } from "@angular/common/http";
 import { DeviceConfiguration } from "../objects/objects";
 import { APIService } from "./api.service";
 import { DataService } from "./data.service";
-import { SocketService, MESSAGE, Event } from "./socket.service";
+import { SocketService, MESSAGE } from "./socket.service";
 
 /*
  *
