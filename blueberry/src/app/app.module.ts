@@ -75,15 +75,6 @@ import { StreamModalComponent } from "./modals/streammodal/streammodal.component
     DataService,
     GraphService
   ],
-  entryComponents: [
-    HelpModal,
-    ConfirmHelpModal,
-    PowerOffAllModalComponent,
-    ShareModalComponent,
-    MirrorModalComponent,
-    MessageModalComponent,
-    StreamModalComponent
-  ],
   bootstrap: [AppComponent]
 })
 export class AppModule {}
