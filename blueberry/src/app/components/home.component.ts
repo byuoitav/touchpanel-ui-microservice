@@ -2,11 +2,9 @@ import {
   Component,
   ViewChild,
   EventEmitter,
-  Output as AngularOutput,
   OnInit
 } from "@angular/core";
-import { MatDialog, MatDialogRef } from "@angular/material";
-import { deserialize } from "serializer.ts/Serializer";
+import { MatDialog, MatDialogRef } from "@angular/material/dialog";
 import { WheelComponent } from "./wheel.component";
 import { DataService } from "../services/data.service";
 import { CommandService } from "../services/command.service";
@@ -19,9 +17,8 @@ import {
   BasicDeviceInfo,
   BasicRoomInfo
 } from "../services/socket.service";
-import { Preset, AudioConfig } from "../objects/objects";
+import { Preset } from "../objects/objects";
 import {
-  Output,
   Display,
   AudioDevice,
   INPUT,

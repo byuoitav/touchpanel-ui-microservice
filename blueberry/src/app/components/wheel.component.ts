@@ -7,17 +7,12 @@ import {
   ViewChild,
   EventEmitter
 } from "@angular/core";
-import Swal from 'sweetalert2/dist/sweetalert2.js'; 
-import { SwalComponent } from "@sweetalert2/ngx-sweetalert2";
-import { SwalPartialTargets } from "@sweetalert2/ngx-sweetalert2";
+import { SwalPortalTargets } from "@sweetalert2/ngx-sweetalert2";
 
-import { Preset, AudioConfig } from "../objects/objects";
+import { Preset } from "../objects/objects";
 import { Display, Input, AudioDevice } from "../objects/status.objects";
 import { CommandService } from "../services/command.service";
-import { Event } from "../services/socket.service";
-import { APIService } from "../services/api.service";
-import { MatDialog } from "@angular/material";
-import { StreamModalComponent } from "app/modals/streammodal/streammodal.component";
+import { MatDialog } from "@angular/material/dialog";
 
 @Component({
   selector: "wheel",
@@ -56,8 +51,7 @@ export class WheelComponent implements AfterContentInit {
 
   constructor(
     public command: CommandService,
-    private api: APIService,
-    public readonly swalTargets: SwalPartialTargets,
+    public readonly swalTargets: SwalPortalTargets,
     public dialog: MatDialog
   ) {}
 

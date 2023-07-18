@@ -5,9 +5,7 @@ import {
   SimpleChanges,
   OnInit
 } from "@angular/core";
-import { MatButton } from "@angular/material";
 
-import { APIService } from "../services/api.service";
 
 const LOW = 3;
 const REDIRECT: string =

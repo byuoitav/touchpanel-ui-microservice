@@ -1,7 +1,7 @@
 import { Injectable, EventEmitter } from "@angular/core";
-import { HttpClient, HttpHeaders, HttpRequest } from "@angular/common/http";
-import { Observable } from "rxjs/Observable";
-import { of } from "rxjs/observable/of";
+import { HttpClient } from "@angular/common/http";
+import { Observable } from "rxjs";
+import { of } from "rxjs";
 import {
   UIConfiguration,
   Room,
@@ -14,7 +14,7 @@ import {tap, catchError, map, timeout} from 'rxjs/operators';
 import "rxjs/add/operator/map";
 import "rxjs/add/operator/timeout";
 import { deserialize } from "serializer.ts/Serializer";
-import { JsonConvert, OperationMode, ValueCheckingMode } from "json2typescript";
+import { JsonConvert } from "json2typescript";
 
 const RETRY_TIMEOUT = 5 * 1000;
 const MONITOR_TIMEOUT = 30 * 1000;

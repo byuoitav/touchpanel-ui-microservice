@@ -1,29 +1,11 @@
 import {
   Component,
-  OnInit,
-  ViewChild,
-  ElementRef,
-  ComponentRef
-} from "@angular/core";
-import { MatDialog } from "@angular/material";
+  ViewChild} from "@angular/core";
+import { MatDialog } from "@angular/material/dialog";
 
 import { APIService } from "../services/api.service";
-import { DataService } from "../services/data.service";
 import { CommandService } from "../services/command.service";
 import { SocketService } from "../services/socket.service";
-import { Preset, Panel } from "../objects/objects";
-import {
-  Device,
-  Input,
-  Output,
-  Display,
-  AudioDevice,
-  POWER,
-  INPUT,
-  BLANKED,
-  MUTED,
-  VOLUME
-} from "../objects/status.objects";
 import { HomeComponent } from "./home.component";
 import { AudioComponent } from "./audio/audio.component";
 

@@ -6,7 +6,7 @@ import {
   ViewChild,
   EventEmitter
 } from "@angular/core";
-import { MatSlider } from "@angular/material";
+import { MatSlider } from "@angular/material/slider";
 
 @Component({
   selector: "volume",
