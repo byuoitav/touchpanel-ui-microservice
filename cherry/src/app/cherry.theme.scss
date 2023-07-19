@@ -20,12 +20,19 @@ $cherry: mat-dark-theme($primary, $accent, $warn);
     }
 }
 
-
 // secondary theme.
 // colors for help button, sliders, and other small visual elements.
 $s-primary: mat-palette($mat-light-blue, A700, 200, 900);
 $s-accent: mat-palette($mat-teal, 100);
 $s-warn: mat-palette($mat-lime);
+
+//camera stuff
+$d-pad-fg: #ddd;
+$d-pad-fg-hover: #ddd;
+$d-pad-bg: #263238;
+$arrowColor: #777;
+$arrowColorPressed: #333;
+
 
 $secondary: mat-dark-theme($s-primary, $s-accent, $s-warn);
 

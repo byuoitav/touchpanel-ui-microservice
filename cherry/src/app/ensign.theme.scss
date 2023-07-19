@@ -1,0 +1,67 @@
+@import '~@angular/material/theming';
+
+@include mat-core();
+
+$mat-custom: (
+  50: #e8f5e9,
+  100: #c8e6c9,
+  200: #a5d6a7,
+  300: #81c784,
+  400: #66bb6a,
+  500: #002b6b,
+  600: #43a047,
+  700: #d8f166,
+  800: #2e7d32,
+  900: #001d52,
+  A100: #b9f6ca,
+  A200: #69f0ae,
+  A400: #00e676,
+  A700: #00c853,
+  contrast: (
+    50: $dark-primary-text,
+    100: $dark-primary-text,
+    200: $dark-primary-text,
+    300: $dark-primary-text,
+    400: $dark-primary-text,
+    500: $dark-primary-text,
+    600: $light-primary-text,
+    700: $light-primary-text,
+    800: $light-primary-text,
+    900: $light-primary-text,
+    A100: $dark-primary-text,
+    A200: $dark-primary-text,
+    A400: $dark-primary-text,
+    A700: $dark-primary-text,
+  )
+);
+
+$primary: mat-palette($mat-custom, 700, 500, 900); 
+$accent: mat-palette($mat-light-green, A700, 200, A700);
+$warn: mat-palette($mat-orange, 600, 800, 400);
+
+$cherry: mat-dark-theme($primary, $accent, $warn);
+
+@include angular-material-theme($cherry);
+
+.mat-app-background {
+    background-color: mat-color($primary, darker);
+}
+
+.mat-tab-label-darker {
+    .mat-tab-label-container {
+        background-color: mat-color($primary, 800) 
+    }
+}
+
+
+// secondary theme.
+// colors for help button, sliders, and other small visual elements.
+$s-primary: mat-palette($mat-light-blue, A700, 200, 900);
+$s-accent: mat-palette($mat-teal, 100);
+$s-warn: mat-palette($mat-lime);
+
+$secondary: mat-dark-theme($s-primary, $s-accent, $s-warn);
+
+.secondary-theme {
+    @include angular-material-theme($secondary);
+}

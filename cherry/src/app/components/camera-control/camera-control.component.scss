@@ -1,9 +1,11 @@
+@import '../../../styles.scss';
+
 $d-pad-radius: 17%;
 $d-pad-radius-in: 20%;
-$d-pad-fg: #ddd;
-$d-pad-fg-hover: #eee;
-$d-pad-bg: #263238;
-$arrowColor: #777;
+// $d-pad-fg: $camera-d-pad-fg;
+// $d-pad-fg-hover: $camera-d-pad-fg-hover;
+// $d-pad-bg: $camera-d-pad-bg;
+// $arrowColor: $camera-arrowColor;
 $tri-sml-a: 13px;
 $tri-sml-b: 19px;
 $tri-lrg-a: 13px;
@@ -36,10 +38,10 @@ $d-pad-arrow-move: 35%;
 	button {
 		width: 28%;
 		height: 67%;
-		background-color: #ddd;
+		background-color: $d-pad-fg;
 
 		mat-icon {
-			color: #777;
+			color: $arrowColor;
 			transform: scale(3);
 			height: unset;
 			width: unset;
@@ -58,10 +60,10 @@ $d-pad-arrow-move: 35%;
 	button {
 		width: 28%;
 		height: 100%;
-		background-color: #ddd;
+		background-color: $d-pad-fg;
 
 		mat-icon {
-			color: #777;
+			color: $arrowColor;
 			transform: scale(3);
 			height: unset;
 			width: unset;
@@ -157,11 +159,11 @@ $d-pad-arrow-move: 35%;
 	a {
 	display:block;
 	position: absolute;
-	-webkit-tap-highlight-color:  rgba(255, 255, 255, 0);
+	// -webkit-tap-highlight-color:  rgba(255, 255, 255, 0);
 	width: 33.3%;
     height: 43%;
     line-height: 40%;
-    color: #fff;
+    // color: #fff;
     background: $d-pad-fg;
     text-align: center;
     &:hover {
@@ -217,7 +219,7 @@ $d-pad-arrow-move: 35%;
       border-color: transparent transparent $arrowColor transparent;
     }
     &:active:before {
-      border-bottom-color: #333;
+      border-bottom-color: $arrowColorPressed;
       top: $d-pad-arrow-move;
     }
   }
@@ -245,7 +247,7 @@ $d-pad-arrow-move: 35%;
       border-color: $arrowColor transparent transparent transparent;
     }
     &:active:before {
-      border-top-color: #333;
+      border-top-color: $arrowColorPressed;
       bottom: $d-pad-arrow-move;
     }
   }
@@ -273,7 +275,7 @@ $d-pad-arrow-move: 35%;
       border-color: transparent $arrowColor transparent transparent;
     }
     &:active:before {
-      border-right-color: #333;
+      border-right-color: $arrowColorPressed;
       left: $d-pad-arrow-move; 
     }
   }
@@ -301,15 +303,15 @@ $d-pad-arrow-move: 35%;
       border-color: transparent transparent transparent $arrowColor;
     }
     &:active:before {
-      border-left-color: #333;
+      border-left-color: $arrowColorPressed;
       right: $d-pad-arrow-move;
     }
   }
 }
-.d-pad.up a.up:before { border-bottom-color: #333; }
-.d-pad.down a.down:before { border-top-color: #333; }
-.d-pad.left a.left:before { border-right-color: #333; }
-.d-pad.right a.right:before { border-left-color: #333; }
+.d-pad.up a.up:before { border-bottom-color: $arrowColorPressed; }
+.d-pad.down a.down:before { border-top-color: $arrowColorPressed; }
+.d-pad.left a.left:before { border-right-color: $arrowColorPressed; }
+.d-pad.right a.right:before { border-left-color: $arrowColorPressed; }
 
 .code-text {
   display: flex;

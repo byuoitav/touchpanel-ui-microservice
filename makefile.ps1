@@ -173,7 +173,7 @@ function Deploy {
             Write-Output "Pushing dev containers with tag $TAG"
     
             Write-Output "Pushing container $DOCKER_PKG/$NAME-dev:$TAG"
-            Invoke-Expression "docker push $DOCKER_PKG/$NAME-dev:$COMMIT_HASH"
+            Invoke-Expression "docker push $DOCKER_PKG/$NAME-dev:$TAG"
         } elseif ($TAG -match $PRD_TAG_REGEX) {
             Write-Output "Pushing prd containers with tag $TAG"
     
