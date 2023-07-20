@@ -1,6 +1,6 @@
 import { Injectable, EventEmitter, ViewChild, ElementRef } from "@angular/core";
 import {HttpClient, Response, HttpHeaders, RequestOptions, HttpRequest} from "@angular/common/http";
-import { Observable } from "rxjs/Rx";
+import { Observable } from "rxjs";
 import { MatSliderChange, MatDialog } from "@angular/material";
 
 import { APIService } from "./api.service";

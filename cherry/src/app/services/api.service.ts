@@ -1,6 +1,6 @@
 import {Injectable, EventEmitter} from "@angular/core";
 import {HttpClient, Response, HttpHeaders, RequestOptions} from "@angular/common/http";
-import {Observable} from "rxjs/Rx";
+import {Observable} from "rxjs";
 import {
   UIConfiguration,
   Room,
