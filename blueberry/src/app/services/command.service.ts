@@ -11,9 +11,6 @@ import { Event, BasicDeviceInfo, BasicRoomInfo } from "./socket.service";
 import { Input, Display, AudioDevice } from "../objects/status.objects";
 import { Preset, ConfigCommand } from "../objects/objects";
 
-import "rxjs/add/operator/map";
-import "rxjs/add/operator/timeout";
-
 const TIMEOUT = 12 * 1000;
 
 class CommandRequest {

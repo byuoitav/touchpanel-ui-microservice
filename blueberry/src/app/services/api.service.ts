@@ -11,8 +11,6 @@ import {
 import { Event } from "./socket.service";
 
 import {tap, catchError, map, timeout} from 'rxjs/operators';
-import "rxjs/add/operator/map";
-import "rxjs/add/operator/timeout";
 import { deserialize } from "serializer.ts/Serializer";
 import { JsonConvert } from "json2typescript";
 

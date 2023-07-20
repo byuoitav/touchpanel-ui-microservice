@@ -48,10 +48,9 @@ import { StreamModalComponent } from "./modals/streammodal/streammodal.component
     ActivityButtonComponent,
     ShareModalComponent,
     AudioComponent,
-    VolumeComponent,
     MirrorModalComponent,
     MessageModalComponent,
-    StreamModalComponent
+    VolumeComponent
   ],
   imports: [
     BrowserModule,
@@ -66,7 +65,8 @@ import { StreamModalComponent } from "./modals/streammodal/streammodal.component
     MatChipsModule,
     MatProgressSpinnerModule,
     UiSwitchModule,
-    SweetAlert2Module.forRoot()
+    SweetAlert2Module.forRoot(),
+    StreamModalComponent
   ],
   providers: [
     APIService,

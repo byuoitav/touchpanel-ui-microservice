@@ -6,19 +6,23 @@ import {
   ViewChild,
   EventEmitter
 } from "@angular/core";
-import { MatSlider } from "@angular/material/slider";
+import { MatSliderModule } from "@angular/material/slider";
 
 @Component({
   selector: "volume",
   templateUrl: "./volume.component.html",
-  styleUrls: ["./volume.component.scss"]
+  styleUrls: ["./volume.component.scss"],
 })
 export class VolumeComponent implements OnInit {
+  thumbLabel = true;
+  vertical = true;
   @Input()
   level: number;
   @Input()
   mute: boolean;
   @Input() name: string;
+  value: number;
+  
 
   @Input()
   muteType: string;
@@ -29,14 +33,15 @@ export class VolumeComponent implements OnInit {
   muteChange: EventEmitter<boolean> = new EventEmitter();
 
   @ViewChild("slider")
-  slider: MatSlider;
+  slider: MatSliderModule;
 
   constructor() {}
   ngOnInit() {}
 
   public closeThumb() {
     setTimeout(() => {
-      this.slider._elementRef.nativeElement.blur();
-    }, 2000);
+      this.thumbLabel = false;
+    } 
+    , 2000);
   }
 }
