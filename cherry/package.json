@@ -31,12 +31,12 @@
     "material-design-icons": "^3.0.1",
     "rxjs": "^7.8.1",
     "serializer.ts": "0.0.12",
-    "tslib": "^1.9.0",
+    "tslib": "^2.6.0",
     "zone.js": "^0.13.1"
   },
   "devDependencies": {
-    "@angular-devkit/build-angular": "~0.13.0",
-    "@angular/cli": "^7.3.10",
+    "@angular-devkit/build-angular": "~16.1.5",
+    "@angular/cli": "^16.1.5",
     "@angular/compiler-cli": "^16.1.6",
     "@angular/language-service": "^16.1.6",
     "@types/jasmine": "~4.3.5",
