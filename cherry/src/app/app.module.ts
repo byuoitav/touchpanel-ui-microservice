@@ -1,6 +1,6 @@
 import {BrowserModule} from "@angular/platform-browser";
 import {NgModule} from "@angular/core";
-import {HttpModule} from "@angular/http";
+import {HttpClientModule} from "@angular/common/http";
 import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
 import {
   MatTabsModule,
@@ -24,12 +24,7 @@ import {ConfirmHelpDialog} from "./dialogs/confirmhelp.dialog";
 import {ViaDialog} from "./dialogs/via.dialog";
 import { AudioDialog } from "./dialogs/audio.dialog";
 
-import {APIService} from "./services/api.service";
-import {CommandService} from "./services/command.service";
-import {DataService} from "./services/data.service";
-import {GraphService} from "./services/graph.service";
-import {SocketService} from "./services/socket.service";
-import {ManagementComponent} from "./components/management/management.component";
+import {APIService} from HttpClientModulenent} from "./components/management/management.component";
 import {StreamModalComponent} from "./dialogs/streammodal/streammodal.component";
 import {CameraControlComponent} from './components/camera-control/camera-control.component';
 import { RecordingComponent } from './components/recording/recording.component';
@@ -52,7 +47,7 @@ import { RecordingComponent } from './components/recording/recording.component';
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
-    HttpModule,
+    HttpClientModule,
     MatTabsModule,
     MatSliderModule,
     MatButtonModule,

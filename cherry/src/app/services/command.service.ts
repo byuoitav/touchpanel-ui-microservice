@@ -1,11 +1,5 @@
 import { Injectable, EventEmitter, ViewChild, ElementRef } from "@angular/core";
-import {
-  Http,
-  Response,
-  Headers,
-  RequestOptions,
-  Request
-} from "@angular/http";
+import {HttpClient, Response, HttpHeaders, RequestOptions, HttpRequest} from "@angular/common/http";
 import { Observable } from "rxjs/Rx";
 import { MatSliderChange, MatDialog } from "@angular/material";
 
@@ -41,7 +35,7 @@ export class CommandService {
   private options: RequestOptions;
 
   constructor(
-    private http: Http,
+    private http: HttpClient,
     private data: DataService,
     public api: APIService,
     public dialog: MatDialog

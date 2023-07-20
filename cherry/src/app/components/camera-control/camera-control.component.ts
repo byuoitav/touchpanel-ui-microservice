@@ -1,5 +1,5 @@
 import {Component, OnInit, Input, AfterViewInit, ViewChild} from '@angular/core';
-import {Http} from "@angular/http";
+import {HttpClient} from "@angular/common/http";
 import {MatTabGroup} from "@angular/material/tabs";
 
 import {Camera, CameraPreset, Preset} from "../../objects/objects";
@@ -18,7 +18,7 @@ export class CameraControlComponent implements OnInit, AfterViewInit {
   code: string;
   room = APIService.building + "-" + APIService.roomName;
 
-  constructor(private http: Http) {}
+  constructor(private http: HttpClient) {}
 
   ngOnInit() {
     console.log("cameras", this.preset.cameras);

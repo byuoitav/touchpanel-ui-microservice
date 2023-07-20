@@ -1,5 +1,5 @@
 import {Injectable, EventEmitter} from "@angular/core";
-import {Http} from "@angular/http";
+import {HttpClient} from "@angular/common/http";
 
 import {APIService} from "./api.service";
 import {SocketService, MESSAGE, Event} from "./socket.service";
@@ -42,7 +42,7 @@ export class DataService {
   constructor(
     private api: APIService,
     private socket: SocketService,
-    private http: Http
+    private http: HttpClient
   ) {
     this.loaded = new EventEmitter<boolean>();
 

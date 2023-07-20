@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { Http } from '@angular/http';
+import {HttpClient} from "@angular/common/http";
 import { catchError, retry } from 'rxjs/operators';
 import { Recording } from '../../objects/objects';
 
@@ -16,7 +16,7 @@ export class RecordingComponent implements OnInit {
   recordTime = 0;
   recordTimer: any;
 
-  constructor(private http: Http) {}
+  constructor(private http: HttpClient) {}
 
   ngOnInit() {
     if (this.recording != undefined && this.recording.maxTime === undefined) {

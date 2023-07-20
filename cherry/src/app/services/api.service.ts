@@ -1,5 +1,5 @@
 import {Injectable, EventEmitter} from "@angular/core";
-import {Http, Response, Headers, RequestOptions} from "@angular/http";
+import {HttpClient, Response, HttpHeaders, RequestOptions} from "@angular/common/http";
 import {Observable} from "rxjs/Rx";
 import {
   UIConfiguration,
@@ -34,7 +34,7 @@ export class APIService {
   private static localurl: string;
   private static options: RequestOptions;
 
-  constructor(private http: Http) {
+  constructor(private http: HttpClient) {
     this.loaded = new EventEmitter<boolean>();
     this.jsonConvert = new JsonConvert();
     this.jsonConvert.ignorePrimitiveChecks = false;
