@@ -30,6 +30,6 @@
     pointer-events: all;    
 }
 
-/deep/ .mat-button-focus-overlay {
+::ng-deep .mat-button-focus-overlay {
     opacity: 0 !important;
 }
