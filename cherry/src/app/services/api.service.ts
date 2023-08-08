@@ -1,6 +1,6 @@
 import {Injectable, EventEmitter} from "@angular/core";
-import {HttpClient, Response, HttpHeaders, RequestOptions} from "@angular/common/http";
-import {Observable} from "rxjs";
+import {HttpClient, HttpHeaders, HttpParams} from "@angular/common/http";
+import {Observable, of, timeout} from "rxjs";
 import {
   UIConfiguration,
   Room,
@@ -8,11 +8,15 @@ import {
   RoomStatus
 } from "../objects/objects";
 import {Event} from "./socket.service";
-import {JsonConvert, OperationMode, ValueCheckingMode} from "json2typescript";
+import {JsonConvert} from "json2typescript";
 
 import "rxjs/add/operator/map";
 import "rxjs/add/operator/timeout";
 import {deserialize} from "serializer.ts/Serializer";
+import { tap } from "rxjs";
+import { catchError } from "rxjs";
+import { map } from "rxjs";
+import { subscribe } from "diagnostics_channel";
 
 const RETRY_TIMEOUT = 5 * 1000;
 const MONITOR_TIMEOUT = 30 * 1000;
@@ -32,7 +36,7 @@ export class APIService {
 
   public static apihost: string;
   private static localurl: string;
-  private static options: RequestOptions;
+  private static options: {};
 
   constructor(private http: HttpClient) {
     this.loaded = new EventEmitter<boolean>();
@@ -42,7 +46,7 @@ export class APIService {
     if (APIService.options == null) {
       const headers = new Headers();
       headers.append("content-type", "application/json");
-      APIService.options = new RequestOptions({headers: headers});
+      APIService.options = {headers: new HttpHeaders(headers)};
       APIService.localurl = window.location.protocol + "//" + window.location.host;
 
       APIService.room = new Room();
@@ -188,73 +192,88 @@ export class APIService {
     err: Function = func => {},
     after: Function = func => {}
   ): void {
-    this.http
-      .get(url)
-      .map(response => response.json())
-      .subscribe(
-        data => {
-          success();
-        },
-        error => {
-          console.error("error:", error);
-          err();
-        },
-        () => {
-          after();
-        }
-      );
+    this.http.get(url).pipe(
+      tap(data => console.log("got data", data)),
+      catchError(this.handleError("get", [])),
+      //map(response => response.json()),
+    ).subscribe(
+      data => { success(); },
+      error => {
+        console.error("error:", error);
+        err();
+      },
+      () => { after(); }
+
+    
+    );
   }
 
   private getHostname(): Observable<Object> {
-    return this.http
-      .get(APIService.localurl + "/hostname")
-      .map(response => response.json());
+    return this.http.get(APIService.localurl + "/hostname").pipe(
+      tap(data => console.log("got hostname", data)),
+      catchError(this.handleError("getHostname", [])),
+      //map(response => response.json())
+    );
   }
 
   private getPiHostname(): Observable<Object> {
-    return this.http
-      .get(APIService.localurl + "/pihostname")
-      .map(response => response.json());
+    return this.http.get(APIService.localurl + "/pihostname").pipe(
+      tap(data => console.log("got pihostname", data)),
+      catchError(this.handleError("getPiHostname", [])),
+      //map(response => response.json())
+    );
   }
 
   private getAPIUrl(): Observable<Object> {
-    return this.http
-      .get(APIService.localurl + "/api")
-      .map(response => response.json());
+    return this.http.get(APIService.localurl + "/api").pipe(
+      tap(data => console.log("got apiurl", data)),
+      catchError(this.handleError("getAPIUrl", [])),
+      //map(response => response.json())
+    );
   }
 
   private getAPIHealth(): Observable<Object> {
-    return this.http
-      .get(APIService.apihost + ":8000/mstatus")
-      .timeout(RETRY_TIMEOUT)
-      .map(response => response.json());
+    return this.http.get(APIService.apihost + ":8000/mstatus").pipe(
+      tap(data => console.log("got api health", data)),
+      catchError(this.handleError("getAPIHealth", [])),
+      //map(response => response.json())
+      timeout(RETRY_TIMEOUT),
+    );
   }
 
   private getNextAPIUrl(): Observable<Object> {
-    return this.http
-      .get(APIService.localurl + "/nextapi")
-      .map(response => response.json());
+    return this.http.get(APIService.localurl + "/nextapi").pipe(
+      tap(data => console.log("got nextapi", data)),
+      catchError(this.handleError("getNextAPIUrl", [])),
+      //map(response => response.json())
+    );
   }
 
   private getUIConfig(): Observable<Object> {
-    return this.http
-      .get(APIService.localurl + "/uiconfig")
-      .map(response => response.json())
-      .map(res => deserialize<UIConfiguration>(UIConfiguration, res));
+    return this.http.get(APIService.apiurl + "/uiconfig").pipe(
+      tap(data => console.log("got uiconfig", data)),
+      catchError(this.handleError("getUIConfig", [])),
+      //map(response => response.json())
+      map(res => deserialize<UIConfiguration>(UIConfiguration, res))
+    );
   }
-
+  
   private getRoomConfig(): Observable<Object> {
-    return this.http
-      .get(APIService.apiurl + "/configuration")
-      .map(response => response.json())
-      .map(res => deserialize<RoomConfiguration>(RoomConfiguration, res));
+    return this.http.get(APIService.apiurl + "/configuration").pipe(
+      tap(data => console.log("got roomconfig", data)),
+      catchError(this.handleError("getRoomConfig", [])),
+      //map(response => response.json())
+      map(res => deserialize<RoomConfiguration>(RoomConfiguration, res))
+    );
   }
 
   private getRoomStatus(): Observable<Object> {
-    return this.http
-      .get(APIService.apiurl)
-      .map(response => response.json())
-      .map(res => deserialize<RoomStatus>(RoomStatus, res));
+    return this.http.get(APIService.apiurl).pipe(
+      tap(data => console.log("got roomstatus", data)),
+      catchError(this.handleError("getRoomStatus", [])),
+      //map(response => response.json())
+      map(res => deserialize<RoomStatus>(RoomStatus, res))
+    );
   }
 
   public sendEvent(event: Event) {
@@ -271,11 +290,11 @@ export class APIService {
 
     switch (type) {
       case "help":
-        return this.http.post(
-          APIService.localurl + "/help",
-          body,
-          APIService.options
+        return this.http.post(APIService.localurl + "/help ", body, APIService.options).pipe(
+          tap(data => console.log("sent help", data)),
+          catchError(this.handleError('help', []))
         );
+        
       case "confirm":
         return this.http.post(
           APIService.localurl + "/confirmhelp",
@@ -290,4 +309,12 @@ export class APIService {
         );
     }
   }
+
+  private handleError<T>(operation = "operation", result?: T) {
+    return (error: any): Observable<T> => {
+      console.error("error doing ${operation}:", error);
+      return of(result as T);
+    };
+  }
+
 }

@@ -1,7 +1,7 @@
 import {Component, OnInit, Input, AfterViewInit, ViewChild} from '@angular/core';
 import {HttpClient} from "@angular/common/http";
 import {MatTabGroup} from "@angular/material/tabs";
-
+import { map } from 'rxjs';
 import {Camera, CameraPreset, Preset} from "../../objects/objects";
 import { APIService } from '../../services/api.service';
 
@@ -154,6 +154,16 @@ export class CameraControlComponent implements OnInit, AfterViewInit {
   }
 
   getControlKey = () => {
+    this.http.get(window.location.protocol + "//" + window.location.host +"/control-key/" + this.room + "/" + this.preset.name).pipe(
+      map(response => response.json())
+    ).subscribe(
+      data => {
+        this.code = data.ControlKey;
+      }
+    )
+  }
+
+  getControlKey = () => {
     this.http
     .get(window.location.protocol + "//" + window.location.host +"/control-key/" + this.room + "/" + this.preset.name)
     .map(response => response.json()).subscribe(
@@ -163,3 +173,4 @@ export class CameraControlComponent implements OnInit, AfterViewInit {
     )
   }
 }
+ 
