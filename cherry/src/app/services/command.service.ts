@@ -1,7 +1,6 @@
 import { Injectable, EventEmitter, ViewChild, ElementRef } from "@angular/core";
-import {HttpClient, Response, HttpHeaders, RequestOptions, HttpRequest} from "@angular/common/http";
-import { Observable } from "rxjs";
-import { MatSliderChange, MatDialog } from "@angular/material";
+import { HttpClient, HttpRequest } from "@angular/common/http";
+import { MatDialog } from "@angular/material/dialog";
 
 import { APIService } from "./api.service";
 import { DataService } from "./data.service";
@@ -9,17 +8,19 @@ import { Event, BasicDeviceInfo, BasicRoomInfo } from "./socket.service";
 import { Input, Display, AudioDevice } from "../objects/status.objects";
 import { Preset, AudioConfig, ConfigCommand } from "../objects/objects";
 
-import "rxjs/add/operator/map";
-import "rxjs/add/operator/timeout";
+import { Observable, of } from "rxjs";
+import { catchError, tap, timeout } from 'rxjs/operators';
+import { map } from "rxjs";
+import { subscribe } from "diagnostics_channel";
 import { deserialize } from "serializer.ts/Serializer";
 
 const TIMEOUT = 12 * 1000;
 
 class CommandRequest {
-  req: Request;
+  req: HttpRequest<any>;
   delay: number;
 
-  constructor(req: Request, delay?: number) {
+  constructor(req: HttpRequest<any>, delay?: number) {
     this.req = req;
 
     if (delay) {
@@ -32,7 +33,7 @@ class CommandRequest {
 
 @Injectable()
 export class CommandService {
-  private options: RequestOptions;
+  private options: HttpRequest<any>; 
 
   constructor(
     private http: HttpClient,
@@ -42,21 +43,25 @@ export class CommandService {
   ) {
     const headers = new Headers();
     headers.append("content-type", "application/json");
-    this.options = new RequestOptions({ headers: headers });
+    this.options = new HttpRequest<any>("GET", "", {headers: headers});
   }
 
-  private put(data: any): Observable<Object> {
-    return this.http
-      .put(APIService.apiurl, data, this.options)
-      .timeout(TIMEOUT)
-      .map(res => res.json());
+  private put(data:any): Observable<Object> {
+    return this.http.put(APIService.apiurl, data, this.options.body).pipe(
+      timeout(TIMEOUT),
+      tap(res => console.log("PUT response", res)),
+      //map(res => res.json())
+      catchError(this.handleError("put", []))
+    );
   }
 
-  private putWithCustomTimeout(data: any, timeout: number): Observable<Object> {
-    return this.http
-      .put(APIService.apiurl, data, this.options)
-      .timeout(timeout)
-      .map(res => res.json());
+  private putWithCustomTimeout(data: any, timeOut: number): Observable<Object> {
+    return this.http.put(APIService.apiurl, data, this.options.body).pipe(
+      timeout(timeOut),
+      tap(res => console.log("PUT response", res)),
+      //map(res => res.json())
+      catchError(this.handleError("", []))
+    );
   }
 
   public setPower(p: string, displays: Display[]): EventEmitter<boolean> {
@@ -112,12 +117,7 @@ export class CommandService {
     }
 
     const changeInputReq = new CommandRequest(
-      new Request({
-        method: "PUT",
-        url: APIService.apiurl,
-        body: body
-        // TODO add some kind of 'do this based on the response' function
-      })
+      new HttpRequest("PUT", APIService.apiurl, body)
     );
     const requests: CommandRequest[] = [changeInputReq];
 
@@ -486,11 +486,7 @@ export class CommandService {
     console.log("sending power on default body", body);
 
     const powerOnReq = new CommandRequest(
-      new Request({
-        method: "PUT",
-        url: APIService.apiurl,
-        body: body
-      })
+      new HttpRequest("PUT", APIService.apiurl, body)
     );
     const requests: CommandRequest[] = [powerOnReq];
 
@@ -558,40 +554,40 @@ export class CommandService {
   private executeRequest(
     req: CommandRequest,
     maxTries: number,
-    timeout: number
+    timeOut: number
   ): EventEmitter<boolean> {
     const ret: EventEmitter<boolean> = new EventEmitter<boolean>();
     console.log("executing request", req);
 
     setTimeout(() => {
-      this.http
-        .request(req.req)
-        .timeout(timeout)
-        .subscribe(
-          data => {
-            console.log("successfully executed request", req);
-            ret.emit(true);
+      this.http.request(req.req).pipe(
+        timeout(timeOut),
+        catchError(this.handleError("executeRequest", []))
+      ).subscribe(
+        data => {
+          console.log("successfully executed request", req);
+          ret.emit(true);
+          return;
+        },
+        err => {
+          maxTries--;
+
+          if (maxTries === 0) {
+            ret.emit(false);
             return;
-          },
-          err => {
-            maxTries--;
-
-            if (maxTries === 0) {
-              ret.emit(false);
-              return;
-            }
-
-            // retry request
-            console.error(
-              "request (" + req + ") failed. error:",
-              err,
-              ". There are",
-              maxTries,
-              " remaining, retrying in 3 seconds..."
-            );
-            setTimeout(() => this.executeRequest(req, maxTries, timeout), 3000);
           }
-        );
+
+          // retry request
+          console.error(
+            "request (" + req + ") failed. error:",
+            err,
+            ". There are",
+            maxTries,
+            " remaining, retrying in 3 seconds..."
+          );
+          setTimeout(() => this.executeRequest(req, maxTries, timeOut), 3000);
+        }
+      );
     }, req.delay);
 
     return ret;
@@ -600,11 +596,7 @@ export class CommandService {
   private buildRequest(cmd: ConfigCommand): CommandRequest {
     // if we needed logic to create a request, it would be right here!!
     return new CommandRequest(
-      new Request({
-        method: cmd.method,
-        url: APIService.apihost + ":" + cmd.port + "/" + cmd.endpoint,
-        body: cmd.body
-      }),
+      new HttpRequest(cmd.method, APIService.apihost + ":" + cmd.port + "/" + cmd.endpoint, cmd.body),
       cmd.delay
     );
   }
@@ -624,11 +616,7 @@ export class CommandService {
     console.log("sending power off body", body);
 
     const powerOffReq = new CommandRequest(
-      new Request({
-        method: "PUT",
-        url: APIService.apiurl,
-        body: body
-      })
+      new HttpRequest("PUT", APIService.apiurl, body)
     );
     const requests: CommandRequest[] = [powerOffReq];
 
@@ -819,10 +807,7 @@ export class CommandService {
     const config = this.data.getInputConfiguration(via);
 
     // build the request
-    const req = new Request({
-      method: "GET",
-      url: APIService.apihost + ":8014/via/" + config.address + "/" + endpoint
-    });
+    const req = new HttpRequest("GET", APIService.apihost + ":8014/via/" + config.address + "/" + endpoint);
 
     // execute request
     console.log("executing via control request:", req);
@@ -857,4 +842,13 @@ export class CommandService {
 
     this.api.sendEvent(event);
   }
+
+  private handleError<T>(operation = "operation", result?: T) {
+    return (error: any): Observable<T> => {
+      console.error("error doing ${operation}", error);
+
+      return of(result as T);
+    };
+  }
 }
+

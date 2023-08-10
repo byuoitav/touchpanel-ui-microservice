@@ -1,9 +1,8 @@
 import { Injectable, EventEmitter } from "@angular/core";
 import { HttpClient, HttpRequest } from "@angular/common/http";
-import {catchError, timeout} from 'rxjs/operators';
-import {Observable } from "rxjs";
+import { catchError, tap, timeout } from 'rxjs/operators';
+import { Observable } from "rxjs";
 import { of } from "rxjs";
-import { Request } from "express";
 
 import { APIService } from "./api.service";
 import { DataService } from "./data.service";
@@ -141,6 +140,7 @@ export class CommandService {
   private put(data: any): Observable<Object> {
     return this.http.put(APIService.apiurl, data, this.options.body).pipe(
       timeout(TIMEOUT),
+      tap(_ => console.log("put data:", data)),
       catchError(this.handleError("put", []))
     );
   }

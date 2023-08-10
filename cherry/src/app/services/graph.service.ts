@@ -128,69 +128,58 @@ export class GraphService {
    */
   private getDividerSensorStatus() {
     if (this.dividerSensor != null) {
-      this.http
-        .get("http://" + this.dividerSensor.address + ":10000/divider/state")
-        .map(res => res.json())
-        .subscribe(
-          data => {
-            if (data["connected"] != null) {
-              let numChanged: number;
-              do {
-                numChanged = 0;
 
-                for (const connected of data["connected"]) {
-                  if (this.connect(connected)) {
-                    ++numChanged;
-                  }
+      this.http.get("http://" + this.dividerSensor.address + ":10000/divider/state").pipe(
+        //map(res => res.json())
+      ).subscribe(
+        data => {
+          if (data["connected"] != null) {
+            let numChanged: number;
+            do {
+              numChanged = 0;
+
+              for (const connected of data["connected"]) {
+                if (this.connect(connected)) {
+                  ++numChanged;
                 }
-              } while (numChanged > 0);
-            }
-
-            if (data["disconnected"] != null) {
-              for (const disconnected of data["disconnected"]) {
-                this.disconnect(disconnected);
               }
-            }
-          },
-          err => {
-            setTimeout(this.getDividerSensorStatus, 5000);
+            } while (numChanged > 0);
           }
-        );
+
+          if (data["disconnected"] != null) {
+            for (const disconnected of data["disconnected"]) {
+              this.disconnect(disconnected);
+            }
+          }
+        },
+        err => {
+          setTimeout(this.getDividerSensorStatus, 5000);
+        }
+      );
     }
   }
 
   private setCurrentPreset() {
-    this.http
-      .get(
-        "http://" +
-          this.dividerSensor.address +
-          ":10000/divider/preset/" +
-          APIService.piHostname
-      )
-      .map(res => res.json())
-      .subscribe(
-        data => {
-          const preset = this.data.presets.find(
-            p => p.name.toLowerCase() === data.toLowerCase()
+    this.http.get("http://" + this.dividerSensor.address + ":10000/divider/preset/" + APIService.piHostname).pipe(
+      //map(res => res.json())
+    ).subscribe(
+      data => {
+        const preset = this.data.presets.find(
+          p => p.name.toLowerCase() === data.toString().toLowerCase()
           );
 
-          if (preset != null) {
-            console.log("setting initial preset to", preset);
-            this.data.panel.preset = preset;
-          } else {
-            console.error(
-              "current preset response doesn't exist. response: ",
-              data
-            );
-          }
-        },
-        err => {
-          console.log(
-            "failed to get intial preset from divider sensor, trying again..."
-          );
-          setTimeout(this.setCurrentPreset, 5000);
+        if (preset != null) {
+          console.log("setting initial preset to", preset);
+          this.data.panel.preset = preset;
+        } else {
+          console.error("current preset response doesn't exist. response: ", data);
         }
-      );
+      },
+      err => {
+        console.log("failed to get intial preset from divider sensor, trying again...");
+        setTimeout(this.setCurrentPreset, 5000);
+      }
+    );
   }
 
   private getNodeByDisplays(list: Set<string>): Node {

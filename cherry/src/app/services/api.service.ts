@@ -10,8 +10,6 @@ import {
 import {Event} from "./socket.service";
 import {JsonConvert} from "json2typescript";
 
-import "rxjs/add/operator/map";
-import "rxjs/add/operator/timeout";
 import {deserialize} from "serializer.ts/Serializer";
 import { tap } from "rxjs";
 import { catchError } from "rxjs";
