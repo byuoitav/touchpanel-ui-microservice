@@ -1,6 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import {HttpClient} from "@angular/common/http";
-import { catchError, retry } from 'rxjs/operators';
+import { catchError, retry, tap } from 'rxjs/operators';
 import { Recording } from '../../objects/objects';
 
 @Component({
@@ -40,26 +40,28 @@ export class RecordingComponent implements OnInit {
     }
 
     this.http.get(rec.start).pipe(
+      tap(data => console.log("startRecording response:", data)),
       retry(2),
       catchError(err => {
         throw "failed to start recording. " + err
       })
-    ).subscribe(resp => {
+    ).subscribe({
+      next: data => {
+        console.log("started recording", data);
+        this.recordTime = 0;
+        this.recordTimer = setInterval(() => {
+          this.recordTime++;
+          if (this.recordTime >= 60 * this.recording.maxTime) {
+            this.stopRecording(this.recording);
+          }
+        }, 1000);
 
-      console.log("recording started");
-      this.recordTime = 0;
-
-      this.recordTimer = setInterval(() => {
-        this.recordTime++;
-        if (this.recordTime >= 60 * this.recording.maxTime) {
-          this.stopRecording(this.recording);
-        }
-      }, 1000);
-
-      this.isRecording = true;
-
-    }, err => {
-      console.log(err);
+        this.isRecording = true;
+      }, error: error => {
+        console.warn("error", error);
+      }, complete: () => {
+        console.log("complete");
+      }
     });
   }
 
@@ -71,19 +73,21 @@ export class RecordingComponent implements OnInit {
     }
 
     this.http.get(rec.stop).pipe(
+      tap(data => console.log("stopRecording response:", data)),
       retry(2),
       catchError(err => {
         throw "failed to stop recording. " + err
       })
-    ).subscribe(resp => {
-
-      console.log("recording stopped");
-      clearInterval(this.recordTimer);
-
-      this.isRecording = false;
-
-    }, err => {
-      console.log(err);
+    ).subscribe({
+      next: data => {
+        console.log("recording stopped", data);
+        clearInterval(this.recordTimer);
+        this.isRecording = false;
+      }, error: error => {
+        console.warn("error", error);
+      }, complete: () => {
+        console.log("complete");
+      }
     });
   }
 

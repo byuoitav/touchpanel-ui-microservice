@@ -1,13 +1,11 @@
-import {Component, ViewEncapsulation, ViewChild} from "@angular/core";
-import {MatTabChangeEvent, MatDialog} from "@angular/material";
-import {trigger, style, animate, transition} from "@angular/animations";
+import {Component, ViewEncapsulation} from "@angular/core";
+import {MatDialog} from "@angular/material/dialog";
+import {trigger, animate, transition} from "@angular/animations";
 
 import {DataService} from "../services/data.service";
 import {CommandService} from "../services/command.service";
-import {GraphService} from "../services/graph.service";
 import {HelpDialog} from "../dialogs/help.dialog";
 import {Output} from "../objects/status.objects";
-import { AudiocontrolComponent } from "./audiocontrol/audiocontrol.component";
 import { AudioDialog } from "../dialogs/audio.dialog";
 
 const HIDDEN = "hidden";

@@ -1,7 +1,7 @@
 import {Component, OnInit, Input, AfterViewInit, ViewChild} from '@angular/core';
 import {HttpClient} from "@angular/common/http";
 import {MatTabGroup} from "@angular/material/tabs";
-import { map } from 'rxjs';
+import { map, tap} from 'rxjs';
 import {Camera, CameraPreset, Preset} from "../../objects/objects";
 import { APIService } from '../../services/api.service';
 
@@ -42,10 +42,18 @@ export class CameraControlComponent implements OnInit, AfterViewInit {
       return;
     }
 
-    this.http.get(cam.tiltUp).subscribe(resp => {
-      console.log("resp", resp);
-    }, err => {
-      console.warn("err", err);
+    this.http.get(cam.tiltUp).pipe(
+      tap(data => console.log("tiltUp response:", data))
+    ).subscribe({
+      next: data => {
+        console.log("data", data);
+      },
+      error: err => {
+        console.warn("err", err);
+      },
+      complete: () => {
+        console.log("complete");
+      }
     });
   }
 
@@ -55,10 +63,18 @@ export class CameraControlComponent implements OnInit, AfterViewInit {
       return;
     }
 
-    this.http.get(cam.tiltDown).subscribe(resp => {
-      console.log("resp", resp);
-    }, err => {
-      console.warn("err", err);
+    this.http.get(cam.tiltDown).pipe(
+      tap(data => console.log("tiltDown response:", data))
+    ).subscribe({
+      next: data => {
+        console.log("data", data);
+      },
+      error: err => {
+        console.warn("err", err);
+      },
+      complete: () => {
+        console.log("complete");
+      }
     });
   }
 
@@ -68,10 +84,18 @@ export class CameraControlComponent implements OnInit, AfterViewInit {
       return;
     }
 
-    this.http.get(cam.panLeft).subscribe(resp => {
-      console.log("resp", resp);
-    }, err => {
-      console.warn("err", err);
+    this.http.get(cam.panLeft).pipe(
+      tap(data => console.log("panLeft response:", data))
+    ).subscribe({
+      next: data => {
+        console.log("data", data);
+      },
+      error: err => {
+        console.warn("err", err);
+      },
+      complete: () => {
+        console.log("complete");
+      }
     });
   }
 
@@ -81,10 +105,18 @@ export class CameraControlComponent implements OnInit, AfterViewInit {
       return;
     }
 
-    this.http.get(cam.panRight).subscribe(resp => {
-      console.log("resp", resp);
-    }, err => {
-      console.warn("err", err);
+    this.http.get(cam.panRight).pipe(
+      tap(data => console.log("panRight response:", data))
+    ).subscribe({
+      next: data => {
+        console.log("data", data);
+      },
+      error: err => {
+        console.warn("err", err);
+      },
+      complete: () => {
+        console.log("complete");
+      }
     });
   }
 
@@ -94,10 +126,18 @@ export class CameraControlComponent implements OnInit, AfterViewInit {
       return;
     }
 
-    this.http.get(cam.panTiltStop).subscribe(resp => {
-      console.log("resp", resp);
-    }, err => {
-      console.warn("err", err);
+    this.http.get(cam.panTiltStop).pipe(
+      tap(data => console.log("panTiltStop response:", data))
+    ).subscribe({
+      next: data => {
+        console.log("data", data);
+      },
+      error: err => {
+        console.warn("err", err);
+      },
+      complete: () => {
+        console.log("complete");
+      }
     });
   }
 
@@ -107,10 +147,18 @@ export class CameraControlComponent implements OnInit, AfterViewInit {
       return;
     }
 
-    this.http.get(cam.zoomIn).subscribe(resp => {
-      console.log("resp", resp);
-    }, err => {
-      console.warn("err", err);
+    this.http.get(cam.zoomIn).pipe(
+      tap(data => console.log("zoomIn response:", data))
+    ).subscribe({
+      next: data => {
+        console.log("data", data);
+      },
+      error: err => {
+        console.warn("err", err);
+      },
+      complete: () => {
+        console.log("complete");
+      }
     });
   }
 
@@ -120,10 +168,18 @@ export class CameraControlComponent implements OnInit, AfterViewInit {
       return;
     }
 
-    this.http.get(cam.zoomOut).subscribe(resp => {
-      console.log("resp", resp);
-    }, err => {
-      console.warn("err", err);
+    this.http.get(cam.zoomOut).pipe(
+      tap(data => console.log("zoomOut response:", data))
+    ).subscribe({
+      next: data => {
+        console.log("data", data);
+      },
+      error: err => {
+        console.warn("err", err);
+      },
+      complete: () => {
+        console.log("complete");
+      }
     });
   }
 
@@ -133,10 +189,18 @@ export class CameraControlComponent implements OnInit, AfterViewInit {
       return;
     }
 
-    this.http.get(cam.zoomStop).subscribe(resp => {
-      console.log("resp", resp);
-    }, err => {
-      console.warn("err", err);
+    this.http.get(cam.zoomStop).pipe(
+      tap(data => console.log("zoomStop response:", data))
+    ).subscribe({
+      next: data => {
+        console.log("data", data);
+      },
+      error: err => {
+        console.warn("err", err);
+      },
+      complete: () => {
+        console.log("complete");
+      }
     });
   }
 
@@ -146,31 +210,38 @@ export class CameraControlComponent implements OnInit, AfterViewInit {
       return;
     }
 
-    this.http.get(preset.setPreset).subscribe(resp => {
-      console.log("resp", resp);
-    }, err => {
-      console.warn("err", err);
+    this.http.get(preset.setPreset).pipe(
+      tap(data => console.log("selectPreset response:", data))
+    ).subscribe({
+      next: data => {
+        console.log("data", data);
+      },
+      error: err => {
+        console.warn("err", err);
+      },
+      complete: () => {
+        console.log("complete");
+      }
     });
   }
 
   getControlKey = () => {
     this.http.get(window.location.protocol + "//" + window.location.host +"/control-key/" + this.room + "/" + this.preset.name).pipe(
-      map(response => response.json())
-    ).subscribe(
-      data => {
-        this.code = data.ControlKey;
+      tap(data => console.log("getControlKey response:", data)),
+      map(response => response)
+    ).subscribe({
+      next: data => {
+        console.log("data", data);
+        this.code = data["code"];
+      },
+      error: err => {
+        console.warn("err", err);
+      },
+      complete: () => {
+        console.log("complete");
       }
-    )
+    });
   }
 
-  getControlKey = () => {
-    this.http
-    .get(window.location.protocol + "//" + window.location.host +"/control-key/" + this.room + "/" + this.preset.name)
-    .map(response => response.json()).subscribe(
-      data => {
-        this.code = data.ControlKey;
-      }
-    )
-  }
 }
  

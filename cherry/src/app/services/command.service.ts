@@ -9,7 +9,7 @@ import { Input, Display, AudioDevice } from "../objects/status.objects";
 import { Preset, AudioConfig, ConfigCommand } from "../objects/objects";
 
 import { Observable, of } from "rxjs";
-import { catchError, tap, timeout } from 'rxjs/operators';
+import { catchError, takeWhile, tap, timeout } from 'rxjs/operators';
 import { map } from "rxjs";
 import { subscribe } from "diagnostics_channel";
 import { deserialize } from "serializer.ts/Serializer";
@@ -50,7 +50,7 @@ export class CommandService {
     return this.http.put(APIService.apiurl, data, this.options.body).pipe(
       timeout(TIMEOUT),
       tap(res => console.log("PUT response", res)),
-      //map(res => res.json())
+      map(res => res),
       catchError(this.handleError("put", []))
     );
   }
@@ -59,7 +59,7 @@ export class CommandService {
     return this.http.put(APIService.apiurl, data, this.options.body).pipe(
       timeout(timeOut),
       tap(res => console.log("PUT response", res)),
-      //map(res => res.json())
+      map(res => res),
       catchError(this.handleError("", []))
     );
   }
@@ -165,15 +165,24 @@ export class CommandService {
       });
     }
 
-    this.put(body).subscribe(
-      data => {
+    this.put(body).pipe(
+      timeout(TIMEOUT),
+      tap(res => console.log("PUT response", res))
+    ).subscribe({
+      next: data => {
+
         ret.emit(true);
+        console.log("next", data);
       },
-      err => {
+      error: err => {
         Display.setBlank(prev, displays);
         ret.emit(false);
+        console.warn("error setting blank", err);
+      },
+      complete: () => {
+        console.log("complete");
       }
-    );
+    });
 
     return ret;
   }
@@ -197,15 +206,24 @@ export class CommandService {
 
     console.log("volume body", body);
 
-    this.put(body).subscribe(
-      data => {
+    this.put(body).pipe(
+      timeout(TIMEOUT),
+      tap(res => console.log("PUT response", res))
+    ).subscribe({
+      next: data => {
         ret.emit(true);
+        console.log("next", data);
       },
-      err => {
+      error: err => {
+
         AudioDevice.setVolume(prev, audioDevices);
         ret.emit(false);
+        console.warn("error setting volume", err);
+      },
+      complete: () => {
+        console.log("complete");
       }
-    );
+    });
 
     return ret;
   }
@@ -227,15 +245,23 @@ export class CommandService {
       });
     }
 
-    this.put(body).subscribe(
-      data => {
+    this.put(body).pipe(
+      timeout(TIMEOUT),
+      tap(res => console.log("PUT response", res))
+    ).subscribe({
+      next: data => {
         ret.emit(true);
+        console.log("next", data);
       },
-      err => {
+      error: err => {
         AudioDevice.setMute(prev, audioDevices);
         ret.emit(false);
+        console.warn("error setting mute", err);
+      },
+      complete: () => {
+        console.log("complete");
       }
-    );
+    });
 
     return ret;
   }
@@ -262,16 +288,24 @@ export class CommandService {
       });
     }
 
-    this.put(body).subscribe(
-      data => {
+    this.put(body).pipe(
+      timeout(TIMEOUT),
+      tap(res => console.log("PUT response", res))
+    ).subscribe({
+      next: data => {
         ret.emit(true);
+        console.log("next", data);
       },
-      err => {
+      error: err => {
         AudioDevice.setMute(prevMute, audioDevices);
         AudioDevice.setVolume(prevVol, audioDevices);
         ret.emit(false);
+        console.warn("error setting mute and volume", err);
+      },
+      complete: () => {
+        console.log("complete");
       }
-    );
+    });
 
     return ret;
   }
@@ -294,9 +328,12 @@ export class CommandService {
 
     console.log("volume body", body);
 
-    this.put(body).subscribe(
-      data => {
-        // post master volume update
+    this.put(body).pipe(
+      timeout(TIMEOUT),
+      tap(res => console.log("PUT response", res))
+    ).subscribe({
+      // post master volume change event
+      next: data => {
         const event = new Event();
 
         event.User = APIService.piHostname;
@@ -313,12 +350,17 @@ export class CommandService {
 
         this.api.sendEvent(event);
         ret.emit(true);
+        console.log("next", data);
       },
-      err => {
+      error: err => {
         preset.masterVolume = prev;
         ret.emit(false);
+        console.warn("error setting master volume", err);
+      },
+      complete: () => {
+        console.log("complete");
       }
-    );
+    });
 
     return ret;
   }
@@ -340,8 +382,11 @@ export class CommandService {
 
     console.log("master mute body", body);
 
-    this.put(body).subscribe(
-      data => {
+    this.put(body).pipe(
+      timeout(TIMEOUT),
+      tap(res => console.log("PUT response", res))
+    ).subscribe({
+      next: data => {
         const event = new Event();
 
         event.User = APIService.piHostname;
@@ -358,13 +403,19 @@ export class CommandService {
 
         this.api.sendEvent(event);
         ret.emit(true);
+        console.log("next", data);
       },
-      err => {
+      error: err => {
         preset.masterMute = prev;
         ret.emit(false);
+        console.warn("error setting master mute", err);
+      },
+      complete: () => {
+        console.log("complete");
       }
-    );
+    });
 
+    
     return ret;
   }
 
@@ -387,8 +438,11 @@ export class CommandService {
 
     console.log("volume body", body);
 
-    this.put(body).subscribe(
-      data => {
+    this.put(body).pipe(
+      timeout(TIMEOUT),
+      tap(res => console.log("PUT response", res))
+    ).subscribe({
+      next: data => {
         const event = new Event();
 
         event.User = APIService.piHostname;
@@ -404,13 +458,19 @@ export class CommandService {
 
         this.api.sendEvent(event);
         ret.emit(true);
+        console.log("next", data);
       },
-      err => {
+      error: err => {
         a.mixlevel = prev;
         ret.emit(false);
+        console.warn("error setting mix level", err);
+      },
+      complete: () => {
+        console.log("complete");
       }
-    );
+    });
 
+  
     return ret;
   }
 
@@ -434,27 +494,36 @@ export class CommandService {
 
     console.log("mix mute body:", body);
 
-    this.put(body).subscribe(
-      data => {
+    this.put(body).pipe(
+      timeout(TIMEOUT),
+      tap(res => console.log("PUT response", res))
+    ).subscribe({
+      next: data => {
         const event = new Event();
 
         event.User = APIService.piHostname;
         event.EventTags = ["ui-communication"];
         event.AffectedRoom = new BasicRoomInfo(
-          APIService.building + "-" + APIService.roomName + "-" + a.name
+          APIService.building + "-" + APIService.roomName + "-" + preset.name
         );
         event.Key = "mix-mute";
         event.Value = String(m);
+        event.Data = preset.name;
 
         this.api.sendEvent(event);
 
         ret.emit(true);
+        console.log("next", data);
       },
-      err => {
+      error: err => {
         a.mixmute = prev;
         ret.emit(false);
+        console.warn("error setting mix mute", err);
+      },
+      complete: () => {
+        console.log("complete");
       }
-    );
+    });
 
     return ret;
   }
@@ -560,16 +629,17 @@ export class CommandService {
     console.log("executing request", req);
 
     setTimeout(() => {
+
       this.http.request(req.req).pipe(
         timeout(timeOut),
         catchError(this.handleError("executeRequest", []))
-      ).subscribe(
-        data => {
+      ).subscribe({
+        next: data => {
           console.log("successfully executed request", req);
           ret.emit(true);
           return;
         },
-        err => {
+        error: err => {
           maxTries--;
 
           if (maxTries === 0) {
@@ -586,8 +656,12 @@ export class CommandService {
             " remaining, retrying in 3 seconds..."
           );
           setTimeout(() => this.executeRequest(req, maxTries, timeOut), 3000);
+        },
+        complete: () => {
+          console.log("complete");
         }
-      );
+      });
+
     }, req.delay);
 
     return ret;
@@ -638,14 +712,22 @@ export class CommandService {
 
     const body = { power: "standby" };
 
-    this.put(body).subscribe(
-      data => {
+    this.put(body).pipe(
+      timeout(20 * 1000),
+      catchError(this.handleError("powerOffAll", []))
+    ).subscribe({
+      next: data => {
         ret.emit(true);
+        console.log("power off all success", data);
       },
-      err => {
+      error: err => {
         ret.emit(false);
+        console.error("power off all error", err);
+      },  
+      complete: () => {
+        console.log("power off all complete");
       }
-    );
+    });
 
     return ret;
   }
@@ -811,14 +893,23 @@ export class CommandService {
 
     // execute request
     console.log("executing via control request:", req);
-    this.http.request(req).subscribe(
-      data => {
+
+    this.http.request(req).pipe(
+      timeout(20 * 1000),
+      catchError(this.handleError("viaControl", []))
+    ).subscribe({
+      next: data => {
         ret.emit(true);
+        console.log("via control success", data);
       },
-      err => {
+      error: err => {
         ret.emit(false);
+        console.error("via control error", err);
+      },
+      complete: () => {
+        console.log("via control complete");
       }
-    );
+    });
 
     return ret;
   }

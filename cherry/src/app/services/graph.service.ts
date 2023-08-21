@@ -5,6 +5,8 @@ import { DeviceConfiguration } from "../objects/objects";
 import { APIService } from "./api.service";
 import { DataService } from "./data.service";
 import { SocketService, MESSAGE, Event } from "./socket.service";
+import { map, tap, Observable, of, catchError } from "rxjs"
+import * as e from "express";
 
 /*
  *
@@ -128,11 +130,13 @@ export class GraphService {
    */
   private getDividerSensorStatus() {
     if (this.dividerSensor != null) {
-
+      
       this.http.get("http://" + this.dividerSensor.address + ":10000/divider/state").pipe(
-        //map(res => res.json())
-      ).subscribe(
-        data => {
+        map(res => res),  
+        tap(res => console.log("getDividerSensorStatus", res)),
+        catchError(this.handleError("getDividerSensorStatus", []))
+      ).subscribe({
+        next: data => {
           if (data["connected"] != null) {
             let numChanged: number;
             do {
@@ -152,18 +156,26 @@ export class GraphService {
             }
           }
         },
-        err => {
+        error: err => {
           setTimeout(this.getDividerSensorStatus, 5000);
+          console.warn("failed to get divider sensor status, trying again in 5 seconds", err);
+        },
+        complete: () => {
+          console.log("completed getting divider sensor status");
         }
-      );
+
+      });
     }
   }
 
   private setCurrentPreset() {
+
     this.http.get("http://" + this.dividerSensor.address + ":10000/divider/preset/" + APIService.piHostname).pipe(
-      //map(res => res.json())
-    ).subscribe(
-      data => {
+      map(res => res),
+      tap(res => console.log("setCurrentPreset", res)),
+      catchError(this.handleError("setCurrentPreset", []))
+    ).subscribe({
+      next: data => {
         const preset = this.data.presets.find(
           p => p.name.toLowerCase() === data.toString().toLowerCase()
           );
@@ -175,11 +187,14 @@ export class GraphService {
           console.error("current preset response doesn't exist. response: ", data);
         }
       },
-      err => {
-        console.log("failed to get intial preset from divider sensor, trying again...");
+      error: err => {
+        console.warn("failed to get intial preset from divider sensor, trying again...", err);
         setTimeout(this.setCurrentPreset, 5000);
+      },
+      complete: () => {
+        console.log("completed setting current preset");
       }
-    );
+    });
   }
 
   private getNodeByDisplays(list: Set<string>): Node {
@@ -276,6 +291,15 @@ export class GraphService {
       }
     });
   }
+
+  private handleError<T>(operation = "operation", result?: T) {
+    return (error: any): Observable<T> => {
+      console.error("error doing ${operation}", error);
+
+      return of(result as T);
+    };
+  }
+
 }
 
 /*

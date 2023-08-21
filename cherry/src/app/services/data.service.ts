@@ -22,6 +22,9 @@ import {
   MUTED
 } from "../objects/status.objects";
 
+import { catchError, tap } from "rxjs/operators";
+import { Observable, of } from "rxjs";
+
 const PRESET_SWITCH = "preset-switch";
 
 @Injectable()
@@ -314,37 +317,36 @@ export class DataService {
       return;
     }
 
-    this.http
-      .get(
-        "http://" +
-        this.dividerSensor.address +
-        ":10000/divider/preset/" +
-        APIService.piHostname
-      )
-      .subscribe(
-        data => {
-          const body = (<any>data)._body;
-          const preset = this.presets.find(
-            p => p.name.toLowerCase() === body.toLowerCase()
-          );
+    this.http.get("http://" + this.dividerSensor.address + ":10000/divider/preset/" + APIService.piHostname).pipe(
+      tap(data => {console.log(data);}),
+      catchError(this.handleError("getCurrentPreset", []))
+    ).subscribe({
+      next: data => {
+        const body = (<any>data)._body;
+        const preset = this.presets.find(
+          p => p.name.toLowerCase() === body.toLowerCase()
+        );
 
-          if (preset != null) {
-            console.log("setting initial preset to", preset);
-            this.panel.preset = preset;
-          } else {
-            console.error(
-              "current preset response doesn't exist. response: ",
-              data
-            );
-          }
-        },
-        err => {
-          console.log(
-            "failed to get intial preset from divider sensor, trying again..."
+        if (preset != null) {
+          console.log("setting initial preset to", preset);
+          this.panel.preset = preset;
+        } else {
+          console.error(
+            "current preset response doesn't exist. response: ",
+            data
           );
-          setTimeout(this.setCurrentPreset, 5000);
         }
-      );
+      },
+      error: err => {
+        console.log(
+          "failed to get intial preset from divider sensor, trying again...", err
+        );
+        setTimeout(this.setCurrentPreset, 5000);
+      },
+      complete: () => {
+        console.log("complete");
+      }
+    });
   };
 
   private update() {
@@ -509,4 +511,13 @@ export class DataService {
       }
     }
   }
+
+  private handleError<T>(operation = "operation", result?: T) {
+    return (error: any): Observable<T> => {
+      console.error("error doing ${operation}", error);
+
+      return of(result as T);
+    };
+  }
+
 }

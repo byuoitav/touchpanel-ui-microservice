@@ -4,13 +4,10 @@ import {
   Output,
   EventEmitter,
   ViewEncapsulation,
-  ElementRef,
   ViewChild
 } from "@angular/core";
-import { MatSlider } from "@angular/material";
+import { MatSlider } from "@angular/material/slider";
 
-import { CommandService } from "../../services/command.service";
-import { AudioDevice } from "../../objects/status.objects";
 
 @Component({
   selector: "volume",

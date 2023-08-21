@@ -10,7 +10,6 @@ import {MatTabGroup} from "@angular/material/tabs";
 
 import {CommandService} from "../../services/command.service";
 import {Preset} from "../../objects/objects";
-import {AudioDevice} from "../../objects/status.objects";
 
 @Component({
   selector: "audiocontrol",

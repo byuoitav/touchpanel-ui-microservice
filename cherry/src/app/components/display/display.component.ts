@@ -1,14 +1,13 @@
-import { Component, Input as AngularInput, AfterViewInit } from "@angular/core";
-import { MatDialog } from "@angular/material";
+import { Component, Input as AngularInput } from "@angular/core";
+import { MatDialog } from "@angular/material/dialog";
 
 import { DataService } from "../../services/data.service";
 import { CommandService } from "../../services/command.service";
 import { ViaDialog } from "../../dialogs/via.dialog";
 
-import { Preset, Panel } from "../../objects/objects";
-import { Display, AudioDevice, Input } from "../../objects/status.objects";
+import { Panel } from "../../objects/objects";
+import { Display, Input } from "../../objects/status.objects";
 import { StreamModalComponent } from "../../dialogs/streammodal/streammodal.component";
-import { isUndefined } from "util";
 
 @Component({
   selector: "display",

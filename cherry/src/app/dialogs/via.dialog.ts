@@ -2,7 +2,6 @@ import { Component, Inject } from "@angular/core";
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from "@angular/material/dialog";
 
 import { CommandService } from "../services/command.service";
-import { ConfirmHelpDialog } from "./confirmhelp.dialog";
 
 @Component({
   selector: "help",
