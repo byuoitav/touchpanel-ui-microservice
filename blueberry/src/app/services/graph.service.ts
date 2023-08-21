@@ -112,8 +112,8 @@ export class GraphService {
     if (this.dividerSensor != null) {
 
       this.http.get("http://" + this.dividerSensor.address + ":10000/divider/state").pipe(
-      ).subscribe(
-        data => {
+      ).subscribe({
+        next: data => {
           if (data["connected"] != null) {
             let numChanged: number;
             do {
@@ -133,10 +133,14 @@ export class GraphService {
             }
           }
         },
-        err => {
+        error: err => {
+          console.error("error getting divider sensor status", err);
           setTimeout(this.getDividerSensorStatus, 5000);
-        }
-      );
+        },
+        complete: () => {
+          setTimeout(this.getDividerSensorStatus, 5000);
+        } 
+      });
     }
   }
 

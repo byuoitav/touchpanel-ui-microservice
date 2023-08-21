@@ -39,11 +39,15 @@ export class HelpModal implements OnInit {
     return new Promise<boolean>((resolve, reject) => {
       this.api.help("help").subscribe({
         next: data => {
+          console.log("help requested", data);
           resolve(true);
         },
         error: err => {
           console.error("failed to request help", err);
           resolve(false);
+        },
+        complete: () => {
+          console.log("help request completed");
         }
       });
     });

@@ -6,8 +6,6 @@ import {
 } from "angular2-websocket/angular2-websocket";
 import {
   JsonConvert,
-  OperationMode,
-  ValueCheckingMode,
   JsonObject,
   JsonProperty,
   Any,

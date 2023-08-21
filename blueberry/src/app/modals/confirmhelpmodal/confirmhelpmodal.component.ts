@@ -28,11 +28,15 @@ export class ConfirmHelpModal implements OnInit {
     return new Promise<boolean>((resolve, reject) => {
       this.api.help("cancel").subscribe({
         next: data => {
+          console.log("help canceled", data);
           resolve(true);
         },
         error: err => {
           console.error("failed to cancel help:", err);
           resolve(false);
+        },
+        complete: () => {
+          console.log("help cancel completed");
         }
       });
     });
@@ -47,11 +51,15 @@ export class ConfirmHelpModal implements OnInit {
     return new Promise<boolean>((resolve, reject) => {
       this.api.help("confirm").subscribe({
         next: data => {
+          console.log("help confirmed", data);
           resolve(true);
         },
         error: err => {
           console.error("failed to cancel help:", err);
           resolve(false);
+        },
+        complete: () => {
+          console.log("help confirm completed");
         }
       });
     });

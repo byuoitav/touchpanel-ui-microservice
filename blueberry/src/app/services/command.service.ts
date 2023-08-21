@@ -93,16 +93,19 @@ export class CommandService {
     console.log("executing request", req);
 
     setTimeout(() => {
+
+
       this.http.request(req.req).pipe(
         timeout(timeOut),
         catchError(this.handleError("executeRequest", []))
-      ).subscribe(
-        data => {
+      ).subscribe({
+        next: data => {
           console.log("successfully executed request", req);
+          console.log("data", data);
           ret.emit(true);
           return;
         },
-        err => {
+        error: err => {
           maxTries--;
 
           if (maxTries === 0) {
@@ -120,8 +123,11 @@ export class CommandService {
           );
 
           setTimeout(() => this.executeRequest(req, maxTries, timeOut), 3000);
+        },
+        complete: () => {
+          console.log("request completed");
         }
-      );
+      });
     }, req.delay);
 
     return ret;
@@ -166,15 +172,20 @@ export class CommandService {
       });
     }
 
-    this.put(body).subscribe(
-      data => {
+    this.put(body).subscribe({
+      next: data => {
+        console.log("put data", data);
         ret.emit(true);
       },
-      err => {
-        Display.setPower(p, displays);
+      error: err => {
+        console.error("put error", err);
+        Display.setPower(prev, displays);
         ret.emit(false);
+      },
+      complete: () => {
+        console.log("put completed");
       }
-    );
+    });
 
     return ret;
   }
@@ -195,15 +206,20 @@ export class CommandService {
       });
     }
 
-    this.put(body).subscribe(
-      data => {
+    this.put(body).subscribe({
+      next: data => {
+        console.log("put data", data);
         ret.emit(true);
       },
-      err => {
+      error: err => {
+        console.error("put error", err);
         Display.setInput(prev, displays);
         ret.emit(false);
+      },
+      complete: () => {
+        console.log("put completed");
       }
-    );
+    });
 
     return ret;
   }
@@ -222,15 +238,20 @@ export class CommandService {
       });
     }
 
-    this.put(body).subscribe(
-      data => {
+    this.put(body).subscribe({
+      next: data => {
+        console.log("put data", data);
         ret.emit(true);
       },
-      err => {
+      error: err => {
+        console.error("put error", err);
         Display.setBlank(prev, displays);
         ret.emit(false);
+      },
+      complete: () => {
+        console.log("put completed");
       }
-    );
+    });
 
     return ret;
   }
@@ -252,15 +273,21 @@ export class CommandService {
 
     console.log("volume body", body);
 
-    this.put(body).subscribe(
-      data => {
+
+    this.put(body).subscribe({
+      next: data => {
+        console.log("put data", data);
         ret.emit(true);
       },
-      err => {
+      error: err => {
+        console.error("put error", err);
         AudioDevice.setVolume(prev, devices);
         ret.emit(false);
+      },
+      complete: () => {
+        console.log("put completed");
       }
-    );
+    });
 
     return ret;
   }
@@ -280,15 +307,20 @@ export class CommandService {
       });
     }
 
-    this.put(body).subscribe(
-      data => {
+    this.put(body).subscribe({
+      next: data => {
+        console.log("put data", data);
         ret.emit(true);
       },
-      err => {
+      error: err => {
+        console.error("put error", err);
         AudioDevice.setMute(prev, devices);
         ret.emit(false);
+      },
+      complete: () => {
+        console.log("put completed");
       }
-    );
+    });
 
     return ret;
   }
@@ -378,14 +410,20 @@ export class CommandService {
 
     const body = { power: "standby" };
 
-    this.put(body).subscribe(
-      data => {
+
+    this.put(body).subscribe({
+      next: data => {
+        console.log("put data", data);
         ret.emit(true);
       },
-      err => {
+      error: err => {
+        console.error("put error", err);
         ret.emit(false);
+      },
+      complete: () => {
+        console.log("put completed");
       }
-    );
+    });
 
     return ret;
   }
@@ -452,14 +490,19 @@ export class CommandService {
     }
 
     console.log("share body:", body);
-    this.putWithCustomTimeout(body, 20 * 1000).subscribe(
-      data => {
+    this.putWithCustomTimeout(body, 20 * 1000).subscribe({
+      next: data => {
+        console.log("share", data);
         ret.emit(true);
       },
-      err => {
+      error: err => {
+        console.error("share", err);
         ret.emit(false);
+      },
+      complete: () => {
+        console.log("share completed");
       }
-    );
+    });
 
     return ret;
   }
@@ -509,15 +552,20 @@ export class CommandService {
     */
 
     console.log("unshare body", body);
-    this.putWithCustomTimeout(body, 20 * 1000).subscribe(
-      data => {
+    this.putWithCustomTimeout(body, 20 * 1000).subscribe({
+      next: data => {
+        console.log("unshare", data);
         ret.emit(true);
       },
-      err => {
+      error: err => {
+        console.error("unshare", err);
         ret.emit(false);
+      },
+      complete: () => {
+        console.log("unshare completed");
       }
-    );
-
+    });
+    
     return ret;
   }
 
@@ -539,16 +587,19 @@ export class CommandService {
     }
 
     console.log("mirror body", body);
-
-    this.put(body).subscribe(
-      data => {
+    this.put(body).subscribe({
+      next: data => {
+        console.log("mirror", data);
         ret.emit(true);
       },
-      err => {
+      error: err => {
+        console.error("mirror", err);
         ret.emit(false);
-        console.error(err);
+      },
+      complete: () => {
+        console.log("mirror completed");
       }
-    );
+    });
 
     return ret;
   }
