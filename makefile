@@ -72,17 +72,17 @@ ifeq (${COMMIT_HASH}, ${TAG})
 	@echo Building dev containers with tag ${COMMIT_HASH}
 
 	@echo Building container ${DOCKER_PKG}/${NAME}-dev:${COMMIT_HASH}
-	@docker build dockerfile --build-arg NAME=${NAME}-arm -t ${DOCKER_PKG}/${NAME}-dev:${COMMIT_HASH} dist
+	@docker build -f Dockerfile --build-arg NAME=${NAME}-arm -t ${DOCKER_PKG}/${NAME}-dev:${COMMIT_HASH} dist
 else ifneq ($(shell echo ${TAG} | grep -x -E ${DEV_TAG_REGEX}),)
 	@echo Building dev containers with tag ${TAG}
 
 	@echo Building container ${DOCKER_PKG}/${NAME}-dev:${TAG}
-	@docker build dockerfile --build-arg NAME=${NAME}-arm -t ${DOCKER_PKG}/${NAME}-dev:${TAG} dist
+	@docker build -f Dockerfile --build-arg NAME=${NAME}-arm -t ${DOCKER_PKG}/${NAME}-dev:${TAG} dist
 else ifneq ($(shell echo ${TAG} | grep -x -E ${PRD_TAG_REGEX}),)
 	@echo Building prd containers with tag ${TAG}
 
 	@echo Building container ${DOCKER_PKG}/${NAME}:${TAG}
-	@docker build dockerfile --build-arg NAME=${NAME}-arm -t ${DOCKER_PKG}/${NAME}:${TAG} dist
+	@docker build -f Dockerfile --build-arg NAME=${NAME}-arm -t ${DOCKER_PKG}/${NAME}:${TAG} dist
 endif
 
 deploy: docker
