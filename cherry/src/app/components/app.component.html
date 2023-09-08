@@ -23,7 +23,7 @@
 			</ng-template>
 		</div>
 
-		<div class="buttons bottom corner" *ngIf="isPoweredOff() && !unlocking && this.data.preset?.independentAudioDevices?.length > 0">
+		<div class="buttons bottom corner" *ngIf="isPoweredOff() && !unlocking && data?.panel?.preset?.independentAudioDevices?.length > 0">
 			<button
 				mat-fab
 				class="independentAudio button"

@@ -16,6 +16,7 @@ import { UiSwitchModule } from "ngx-ui-switch";
 import { SweetAlert2Module } from "@toverux/ngx-sweetalert2";
 import "hammerjs";
 
+
 import { AppComponent } from "./components/app.component";
 import { HomeComponent } from "./components/home.component";
 import { WheelComponent } from "./components/wheel.component";
@@ -86,4 +87,5 @@ import { StreamModalComponent } from "./modals/streammodal/streammodal.component
   ],
   bootstrap: [AppComponent]
 })
+
 export class AppModule {}
