@@ -18,5 +18,8 @@
     ],
     "module": "ES2022",
     "baseUrl": "./"
+  },
+  "angularCompilerOptions": {
+    "disableTypeScriptVersionCheck": true
   }
 }

@@ -18,5 +18,8 @@
       "dom"
     ],
     "module": "ES2022"
+  },
+  "angularCompilerOptions": {
+    "disableTypeScriptVersionCheck": true
   }
 }
