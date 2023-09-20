@@ -56,21 +56,31 @@ export class APIService {
   }
 
   private setupHostname() {
-    this.getHostname().subscribe(
-      data => {
+    this.getHostname().pipe(
+      tap(data => console.log("got hostname", data)),
+      catchError(this.handleError('setupHostname', [])),
+      map(response => response)
+    ).subscribe({
+      next: data => {
         APIService.hostname = String(data);
         this.setupPiHostname();
       },
-      err => {
+      error: err => {
         setTimeout(() => this.setupHostname(), RETRY_TIMEOUT);
-      }
-    );
+      },
+      complete: () => console.log('done')
+    });
   }
+  
 
   // hostname, building, room
   private setupPiHostname() {
-    this.getPiHostname().subscribe(
-      data => {
+    this.getPiHostname().pipe(
+      tap(data => console.log("got pi hostname", data)),
+      catchError(this.handleError('setupPiHostname', [])),
+      map(response => response)
+    ).subscribe({
+      next: data => {
         APIService.piHostname = String(data);
 
         const split = APIService.piHostname.split("-");
@@ -79,97 +89,119 @@ export class APIService {
 
         this.setupAPIUrl(false);
       },
-      err => {
+      error: err => {
         setTimeout(() => this.setupPiHostname(), RETRY_TIMEOUT);
-      }
-    );
+        console.error("error getting pi hostname", err);
+      },
+      complete: () => console.log('done')
+    });
   }
 
   private setupAPIUrl(next: boolean) {
-    if (next) {
+    if (next){
       console.warn("switching to next api");
-      this.getNextAPIUrl().subscribe(
-        data => {},
-        err => {
+      this.getNextAPIUrl().pipe(
+        tap(data => console.log("got next api url", data)),
+        catchError(this.handleError('setupAPIUrl', [])),  
+      ).subscribe({
+        next: data => {},
+        error: err => {
           setTimeout(() => this.setupAPIUrl(next), RETRY_TIMEOUT);
-        }
-      );
+          console.error("error getting next api url", err);
+        },
+        complete: () => console.log('done')
+      });
     }
 
-    this.getAPIUrl().subscribe(
-      data => {
+    this.getAPIUrl().pipe(
+      tap(data => console.log("got api url", data)),
+      catchError(this.handleError('setupAPIUrl', [])),
+    ).subscribe({
+      next: data => {
         APIService.apihost = "http://" + location.hostname;
         if (!data["hostname"].includes("localhost")) {
           APIService.apihost = "http://" + data["hostname"];
         }
 
-        APIService.apiurl =
-          APIService.apihost +
-          ":8000/buildings/" +
-          APIService.building +
-          "/rooms/" +
-          APIService.roomName;
+        APIService.apiurl = APIService.apihost + ":8000/buildings/" + APIService.building + "/rooms/" + APIService.roomName;
         console.info("API url:", APIService.apiurl);
 
         if (!next) {
           this.setupUIConfig();
         }
       },
-      err => {
+      error: err => {
         setTimeout(() => this.setupAPIUrl(next), RETRY_TIMEOUT);
-      }
-    );
+        console.error("error getting api url", err);
+      },
+      complete: () => console.log('done')
+    });
   }
 
   private monitorAPI() {
-    this.getAPIHealth().subscribe(
-      data => {
+    this.getAPIHealth().pipe(
+      tap(data => console.log("got api health", data)),
+      catchError(this.handleError('monitorAPI', [])),
+    ).subscribe({
+      next: data => {
         if (data["statuscode"] !== 0) {
           this.setupAPIUrl(true);
         }
 
         setTimeout(() => this.monitorAPI(), MONITOR_TIMEOUT);
       },
-      err => {
+      error: err => {
         this.setupAPIUrl(true);
         setTimeout(() => this.monitorAPI(), MONITOR_TIMEOUT);
-      }
-    );
+      },
+      complete: () => console.log('done')
+    });
   }
 
   private setupUIConfig() {
-    this.getUIConfig().subscribe(
-      data => {
+    this.getUIConfig().pipe(
+      tap(data => console.log("got ui config", data)),
+      catchError(this.handleError('setupUIConfig', [])),
+    ).subscribe({
+      next: data => {
         APIService.room.uiconfig = new UIConfiguration();
         Object.assign(APIService.room.uiconfig, data);
         console.info("UI Configuration:", APIService.room.uiconfig);
 
         this.setupHelpConfig();
       },
-      err => {
+      error: err => {
         setTimeout(() => this.setupUIConfig(), RETRY_TIMEOUT);
-      }
-    );
+      },
+      complete: () => console.log('done')
+    });
   }
 
   private setupHelpConfig() {
-    this.getHelpConfig().subscribe(
-      data => {
+    this.getHelpConfig().pipe(
+      tap(data => console.log("got help config", data)),
+      catchError(this.handleError('setupHelpConfig', [])),
+    ).subscribe({
+      next: data => {
         APIService.helpConfig = new Object();
         Object.assign(APIService.helpConfig, data);
         console.info("help config", APIService.helpConfig);
 
         this.setupRoomConfig();
       },
-      err => {
+      error: err => {
         setTimeout(() => this.setupHelpConfig(), RETRY_TIMEOUT);
-      }
-    );
+      },
+      complete: () => console.log('done')
+    });
   }
 
   private setupRoomConfig() {
-    this.getRoomConfig().subscribe(
-      data => {
+    this.getRoomConfig().pipe(
+      tap(data => console.log("got room config", data)),
+      catchError(this.handleError('setupRoomConfig', [])),
+    ).subscribe({
+      next: data => {
         APIService.room.config = new RoomConfiguration();
         Object.assign(APIService.room.config, data);
 
@@ -177,25 +209,30 @@ export class APIService {
 
         this.setupRoomStatus();
       },
-      err => {
+      error: err => {
         setTimeout(() => this.setupRoomConfig(), RETRY_TIMEOUT);
-      }
-    );
+      },
+      complete: () => console.log('done')
+    });
   }
 
   private setupRoomStatus() {
-    this.getRoomStatus().subscribe(
-      data => {
+    this.getRoomStatus().pipe(
+      tap(data => console.log("got room status", data)),
+      catchError(this.handleError('setupRoomStatus', [])),
+    ).subscribe({
+      next: data => {
         APIService.room.status = new RoomStatus();
         Object.assign(APIService.room.status, data);
         console.info("Room Status:", APIService.room.status);
 
         this.loaded.emit(true);
       },
-      err => { 
+      error: err => {
         setTimeout(() => this.setupRoomStatus(), RETRY_TIMEOUT);
-      }
-    );
+      },
+      complete: () => console.log('done')
+    });
   }
 
   get(
