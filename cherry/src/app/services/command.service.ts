@@ -936,8 +936,7 @@ export class CommandService {
 
   private handleError<T>(operation = "operation", result?: T) {
     return (error: any): Observable<T> => {
-      console.error("error doing ${operation}", error);
-
+      console.error("error doing %s", error);
       return of(result as T);
     };
   }
