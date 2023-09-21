@@ -514,7 +514,7 @@ export class DataService {
 
   private handleError<T>(operation: string, result?: T) {
     return (error: any): Observable<T> => {
-      console.error("error doing %s err: $s", operation, error);
+      console.error("error doing:", operation, "err:", error)
       return of(result as T);
     };
   }

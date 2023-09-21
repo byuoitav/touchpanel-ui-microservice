@@ -228,7 +228,7 @@ export class CameraControlComponent implements OnInit, AfterViewInit {
   getControlKey = () => {
     this.http.get(window.location.protocol + "//" + window.location.host +"/control-key/" + this.room + "/" + this.preset.name).pipe(
       tap(data => console.log("getControlKey response:", data)),
-      map(response => response)
+      map(data => data)
     ).subscribe({
       next: data => {
         console.log("data", data);

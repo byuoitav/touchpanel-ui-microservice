@@ -55,11 +55,12 @@ export class APIService {
     }
   }
 
+  //use the new subscribe syntax
   private setupHostname() {
     this.getHostname().pipe(
       tap(data => console.log("got hostname", data)),
       catchError(this.handleError('setupHostname', [])),
-      map(response => response)
+      map(data => data)
     ).subscribe({
       next: data => {
         APIService.hostname = String(data);
@@ -72,13 +73,12 @@ export class APIService {
     });
   }
   
-
   // hostname, building, room
   private setupPiHostname() {
     this.getPiHostname().pipe(
       tap(data => console.log("got pi hostname", data)),
       catchError(this.handleError('setupPiHostname', [])),
-      map(response => response)
+      map(data => data)
     ).subscribe({
       next: data => {
         APIService.piHostname = String(data);
@@ -265,7 +265,7 @@ export class APIService {
   }
 
   private getAPIUrl(): Observable<Object> {
-    return this.http.get(APIService.localurl + ":8888./api").pipe(
+    return this.http.get(APIService.localurl + ":8888/api").pipe(
       tap(data => console.log("got api url", data)),
       catchError(this.handleError('getAPIUrl', []))
     );
@@ -289,8 +289,8 @@ export class APIService {
   private getUIConfig(): Observable<Object> {
     return this.http.get(APIService.localurl + ":8888/uiconfig").pipe(
       tap(data => console.log("got ui config", data)),
-      map(res => deserialize<UIConfiguration>(UIConfiguration, res)),
-      map(res => UIConfiguration),
+      map(data => deserialize<UIConfiguration>(UIConfiguration, data)),
+      map(data => UIConfiguration),
       catchError(this.handleError('getUIConfig', []))
     );
   }
@@ -305,7 +305,7 @@ export class APIService {
   private getRoomConfig(): Observable<Object> {
     return this.http.get(APIService.apiurl + "/configuration").pipe(
       tap(data => console.log("got room config", data)),
-      map(res => deserialize<RoomConfiguration>(RoomConfiguration, res)),
+      map(data => deserialize<RoomConfiguration>(RoomConfiguration, data)),
       catchError(this.handleError('getRoomConfig', []))
     );
   }
@@ -313,7 +313,7 @@ export class APIService {
   private getRoomStatus(): Observable<Object> {
     return this.http.get(APIService.apiurl).pipe(
       tap(data => console.log("got room status", data)),
-      map(res => deserialize<RoomStatus>(RoomStatus, res)),
+      map(data => deserialize<RoomStatus>(RoomStatus, data)),
       catchError(this.handleError('getRoomStatus', []))
     );
   }
@@ -355,7 +355,7 @@ export class APIService {
 
   private handleError<T>(operation: string, result?: T) {
     return (error: any): Observable<T> => {
-      console.error("error doing %s err: $s", operation, error);
+      console.error("error doing:", operation, "err:", error)
       return of(result as T);
     };
   }

@@ -55,12 +55,13 @@ export class APIService {
     }
   }
 
+  //use the new subscribe syntax
   private setupHostname() {
 
     this.getHostname().pipe(
       tap(data => console.log("getHostname response", data)),
       catchError(this.handleError("get", [])),
-      map(response => response),
+      map(data => data),
     ).subscribe({
       next: data => {
         APIService.hostname = String(data);
@@ -81,7 +82,7 @@ export class APIService {
     this.getPiHostname().pipe(
       tap(data => console.log("getPiHostname response", data)),
       catchError(this.handleError("get", [])),
-      map(response => response),
+      map(data => data),
     ).subscribe({
       next: data => {
         APIService.piHostname = String(data);
@@ -251,7 +252,7 @@ export class APIService {
     this.http.get(url).pipe(
       tap(data => console.log("got data", data)),
       catchError(this.handleError("get", [])),
-      map(response => response),
+      map(data => data),
     ).subscribe({
       next: data => { success(); },
       error: error => {
@@ -267,7 +268,7 @@ export class APIService {
     return this.http.get(APIService.localurl + "/hostname").pipe(
       tap(data => console.log("got hostname", data)),
       catchError(this.handleError("getHostname", [])),
-      map(response => response)
+      map(data => data)
     );
   }
 
@@ -275,7 +276,7 @@ export class APIService {
     return this.http.get(APIService.localurl + "/pihostname").pipe(
       tap(data => console.log("got pihostname", data)),
       catchError(this.handleError("getPiHostname", [])),
-      map(response => response)
+      map(data => data)
     );
   }
 
@@ -283,7 +284,7 @@ export class APIService {
     return this.http.get(APIService.localurl + "/api").pipe(
       tap(data => console.log("got apiurl", data)),
       catchError(this.handleError("getAPIUrl", [])),
-      map(response => response)
+      map(data => data)
     );
   }
 
@@ -291,7 +292,7 @@ export class APIService {
     return this.http.get(APIService.apihost + ":8000/mstatus").pipe(
       tap(data => console.log("got api health", data)),
       catchError(this.handleError("getAPIHealth", [])),
-      map(response => response),
+      map(data => data),
       timeout(RETRY_TIMEOUT),
     );
   }
@@ -300,7 +301,7 @@ export class APIService {
     return this.http.get(APIService.localurl + "/nextapi").pipe(
       tap(data => console.log("got nextapi", data)),
       catchError(this.handleError("getNextAPIUrl", [])),
-      map(response => response)
+      map(data => data)
     );
   }
 
@@ -308,8 +309,8 @@ export class APIService {
     return this.http.get(APIService.apiurl + "/uiconfig").pipe(
       tap(data => console.log("got uiconfig", data)),
       catchError(this.handleError("getUIConfig", [])),
-      map(response => response),
-      map(res => deserialize<UIConfiguration>(UIConfiguration, res))
+      map(data => data),
+      map(data => deserialize<UIConfiguration>(UIConfiguration, data))
     );
   }
   
@@ -317,8 +318,8 @@ export class APIService {
     return this.http.get(APIService.apiurl + "/configuration").pipe(
       tap(data => console.log("got roomconfig", data)),
       catchError(this.handleError("getRoomConfig", [])),
-      map(response => response),
-      map(res => deserialize<RoomConfiguration>(RoomConfiguration, res))
+      map(data => data),
+      map(data => deserialize<RoomConfiguration>(RoomConfiguration, data))
     );
   }
 
@@ -326,8 +327,8 @@ export class APIService {
     return this.http.get(APIService.apiurl).pipe(
       tap(data => console.log("got roomstatus", data)),
       catchError(this.handleError("getRoomStatus", [])),
-      map(response => response),
-      map(res => deserialize<RoomStatus>(RoomStatus, res))
+      map(data => data),
+      map(data => deserialize<RoomStatus>(RoomStatus, data))
     );
   }
 
@@ -367,7 +368,7 @@ export class APIService {
 
   private handleError<T>(operation: string, result?: T) {
     return (error: any): Observable<T> => {
-      console.error("error doing %s err: $s", operation, error);
+      console.error("error doing:", operation, "err:", error)
       return of(result as T);
     };
   }

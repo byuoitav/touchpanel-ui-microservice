@@ -93,8 +93,6 @@ export class CommandService {
     console.log("executing request", req);
 
     setTimeout(() => {
-
-
       this.http.request(req.req).pipe(
         timeout(timeOut),
         catchError(this.handleError("executeRequest", []))
@@ -626,7 +624,7 @@ export class CommandService {
 
   private handleError<T>(operation: string, result?: T) {
     return (error: any): Observable<T> => {
-      console.error("error doing %s err: $s", operation, error);
+      console.error("error doing:", operation, "err:", error)
       return of(result as T);
     };
   }

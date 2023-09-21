@@ -132,8 +132,8 @@ export class GraphService {
     if (this.dividerSensor != null) {
       
       this.http.get("http://" + this.dividerSensor.address + ":10000/divider/state").pipe(
-        map(res => res),  
-        tap(res => console.log("getDividerSensorStatus", res)),
+        map(data => data),  
+        tap(data => console.log("getDividerSensorStatus", data)),
         catchError(this.handleError("getDividerSensorStatus", []))
       ).subscribe({
         next: data => {
@@ -171,8 +171,8 @@ export class GraphService {
   private setCurrentPreset() {
 
     this.http.get("http://" + this.dividerSensor.address + ":10000/divider/preset/" + APIService.piHostname).pipe(
-      map(res => res),
-      tap(res => console.log("setCurrentPreset", res)),
+      map(data => data),
+      tap(data => console.log("setCurrentPreset", data)),
       catchError(this.handleError("setCurrentPreset", []))
     ).subscribe({
       next: data => {
@@ -294,7 +294,7 @@ export class GraphService {
 
   private handleError<T>(operation: string, result?: T) {
     return (error: any): Observable<T> => {
-      console.error("error doing %s err: $s", operation, error);
+      console.error("error doing:", operation, "err:", error)
       return of(result as T);
     };
   }
