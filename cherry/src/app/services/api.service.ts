@@ -365,9 +365,9 @@ export class APIService {
     }
   }
 
-  private handleError<T>(operation = "operation", result?: T) {
+  private handleError<T>(operation: string, result?: T) {
     return (error: any): Observable<T> => {
-      console.error("error doing %s", error);
+      console.error("error doing %s err: $s", operation, error);
       return of(result as T);
     };
   }
