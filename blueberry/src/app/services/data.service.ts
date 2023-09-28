@@ -50,7 +50,7 @@ export class DataService {
   }
 
   private createInputs() {
-    for (const config of APIService.room.uiconfig.inputConfiguration) {
+    for (const config of APIService.room.uiconfig?.inputConfiguration) {
       const name = config.name.split("|")[0];
       const input = APIService.room.config.devices.find(i => i.name === name);
 
