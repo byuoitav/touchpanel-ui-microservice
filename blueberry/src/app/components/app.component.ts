@@ -52,6 +52,13 @@ export class AppComponent {
       return false;
     }
 
+    // added this check to prevent errors with undefined home
+    if (this.home == undefined || this.home == null) {
+      return true;
+    }
+
+    console.log("showManagement", this.home);
+
     if (this.home.audio && this.home.audio.isShowing()) {
       return false;
     }
