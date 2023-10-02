@@ -165,7 +165,7 @@ export class APIService {
     ).subscribe({
       next: data => {
         APIService.room.uiconfig = new UIConfiguration();
-        Object.assign(APIService.room.uiconfig, data);
+        Object.assign<UIConfiguration, Object>(APIService.room.uiconfig, data);
         console.log("UI Configuration:", APIService.room.uiconfig);//log the UI config
         console.info("UI Configuration:", APIService.room.uiconfig);
 

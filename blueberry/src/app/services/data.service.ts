@@ -50,7 +50,8 @@ export class DataService {
   }
 
   private createInputs() {
-    console.log("config file: ", APIService.room.uiconfig);//log the config file
+    var ifConfig = APIService.room.uiconfig !== undefined;
+    console.log("config file: ", ifConfig);//log the config file
     for (const config of APIService.room.uiconfig?.inputConfiguration) {
       const name = config.name.split("|")[0];
       const input = APIService.room.config.devices.find(i => i.name === name);
