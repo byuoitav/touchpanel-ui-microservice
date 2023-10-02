@@ -59,8 +59,8 @@ export class APIService {
   private setupHostname() {
     this.getHostname().pipe(
       tap(data => console.log("got hostname", data)),
+      map(data => data),
       catchError(this.handleError('setupHostname', [])),
-      map(data => data)
     ).subscribe({
       next: data => {
         APIService.hostname = String(data);
@@ -77,8 +77,8 @@ export class APIService {
   private setupPiHostname() {
     this.getPiHostname().pipe(
       tap(data => console.log("got pi hostname", data)),
+      map(data => data),
       catchError(this.handleError('setupPiHostname', [])),
-      map(data => data)
     ).subscribe({
       next: data => {
         APIService.piHostname = String(data);
@@ -102,6 +102,7 @@ export class APIService {
       console.warn("switching to next api");
       this.getNextAPIUrl().pipe(
         tap(data => console.log("got next api url", data)),
+        map(data => data),
         catchError(this.handleError('setupAPIUrl', [])),  
       ).subscribe({
         next: data => {},
@@ -115,6 +116,7 @@ export class APIService {
 
     this.getAPIUrl().pipe(
       tap(data => console.log("got api url", data)),
+      map(data => data),
       catchError(this.handleError('setupAPIUrl', [])),
     ).subscribe({
       next: data => {
@@ -141,6 +143,7 @@ export class APIService {
   private monitorAPI() {
     this.getAPIHealth().pipe(
       tap(data => console.log("got api health", data)),
+      map(data => data),
       catchError(this.handleError('monitorAPI', [])),
     ).subscribe({
       next: data => {
@@ -161,6 +164,7 @@ export class APIService {
   private setupUIConfig() {
     this.getUIConfig().pipe(
       tap(data => console.log("got ui config", data)),
+      map(data => data),
       catchError(this.handleError('setupUIConfig', [])),
     ).subscribe({
       next: data => {
@@ -181,6 +185,7 @@ export class APIService {
   private setupHelpConfig() {
     this.getHelpConfig().pipe(
       tap(data => console.log("got help config", data)),
+      map(data => data),
       catchError(this.handleError('setupHelpConfig', [])),
     ).subscribe({
       next: data => {
@@ -200,6 +205,7 @@ export class APIService {
   private setupRoomConfig() {
     this.getRoomConfig().pipe(
       tap(data => console.log("got room config", data)),
+      map(data => data),
       catchError(this.handleError('setupRoomConfig', [])),
     ).subscribe({
       next: data => {
@@ -220,6 +226,7 @@ export class APIService {
   private setupRoomStatus() {
     this.getRoomStatus().pipe(
       tap(data => console.log("got room status", data)),
+      map(data => data),
       catchError(this.handleError('setupRoomStatus', [])),
     ).subscribe({
       next: data => {
