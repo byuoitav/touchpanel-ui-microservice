@@ -66,13 +66,15 @@ export class APIService {
       next: data => {
         APIService.hostname = String(data);
         this.setupPiHostname();
+
+        console.log("Observer getHostname got a next value: " + data);
       },
       error: err => {
         setTimeout(() => this.setupHostname(), RETRY_TIMEOUT);
-        console.error("getHostname error", err);
+        console.error("Observer getHostname got an error: " + err);
       },
       complete: () => {
-        console.log("getHostname complete");
+        console.log("Observer getHostname got a complete notification");
       }
     });
   }
@@ -92,13 +94,15 @@ export class APIService {
         APIService.roomName = split[1];
 
         this.setupAPIUrl(false);
+
+        console.log("Observer getPiHostname got a next value: " + data);
       },
       error: err => {
         setTimeout(() => this.setupPiHostname(), RETRY_TIMEOUT);
-        console.error("getPiHostname error", err);
+        console.error("Observer getPiHostname got an error: " + err);
       },
       complete: () => {
-        console.log("getPiHostname complete");
+        console.log("Observer getPiHostname got a complete notification");
       }
     });
   }
@@ -110,13 +114,15 @@ export class APIService {
         tap(data => console.log("getNextAPIUrl response", data)),
         catchError(this.handleError("get", [])),
       ).subscribe({
-        next: data => {},
+        next: data => {
+          console.log("Observer getNextAPIUrl got a next value: " + data);
+        },
         error: err => {
           setTimeout(() => this.setupAPIUrl(next), RETRY_TIMEOUT);
-          console.error("getNextAPIUrl error", err);
+          console.error("Observer getNextAPIUrl got an error: " + err);
         },
         complete: () => {
-          console.log("getNextAPIUrl complete");
+          console.log("Observer getNextAPIUrl got a complete notification");
         }
       });
     }
@@ -137,13 +143,15 @@ export class APIService {
         if (!next) {
           this.setupUIConfig();
         }
+
+        console.log("Observer getAPIUrl got a next value: " + data);
       },
       error: err => {
         setTimeout(() => this.setupAPIUrl(next), RETRY_TIMEOUT);
-        console.error("getAPIUrl error", err);
+        console.error("Observer getAPIUrl got an error: " + err);
       },
       complete: () => {
-        console.log("getAPIUrl complete");
+        console.log("Observer getAPIUrl got a complete notification");
       }
     });
   }
@@ -160,13 +168,17 @@ export class APIService {
         }
 
         setTimeout(() => this.monitorAPI(), MONITOR_TIMEOUT);
+
+        console.log("Observer getAPIHealth got a next value: " + data);
       },
       error: err => {
         this.setupAPIUrl(true);
         setTimeout(() => this.monitorAPI(), MONITOR_TIMEOUT);
+
+        console.error("Observer getAPIHealth got an error: " + err);
       },
       complete: () => {
-        console.log("getAPIHealth complete");
+        console.log("Observer getAPIHealth got a complete notification");
       }
     });
   }
@@ -184,13 +196,15 @@ export class APIService {
         console.info("UI Configuration:", APIService.room.uiconfig);
 
         this.setupRoomConfig();
+
+        console.log("Observer getUIConfig got a next value: " + data);
       },
       error: err => {
         setTimeout(() => this.setupUIConfig(), RETRY_TIMEOUT);
-        console.error("getUIConfig error", err);
+        console.error("Observer getUIConfig got an error: " + err);
       },
       complete: () => {
-        console.log("getUIConfig complete");
+        console.log("Observer getUIConfig got a complete notification");
       }
     });
   }
@@ -231,13 +245,15 @@ export class APIService {
         console.info("Room Status:", APIService.room.status);
 
         this.loaded.emit(true);
+
+        console.log("Observer getRoomStatus got a next value: " + data);
       },
       error: err => {
         setTimeout(() => this.setupRoomStatus(), RETRY_TIMEOUT);
-        console.error("getRoomStatus error", err);
+        console.error("Observer getRoomStatus got an error: " + err);
       },
       complete: () => {
-        console.log("getRoomStatus complete");
+        console.log("Observer getRoomStatus got a complete notification");
       }
     });
   }
@@ -254,9 +270,11 @@ export class APIService {
       catchError(this.handleError("get", [])),
       map(data => data),
     ).subscribe({
-      next: data => { success(); },
+      next: data => { success();
+        console.log("Observer get got a next value: " + data);
+      },
       error: error => {
-        console.error("error:", error);
+        console.error("Observer get got an error: " + error);
         err();
       },
       complete: () => { after(); }
