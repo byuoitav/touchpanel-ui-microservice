@@ -287,7 +287,8 @@ export class APIService {
   private getHostname(): Observable<Object> {
     return this.http.get(APIService.localurl + ":8888/hostname").pipe(
       tap(data => console.log("got hostname", data)),
-      catchError(this.handleError('getHostname', []))
+      catchError(this.handleError('getHostname', [])),
+      map(data => data),
     );
 
   }
@@ -295,61 +296,73 @@ export class APIService {
   private getPiHostname(): Observable<Object> {
     return this.http.get(APIService.localurl + ":8888/pihostname").pipe(
       tap(data => console.log("got pi hostname", data)),
-      catchError(this.handleError('getPiHostname', []))
+      catchError(this.handleError('getPiHostname', [])),
+      map(data => data),
     );
   }
 
   private getAPIUrl(): Observable<Object> {
     return this.http.get(APIService.localurl + ":8888/api").pipe(
       tap(data => console.log("got api url", data)),
-      catchError(this.handleError('getAPIUrl', []))
+      catchError(this.handleError('getAPIUrl', [])),
+      map(data => data),
     );
   }
 
   private getAPIHealth(): Observable<Object> {
     return this.http.get(APIService.apihost + ":8000/mstatus").pipe(
-      timeout(RETRY_TIMEOUT),
       tap(data => console.log("got api health", data)),
-      catchError(this.handleError('getAPIHealth', []))
+      catchError(this.handleError('getAPIHealth', [])),
+      map(data => data),
+      timeout(RETRY_TIMEOUT),
     );
   }
 
   private getNextAPIUrl(): Observable<Object> {
     return this.http.get(APIService.localurl + ":8888/nextapi").pipe(
       tap(data => console.log("got next api url", data)),
-      catchError(this.handleError('getNextAPIUrl', []))
+      catchError(this.handleError('getNextAPIUrl', [])),
+      map(data => data),
     );
   }
 
   private getUIConfig(): Observable<Object> {
     return this.http.get(APIService.localurl + ":8888/uiconfig").pipe(
       tap(data => console.log("got ui config", data)),
+      catchError(this.handleError('getUIConfig', [])),
+      map(data => data),
       map(data => deserialize<UIConfiguration>(UIConfiguration, data)),
-      map(data => UIConfiguration),
-      catchError(this.handleError('getUIConfig', []))
+      
+      
     );
   }
 
   private getHelpConfig(): Observable<Object> {
     return this.http.get(APIService.localurl + ":8888/blueberry/db/help.json").pipe(
       tap(data => console.log("got help config", data)),
-      catchError(this.handleError('getHelpConfig', []))
+      catchError(this.handleError('getHelpConfig', [])),
+      map(data => data),
+      map(data => deserialize<Object>(Object, data)),
     );
   }
 
   private getRoomConfig(): Observable<Object> {
     return this.http.get(APIService.apiurl + "/configuration").pipe(
       tap(data => console.log("got room config", data)),
+      catchError(this.handleError('getRoomConfig', [])),
+      map(data => data),
       map(data => deserialize<RoomConfiguration>(RoomConfiguration, data)),
-      catchError(this.handleError('getRoomConfig', []))
+      
     );
   }
 
   private getRoomStatus(): Observable<Object> {
     return this.http.get(APIService.apiurl).pipe(
       tap(data => console.log("got room status", data)),
+      catchError(this.handleError('getRoomStatus', [])),
+      map(data => data),
       map(data => deserialize<RoomStatus>(RoomStatus, data)),
-      catchError(this.handleError('getRoomStatus', []))
+      
     );
   }
 
