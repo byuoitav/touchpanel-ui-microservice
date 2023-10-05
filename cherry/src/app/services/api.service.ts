@@ -324,7 +324,7 @@ export class APIService {
   }
 
   private getUIConfig(): Observable<Object> {
-    return this.http.get(APIService.apiurl + "/uiconfig").pipe(
+    return this.http.get(APIService.localurl + "/uiconfig").pipe(
       tap(data => console.log("got uiconfig", data)),
       catchError(this.handleError("getUIConfig", [])),
       map(data => data),
