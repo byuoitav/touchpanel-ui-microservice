@@ -1,16 +1,24 @@
-@import "@angular/material/theming";
+@use '@angular/material' as mat;
 
-@include mat-core();
+@include mat.core();
 
-$primary: mat-palette($mat-blue-grey, 700, 500, 900);
-$accent: mat-palette($mat-light-blue, A700, 200, A700);
-$warn: mat-palette($mat-red, 600, 800, 400);
+$primary: mat.define-palette(mat.$blue-grey-palette, 700, 500, 900);
+$accent: mat.define-palette(mat.$light-blue-palette, A700, 200, A700);
+$warn: mat.define-palette(mat.$red-palette, 600, 800, 400);
 
-$blueberry: mat-dark-theme($primary, $accent, $warn);
-@include angular-material-theme($blueberry);
+$blueberry: mat.define-dark-theme((
+  color: (
+    primary: $primary,
+    accent: $accent,
+    warn: $warn,
+  ),
+  density: 0,
+));
+
+@include mat.core-theme($blueberry);
 
 .primary-background {
-  background-color: mat-color($primary, darker);
+  background-color: mat.core-color($primary, 700);
 }
 
 /*
@@ -27,12 +35,19 @@ $blueberry: mat-dark-theme($primary, $accent, $warn);
 
 // secondary theme.
 // colors for help button, sliders, and other small visual elements.
-$s-primary: mat-palette($mat-light-blue, A700, 200, 900);
-$s-accent: mat-palette($mat-teal, 100);
-$s-warn: mat-palette($mat-lime);
+$s-primary: mat.define-palette(mat.$light-blue-palette, A700, 200, 900);
+$s-accent: mat.define-palette(mat.$teal-palette, 100, 200, 900);
+$s-warn: mat.define-palette(mat.$lime-palette, 100, 200, 900);
 
-$secondary: mat-dark-theme($s-primary, $s-accent, $s-warn);
+$secondary: mat.define-dark-theme((
+  color: (
+    primary: $s-primary,
+    accent: $s-accent,
+    warn: $s-warn,
+  ),
+  density: 0,
+));
 
 .secondary-theme {
-  @include angular-material-theme($secondary);
+  @include mat.core-theme($secondary);
 }
