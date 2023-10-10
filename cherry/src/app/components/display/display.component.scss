@@ -1,5 +1,7 @@
+@use 'sass:math';
+
 $max-width: 90vw;
-$volume-width: $max-width / 8;
+$volume-width: math.div($max-width, 8);
 $outputs-height: 35vh;
 $inputs-height: 40vh;
 %align {
@@ -23,7 +25,7 @@ $inputs-height: 40vh;
     @extend %align-horiz;
     position: relative;
     max-width: $max-width;
-    margin-left: (100vw - $max-width - $volume-width) / 2;
+    margin-left: math.div(100vw - $max-width - $volume-width, 2);
 }
 
 %io-button {
@@ -46,14 +48,14 @@ $inputs-height: 40vh;
 .outputs {
     @extend %io-row;
     height: $outputs-height;
-    margin-top: $outputs-height / 8;
-    margin-bottom: $outputs-height / 8;
+    margin-top: math.div($outputs-height, 8);
+    margin-bottom: math.div($outputs-height, 8);
     flex-wrap: wrap;
     text-align: center;
     .output {
         @extend %io-button;
-        margin-right: $max-width / 100;
-        width: $max-width / 7;
+        margin-right:  math.div($max-width, 100);
+        width: math.div($max-width, 7);
         .icon {
             @include io-icon(400%);
         }
@@ -66,15 +68,15 @@ $inputs-height: 40vh;
 .inputs {
     @extend %io-row;
     height: $inputs-height;
-    margin-bottom: $inputs-height / 8;
-    margin-top: $inputs-height / 10;
+    margin-bottom: math.div($inputs-height, 8);
+    margin-top: math.div($inputs-height, 10);
     // overflowing inputs line
     flex-wrap: wrap-reverse;
     .input {
         @extend %io-button;
-        margin-right: $max-width / 200;
-        width: $max-width / 9;
-        margin-bottom: $inputs-height / 23;
+        margin-right: math.div($max-width, 200);
+        width: math.div($max-width, 9);
+        margin-bottom: math.div($inputs-height, 23);
         .icon {
             padding-top: 1.3vh;
             @include io-icon(200%);

@@ -1,4 +1,9 @@
 // center the tab labels
+@use '@angular/material' as mat;
+@use 'sass:math';
+
+@include mat.core();
+
 @import '../cherry.theme.scss';
 $byu-logo-color: #bec2ba;
 
@@ -24,8 +29,8 @@ $buttonXOffset: .55rem;
 
         width: $size;
         height: $size;
-        right: $size / -2;
-        bottom: $size / -2;
+        right: math.div($size, -2);
+        bottom: math.div($size, -2);
     }
 
     &.cdk-focused {
@@ -135,7 +140,7 @@ $buttonXOffset: .55rem;
             font-size: 5vw;
             height: 5vw;
             width: 5vw;
-            color: mat-color($primary, darker);
+            color: mat.get-color-from-palette($primary, darker);
         }
     }
 

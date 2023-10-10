@@ -1,3 +1,5 @@
+@use 'sass:math';
+
 $devices-width: 90vw;
 $devices-height: 75vh;
 $volume-height: 78%;
@@ -33,11 +35,11 @@ $buffer-size: 3vw;
     .device {
         @extend %align-vert;
         height: 100%;
-        width: (($devices-width - (2 * $button-width)) / 4);
+        width: math.div($devices-width - (2 * $button-width), 4);
         // margin-left: $buffer-size;
         // margin-right: $buffer-size;
         &.display {
-            width: (($devices-width - $master-width - (2 * $button-width)) / 3.35);
+            width: math.div($devices-width - $master-width - (2 * $button-width), 3.35);
         }
     }
     &.displays {
@@ -57,7 +59,7 @@ $buffer-size: 3vw;
     .device {
         @extend %align-vert;
         height: 100%;
-        width: (($devices-width - (2 * $button-width)) / 5);
+        width: math.div($devices-width - (2 * $button-width), 5);
     }
     &::before {
         position: absolute;
@@ -74,9 +76,9 @@ $buffer-size: 3vw;
     height: $volume-height;
     min-height: $volume-height;
     padding-top: 5px;
-    width: (($devices-width - (2 * $button-width)) / 3);
+    width: math.div($devices-width - (2 * $button-width), 3);
     &.display {
-        width: (($devices-width - $master-width - (2 * $button-width)) / 3);
+        width: math.div($devices-width - $master-width - (2 * $button-width), 3);
     }
 }
 

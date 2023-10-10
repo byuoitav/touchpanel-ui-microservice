@@ -17,9 +17,13 @@ $blueberry: mat.define-dark-theme((
 
 @include mat.core-theme($blueberry);
 
-.primary-background {
-  background-color: mat.core-color($primary, 700);
+.blueberry-theme {
+  @include mat.core-theme($blueberry);
 }
+
+//.primary-background {
+  //background-color: mat.core-color($blueberry);
+//}
 
 /*
 .mat-app-background {

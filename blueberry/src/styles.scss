@@ -1,15 +1,20 @@
 /* You can add global styles to this file, and also import other style files */
 @import "material-design-icons/iconfont/material-icons.css";
+
+$material-design-icons-font-directory-path: '~material-design-icons-iconfont/dist/fonts/';
+
+@import 'material-design-icons-iconfont/src/material-design-icons';
+
 // @import '~@angular/material/prebuilt-themes/indigo-pink.css';
 @import "./app/theme.scss";
 
-@import url("https://fonts.googleapis.com/css?family=Source+Sans+Pro:600");
+@import url('https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@600&display=swap');
 
 html {
   overflow: hidden;
   user-select: none;
 
-  font-family: "Source Sans Pro", sans-serif;
+  font-family: "Source Sans 3", sans-serif;
   letter-spacing: 0.1px;
 }
 

@@ -1,7 +1,15 @@
+@use '@angular/material' as mat;
+
 /* You can add global styles to this file, and also import other style files */
-@import "~material-design-icons/iconfont/material-icons.css";
+
+$material-design-icons-font-directory-path: '~material-design-icons-iconfont/dist/fonts/';
+
+@import 'material-design-icons-iconfont/src/material-design-icons';
+
 //@import url('https://fonts.googleapis.com/css?family=Source+Sans+Pro:600');
-@import 'app/cherry.theme.scss';
+@import './app/cherry.theme.scss';
+
+@include mat.core();
 
 html {
     overflow: hidden;
@@ -11,7 +19,8 @@ html {
 }
 
 .mat-dialog-container {
-    background-color: mat-color($primary, darker) !important;
+    //background-color: mat.mat-color($primary, darker) !important;
+    background-color: mat.get-color-from-palette($primary, darker) !important;
 }
 
 /*
