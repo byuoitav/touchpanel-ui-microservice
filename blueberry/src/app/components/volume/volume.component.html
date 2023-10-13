@@ -3,16 +3,17 @@
 
   <!-- volume slider -->
   <mat-slider
-    #slider
     class="slider"
-    [class.shorter]="muteType === 'mat-fab'"
     color="primary"
+    [class.shorter]="muteType === 'mat-fab'"
     (change)="levelChange.emit($event.value); closeThumb()"
     [max]="100"
     [min]="0"
     [step]="5"
-    [discrete]="thumbLabel"
-  >
+    [discrete]="true"
+    [showTickMarks]="true">
+
+    <input matSliderThumb type="range" (blur)="closeThumb()" [value]="level" />
   </mat-slider>
 
   <!-- mute button -->

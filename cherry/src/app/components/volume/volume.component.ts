@@ -6,7 +6,7 @@ import {
   ViewEncapsulation,
   ViewChild
 } from "@angular/core";
-import { MatSlider } from "@angular/material/slider";
+import { MatSliderModule, MatSliderThumb } from "@angular/material/slider";
 
 
 @Component({
@@ -29,7 +29,10 @@ export class VolumeComponent {
   public beforeMuteLevel: number;
 
   @ViewChild("slider")
-  slider: MatSlider;
+  slider: MatSliderModule;
+
+  @ViewChild("thumb")
+  thumb: MatSliderThumb;
 
   constructor() {}
 
@@ -47,7 +50,7 @@ export class VolumeComponent {
 
   public closeThumb() {
     setTimeout(() => {
-      this.slider._elementRef.nativeElement.blur();
+      this.thumb.blur();
     }, 2000);
   }
 }
