@@ -6,8 +6,9 @@
       [max]="100"
       [min]="0"
       [step]="5"
-      [discrete]="thumbLabel"
-      [showTickMarks]="true"
+      [discrete]="false"
+      [showTickMarks]="false"
+      [vertical]="true"
       (change)="levelChange.emit($event.value); closeThumb()">
       <input matSliderThumb type="range" (blur)="closeThumb()" [value]="level" />
     </mat-slider>
