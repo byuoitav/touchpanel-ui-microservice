@@ -8,7 +8,7 @@
       [step]="5"
       [discrete]="false"
       [showTickMarks]="false"
-      [vertical]="true"
+      vertical="true"
       (change)="levelChange.emit($event.value); closeThumb()">
       <input matSliderThumb type="range" (blur)="closeThumb()" [value]="level" />
     </mat-slider>

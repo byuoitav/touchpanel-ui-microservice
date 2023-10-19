@@ -8,6 +8,8 @@ import {
 } from "@angular/core";
 import { MatSliderModule } from "@angular/material/slider";
 
+import { Options } from "@angular-slider/ngx-slider";
+
 @Component({
   selector: "volume",
   templateUrl: "./volume.component.html",
@@ -22,6 +24,13 @@ export class VolumeComponent implements OnInit {
   mute: boolean;
   @Input() name: string;
   value: number;
+  options: Options = {
+    floor: 0,
+    ceil: 100,
+    step: 5,
+    vertical: true,
+    showSelectionBar: true,
+  };
   
 
   @Input()

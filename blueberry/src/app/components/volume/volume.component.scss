@@ -70,3 +70,44 @@ $slider-height: 75%;
     rgba(0, 0, 0, 0)
   );
 }
+
+::ng-deep {
+  .custom-slider .ngx-slider .ngx-slider-bar {
+    height: 2px;
+    background: gray;
+  }
+
+  // custom color
+  .custom-slider .ngx-slider .ngx-slider-selection {
+    background: #0091ea;
+  }
+
+  // hide limit tags
+  .custom-slider .ngx-slider .ngx-slider-limit {
+    display: none;
+  }
+
+  .custom-slider .ngx-slider .ngx-slider-pointer {
+    background: #0091ea;
+    height: 20px;
+    width: 20px;
+    margin-left: 6px;
+    background-color: #0091ea;
+  }
+
+  .custom-slider .ngx-slider .ngx-slider-pointer::after {
+    display: none;
+    background: #0091ea !important;
+  }
+
+  // volume tags
+  .custom-slider .ngx-slider .ngx-slider-bubble {
+    bottom: 14px;
+    align-items: left;
+  }
+
+  .custom-slider .ngx-slider .animate .ngx-slider-selection {
+
+    transition: none;
+  }
+}

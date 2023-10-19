@@ -2,7 +2,14 @@
   <div *ngIf="name" class="label">{{ name }}</div>
 
   <!-- volume slider -->
-  <mat-slider
+  <div class="custom-slider">
+    <ngx-slider
+      [class.shorter]="muteType === 'mat-fab'"
+      [options]="options"
+      [(value)]="level"
+      (userChangeEnd)="levelChange.emit($event.value) closeThumb()"
+  </div>
+  <!--<mat-slider
     class="slider"
     color="primary"
     [class.shorter]="muteType === 'mat-fab'"
@@ -10,13 +17,11 @@
     [max]="100"
     [min]="0"
     [step]="5" 
-    [vertical]="true"
+    vertical="true"
     [discrete]="false"
     [showTickMarks]="false">
-    
-
     <input matSliderThumb type="range" (blur)="closeThumb()" [value]="level" />
-  </mat-slider>
+  </mat-slider>-->
 
   <!-- mute button -->
   <ng-container [ngSwitch]="muteType">
