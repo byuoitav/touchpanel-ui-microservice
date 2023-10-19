@@ -2,13 +2,12 @@
   <div *ngIf="name" class="label">{{ name }}</div>
 
   <!-- volume slider -->
-  <div class="custom-slider">
-    <ngx-slider
+  <ngx-slider class="slider" color="primary"
       [class.shorter]="muteType === 'mat-fab'"
       [options]="options"
       [(value)]="level"
-      (userChangeEnd)="levelChange.emit($event.value) closeThumb()"
-  </div>
+      (userChangeEnd)="levelChange.emit($event.value); closeThumb()"
+    ></ngx-slider>
   <!--<mat-slider
     class="slider"
     color="primary"

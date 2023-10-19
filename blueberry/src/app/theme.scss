@@ -2,13 +2,9 @@
 
 @include mat.core();
 
-$primary-grey: #263238;
-$accent-grey: #455A64;
-$warn-red: #E53935; 
-
-$primary: mat.define-palette($primary-grey);
-$accent: mat.define-palette($accent-grey);
-$warn: mat.define-palette($warn-red);
+$primary: mat.define-palette(mat.$blue-grey-palette, 700, 500, 900);
+$accent: mat.define-palette(mat.$light-blue-palette, A700, 200, A700);
+$warn: mat.define-palette(mat.$red-palette, 600, 800, 400);
 
 $blueberry: mat.define-dark-theme((
   color: (
