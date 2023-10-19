@@ -8,7 +8,7 @@ import {
 } from "@angular/core";
 import { MatSliderModule } from "@angular/material/slider";
 
-import { Options } from "@angular-slider/ngx-slider";
+import { Options } from "ngx-slider-v2";
 
 @Component({
   selector: "volume",

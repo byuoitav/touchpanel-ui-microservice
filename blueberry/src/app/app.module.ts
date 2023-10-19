@@ -35,7 +35,7 @@ import { VolumeComponent } from "./components/volume/volume.component";
 import { MirrorModalComponent } from "./modals/mirrormodal/mirrormodal.component";
 import { MessageModalComponent } from "./modals/messagemodal/messagemodal.component";
 import { StreamModalComponent } from "./modals/streammodal/streammodal.component";
-import { NgxSliderModule } from '@angular-slider/ngx-slider';
+import { NgxSliderModule } from 'ngx-slider-v2';
 
 @NgModule({
   declarations: [
