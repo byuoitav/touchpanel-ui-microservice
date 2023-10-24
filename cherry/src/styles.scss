@@ -6,8 +6,10 @@ $material-design-icons-font-directory-path: '~material-design-icons-iconfont/dis
 
 @import 'material-design-icons-iconfont/src/material-design-icons';
 
-//@import url('https://fonts.googleapis.com/css?family=Source+Sans+Pro:600');
 @import './app/cherry.theme.scss';
+
+@import url('https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@600&display=swap');
+
 
 @include mat.core();
 
@@ -15,7 +17,8 @@ html {
     overflow: hidden;
     user-select: none;
 
-//    font-family: 'Source Sans Pro', sans-serif !important;
+    font-family: "Source Sans 3", sans-serif;
+    letter-spacing: 0.1px;
 }
 
 .mat-dialog-container {

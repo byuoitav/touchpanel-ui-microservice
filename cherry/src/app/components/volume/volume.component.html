@@ -1,6 +1,6 @@
 <div class="volume">
     <!-- volume slider -->
-    <mat-slider
+    <!-- <mat-slider
       class="slider"
       color="primary"
       [max]="100"
@@ -11,7 +11,13 @@
       vertical="true"
       (change)="levelChange.emit($event.value); closeThumb()">
       <input matSliderThumb type="range" (blur)="closeThumb()" [value]="level" />
-    </mat-slider>
+    </mat-slider> -->
+    <ngx-slider class="slider" color="primary"
+      [options]="options"
+      [(value)]="level"
+      (userChangeEnd)="levelChange.emit($event.value); closeThumb()"
+    >
+    </ngx-slider>
     <!-- mute button -->
     <div [class.secondary-theme]="!mute">
         <button mat-raised-button [color]="mute ? 'warn' : 'primary'" (click)="muteClick()" (press)="muteClick()" class="button" [class.muted]="mute">

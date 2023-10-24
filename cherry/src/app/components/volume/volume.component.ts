@@ -8,6 +8,7 @@ import {
 } from "@angular/core";
 import { MatSliderModule, MatSliderThumb } from "@angular/material/slider";
 
+import { Options } from "ngx-slider-v2";
 
 @Component({
   selector: "volume",
@@ -20,6 +21,14 @@ export class VolumeComponent {
   level: number;
   @Input()
   mute: boolean;
+
+  options: Options = {
+    floor: 0,
+    ceil: 100,
+    step: 5,
+    vertical: true,
+    showSelectionBar: true,
+  };
 
   @Output()
   levelChange: EventEmitter<number> = new EventEmitter();

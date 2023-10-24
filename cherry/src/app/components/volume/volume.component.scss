@@ -34,3 +34,33 @@ $slider-height: 80%;
 ::ng-deep .mat-slider.mat-slider-vertical .mat-slider-track-fill {
     width: 100%;
 }
+
+::ng-deep .ngx-slider .ngx-slider-bar {
+  height: 2px !important;
+  background: gray !important;
+}
+
+::ng-deep .ngx-slider .ngx-slider-selection {
+  background: #0091ea !important;
+}
+
+// hide limit tags
+::ng-deep .ngx-slider .ngx-slider-limit {
+  display: none !important;
+}
+
+:ng-deep .ngx-slider .ngx-slider-pointer {
+  background: #0091ea !important;
+  background-color: #0091ea !important;
+}
+
+::ng-deep .ngx-slider .ngx-slider-pointer::after {
+  display: none !important;
+  background: #0091ea !important;
+}
+
+// volume tags
+::ng-deep .ngx-slider .ngx-slider-bubble {
+  bottom: 14px !important;
+  align-items: left !important;
+}
