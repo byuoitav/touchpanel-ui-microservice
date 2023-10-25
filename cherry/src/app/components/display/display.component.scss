@@ -2,8 +2,8 @@
 
 $max-width: 90vw;
 $volume-width: math.div($max-width, 8);
-$outputs-height: 35vh;
-$inputs-height: 40vh;
+$outputs-height: 40vh;
+$inputs-height: 35vh;
 %align {
     display: flex;
     align-content: center;
