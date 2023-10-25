@@ -63,15 +63,9 @@ ul {
       position: absolute;
       height: 25%;
       width: 25%;
-<<<<<<< HEAD
-<<<<<<< HEAD
       bottom: 30px;
-=======
       top: 30px;
->>>>>>> 2777c5a (fixing the sliders)
-=======
       bottom: 30px;
->>>>>>> 2c5e17d (fixing the sliders)
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -119,15 +113,9 @@ ul {
     position: absolute;
     width: 100%;
     text-align: center;
-<<<<<<< HEAD
-<<<<<<< HEAD
     bottom: 30px;
-=======
     top: 30px;
->>>>>>> 2777c5a (fixing the sliders)
-=======
     bottom: 30px;
->>>>>>> 2c5e17d (fixing the sliders)
     transition: transform $duration, opacity $duration, ease-in-out;
     will-change: transform, opacity;
     pointer-events: none;
