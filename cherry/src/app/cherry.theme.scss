@@ -2,9 +2,9 @@
 
 @include mat.core();
 
-$primary: mat.define-palette(mat.$blue-grey-palette); 
-$accent: mat.define-palette(mat.$light-blue-palette);
-$warn: mat.define-palette(mat.$red-palette);
+$primary: mat.define-palette(mat.$blue-grey-palette, 700, 500, 900);
+$accent: mat.define-palette(mat.$light-blue-palette, A700, 200, A700);
+$warn: mat.define-palette(mat.$red-palette, 600, 800, 400);
 
 $cherry: mat.define-dark-theme((
     color: (
@@ -17,15 +17,19 @@ $cherry: mat.define-dark-theme((
 
 @include mat.core-theme($cherry);
 
+.cherry-theme {
+    @include mat.core-theme($cherry);
+}
+
 .mat-app-background {
     //background-color: mat.core-color($primary);
-    background-color: mat.get-color-from-palette($primary);
+    background-color: mat.core-color($primary, darker);
 }
 
 .mat-tab-label-darker {
     .mat-tab-label-container {
         //background-color: mat.mat-color($mat-blue-grey, 800);
-        background-color: mat.get-color-from-palette($primary, darker);
+        background-color: mat.core-color($primary, 800);
     }
 }
 

@@ -15,7 +15,7 @@
     <ngx-slider class="slider" color="primary"
       [options]="options"
       [(value)]="level"
-      (userChangeEnd)="levelChange.emit($event.value); closeThumb()"
+      (userChange)="levelChange.emit($event.value); closeThumb()"
     >
     </ngx-slider>
     <!-- mute button -->

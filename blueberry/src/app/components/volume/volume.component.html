@@ -6,7 +6,7 @@
       [class.shorter]="muteType === 'mat-fab'"
       [options]="options"
       [(value)]="level"
-      (userChangeEnd)="levelChange.emit($event.value); closeThumb()"
+      (userChange)="levelChange.emit($event.value); closeThumb()"
     ></ngx-slider>
   <!--<mat-slider
     class="slider"
