@@ -63,8 +63,6 @@ ul {
       position: absolute;
       height: 25%;
       width: 25%;
-      bottom: 10px;
-      top: 20px;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -113,7 +111,7 @@ ul {
     width: 100%;
     text-align: center;
     bottom: 10px;
-    top: 20px;
+    top: 20px; // center + height should be 100%
     transition: transform $duration, opacity $duration, ease-in-out;
     will-change: transform, opacity;
     pointer-events: none;

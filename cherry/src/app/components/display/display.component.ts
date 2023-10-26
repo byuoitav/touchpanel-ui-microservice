@@ -8,6 +8,7 @@ import { ViaDialog } from "../../dialogs/via.dialog";
 import { Panel } from "../../objects/objects";
 import { Display, Input } from "../../objects/status.objects";
 import { StreamModalComponent } from "../../dialogs/streammodal/streammodal.component";
+import { MatButtonModule } from "@angular/material/button";
 
 @Component({
   selector: "display",

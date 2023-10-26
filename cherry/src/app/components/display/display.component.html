@@ -40,7 +40,7 @@
     <button mat-button class="input mat-elevation-z7" [color]="isOneBlanked() ? 'accent' : ''" (click)="blank(); command.buttonPress('blank', getSelectedDisplayNames())" (press)="
       blank();
       command.buttonPress('long press blank', getSelectedDisplayNames())
-    " [class.mat-raised-button]="isOneBlanked()">
+    "[class.mat-raised-button]="isOneBlanked()">
       <div class="icon">
         <ng-container *ngTemplateOutlet="blankicon"></ng-container>
         <span>Blank</span>
