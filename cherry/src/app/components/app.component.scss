@@ -4,7 +4,7 @@
 
 @include mat.core();
 
-@import '../cherry.theme.scss';
+@import '../cherry-theme.scss';
 $byu-logo-color: #bec2ba;
 
 .mat-tab-labels {
@@ -107,6 +107,7 @@ $buttonXOffset: .55rem;
     @extend %top-button;
 
     left: $buttonXOffset;
+    background-color: warn;
 }
 
 .help {
@@ -140,7 +141,7 @@ $buttonXOffset: .55rem;
             font-size: 5vw;
             height: 5vw;
             width: 5vw;
-            color: mat.get-color-from-palette($primary, darker);
+            color: mat.get-color-from-pallette($primary, darker);
         }
     }
 

@@ -23,13 +23,13 @@ $cherry: mat.define-dark-theme((
 
 .mat-app-background {
     //background-color: mat.core-color($primary);
-    background-color: mat.core-color($primary, darker);
+    background-color: mat.get-color-from-palette($primary, darker);
 }
 
 .mat-tab-label-darker {
     .mat-tab-label-container {
         //background-color: mat.mat-color($mat-blue-grey, 800);
-        background-color: mat.core-color($primary, 800);
+        background-color: mat.get-color-from-palette($primary, 800);
     }
 }
 
@@ -37,8 +37,8 @@ $cherry: mat.define-dark-theme((
 // secondary theme.
 // colors for help button, sliders, and other small visual elements.
 $s-primary: mat.define-palette(mat.$light-blue-palette, A700, 200, 900);
-$s-accent: mat.define-palette(mat.$teal-palette, 100, 200, 900);
-$s-warn: mat.define-palette(mat.$lime-palette, 100, 200, 900);
+$s-accent: mat.define-palette(mat.$teal-palette, 100);
+$s-warn: mat.define-palette(mat.$lime-palette);
 
 $secondary: mat.define-dark-theme((
     color: (

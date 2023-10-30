@@ -21,7 +21,9 @@
               "src/favicon.ico"
             ],
             "styles": [
-              "src/styles.scss"
+              "src/styles.scss",
+              "src/app/cherry-theme.scss"
+
             ],
             "scripts": []
           },
