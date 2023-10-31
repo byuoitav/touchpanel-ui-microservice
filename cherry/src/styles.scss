@@ -1,12 +1,12 @@
+/* You can add global styles to this file, and also import other style files */
+
+$material-design-icons-font-directory-path: '~material-design-icons-iconfont/dist/fonts/';
+
 @import 'material-design-icons-iconfont/src/material-design-icons';
 
 @import './app/cherry-theme.scss';
 
 @import url('https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@600&display=swap');
-
-@include mat.core();
-
-$material-design-icons-font-directory-path: '~material-design-icons-iconfont/dist/fonts/';
 
 html {
     overflow: hidden;
@@ -18,7 +18,7 @@ html {
 
 .mat-dialog-container {
     //background-color: mat.mat-color($primary, darker) !important;
-    background-color: mat.get-color-from-palette($primary, darker) !important;
+    background-color: $primary, darker !important;
 }
 
 /*
