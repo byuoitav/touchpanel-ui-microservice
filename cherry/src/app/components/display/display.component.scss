@@ -2,7 +2,7 @@
 
 $max-width: 90vw;
 $volume-width: math.div($max-width, 8);
-$outputs-height: 45vh;
+$outputs-height: 35vh;
 $inputs-height: 40vh;
 %align {
     display: flex;
@@ -72,14 +72,42 @@ $inputs-height: 40vh;
     margin-top: math.div($inputs-height, 10);
     // overflowing inputs line
     flex-wrap: wrap-reverse;
+    align-items: stretch;
+
     .input {
         @extend %io-button;
         margin-right: math.div($max-width, 200);
         width: math.div($max-width, 9);
         margin-bottom: math.div($inputs-height, 23);
+        height: 100%;
+        line-height: 160%;
+        align-items: stretch;
+        padding-top: 0px;
+
         .icon {
             padding-top: 1.3vh;
             @include io-icon(200%);
+            height: 100%;
+
+            display: grid;
+            grid-template-areas: "icon" "label" "label";
+            grid-auto-rows: 30%;
+            align-items: start !important;
+            gap: 3px;
+
+            i {
+                height: 100%;
+                grid-area: icon;
+            }
+            span {
+                grid-area: label;
+                display: inline-flex;
+                align-items: center;
+                height: 100%;
+                align-self: center;
+                text-wrap: balance;
+                padding-bottom: 10%;
+            }
         }
     }
 }

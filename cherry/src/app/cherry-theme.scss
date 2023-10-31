@@ -29,7 +29,7 @@ $cherry: mat.define-dark-theme((
 .mat-tab-label-darker {
     .mat-tab-label-container {
         //background-color: mat.mat-color($mat-blue-grey, 800);
-        background-color: mat.get-color-from-palette($primary, 800);
+        background-color: mat.get-color-from-palette(mat.$blue-grey-palette, 800);
     }
 }
 
@@ -52,8 +52,3 @@ $secondary: mat.define-dark-theme((
 .secondary-theme {
     @include mat.core-theme($secondary);
 }
-
-// Include theme styles for core and each component used in your app.
-// Alternatively, you can import and @include the theme mixins for each component
-// that you are using.
-@include mat.all-component-themes($cherry);

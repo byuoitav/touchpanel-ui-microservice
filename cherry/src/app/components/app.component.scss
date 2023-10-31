@@ -5,6 +5,7 @@
 @include mat.core();
 
 @import '../cherry-theme.scss';
+@import '../../styles.scss';
 $byu-logo-color: #bec2ba;
 
 .mat-tab-labels {

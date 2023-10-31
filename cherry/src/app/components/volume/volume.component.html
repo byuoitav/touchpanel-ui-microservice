@@ -14,7 +14,7 @@
     </mat-slider> -->
     <ngx-slider class="slider" color="primary"
       [options]="options"
-      [(value)]="level"
+      [(value)]="mute ? beforeMuteLevel : level"
       (userChange)="levelChange.emit($event.value); closeThumb()"
     >
     </ngx-slider>

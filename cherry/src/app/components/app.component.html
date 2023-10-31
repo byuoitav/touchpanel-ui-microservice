@@ -45,7 +45,7 @@
 		</ng-container>
 
 		<div class="secondary-theme">
-			<button mat-raised-button class="help" color="s-accent"
+			<button mat-raised-button class="help" color="accent"
 				(click)="openHelpDialog(); command.buttonPress('open help modal')" (press)="
           openHelpDialog(); command.buttonPress('long press open help modal')
         ">
@@ -55,7 +55,7 @@
 
 		<!-- home screen if there are displays -->
 		<ng-container *ngIf="data?.panel?.preset?.displays?.length > 0">
-			<mat-tab-group backgroundColor="accent" color="accent" [(selectedIndex)]="selectedTabIndex"
+			<mat-tab-group backgroundColor="primary" color="accent" [(selectedIndex)]="selectedTabIndex"
 				(selectedTabChange)="
           command.buttonPress('tab changed to ' + $event.tab.textLabel)
         ">
