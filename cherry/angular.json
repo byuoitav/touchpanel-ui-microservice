@@ -21,8 +21,8 @@
               "src/favicon.ico"
             ],
             "styles": [
-              "src/styles.scss",
-              "src/app/cherry-theme.scss"
+              "src/app/cherry-theme.scss",
+              "src/styles.scss"
             ],
             "scripts": []
           },
@@ -71,6 +71,7 @@
             "tsConfig": "src/tsconfig.spec.json",
             "scripts": [],
             "styles": [
+              "src/app/cherry-theme.scss",
               "src/styles.scss"
             ],
             "assets": [
