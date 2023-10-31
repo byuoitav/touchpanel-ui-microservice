@@ -1,5 +1,9 @@
 /* You can add global styles to this file, and also import other style files */
 
+@use '@angular/material' as mat;
+
+@include mat.core();
+
 $material-design-icons-font-directory-path: '~material-design-icons-iconfont/dist/fonts/';
 
 @import 'material-design-icons-iconfont/src/material-design-icons';
@@ -18,7 +22,7 @@ html {
 
 .mat-dialog-container {
     //background-color: mat.mat-color($primary, darker) !important;
-    background-color: $primary-800 !important;
+    background-color: mat.get-color-from-palette($primary, darker) !important;
 }
 /*
 .mat-button {
