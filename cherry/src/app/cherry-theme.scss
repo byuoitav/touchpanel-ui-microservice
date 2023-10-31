@@ -52,3 +52,8 @@ $secondary: mat.define-dark-theme((
 .secondary-theme {
     @include mat.core-theme($secondary);
 }
+
+// Include theme styles for core and each component used in your app.
+// Alternatively, you can import and @include the theme mixins for each component
+// that you are using.
+@include mat.all-component-themes($cherry-theme);
