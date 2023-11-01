@@ -29,7 +29,7 @@ $inputs-height: 40vh;
 }
 
 %io-button {
-    white-space: nowrap;
+    white-space: normal;
     overflow: hidden;
     text-overflow: ellipsis;
     padding: 0 .5vw 0 .5vw;
@@ -47,7 +47,7 @@ $inputs-height: 40vh;
 
 .outputs {
     @extend %io-row;
-    height: $outputs-height;
+    min-height: $outputs-height;
     margin-top: math.div($outputs-height, 8);
     margin-bottom: math.div($outputs-height, 8);
     flex-wrap: wrap;
