@@ -20,7 +20,7 @@ $blueberry-warn: mat.define-palette(mat.$red-palette, 600, 800, 400);
 
 // Create the theme object. A theme consists of configurations for individual
 // theming systems such as "color" or "typography".
-$blueberry: mat.define-light-theme((
+$blueberry-theme: mat.define-light-theme((
   color: (
     primary: $blueberry-primary,
     accent: $blueberry-accent,
@@ -33,14 +33,14 @@ $blueberry: mat.define-light-theme((
 // that you are using.
 @include mat.all-component-themes($blueberry-theme);
 
-@include mat.core-theme($blueberry);
+@include mat.core-theme($blueberry-theme);
 
 .blueberry-theme {
-  @include mat.core-theme($blueberry);
+  @include mat.core-theme($blueberry-theme);
 }
 
 //.primary-background {
-  //background-color: mat.core-color($blueberry);
+  //background-color: mat.core-color($blueberry-theme);
 //}
 
 /*
