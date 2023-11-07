@@ -40,8 +40,8 @@ $cherry-theme: mat.define-dark-theme((
 }
 
 .mat-app-background {
-    //background-color: mat.core-color($primary);
-    background-color: mat.get-color-from-palette($primary, darker);
+    //background-color: mat.core-color($cherry-primary);
+    background-color: mat.get-color-from-palette($cherry-primary, darker);
 }
 
 .mat-tab-label-darker {
