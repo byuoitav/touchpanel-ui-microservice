@@ -12,6 +12,8 @@ $material-design-icons-font-directory-path: '~material-design-icons-iconfont/dis
 
 @import url('https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@600&display=swap');
 
+@include angular-material-theme($cherry-theme);
+
 html {
     overflow: hidden;
     user-select: none;
@@ -37,4 +39,7 @@ html {
     font-family: "Source Sans 3", sans-serif;
     letter-spacing: 0.1px;
 }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }

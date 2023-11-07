@@ -110,8 +110,6 @@ ul {
     position: absolute;
     width: 100%;
     text-align: center;
-    bottom: 10px;
-    top: 20px; // center + height should be 100%
     transition: transform $duration, opacity $duration, ease-in-out;
     will-change: transform, opacity;
     pointer-events: none;

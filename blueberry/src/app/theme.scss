@@ -1,19 +1,37 @@
-@use '@angular/material' as mat;
 
+// Custom Theming for Angular Material
+// For more information: https://material.angular.io/guide/theming
+@use '@angular/material' as mat;
+// Plus imports for other components in your app.
+
+// Include the common styles for Angular Material. We include this here so that you only
+// have to load a single css file for Angular Material in your app.
+// Be sure that you only ever include this mixin once!
 @include mat.core();
 
-$primary: mat.define-palette(mat.$blue-grey-palette, 700, 500, 900);
-$accent: mat.define-palette(mat.$light-blue-palette, A700, 200, A700);
-$warn: mat.define-palette(mat.$red-palette, 600, 800, 400);
+// Define the palettes for your theme using the Material Design palettes available in palette.scss
+// (imported above). For each palette, you can optionally specify a default, lighter, and darker
+// hue. Available color palettes: https://material.io/design/color/
+$blueberry-primary: mat.define-palette(mat.$blue-grey-palette, 700, 500, 900);
+$blueberry-accent: mat.define-palette(mat.$light-blue-palette, A700, 200, A700);
 
-$blueberry: mat.define-dark-theme((
+// The warn palette is optional (defaults to red).
+$blueberry-warn: mat.define-palette(mat.$red-palette, 600, 800, 400);
+
+// Create the theme object. A theme consists of configurations for individual
+// theming systems such as "color" or "typography".
+$blueberry: mat.define-light-theme((
   color: (
-    primary: $primary,
-    accent: $accent,
-    warn: $warn,
-  ),
-  density: 0,
+    primary: $blueberry-primary,
+    accent: $blueberry-accent,
+    warn: $blueberry-warn,
+  )
 ));
+
+// Include theme styles for core and each component used in your app.
+// Alternatively, you can import and @include the theme mixins for each component
+// that you are using.
+@include mat.all-component-themes($blueberry-theme);
 
 @include mat.core-theme($blueberry);
 
