@@ -6,21 +6,8 @@
       [class.shorter]="muteType === 'mat-fab'"
       [options]="options"
       [(value)]="level"
-      (userChange)="levelChange.emit($event.value); closeThumb()"
+      (userChange)="onUserChange($event.value); closeThumb()"
     ></ngx-slider>
-  <!--<mat-slider
-    class="slider"
-    color="primary"
-    [class.shorter]="muteType === 'mat-fab'"
-    (change)="levelChange.emit($event.value); closeThumb()"
-    [max]="100"
-    [min]="0"
-    [step]="5" 
-    vertical="true"
-    [discrete]="false"
-    [showTickMarks]="false">
-    <input matSliderThumb type="range" (blur)="closeThumb()" [value]="level" />
-  </mat-slider>-->
 
   <!-- mute button -->
   <ng-container [ngSwitch]="muteType">

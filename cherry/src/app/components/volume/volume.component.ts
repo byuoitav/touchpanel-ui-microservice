@@ -8,7 +8,7 @@ import {
 } from "@angular/core";
 import { MatSliderModule, MatSliderThumb } from "@angular/material/slider";
 
-import { Options } from "ngx-slider-v2";
+import { Options, ChangeContext, PointerType } from 'ngx-slider-v2';
 
 @Component({
   selector: "volume",
@@ -20,7 +20,7 @@ export class VolumeComponent {
   @Input()
   level: number;
   @Input()
-  mute: boolean;
+  muted: boolean;
 
   options: Options = {
     floor: 0,
@@ -47,7 +47,7 @@ export class VolumeComponent {
 
   public muteClick() {
     let emit: MuteStatus;
-    if (this.mute) {
+    if (this.muted) {
       emit = new MuteStatus(this.beforeMuteLevel, false);
     } else {
       this.beforeMuteLevel = this.level;
@@ -61,6 +61,10 @@ export class VolumeComponent {
     setTimeout(() => {
       this.thumb.blur();
     }, 2000);
+  }
+
+  public onUserChange(changeContext: ChangeContext): void {
+    this.levelChange.emit(changeContext.value);
   }
 }
 

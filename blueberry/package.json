@@ -33,7 +33,7 @@
     "material-design-icons": "^3.0.1",
     "material-design-icons-iconfont": "^6.7.0",
     "ngx-slider-v2": "^16.0.2",
-    "ngx-ui-switch": "^14.0.3",
+    "ngx-ui-switch": "^14.1.0",
     "rxjs": "^7.8.1",
     "rxjs-compat": "^6.6.7",
     "serializer.ts": "0.0.12",
