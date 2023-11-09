@@ -2,15 +2,15 @@
     <!-- volume slider -->
     <ngx-slider class="slider" color="primary"
       [options]="options"
-      [(value)]="mute ? beforeMuteLevel : level"
+      [(value)]="muted ? beforeMuteLevel : level"
       (userChange)="onUserChange($event.value); closeThumb()"
     >
     </ngx-slider>
     <!-- mute button -->
-    <div [class.secondary-theme]="!mute">
-        <button mat-raised-button [color]="mute ? 'warn' : 'primary'" (click)="muteClick()" (press)="muteClick()" class="button" [class.muted]="mute">
-      <ng-container *ngIf="!mute">Mute</ng-container>
-      <ng-container *ngIf="mute">Unmute</ng-container>
+    <div [class.secondary-theme]="!muted">
+        <button mat-raised-button [color]="mute ? 'warn' : 'primary'" (click)="muteClick()" (press)="muteClick()" class="button" [class.muted]="muted">
+      <ng-container *ngIf="!muted">Mute</ng-container>
+      <ng-container *ngIf="muted">Unmute</ng-container>
     </button>
     </div>
 </div>

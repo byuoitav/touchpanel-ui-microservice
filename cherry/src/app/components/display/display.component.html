@@ -103,7 +103,7 @@
 <!-- Display component only controls the audioDevices in the "audioDevices" array of the UIConfig -->
 <div class="volume-label">Master Display Volume</div>
 <div class="volume">
-    <volume [level]="panel?.preset?.masterVolume" [mute]="panel?.preset?.masterMute" (levelChange)="
+    <volume [level]="panel?.preset?.masterVolume" [muted]="panel?.preset?.masterMute" (levelChange)="
       command.setMasterVolume($event, panel?.preset);
       command.buttonPress('master volume set on display page', {
         level: $event
