@@ -1,3 +1,4 @@
+import { NgxSliderModule } from "ngx-slider-v2";
 import {
   Component,
   Input,
@@ -20,7 +21,7 @@ export class VolumeComponent {
   @Input()
   level: number;
   @Input()
-  muted: boolean;
+  mute: boolean;
 
   options: Options = {
     floor: 0,
@@ -37,9 +38,12 @@ export class VolumeComponent {
 
   public beforeMuteLevel: number;
 
-  @ViewChild("slider")
-  slider: MatSliderModule;
+  //@ViewChild("slider")
+  //slider: MatSliderModule;
 
+  @ViewChild("slider")
+  slider: NgxSliderModule;
+  
   @ViewChild("thumb")
   thumb: MatSliderThumb;
 
@@ -47,13 +51,16 @@ export class VolumeComponent {
 
   public muteClick() {
     let emit: MuteStatus;
-    if (this.muted) {
+    if (this.mute) {
       emit = new MuteStatus(this.beforeMuteLevel, false);
     } else {
       this.beforeMuteLevel = this.level;
       emit = new MuteStatus(0, true);
     }
 
+    console.log("muteClick:emit " + emit.muted + " " + emit.level);
+    console.log("muteClick:values " + this.mute + " " + this.level);
+    console.log("muteClick:before " + this.beforeMuteLevel);
     this.muteChange.emit(emit);
   }
 
@@ -64,6 +71,7 @@ export class VolumeComponent {
   }
 
   public onUserChange(changeContext: ChangeContext): void {
+    console.log("onUserChange: " + changeContext.value);
     this.levelChange.emit(changeContext.value);
   }
 }
