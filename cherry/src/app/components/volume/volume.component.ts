@@ -47,7 +47,11 @@ export class VolumeComponent {
   @ViewChild("thumb")
   thumb: MatSliderThumb;
 
-  constructor() {}
+  constructor() {
+    this.level = 0;
+    this.mute = false;
+    this.beforeMuteLevel = 0;
+  }
 
   public muteClick() {
     let emit: MuteStatus;
@@ -57,11 +61,9 @@ export class VolumeComponent {
       this.beforeMuteLevel = this.level;
       emit = new MuteStatus(0, true);
     }
-
-    console.log("muteClick:emit " + emit.muted + " " + emit.level);
-    console.log("muteClick:values " + this.mute + " " + this.level);
-    console.log("muteClick:before " + this.beforeMuteLevel);
+    this.mute = !this.mute;
     this.muteChange.emit(emit);
+    console.log("muteClick: level(" + emit.level + ") mute(" + emit.muted + ")");
   }
 
   public closeThumb() {
@@ -71,8 +73,26 @@ export class VolumeComponent {
   }
 
   public onUserChange(changeContext: ChangeContext): void {
-    console.log("onUserChange: " + changeContext.value);
     this.levelChange.emit(changeContext.value);
+    if (changeContext.pointerType === PointerType.Min) {
+      this.closeThumb();
+    }
+
+    if (changeContext.pointerType === PointerType.Max) {
+      this.closeThumb();
+    }
+
+    //if is mute and change level, unmute
+    if (this.mute) {
+      this.muteClick();
+    }
+
+    //if level is 0, mute
+    if (changeContext.value === 0) {
+      this.muteClick();
+    }
+    
+    console.log("onUserChange: level(" + changeContext.value + ") mute(" + this.mute + ")");
   }
 }
 

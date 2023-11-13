@@ -5,7 +5,8 @@
       color="primary"
       (userChange)="onUserChange($event.value); closeThumb()"
       [options]="options"
-      [value]="mute ? beforeMuteLevel : level"
+      [(value)]="mute ? beforeMuteLevel : level"
+      #slider>
     >
     </ngx-slider>
     <!-- mute button -->
