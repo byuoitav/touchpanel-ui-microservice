@@ -13,6 +13,7 @@ import { Preset } from "../objects/objects";
 import { Display, Input, AudioDevice } from "../objects/status.objects";
 import { CommandService } from "../services/command.service";
 import { MatDialog } from "@angular/material/dialog";
+import { UiSwitchModule } from 'ngx-ui-switch';
 
 @Component({
   selector: "wheel",
