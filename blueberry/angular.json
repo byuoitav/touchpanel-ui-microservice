@@ -22,7 +22,8 @@
             ],
             "styles": [
               "src/app/theme.scss",
-              "src/styles.scss"
+              "src/styles.scss",
+              "./node_modules/ngx-ui-switch/ui-switch.component.css"
             ],
             "scripts": []
           },
@@ -72,7 +73,8 @@
             "scripts": [],
             "styles": [
               "src/app/theme.scss",
-              "src/styles.scss"
+              "src/styles.scss",
+              "./node_modules/ngx-ui-switch/ui-switch.component.css"
             ],
             "assets": [
               "src/assets",
