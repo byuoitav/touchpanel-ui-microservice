@@ -40,37 +40,6 @@ $slider-height: 75%;
   }
 }
 
-::ng-deep .mat-slider .mat-slider-thumb {
-  width: 50px;
-  height: 50px;
-  right: -25px;
-  bottom: -25px;
-}
-
-::ng-deep .mat-slider.mat-slider-vertical .mat-slider-track-wrapper {
-  width: 10px;
-  left: -4px;
-  border-radius: 10px;
-}
-
-::ng-deep .mat-slider.mat-slider-vertical .mat-slider-track-background {
-  width: 100%;
-  background-image: linear-gradient(
-    to top,
-    rgba(0, 0, 0, 0.15),
-    rgba(0, 0, 0, 0)
-  );
-}
-
-::ng-deep .mat-slider.mat-slider-vertical .mat-slider-track-fill {
-  width: 100%;
-  background-image: linear-gradient(
-    to top,
-    rgba(0, 0, 0, 0.3),
-    rgba(0, 0, 0, 0)
-  );
-}
-
 // customize ngx-slider
 
 :ng-deep .ngx-slider .ngx-slider-pointer {
