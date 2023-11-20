@@ -24,17 +24,14 @@ $slider-height: 80%;
 
 :ng-deep .ngx-slider {
   height: $slider-height;
-  width: 100%;
 }
 
 .ngx-slider.vertical {
   height: $slider-height;
-  width: 100%;
 }
 
 :ng-deep .ngx-slider.vertical {
   height: $slider-height;
-  width: 100%;
 }
 
 :ng-deep .ngx-slider .ngx-slider-pointer {
