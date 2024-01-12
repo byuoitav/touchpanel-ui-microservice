@@ -1,18 +1,14 @@
-import { Injectable, EventEmitter, ViewChild, ElementRef } from "@angular/core";
-import { HttpClient, HttpRequest } from "@angular/common/http";
-import { MatDialog } from "@angular/material/dialog";
+import { Injectable, EventEmitter } from "@angular/core";
+import { HttpClient, HttpRequest,  HttpHeaders, HttpParams} from "@angular/common/http";
+import { catchError, tap, timeout } from 'rxjs/operators';
+import { Observable, of, map } from "rxjs";
 
 import { APIService } from "./api.service";
 import { DataService } from "./data.service";
 import { Event, BasicDeviceInfo, BasicRoomInfo } from "./socket.service";
 import { Input, Display, AudioDevice } from "../objects/status.objects";
-import { Preset, AudioConfig, ConfigCommand } from "../objects/objects";
-
-import { Observable, of } from "rxjs";
-import { catchError, takeWhile, tap, timeout } from 'rxjs/operators';
-import { map } from "rxjs";
-import { subscribe } from "diagnostics_channel";
-import { deserialize } from "serializer.ts/Serializer";
+import { Preset, ConfigCommand } from "../objects/objects";
+import { MatDialog } from "@angular/material/dialog";
 
 const TIMEOUT = 12 * 1000;
 
@@ -33,7 +29,7 @@ class CommandRequest {
 
 @Injectable()
 export class CommandService {
-  private options: HttpRequest<any>; 
+  private options: {}
 
   constructor(
     private http: HttpClient,
@@ -41,13 +37,16 @@ export class CommandService {
     public api: APIService,
     public dialog: MatDialog
   ) {
-    const headers = new Headers();
-    headers.append("content-type", "application/json");
-    this.options = new HttpRequest<any>("GET", "", {headers: headers});
+    this.options = {
+      headers: new HttpHeaders({
+        "Content-Type": "application/json"
+      }),
+      params : new HttpParams()
+    };
   }
 
   private put(data:any): Observable<Object> {
-    return this.http.put(APIService.apiurl, data, this.options.body).pipe(
+    return this.http.put(APIService.apiurl, data, this.options).pipe(
       timeout(TIMEOUT),
       tap(res => console.log("PUT response", res)),
       map(res => res),
@@ -56,7 +55,7 @@ export class CommandService {
   }
 
   private putWithCustomTimeout(data: any, timeOut: number): Observable<Object> {
-    return this.http.put(APIService.apiurl, data, this.options.body).pipe(
+    return this.http.put(APIService.apiurl, data, this.options).pipe(
       timeout(timeOut),
       tap(res => console.log("PUT response", res)),
       map(res => res),
@@ -78,24 +77,29 @@ export class CommandService {
       });
     }
 
-    this.put(body).subscribe(
-      data => {
+    this.put(body).pipe(
+      timeout(TIMEOUT),
+      tap(data => console.log("PUT data", data)),
+      catchError(this.handleError("setPower", []))
+    ).subscribe({
+      next: data => {
         ret.emit(true);
+        console.log("setPower", data);
       },
-      err => {
-        Display.setPower(p, displays);
+      error: err => {
+        Display.setPower(prev, displays);
         ret.emit(false);
+        console.warn("error setPower", err);
+      },
+      complete: () => {
+        console.log("setPower completed");
       }
-    );
+    });
 
     return ret;
   }
 
-  public setInput(
-    preset: Preset,
-    i: Input,
-    displays: Display[]
-  ): EventEmitter<boolean> {
+  public setInput(preset: Preset, i: Input, displays: Display[]): EventEmitter<boolean> {
     i.click.emit();
 
     const ret: EventEmitter<boolean> = new EventEmitter<boolean>();
@@ -167,7 +171,8 @@ export class CommandService {
 
     this.put(body).pipe(
       timeout(TIMEOUT),
-      tap(res => console.log("PUT response", res))
+      tap(res => console.log("PUT response", res)),
+      catchError(this.handleError("setBlank", []))
     ).subscribe({
       next: data => {
 
@@ -208,7 +213,8 @@ export class CommandService {
 
     this.put(body).pipe(
       timeout(TIMEOUT),
-      tap(res => console.log("PUT response", res))
+      tap(res => console.log("PUT response", res)),
+      catchError(this.handleError("setVolume", []))
     ).subscribe({
       next: data => {
         ret.emit(true);
@@ -228,10 +234,7 @@ export class CommandService {
     return ret;
   }
 
-  public setMute(
-    m: boolean,
-    audioDevices: AudioDevice[]
-  ): EventEmitter<boolean> {
+  public setMute(m: boolean, audioDevices: AudioDevice[]): EventEmitter<boolean> {
     const ret: EventEmitter<boolean> = new EventEmitter<boolean>();
     console.log("changing mute to", m, "on", audioDevices);
     const prev = AudioDevice.getMute(audioDevices);
@@ -247,7 +250,8 @@ export class CommandService {
 
     this.put(body).pipe(
       timeout(TIMEOUT),
-      tap(res => console.log("PUT response", res))
+      tap(res => console.log("PUT response", res)),
+      catchError(this.handleError("setMute", []))
     ).subscribe({
       next: data => {
         ret.emit(true);
@@ -577,11 +581,7 @@ export class CommandService {
     return ret;
   }
 
-  private executeRequests(
-    requests: CommandRequest[],
-    maxTries: number,
-    timeout: number
-  ): EventEmitter<boolean> {
+  private executeRequests(requests: CommandRequest[], maxTries: number, timeout: number): EventEmitter<boolean> {
     const ret: EventEmitter<boolean> = new EventEmitter<boolean>();
     if (requests.length < 1) {
       setTimeout(() => ret.emit(false), 250);
@@ -620,22 +620,19 @@ export class CommandService {
     return ret;
   }
 
-  private executeRequest(
-    req: CommandRequest,
-    maxTries: number,
-    timeOut: number
-  ): EventEmitter<boolean> {
+  private executeRequest(req: CommandRequest, maxTries: number, timeOut: number): EventEmitter<boolean> {
     const ret: EventEmitter<boolean> = new EventEmitter<boolean>();
     console.log("executing request", req);
 
     setTimeout(() => {
-
       this.http.request(req.req).pipe(
         timeout(timeOut),
+        tap(res => console.log("request response", res)),
         catchError(this.handleError("executeRequest", []))
       ).subscribe({
         next: data => {
           console.log("successfully executed request", req);
+          console.log("data", data);
           ret.emit(true);
           return;
         },

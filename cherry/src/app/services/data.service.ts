@@ -365,7 +365,7 @@ export class DataService {
               let output: Output;
               output = this.displays.find(d => d.name === split[2]);
               if (output != null) {
-                output.power = e.Value;
+                output.power = e.Value; 
               }
 
               output = this.audioDevices.find(a => a.name === split[2]);

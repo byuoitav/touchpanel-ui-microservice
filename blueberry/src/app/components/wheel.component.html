@@ -82,7 +82,12 @@
       (press)="$event.stopPropagation()"
       style="border: none !important;"
     >
-      <ui-switch [checked]="getBlank()" (change)="command.setBlank($event, preset.displays); command.buttonPress($event ? 'blank' : 'unblank', getDisplayNames())" reverse defaultBgColor="#f44336"></ui-switch>
+      <ui-switch 
+        [checked]="getBlank()"
+        (change)="command.setBlank($event, preset.displays); command.buttonPress($event ? 'blank' : 'unblank', getDisplayNames())" 
+        reverse 
+        defaultBgColor="#f44336">
+      </ui-switch>
     </div>
   </div>
 </div>

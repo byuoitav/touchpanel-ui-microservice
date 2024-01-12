@@ -44,7 +44,7 @@ export class APIService {
     if (APIService.options == null) {
       const headers = new Headers();
       headers.append("content-type", "application/json");
-      APIService.options = {headers: new HttpHeaders(headers)};
+      APIService.options = {headers: new HttpHeaders(headers), params: new HttpParams()};
       APIService.localurl = window.location.protocol + "//" + window.location.host;
 
       APIService.room = new Room();

@@ -1,8 +1,7 @@
 import { Injectable, EventEmitter } from "@angular/core";
-import { HttpClient, HttpRequest } from "@angular/common/http";
+import { HttpClient, HttpHeaders, HttpParams, HttpRequest } from "@angular/common/http";
 import { catchError, tap, timeout } from 'rxjs/operators';
-import { Observable } from "rxjs";
-import { of } from "rxjs";
+import { Observable, of, map } from "rxjs";
 
 import { APIService } from "./api.service";
 import { DataService } from "./data.service";
@@ -29,17 +28,18 @@ class CommandRequest {
 
 @Injectable()
 export class CommandService {
-  private options: HttpRequest<any>;
-
+  private options : {};
   constructor(
     private http: HttpClient,
     private data: DataService,
     private api: APIService
   ) {
-    const headers = new Headers();
-    headers.append("content-type", "application/json");
-    this.options = new HttpRequest<any>("GET", "", {
-      headers: headers });
+    this.options = {
+      headers: new HttpHeaders({
+        "Content-Type": "application/json"
+      }),
+      params : new HttpParams()
+    };  
   }
 
   private executeRequests(
@@ -142,16 +142,19 @@ export class CommandService {
   }
 
   private put(data: any): Observable<Object> {
-    return this.http.put(APIService.apiurl, data, this.options.body).pipe(
+    return this.http.put(APIService.apiurl, data, this.options).pipe(
       timeout(TIMEOUT),
-      tap(_ => console.log("put data:", data)),
+      tap(res => console.log("PUT response", res)),
+      map(res => res),
       catchError(this.handleError("put", []))
     );
   }
 
   private putWithCustomTimeout(data: any, timeOut: number): Observable<Object> {
-    return this.http.put(APIService.apiurl, data, this.options.body).pipe(
+    return this.http.put(APIService.apiurl, data, this.options).pipe(
       timeout(timeOut),
+      tap(res => console.log("PUT response", res)),
+      map(res => res),
       catchError(this.handleError("putWithCustomTimeout", []))
     );
   }
@@ -170,18 +173,22 @@ export class CommandService {
       });
     }
 
-    this.put(body).subscribe({
+    this.put(body).pipe(
+      timeout(TIMEOUT),
+      tap(data => console.log("PUT data", data)),
+      catchError(this.handleError("setPower", []))
+    ).subscribe({
       next: data => {
-        console.log("put data", data);
+        console.log("setPower:", data);
         ret.emit(true);
       },
       error: err => {
-        console.error("put error", err);
+        console.error("put error in setPower", err);
         Display.setPower(prev, displays);
         ret.emit(false);
       },
       complete: () => {
-        console.log("put completed");
+        console.log("setPower completed");
       }
     });
 
@@ -236,7 +243,11 @@ export class CommandService {
       });
     }
 
-    this.put(body).subscribe({
+    this.put(body).pipe(
+      timeout(TIMEOUT),
+      tap(data => console.log("PUT data", data)),
+      catchError(this.handleError("setBlank", []))
+    ).subscribe({
       next: data => {
         console.log("put data", data);
         ret.emit(true);
@@ -271,8 +282,11 @@ export class CommandService {
 
     console.log("volume body", body);
 
-
-    this.put(body).subscribe({
+    this.put(body).pipe(
+      timeout(TIMEOUT),
+      tap(data => console.log("PUT data", data)),
+      catchError(this.handleError("setVolume", []))
+    ).subscribe({
       next: data => {
         console.log("put data", data);
         ret.emit(true);
@@ -293,7 +307,6 @@ export class CommandService {
   public setMute(m: boolean, devices: AudioDevice[]): EventEmitter<boolean> {
     const ret: EventEmitter<boolean> = new EventEmitter<boolean>();
     console.log("changing mute to", m, "on", devices);
-
     const prev = AudioDevice.getMute(devices);
     AudioDevice.setMute(m, devices);
 
@@ -305,7 +318,11 @@ export class CommandService {
       });
     }
 
-    this.put(body).subscribe({
+    this.put(body).pipe(
+      timeout(TIMEOUT),
+      tap(data => console.log("PUT data", data)),
+      catchError(this.handleError("setMute", []))
+    ).subscribe({
       next: data => {
         console.log("put data", data);
         ret.emit(true);
@@ -408,8 +425,11 @@ export class CommandService {
 
     const body = { power: "standby" };
 
-
-    this.put(body).subscribe({
+    this.put(body).pipe(
+      timeout(TIMEOUT),
+      tap(data => console.log("PUT data", data)),
+      catchError(this.handleError("powerOffAll", []))
+    ).subscribe({
       next: data => {
         console.log("put data", data);
         ret.emit(true);
@@ -488,17 +508,22 @@ export class CommandService {
     }
 
     console.log("share body:", body);
-    this.putWithCustomTimeout(body, 20 * 1000).subscribe({
+
+    this.putWithCustomTimeout(body, 20 * 1000).pipe(
+      timeout(TIMEOUT),
+      tap(data => console.log("PUT data", data)),
+      catchError(this.handleError("share", []))
+    ).subscribe({
       next: data => {
-        console.log("share", data);
+        console.log("put data", data);
         ret.emit(true);
       },
       error: err => {
-        console.error("share", err);
+        console.error("put error", err);
         ret.emit(false);
       },
       complete: () => {
-        console.log("share completed");
+        console.log("put completed");
       }
     });
 
@@ -550,17 +575,21 @@ export class CommandService {
     */
 
     console.log("unshare body", body);
-    this.putWithCustomTimeout(body, 20 * 1000).subscribe({
+    this.putWithCustomTimeout(body, 20 * 1000).pipe(
+      timeout(TIMEOUT),
+      tap(data => console.log("PUT data", data)),
+      catchError(this.handleError("unshare", []))
+    ).subscribe({
       next: data => {
-        console.log("unshare", data);
+        console.log("put data", data);
         ret.emit(true);
       },
       error: err => {
-        console.error("unshare", err);
+        console.error("put error", err);
         ret.emit(false);
       },
       complete: () => {
-        console.log("unshare completed");
+        console.log("put completed");
       }
     });
     
@@ -585,17 +614,21 @@ export class CommandService {
     }
 
     console.log("mirror body", body);
-    this.put(body).subscribe({
+    this.put(body).pipe(
+      timeout(TIMEOUT),
+      tap(data => console.log("PUT data", data)),
+      catchError(this.handleError("mirror", []))
+    ).subscribe({
       next: data => {
-        console.log("mirror", data);
+        console.log("put data", data);
         ret.emit(true);
       },
       error: err => {
-        console.error("mirror", err);
+        console.error("put error", err);
         ret.emit(false);
       },
       complete: () => {
-        console.log("mirror completed");
+        console.log("put completed");
       }
     });
 
