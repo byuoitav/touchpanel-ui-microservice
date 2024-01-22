@@ -3,14 +3,13 @@
 
   <!-- volume slider -->
   <ngx-slider
-    # slider
     class="slider" 
     color="primary"
     [class.shorter]="muteType === 'mat-fab'"
     [(ngModel)]="level"
     [options]="options"
     [(value)]="level"
-    (change)="levelChange.emit($event.value); (change)='command.volume($event.value)'"
+    (change)="levelChange.emit($event.value);"
     (onUserChangeEnd)=onUserChangeEnd($event)
   ></ngx-slider>
 
