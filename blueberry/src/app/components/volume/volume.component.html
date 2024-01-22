@@ -2,12 +2,17 @@
   <div *ngIf="name" class="label">{{ name }}</div>
 
   <!-- volume slider -->
-  <ngx-slider class="slider" color="primary"
-      [class.shorter]="muteType === 'mat-fab'"
-      [options]="options"
-      [(value)]="level"
-      (userChange)="onUserChange($event.value); closeThumb()"
-    ></ngx-slider>
+  <ngx-slider
+    # slider
+    class="slider" 
+    color="primary"
+    [class.shorter]="muteType === 'mat-fab'"
+    [(ngModel)]="level"
+    [options]="options"
+    [(value)]="level"
+    (change)="levelChange.emit($event.value); (change)='command.volume($event.value)'"
+    (onUserChangeEnd)=onUserChangeEnd($event)
+  ></ngx-slider>
 
   <!-- mute button -->
   <ng-container [ngSwitch]="muteType">

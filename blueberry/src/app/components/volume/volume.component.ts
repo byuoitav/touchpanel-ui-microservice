@@ -17,13 +17,18 @@ import { Options, ChangeContext, PointerType } from 'ngx-slider-v2';
 })
 export class VolumeComponent implements OnInit {
   thumbLabel = true;
-  vertical = true;
+
   @Input()
   level: number;
   @Input()
   mute: boolean;
-  @Input() name: string;
-  value: number;
+
+  @Input() 
+  name: string;
+  
+  @Input()
+  muteType: string;
+
   options: Options = {
     floor: 0,
     ceil: 100,
@@ -32,10 +37,6 @@ export class VolumeComponent implements OnInit {
     showSelectionBar: true,
   };
   
-
-  @Input()
-  muteType: string;
-
   @Output()
   levelChange: EventEmitter<number> = new EventEmitter();
   @Output()
@@ -44,7 +45,7 @@ export class VolumeComponent implements OnInit {
   @ViewChild("slider")
   slider: MatSliderModule;
 
-  public onUserChange(changeContext: ChangeContext): void {
+  onUserChangeEnd(changeContext: ChangeContext): void {
     this.levelChange.emit(changeContext.value);
   }
 

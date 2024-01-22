@@ -35,6 +35,7 @@ import { MirrorModalComponent } from "../modals/mirrormodal/mirrormodal.componen
 import { MessageModalComponent } from "../modals/messagemodal/messagemodal.component";
 import { Action } from "./activity-button/activity-button.component";
 import { StreamModalComponent } from "app/modals/streammodal/streammodal.component";
+import { Observable, catchError, of, tap } from "rxjs";
 
 export const SHARE = "start_share";
 export const STOP_SHARE = "stop_share";
@@ -281,7 +282,34 @@ export class HomeComponent implements OnInit {
         const preset = this.buildSharePreset(from, to);
         console.log("share preset", preset);
 
-        this.command.share(from, to).subscribe(success => {
+        this.command.share(from, to).pipe(
+          tap(success => {
+            if (success) {
+              this.sharePreset = preset;
+              this.changePreset(this.sharePreset);
+
+              const event = new Event();
+
+              event.User = from.name;
+              event.EventTags = ["ui-communication"];
+              event.AffectedRoom = new BasicRoomInfo(
+                APIService.building + "-" + APIService.roomName
+              );
+              event.TargetDevice = new BasicDeviceInfo(APIService.piHostname);
+              event.Key = SHARE;
+              event.Value = " ";
+              event.Data = this.mirroringMe.map(p => p.name);
+
+              this.api.sendEvent(event);
+            }
+          }),
+          catchError(this.handleError<boolean>('share'))
+        ).subscribe({
+          next: success => resolve(success),
+          error: err => reject(err)
+        });
+
+        /*this.command.share(from, to).subscribe(success => {
           if (success) {
             this.mirroringMe.push(...to);
             this.sharePreset = preset;
@@ -303,7 +331,7 @@ export class HomeComponent implements OnInit {
           }
 
           resolve(success);
-        });
+        });*/
       });
     };
   };
@@ -321,7 +349,7 @@ export class HomeComponent implements OnInit {
       undefined
     );
 
-    this.command.unshare(from, to).subscribe(success => {
+    /*this.command.unshare(from, to).subscribe(success => {
       if (success) {
         this.changePreset(from);
         this.mirroringMe = this.mirroringMe.filter(p => !to.includes(p));
@@ -342,6 +370,32 @@ export class HomeComponent implements OnInit {
 
       ref.close();
       ret.emit(success);
+    });*/
+
+    this.command.unshare(from, to).pipe(
+      tap(success => {
+        if (success) {
+          this.changePreset(from);
+          this.mirroringMe = this.mirroringMe.filter(p => !to.includes(p));
+
+          const event = new Event();
+          event.User = from.name;
+          event.EventTags = ["ui-communication"];
+          event.AffectedRoom = new BasicRoomInfo(
+            APIService.building + "-" + APIService.roomName
+          );
+          event.TargetDevice = new BasicDeviceInfo(APIService.piHostname);
+          event.Key = STOP_SHARE;
+          event.Value = " ";
+          event.Data = to.map(p => p.name);
+
+          this.api.sendEvent(event);
+        }
+      }),
+      catchError(this.handleError<boolean>('unshare'))
+    ).subscribe({
+      next: success => ret.emit(success),
+      error: err => ret.error(err)
     });
 
     return ret;
@@ -887,5 +941,12 @@ export class HomeComponent implements OnInit {
         unmirror: this.unmirror
       }
     });
+  }
+
+  private handleError<T>(operation: string, result?: T) {
+    return (error: any): Observable<T> => {
+      console.error("error doing:", operation, "err:", error)
+      return of(result as T);
+    };
   }
 }
