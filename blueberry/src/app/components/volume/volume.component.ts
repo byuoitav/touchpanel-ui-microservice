@@ -45,10 +45,10 @@ export class VolumeComponent implements OnInit {
   @ViewChild("slider")
   slider: MatSliderModule;
 
-  onUserChangeEnd(changeContext: ChangeContext): void {
-    this.levelChange.emit(changeContext.value);
+  onUserChangeEnd(event: ChangeContext): void {
+    this.levelChange.emit(event.value);
   }
-
+  
   constructor() {}
   ngOnInit() {}
 
