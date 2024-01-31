@@ -9,8 +9,8 @@
     [(ngModel)]="level"
     [options]="options"
     [(value)]="level"
-    (change)="levelChange.emit($event.value);"
-    (userChangeEnd)="onUserChangeEnd($event)"
+    (levelChange)="onLevelChange($event)"
+    (userChangeEnd)="levelChange.emit($event.value)"
   ></ngx-slider>
 
   <!-- mute button -->
