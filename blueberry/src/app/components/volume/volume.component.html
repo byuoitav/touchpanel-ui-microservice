@@ -9,7 +9,7 @@
     [(ngModel)]="level"
     [options]="options"
     [(value)]="level"
-    (levelChange)="onLevelChange($event)"
+    (onUserChangeEnd)="onUserChangeEnd($event)"
     (userChangeEnd)="levelChange.emit($event.value)"
   ></ngx-slider>
 
