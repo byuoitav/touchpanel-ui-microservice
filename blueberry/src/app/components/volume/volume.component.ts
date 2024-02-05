@@ -33,13 +33,13 @@ export class VolumeComponent implements OnInit {
     showSelectionBar: true,
   };
   
-  @Output() levelChange: EventEmitter<number> = new EventEmitter();
-  @Output() muteChange: EventEmitter<boolean> = new EventEmitter();
+  @Output() levelChange = new EventEmitter<number>();
+  @Output() muteChange = new EventEmitter<boolean>();
 
   @ViewChild("slider")
   slider: MatSliderModule;
 
-  onUserChangeEnd(event: ChangeContext): void {
+  onLevelChange(event: ChangeContext): void {
     this.levelChange.emit(event.value);
   }
 

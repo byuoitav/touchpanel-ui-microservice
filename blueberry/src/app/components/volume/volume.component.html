@@ -7,9 +7,9 @@
     color="primary"
     [class.shorter]="muteType === 'mat-fab'"
     [(ngModel)]="level"
-    [options]="options"
+    [options]="options"`
     [(value)]="level"
-    (onUserChangeEnd)="onUserChangeEnd($event)"
+    (levelChange)="onLevelChange($event)"
     (userChangeEnd)="levelChange.emit($event.value)"
   ></ngx-slider>
 
