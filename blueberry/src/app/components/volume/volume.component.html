@@ -7,7 +7,7 @@
     color="primary"
     [class.shorter]="muteType === 'mat-fab'"
     [(ngModel)]="level"
-    [options]="options"`
+    [options]="options"
     [(value)]="level"
     (levelChange)="onLevelChange($event)"
     (userChangeEnd)="levelChange.emit($event.value)"
