@@ -55,9 +55,7 @@
       class="dta button"
       [class.grey]="wheel?.getInput()?.reachableDisplays?.length <= 1"
       (click)="showShareModal(); command.buttonPress('open share modal')"
-      (press)="
-        showShareModal(); command.buttonPress('long press open share modal')
-      "
+      (press)="showShareModal(); command.buttonPress('long press open share modal')"
     >
       <mat-icon>screen_share</mat-icon>
     </button>

@@ -144,18 +144,16 @@ export class CommandService {
   private put(data: any): Observable<Object> {
     return this.http.put(APIService.apiurl, data, this.options).pipe(
       timeout(TIMEOUT),
-      tap(res => console.log("PUT response", res)),
       map(res => res),
       catchError(this.handleError("put", []))
     );
   }
-
+  
   private putWithCustomTimeout(data: any, timeOut: number): Observable<Object> {
     return this.http.put(APIService.apiurl, data, this.options).pipe(
       timeout(timeOut),
-      tap(res => console.log("PUT response", res)),
       map(res => res),
-      catchError(this.handleError("putWithCustomTimeout", []))
+      catchError(this.handleError("put", []))
     );
   }
 

@@ -8,7 +8,7 @@ import {
 } from "@angular/core";
 import { MatSliderModule } from "@angular/material/slider";
 
-import { Options, ChangeContext, PointerType } from 'ngx-slider-v2';
+import { Options, ChangeContext } from 'ngx-slider-v2';
 
 @Component({
   selector: "volume",
@@ -40,7 +40,8 @@ export class VolumeComponent implements OnInit {
   slider: MatSliderModule;
 
   onLevelChange(event: ChangeContext): void {
-    this.levelChange.emit(event.value);
+    this.level = event.value;
+    this.levelChange.emit(this.level);
   }
 
 
