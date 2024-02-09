@@ -574,7 +574,6 @@ export class CommandService {
 
     console.log("unshare body", body);
     this.putWithCustomTimeout(body, 20 * 1000).pipe(
-      timeout(TIMEOUT),
       tap(data => console.log("PUT data", data)),
       catchError(this.handleError("unshare", []))
     ).subscribe({
