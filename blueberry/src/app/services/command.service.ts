@@ -435,6 +435,7 @@ export class CommandService {
     to.forEach(p => displays.push(...p.displays));
 
     const body = { displays: [], audioDevices: [] };
+    
     for (const preset of to) {
       for (const disp of preset.displays) {
         body.displays.push({

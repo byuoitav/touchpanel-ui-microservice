@@ -282,34 +282,7 @@ export class HomeComponent implements OnInit {
         const preset = this.buildSharePreset(from, to);
         console.log("share preset", preset);
 
-        this.command.share(from, to).pipe(
-          tap(success => {
-            if (success) {
-              this.sharePreset = preset;
-              this.changePreset(this.sharePreset);
-
-              const event = new Event();
-
-              event.User = from.name;
-              event.EventTags = ["ui-communication"];
-              event.AffectedRoom = new BasicRoomInfo(
-                APIService.building + "-" + APIService.roomName
-              );
-              event.TargetDevice = new BasicDeviceInfo(APIService.piHostname);
-              event.Key = SHARE;
-              event.Value = " ";
-              event.Data = this.mirroringMe.map(p => p.name);
-
-              this.api.sendEvent(event);
-            }
-          }),
-          catchError(this.handleError<boolean>('share'))
-        ).subscribe({
-          next: success => resolve(success),
-          error: err => reject(err)
-        });
-
-        /*this.command.share(from, to).subscribe(success => {
+        this.command.share(from, to).subscribe(success => {
           if (success) {
             this.mirroringMe.push(...to);
             this.sharePreset = preset;
@@ -331,7 +304,7 @@ export class HomeComponent implements OnInit {
           }
 
           resolve(success);
-        });*/
+        });
       });
     };
   };
@@ -348,8 +321,7 @@ export class HomeComponent implements OnInit {
       true,
       undefined
     );
-
-    /*this.command.unshare(from, to).subscribe(success => {
+    this.command.unshare(from, to).subscribe(success => {
       if (success) {
         this.changePreset(from);
         this.mirroringMe = this.mirroringMe.filter(p => !to.includes(p));
@@ -370,32 +342,6 @@ export class HomeComponent implements OnInit {
 
       ref.close();
       ret.emit(success);
-    });*/
-
-    this.command.unshare(from, to).pipe(
-      tap(success => {
-        if (success) {
-          this.changePreset(from);
-          this.mirroringMe = this.mirroringMe.filter(p => !to.includes(p));
-
-          const event = new Event();
-          event.User = from.name;
-          event.EventTags = ["ui-communication"];
-          event.AffectedRoom = new BasicRoomInfo(
-            APIService.building + "-" + APIService.roomName
-          );
-          event.TargetDevice = new BasicDeviceInfo(APIService.piHostname);
-          event.Key = STOP_SHARE;
-          event.Value = " ";
-          event.Data = to.map(p => p.name);
-
-          this.api.sendEvent(event);
-        }
-      }),
-      catchError(this.handleError<boolean>('unshare'))
-    ).subscribe({
-      next: success => ret.emit(success),
-      error: err => ret.error(err)
     });
 
     return ret;
@@ -412,7 +358,7 @@ export class HomeComponent implements OnInit {
       this.changePreset(this.defaultPreset);
     }
 
-    /*this.command.mirror(this.defaultPreset, preset).subscribe(success => {
+    this.command.mirror(this.defaultPreset, preset).subscribe(success => {
       if (success) {
         // tell panels mirroring me to show that they are mirroring them too
         const event = new Event();
@@ -428,30 +374,6 @@ export class HomeComponent implements OnInit {
 
         this.api.sendEvent(event);
       }
-    });*/
-
-    this.command.mirror(this.defaultPreset, preset).pipe(
-      tap(success => {
-        if (success) {
-          // tell panels mirroring me to show that they are mirroring them too
-          const event = new Event();
-          event.User = this.defaultPreset.name;
-          event.EventTags = ["ui-communication"];
-          event.AffectedRoom = new BasicRoomInfo(
-            APIService.building + "-" + APIService.roomName
-          );
-          event.TargetDevice = new BasicDeviceInfo(APIService.piHostname);
-          event.Key = JOIN_SHARE;
-          event.Value = preset.name;
-          event.Data = [this.defaultPreset.name];
-
-          this.api.sendEvent(event);
-        }
-      }),
-      catchError(this.handleError<boolean>('mirror'))
-    ).subscribe({
-      next: success => ref.close(),
-      error: err => ref.close()
     });
 
     this.removeExtraInputs();
@@ -470,19 +392,10 @@ export class HomeComponent implements OnInit {
         currInput.subInputs
       );
 
-      input.click.pipe(
-        tap(() => {
-          this.command.buttonPress("remirror", preset.name);
-          this.mirror(preset);
-        }),  
-      ).subscribe({
-        error: err => console.error(err)
-      });
-
-      /*input.click.subscribe(() => {
+      input.click.subscribe(() => {
         this.command.buttonPress("remirror", preset.name);
         this.mirror(preset);
-      });*/
+      });
 
       return input;
     } else {
@@ -503,35 +416,9 @@ export class HomeComponent implements OnInit {
     return async (): Promise<boolean> => {
       return new Promise<boolean>((resolve, reject) => {
         console.log("unmirroring");
-        
+
         // switch the input back to default
-        this.command.powerOnDefault(this.defaultPreset).pipe(
-          tap(success => {
-            if (success) {
-              const event = new Event();
-              event.User = this.defaultPreset.name;
-              event.EventTags = ["ui-communication"];
-              event.AffectedRoom = new BasicRoomInfo(
-                APIService.building + "-" + APIService.roomName
-              );
-              event.TargetDevice = new BasicDeviceInfo(APIService.piHostname);
-              event.Key = LEAVE_SHARE;
-              event.Value = this.defaultPreset.name;
-              event.Data = [this.defaultPreset.name];
-
-              this.api.sendEvent(event);
-
-              resolve(success);
-              this.removeMirrorPopup();
-            }
-          }),
-          catchError(this.handleError<boolean>('unmirror'))
-        ).subscribe({
-          next: success => resolve(success),
-          error: err => reject(err)
-        });
-
-        /*this.command.powerOnDefault(this.defaultPreset).subscribe(success => {
+        this.command.powerOnDefault(this.defaultPreset).subscribe(success => {
           const event = new Event();
           event.User = this.defaultPreset.name;
           event.EventTags = ["ui-communication"];
@@ -547,32 +434,6 @@ export class HomeComponent implements OnInit {
 
           resolve(success);
           this.removeMirrorPopup();
-        });*/
-
-        this.command.powerOnDefault(this.defaultPreset).pipe(
-          tap(success => {
-            if (success) {
-              const event = new Event();
-              event.User = this.defaultPreset.name;
-              event.EventTags = ["ui-communication"];
-              event.AffectedRoom = new BasicRoomInfo(
-                APIService.building + "-" + APIService.roomName
-              );
-              event.TargetDevice = new BasicDeviceInfo(APIService.piHostname);
-              event.Key = LEAVE_SHARE;
-              event.Value = this.defaultPreset.name;
-              event.Data = [this.defaultPreset.name];
-
-              this.api.sendEvent(event);
-
-              resolve(success);
-              this.removeMirrorPopup();
-            }
-          }),
-          catchError(this.handleError<boolean>('unmirror'))
-        ).subscribe({
-          next: success => resolve(success),
-          error: err => reject(err)
         });
       });
     };
