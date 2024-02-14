@@ -14,6 +14,7 @@ import { Display, Input, AudioDevice } from "../objects/status.objects";
 import { CommandService } from "../services/command.service";
 import { MatDialog } from "@angular/material/dialog";
 import { UiSwitchModule } from 'ngx-ui-switch';
+import { APIService } from "app/services/api.service";
 
 @Component({
   selector: "wheel",
@@ -52,6 +53,7 @@ export class WheelComponent implements AfterContentInit {
 
   constructor(
     public command: CommandService,
+    private api: APIService,
     public readonly swalTargets: SwalPortalTargets,
     public dialog: MatDialog
   ) {}
@@ -93,8 +95,7 @@ export class WheelComponent implements AfterContentInit {
   public render() {
     this.setTranslate();
 
-    const numOfChildren =
-      this.preset.inputs.length + this.preset.extraInputs.length;
+    const numOfChildren = this.preset.inputs.length + this.preset.extraInputs.length;
     const children = this.wheel.nativeElement.children;
     const angle = (360 - WheelComponent.TITLE_ANGLE) / numOfChildren;
 
@@ -107,8 +108,7 @@ export class WheelComponent implements AfterContentInit {
       WheelComponent.TITLE_ANGLE
     );
 
-    let rotate =
-      "rotate(" + String(-WheelComponent.TITLE_ANGLE_ROTATE) + "deg)";
+    let rotate = "rotate(" + String(-WheelComponent.TITLE_ANGLE_ROTATE) + "deg)";
     children[0].style.transform = rotate;
     children[0 + numOfChildren + 1].style.transform = rotate; // rotate the line the corrosponds to this slice
     rotate = "rotate(" + String(WheelComponent.TITLE_ANGLE_ROTATE) + "deg)";

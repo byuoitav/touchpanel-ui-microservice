@@ -24,6 +24,7 @@ export class ShareModalComponent implements OnInit {
     private ds: DataService,
     private command: CommandService,
     private graph: GraphService,
+    private dialog: MatDialog,
     @Inject(MAT_DIALOG_DATA)
     public data: {
       wheel: WheelComponent;

@@ -8,8 +8,7 @@ import {
 
 
 const LOW = 3;
-const REDIRECT: string =
-  "http://" + window.location.hostname + ":10000/dashboard";
+const REDIRECT: string = "http://" + window.location.hostname + ":10000/dashboard";
 
 @Component({
   selector: "management",

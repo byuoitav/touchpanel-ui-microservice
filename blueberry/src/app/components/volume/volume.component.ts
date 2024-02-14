@@ -44,8 +44,6 @@ export class VolumeComponent implements OnInit {
     this.levelChange.emit(this.level);
   }
 
-
-  
   constructor() {}
   ngOnInit() {}
 
