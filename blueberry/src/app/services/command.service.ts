@@ -42,7 +42,7 @@ export class CommandService {
   private executeRequests(
     requests: CommandRequest[],
     maxTries: number,
-    timeout: number
+    timeOut: number
   ): EventEmitter<boolean> {
     const ret: EventEmitter<boolean> = new EventEmitter<boolean>();
     if (requests.length < 1) {
@@ -55,7 +55,7 @@ export class CommandService {
     const mapToStatus: Map<CommandRequest, boolean> = new Map();
 
     for (const req of requests) {
-      this.executeRequest(req, maxTries, timeout).subscribe(success => {
+      this.executeRequest(req, maxTries, timeOut).subscribe(success => {
         mapToStatus.set(req, success);
 
         if (mapToStatus.size === numRequests) {

@@ -12,6 +12,7 @@ import { Event } from "./socket.service";
 import {tap, catchError, map, timeout} from 'rxjs/operators';
 import { deserialize } from "serializer.ts/Serializer";
 import { JsonConvert } from "json2typescript";
+import { response } from "express";
 
 const RETRY_TIMEOUT = 5 * 1000;
 const MONITOR_TIMEOUT = 30 * 1000;
@@ -42,7 +43,7 @@ export class APIService {
     if (APIService.options == null) {
       const headers = new Headers();
       headers.append("content-type", "application/json");
-      APIService.options = { headers: headers };
+      APIService.options = { headers: headers, responseType: "text" as "json" };
       const base = location.origin.split(":");
       APIService.localurl = base[0] + ":" + base[1];
 
