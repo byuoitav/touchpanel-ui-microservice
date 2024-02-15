@@ -81,11 +81,7 @@ export class CommandService {
     return ret;
   }
 
-  private executeRequest(
-    req: CommandRequest,
-    maxTries: number,
-    timeOut: number,
-  ): EventEmitter<boolean> {
+  private executeRequest(req: CommandRequest, maxTries: number, timeOut: number): EventEmitter<boolean> {
     const ret: EventEmitter<boolean> = new EventEmitter<boolean>();
     console.log("executing request", req);
 
@@ -383,7 +379,7 @@ export class CommandService {
     for (const a of preset.audioDevices) {
       body.audioDevices.push({
         name: a.name,
-        power: "on",
+        power: "standby",
         muted: false,
         volume: 30
       });
@@ -410,7 +406,7 @@ export class CommandService {
   public powerOffAll(): EventEmitter<boolean> {
     const ret: EventEmitter<boolean> = new EventEmitter<boolean>();
 
-    const body = { power: "standby" };
+    const body = { power: "standby"};
 
     this.put(body).subscribe({
       next: data => {
