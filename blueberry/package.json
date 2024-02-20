@@ -26,7 +26,6 @@
     "@angular/router": "^17.2.1",
     "@popperjs/core": "^2.11.8",
     "@sweetalert2/ngx-sweetalert2": "^12.1.0",
-    "@toverux/ngx-sweetalert2": "^3.4.0",
     "angular2-websocket": "^0.9.8",
     "bootstrap": "^5.3.2",
     "core-js": "^3.31.1",
