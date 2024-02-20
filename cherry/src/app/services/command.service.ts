@@ -37,18 +37,13 @@ export class CommandService {
     public api: APIService,
     public dialog: MatDialog
   ) {
-    this.options = {
-      headers: new HttpHeaders({
-        "Content-Type": "application/json"
-      }),
-      params : new HttpParams()
-    };
+    const headers = new HttpHeaders().set("Content-Type", "application/json");
+    this.options = { headers: headers };
   }
 
   private put(data:any): Observable<Object> {
     return this.http.put(APIService.apiurl, data, this.options).pipe(
       timeout(TIMEOUT),
-      tap(res => console.log("PUT response", res)),
       map(res => res),
       catchError(this.handleError("put", []))
     );
@@ -57,9 +52,8 @@ export class CommandService {
   private putWithCustomTimeout(data: any, timeOut: number): Observable<Object> {
     return this.http.put(APIService.apiurl, data, this.options).pipe(
       timeout(timeOut),
-      tap(res => console.log("PUT response", res)),
       map(res => res),
-      catchError(this.handleError("", []))
+      catchError(this.handleError("putWithCustomTimeout", []))
     );
   }
 
@@ -77,22 +71,18 @@ export class CommandService {
       });
     }
 
-    this.put(body).pipe(
-      timeout(TIMEOUT),
-      tap(data => console.log("PUT data", data)),
-      catchError(this.handleError("setPower", []))
-    ).subscribe({
+    this.put(body).subscribe({
       next: data => {
         ret.emit(true);
-        console.log("setPower", data);
+        console.log("power put data", data);
       },
       error: err => {
         Display.setPower(prev, displays);
         ret.emit(false);
-        console.warn("error setPower", err);
+        console.error("power put error", err);
       },
       complete: () => {
-        console.log("setPower completed");
+        console.log("power put completed");
       }
     });
 
@@ -169,33 +159,25 @@ export class CommandService {
       });
     }
 
-    this.put(body).pipe(
-      timeout(TIMEOUT),
-      tap(res => console.log("PUT response", res)),
-      catchError(this.handleError("setBlank", []))
-    ).subscribe({
+    this.put(body).subscribe({
       next: data => {
-
         ret.emit(true);
-        console.log("next", data);
+        console.log("blank put data", data);
       },
       error: err => {
         Display.setBlank(prev, displays);
         ret.emit(false);
-        console.warn("error setting blank", err);
+        console.error("blank put error", err);
       },
       complete: () => {
-        console.log("complete");
+        console.log("blank put completed");
       }
     });
 
     return ret;
   }
 
-  public setVolume(
-    v: number,
-    audioDevices: AudioDevice[]
-  ): EventEmitter<boolean> {
+  public setVolume(v: number, audioDevices: AudioDevice[]): EventEmitter<boolean> {
     const ret: EventEmitter<boolean> = new EventEmitter<boolean>();
     console.log("changing volume to", v, "on", audioDevices);
     const prev = AudioDevice.getVolume(audioDevices);
@@ -211,23 +193,18 @@ export class CommandService {
 
     console.log("volume body", body);
 
-    this.put(body).pipe(
-      timeout(TIMEOUT),
-      tap(res => console.log("PUT response", res)),
-      catchError(this.handleError("setVolume", []))
-    ).subscribe({
+    this.put(body).subscribe({
       next: data => {
         ret.emit(true);
-        console.log("next", data);
+        console.log("volume put data", data);
       },
       error: err => {
-
         AudioDevice.setVolume(prev, audioDevices);
         ret.emit(false);
-        console.warn("error setting volume", err);
+        console.error("volume put error", err);
       },
       complete: () => {
-        console.log("complete");
+        console.log("volume put completed");
       }
     });
 
@@ -248,33 +225,25 @@ export class CommandService {
       });
     }
 
-    this.put(body).pipe(
-      timeout(TIMEOUT),
-      tap(res => console.log("PUT response", res)),
-      catchError(this.handleError("setMute", []))
-    ).subscribe({
+    this.put(body).subscribe({
       next: data => {
         ret.emit(true);
-        console.log("next", data);
+        console.log("mute put data", data);
       },
       error: err => {
         AudioDevice.setMute(prev, audioDevices);
         ret.emit(false);
-        console.warn("error setting mute", err);
+        console.error("mute put error", err);
       },
       complete: () => {
-        console.log("complete");
+        console.log("mute put completed");
       }
     });
 
     return ret;
   }
 
-  public setMuteAndVolume(
-    m: boolean,
-    v: number,
-    audioDevices: AudioDevice[]
-  ): EventEmitter<boolean> {
+  public setMuteAndVolume(m: boolean, v: number, audioDevices: AudioDevice[]): EventEmitter<boolean> {
     const ret: EventEmitter<boolean> = new EventEmitter<boolean>();
     console.log("changing volume to", v, "and mute to", m, "on", audioDevices);
     const prevMute = AudioDevice.getMute(audioDevices);
@@ -292,22 +261,19 @@ export class CommandService {
       });
     }
 
-    this.put(body).pipe(
-      timeout(TIMEOUT),
-      tap(res => console.log("PUT response", res))
-    ).subscribe({
+    this.put(body).subscribe({
       next: data => {
         ret.emit(true);
-        console.log("next", data);
+        console.log("mute and volume put data", data);
       },
       error: err => {
         AudioDevice.setMute(prevMute, audioDevices);
         AudioDevice.setVolume(prevVol, audioDevices);
         ret.emit(false);
-        console.warn("error setting mute and volume", err);
+        console.error("mute and volume put error", err);
       },
       complete: () => {
-        console.log("complete");
+        console.log("mute and volume put completed");
       }
     });
 
@@ -332,12 +298,9 @@ export class CommandService {
 
     console.log("volume body", body);
 
-    this.put(body).pipe(
-      timeout(TIMEOUT),
-      tap(res => console.log("PUT response", res))
-    ).subscribe({
-      // post master volume change event
+    this.put(body).subscribe({
       next: data => {
+        // post master volume update
         const event = new Event();
 
         event.User = APIService.piHostname;
@@ -354,15 +317,15 @@ export class CommandService {
 
         this.api.sendEvent(event);
         ret.emit(true);
-        console.log("next", data);
+        console.log("volume put data", data);
       },
       error: err => {
         preset.masterVolume = prev;
         ret.emit(false);
-        console.warn("error setting master volume", err);
+        console.error("volume put error", err);
       },
       complete: () => {
-        console.log("complete");
+        console.log("volume put completed");
       }
     });
 
@@ -386,10 +349,7 @@ export class CommandService {
 
     console.log("master mute body", body);
 
-    this.put(body).pipe(
-      timeout(TIMEOUT),
-      tap(res => console.log("PUT response", res))
-    ).subscribe({
+    this.put(body).subscribe({
       next: data => {
         const event = new Event();
 
@@ -407,15 +367,15 @@ export class CommandService {
 
         this.api.sendEvent(event);
         ret.emit(true);
-        console.log("next", data);
+        console.log("master mute put data", data);
       },
       error: err => {
         preset.masterMute = prev;
         ret.emit(false);
-        console.warn("error setting master mute", err);
+        console.error("master mute put error", err);
       },
       complete: () => {
-        console.log("complete");
+        console.log("master mute put completed");
       }
     });
 
@@ -423,11 +383,7 @@ export class CommandService {
     return ret;
   }
 
-  public setMixLevel(
-    v: number,
-    a: AudioDevice,
-    preset: Preset
-  ): EventEmitter<boolean> {
+  public setMixLevel(v: number, a: AudioDevice, preset: Preset): EventEmitter<boolean> {
     const ret: EventEmitter<boolean> = new EventEmitter<boolean>();
     console.log("changing mix level to", v, "for audioDevice", a);
     const prev = a.mixlevel;
@@ -442,10 +398,7 @@ export class CommandService {
 
     console.log("volume body", body);
 
-    this.put(body).pipe(
-      timeout(TIMEOUT),
-      tap(res => console.log("PUT response", res))
-    ).subscribe({
+    this.put(body).subscribe({
       next: data => {
         const event = new Event();
 
@@ -462,27 +415,22 @@ export class CommandService {
 
         this.api.sendEvent(event);
         ret.emit(true);
-        console.log("next", data);
+        console.log("volume put data", data);
       },
       error: err => {
         a.mixlevel = prev;
         ret.emit(false);
-        console.warn("error setting mix level", err);
+        console.error("volume put error", err);
       },
       complete: () => {
-        console.log("complete");
+        console.log("volume put completed");
       }
     });
-
   
     return ret;
   }
 
-  public setMixMute(
-    m: boolean,
-    a: AudioDevice,
-    preset: Preset
-  ): EventEmitter<boolean> {
+  public setMixMute(m: boolean, a: AudioDevice, preset: Preset): EventEmitter<boolean> {
     const ret: EventEmitter<boolean> = new EventEmitter<boolean>();
     console.log("changing mix mute to", m, "for audioDevice", a);
     console.log("preset.masterMute is:", preset.masterMute);
@@ -498,34 +446,30 @@ export class CommandService {
 
     console.log("mix mute body:", body);
 
-    this.put(body).pipe(
-      timeout(TIMEOUT),
-      tap(res => console.log("PUT response", res))
-    ).subscribe({
+    this.put(body).subscribe({
       next: data => {
         const event = new Event();
 
         event.User = APIService.piHostname;
         event.EventTags = ["ui-communication"];
         event.AffectedRoom = new BasicRoomInfo(
-          APIService.building + "-" + APIService.roomName + "-" + preset.name
+          APIService.building + "-" + APIService.roomName + "-" + a.name
         );
         event.Key = "mix-mute";
         event.Value = String(m);
-        event.Data = preset.name;
 
         this.api.sendEvent(event);
 
         ret.emit(true);
-        console.log("next", data);
+        console.log("mix mute put data", data);
       },
       error: err => {
         a.mixmute = prev;
         ret.emit(false);
-        console.warn("error setting mix mute", err);
+        console.error("mix mute put error", err);
       },
       complete: () => {
-        console.log("complete");
+        console.log("mix mute put completed");
       }
     });
 
@@ -686,6 +630,14 @@ export class CommandService {
 
     console.log("sending power off body", body);
 
+    for (const a of preset.audioDevices) {
+      body.audioDevices.push({
+        name: a.name,
+        muted: false,
+        volume: 30
+      });
+    }
+
     const powerOffReq = new CommandRequest(
       new HttpRequest("PUT", APIService.apiurl, body)
     );
@@ -709,20 +661,17 @@ export class CommandService {
 
     const body = { power: "standby" };
 
-    this.put(body).pipe(
-      timeout(20 * 1000),
-      catchError(this.handleError("powerOffAll", []))
-    ).subscribe({
+    this.put(body).subscribe({
       next: data => {
         ret.emit(true);
-        console.log("power off all success", data);
+        console.log("power off all put data", data);
       },
       error: err => {
         ret.emit(false);
-        console.error("power off all error", err);
-      },  
+        console.error("power off all put error", err);
+      },
       complete: () => {
-        console.log("power off all complete");
+        console.log("power off all put completed");
       }
     });
 
@@ -891,20 +840,17 @@ export class CommandService {
     // execute request
     console.log("executing via control request:", req);
 
-    this.http.request(req).pipe(
-      timeout(20 * 1000),
-      catchError(this.handleError("viaControl", []))
-    ).subscribe({
+    this.http.request(req).subscribe({
       next: data => {
         ret.emit(true);
-        console.log("via control success", data);
+        console.log("via control request data", data);
       },
       error: err => {
         ret.emit(false);
-        console.error("via control error", err);
+        console.error("via control request error", err);
       },
       complete: () => {
-        console.log("via control complete");
+        console.log("via control request completed");
       }
     });
 

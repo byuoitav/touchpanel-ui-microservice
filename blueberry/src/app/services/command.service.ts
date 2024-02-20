@@ -180,8 +180,6 @@ export class CommandService {
   }
 
   public setInput(i: Input, displays: Display[]): EventEmitter<boolean> {
-    // i.click.emit();
-
     const ret: EventEmitter<boolean> = new EventEmitter<boolean>();
     console.log("Changing input on", displays, "to", i.name);
     const prev = Display.getInput(displays);

@@ -18,10 +18,8 @@ import { Options, ChangeContext, PointerType } from 'ngx-slider-v2';
   encapsulation: ViewEncapsulation.Emulated
 })
 export class VolumeComponent {
-  @Input()
-  level: number;
-  @Input()
-  mute: boolean;
+  @Input() level: number;
+  @Input() mute: boolean;
 
   options: Options = {
     floor: 0,
@@ -31,19 +29,14 @@ export class VolumeComponent {
     showSelectionBar: true,
   };
 
-  @Output()
-  levelChange: EventEmitter<number> = new EventEmitter();
-  @Output()
-  muteChange: EventEmitter<MuteStatus> = new EventEmitter();
+  @Output() levelChange: EventEmitter<number> = new EventEmitter();
+  @Output() muteChange: EventEmitter<MuteStatus> = new EventEmitter();
 
   public beforeMuteLevel: number;
 
-  //@ViewChild("slider")
-  //slider: MatSliderModule;
-
   @ViewChild("slider")
-  slider: NgxSliderModule;
-  
+  slider: MatSliderModule;
+
   @ViewChild("thumb")
   thumb: MatSliderThumb;
 
@@ -52,6 +45,7 @@ export class VolumeComponent {
     this.mute = false;
     this.beforeMuteLevel = 0;
   }
+  ngOnInit() {}
 
   public muteClick() {
     let emit: MuteStatus;
@@ -72,7 +66,7 @@ export class VolumeComponent {
     }, 2000);
   }
 
-  public onUserChange(changeContext: ChangeContext): void {
+  public onLevelChange(changeContext: ChangeContext): void {
     this.levelChange.emit(changeContext.value);
     if (changeContext.pointerType === PointerType.Min) {
       this.closeThumb();

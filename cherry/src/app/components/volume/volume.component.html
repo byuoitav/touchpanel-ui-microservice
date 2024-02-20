@@ -3,12 +3,12 @@
     <ngx-slider 
       class="slider"
       color="primary"
-      (userChange)="onUserChange($event.value); closeThumb()"
       [options]="options"
       [(value)]="mute ? beforeMuteLevel : level"
-      #slider>
-    >
-    </ngx-slider>
+      (levelChange)="onLevelChange($event)"
+      (userChangeEnd)="levelChange.emit($event.value)"
+    ></ngx-slider>
+
     <!-- mute button -->
     <div [class.secondary-theme]="!mute">
       <button mat-raised-button [color]="mute ? 'warn' : 'primary'" (click)="muteClick()" (press)="muteClick()" class="button" [class.muted]="mute">
