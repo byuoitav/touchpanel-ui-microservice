@@ -48,18 +48,18 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "cherry:build"
+            "buildTarget": "cherry:build"
           },
           "configurations": {
             "production": {
-              "browserTarget": "cherry:build:production"
+              "buildTarget": "cherry:build:production"
             }
           }
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "cherry:build"
+            "buildTarget": "cherry:build"
           }
         },
         "test": {
