@@ -64,8 +64,10 @@ build: deps
 	@mv cherry/dist dist/cherry-dist
 
 clean:
+	@echo Cleaning up...
 	@go clean
 	@rm -rf dist/
+	@echo Done.
 
 docker: clean build
 ifeq (${COMMIT_HASH}, ${TAG})

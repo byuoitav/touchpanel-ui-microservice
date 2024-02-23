@@ -75,7 +75,7 @@ $inputs-height: 40vh;
 
 .inputs {
     @extend %io-row;
-    height: $inputs-height;
+    min-height: $inputs-height;
     margin-bottom: math.div($inputs-height, 8);
     margin-top: math.div($inputs-height, 10);
     // overflowing inputs line

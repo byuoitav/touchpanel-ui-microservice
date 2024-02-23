@@ -58,6 +58,13 @@ $s-primary: mat.define-palette(mat.$light-blue-palette, A700, 200, 900);
 $s-accent: mat.define-palette(mat.$teal-palette, 100);
 $s-warn: mat.define-palette(mat.$lime-palette);
 
+//camera stuff
+$d-pad-fg: #ddd;
+$d-pad-fg-hover: #ddd;
+$d-pad-bg: #263238;
+$arrowColor: #777;
+$arrowColorPressed: #333;
+
 $secondary: mat.define-dark-theme((
     color: (
         primary: $s-primary,

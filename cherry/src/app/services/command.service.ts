@@ -519,6 +519,18 @@ export class CommandService {
       }
     }
 
+    if (preset.cameras != null) {
+      for (const camera of preset.cameras) {
+        if (camera.presets[0].setPreset != null) {/*if preset 0 exists recall preset 0*/
+          console.log("Recalling camera preset0", camera.presets[0].setPreset)
+          const camPreset = new CommandRequest(
+            new HttpRequest("GET", camera.presets[0].setPreset, null)
+          );
+          requests.push(camPreset);
+        }
+      }
+    }
+
     this.executeRequests(requests, 1, 20 * 1000).subscribe(success => {
       ret.emit(success);
     });
@@ -637,6 +649,8 @@ export class CommandService {
         volume: 30
       });
     }
+
+    preset.masterMute = false;
 
     const powerOffReq = new CommandRequest(
       new HttpRequest("PUT", APIService.apiurl, body)
