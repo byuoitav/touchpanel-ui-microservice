@@ -49,6 +49,10 @@ $cherry-theme: mat.define-dark-theme((
         //background-color: mat.mat-color($mat-blue-grey, 800);
         background-color: mat.get-color-from-palette(mat.$blue-grey-palette, 800);
     }
+
+    .mat-mdc-tab-label {
+        background-color: mat.get-color-from-palette(mat.$blue-grey-palette, 800);
+    }
 }
 
 

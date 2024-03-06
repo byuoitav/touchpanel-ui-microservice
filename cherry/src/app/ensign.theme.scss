@@ -52,6 +52,9 @@ $cherry: mat-dark-theme($primary, $accent, $warn);
     .mat-tab-label-container {
         background-color: mat-color($primary, 800) 
     }
+    .mat-mdc-tab-label-container {
+      background-color: mat-color($primary, 800) 
+    }
 }
 
 

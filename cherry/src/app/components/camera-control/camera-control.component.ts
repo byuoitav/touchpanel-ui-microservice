@@ -34,6 +34,12 @@ export class CameraControlComponent implements OnInit, AfterViewInit {
     this._tabs._elementRef.nativeElement.getElementsByClassName(
       "mat-tab-labels"
     )[0].style.justifyContent = "flex-start";
+
+    // this is disgusting. :(
+    // but, it moves the second line of tabs to be left aligned
+    this._tabs._elementRef.nativeElement.getElementsByClassName(
+      "mat-mdc-tab-labels"
+    )[0].style.justifyContent = "flex-start";
   }
 
   tiltUp = (cam: Camera) => {

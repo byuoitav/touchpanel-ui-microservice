@@ -48,6 +48,12 @@ export class AudiocontrolComponent implements AfterViewInit, OnChanges {
       "mat-tab-labels"
     )[0].style.justifyContent = "flex-start";
 
+    // this is disgusting. :(
+    // but, it moves the second line of tabs to be left aligned
+    this.tabs._elementRef.nativeElement.getElementsByClassName(
+      "mat-mdc-tab-labels"
+    )[0].style.justifyContent = "flex-start";
+
 
   }
 

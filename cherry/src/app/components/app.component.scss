@@ -12,6 +12,10 @@ $byu-logo-color: #bec2ba;
     justify-content: center;
 }
 
+.mat-mdc-tab-labels {
+    justify-content: center;
+}
+
 // make sure no sliders show up
 .mat-tab-body-content {
     overflow: hidden !important;
