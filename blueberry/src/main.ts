@@ -4,7 +4,6 @@ import { enableProdMode } from "@angular/core";
 import { platformBrowserDynamic } from "@angular/platform-browser-dynamic";
 import { AppModule } from "./app/app.module";
 import { environment } from "./environments/environment";
-import { URLSearchParams } from "url"; // Add missing import for URLSearchParams
 
 (<any>window).log = {
   enable: () => {
