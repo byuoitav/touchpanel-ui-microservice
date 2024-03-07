@@ -57,6 +57,12 @@ $cherry: mat-dark-theme($primary, $accent, $warn);
     }
 }
 
+.mat-mdc-tab-labels{
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+}
+
 
 // secondary theme.
 // colors for help button, sliders, and other small visual elements.
