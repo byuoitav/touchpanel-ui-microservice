@@ -5,13 +5,13 @@ import { platformBrowserDynamic } from "@angular/platform-browser-dynamic";
 import { AppModule } from "./app/app.module";
 import { environment } from "./environments/environment";
 
-(<any>Window).log = {
+(window as any).log = {
   enable: () => {
     // create iframe, steal its console
     const i = Document.prototype.createElement.call(document, "iframe");
     i.style.display = "none";
     document.body.appendChild(i);
-    (<any>Window).console = i.contentWindow.console;
+    (window as any).console = i.contentWindow.console;
     
     console.log("Logging enabled.");
   },
@@ -25,6 +25,28 @@ import { environment } from "./environments/environment";
     window.console.info = function() {};
   }
 };
+
+/*
+(<any>window).log = {
+  enable: () => {
+    // create iframe, steal its console
+    const i = Document.prototype.createElement.call(document, "iframe");
+    i.style.display = "none";
+    document.body.appendChild(i);
+    (<any>window).console = i.contentWindow.console;
+    
+    console.log("Logging enabled.");
+  },
+  disable: () => {
+    console.log(
+      "Logging is disabled. To enable, call log.enable(), or reload this page with the query parameter of 'log' set to true."
+    );
+
+    window.console.debug = function() {};
+    window.console.log = function() {};
+    window.console.info = function() {};
+  }
+};*/
 
 if (environment.production) {
   enableProdMode();
