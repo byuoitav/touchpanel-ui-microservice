@@ -13,7 +13,11 @@ $byu-logo-color: #bec2ba;
 }
 
 .mat-mdc-tab-labels {
+    display: flex;
+    padding: 0 250px;
     justify-content: center;
+    align-items: center;
+    flex: 1 0 auto;
 }
 
 // make sure no sliders show up
