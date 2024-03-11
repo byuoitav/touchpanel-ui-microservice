@@ -57,7 +57,7 @@ export class AppComponent {
       return true;
     }
 
-    console.log("showManagement", this.home);
+    //console.log("showManagement", this.home);
 
     if (this.home.audio && this.home.audio.isShowing()) {
       return false;

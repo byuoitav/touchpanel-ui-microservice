@@ -21,6 +21,7 @@
     "@angular/core": "^17.2.1",
     "@angular/forms": "^17.2.1",
     "@angular/http": "^5.2.0",
+    "@angular/localize": "^17.2.4",
     "@angular/material": "^16.2.10",
     "@angular/platform-browser": "^17.2.1",
     "@angular/platform-browser-dynamic": "^17.2.1",
