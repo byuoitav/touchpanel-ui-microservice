@@ -14,7 +14,7 @@ $byu-logo-color: #bec2ba;
 
 .mat-mdc-tab-labels {
     display: flex;
-    padding: 0 250px;
+    padding: 0 7em;
     justify-content: center;
     align-items: center;
     flex: 1 0 auto;
@@ -117,6 +117,8 @@ $buttonXOffset: .55rem;
 
     left: $buttonXOffset;
     background-color: warn;
+    width: 105px!important;
+    min-width: unset!important;
 }
 
 .help {
@@ -124,6 +126,8 @@ $buttonXOffset: .55rem;
     @extend %top-button;
 
     right: $buttonXOffset;
+    width: 105px!important;
+    min-width: unset!important;
 }
 
 .loading {
