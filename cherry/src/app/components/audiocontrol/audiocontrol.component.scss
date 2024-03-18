@@ -30,6 +30,7 @@ $buffer-size: 3vw;
     margin: auto;
     height: $devices-height;
     margin-top: 2%;
+    overflow: hidden;
     // padding-right: $buffer-size;
     // padding-left: $buffer-size;
     .device {
@@ -56,6 +57,7 @@ $buffer-size: 3vw;
     margin-right: 3%;
     margin-top: 1%;
     height: $devices-height + 3vh;
+    overflow: hidden;
     .device {
         @extend %align-vert;
         height: 100%;
