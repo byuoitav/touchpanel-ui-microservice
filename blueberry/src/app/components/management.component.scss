@@ -23,7 +23,7 @@
   min-width: 100px;
   z-index: 5000;
 
-  pointer-events: all;
+  pointer-events: auto;
 }
 
 ::ng-deep .mat-button-focus-overlay {
