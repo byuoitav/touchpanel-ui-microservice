@@ -13,7 +13,7 @@ export class ManagementComponent implements OnChanges, OnInit {
   enabled: boolean;
   defcon: number;
 
-  @ViewChild('topleft') topleft!: ElementRef;
+  @ViewChild('topleft') top!: ElementRef;
 
   constructor() {
     this.reset();
@@ -68,7 +68,7 @@ export class ManagementComponent implements OnChanges, OnInit {
   }
 
   reset() {
-    this.topleft.nativeElement.blur();
+    this.top.nativeElement.blur();
     this.defcon = LOW;
   }
 }
