@@ -1,4 +1,6 @@
-import { Component, Input, OnChanges, SimpleChanges, OnInit, ViewChild, ElementRef } from "@angular/core";
+import { Component, Input, OnChanges, SimpleChanges, OnInit, AfterViewInit, ViewChild, ElementRef } from "@angular/core";
+import { FocusMonitor } from "@angular/cdk/a11y";
+import { MatAnchor } from "@angular/material/button";
 
 const LOW = 3;
 const REDIRECT: string = "http://" + window.location.hostname + ":10000/dashboard";
@@ -8,14 +10,14 @@ const REDIRECT: string = "http://" + window.location.hostname + ":10000/dashboar
   templateUrl: "./management.component.html",
   styleUrls: ["./management.component.scss", "../colorscheme.scss"]
 })
-export class ManagementComponent implements OnChanges, OnInit {
+export class ManagementComponent implements OnChanges, OnInit, AfterViewInit {
   @Input()
   enabled: boolean;
   defcon: number;
 
-  @ViewChild('topleft') top!: ElementRef;
+  @ViewChild("topleft") topleft: MatAnchor;
 
-  constructor() {
+  constructor(private _focusMonitor: FocusMonitor) {
     this.reset();
   }
 
@@ -26,6 +28,10 @@ export class ManagementComponent implements OnChanges, OnInit {
   ngOnChanges(changes: SimpleChanges) {
     console.log("changes: ", changes.prop);
     this.reset();
+  }
+
+  ngAfterViewInit() {
+    this._focusMonitor.stopMonitoring(this.topleft._elementRef.nativeElement);
   }
 
   public update(level: number) {
@@ -68,7 +74,7 @@ export class ManagementComponent implements OnChanges, OnInit {
   }
 
   reset() {
-    this.top.nativeElement.blur();
     this.defcon = LOW;
+    this._focusMonitor.monitor(this.topleft._elementRef.nativeElement);
   }
 }
