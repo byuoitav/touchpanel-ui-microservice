@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, SimpleChanges, OnInit } from "@angular/core";
+import { Component, Input, OnChanges, SimpleChanges, OnInit, ViewChild, ElementRef } from "@angular/core";
 
 const LOW = 3;
 const REDIRECT: string ="http://" + window.location.hostname + ":10000/dashboard";
@@ -12,6 +12,8 @@ export class ManagementComponent implements OnChanges, OnInit {
   @Input()
   enabled: boolean;
   defcon: number;
+
+  @ViewChild('topleft') topleft!: ElementRef;
 
   constructor() {
     this.reset();
@@ -66,6 +68,7 @@ export class ManagementComponent implements OnChanges, OnInit {
   }
 
   public reset() {
+    this.topleft.nativeElement.blur();
     this.defcon = LOW;
   }
 }
