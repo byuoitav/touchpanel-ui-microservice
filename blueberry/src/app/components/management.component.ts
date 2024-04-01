@@ -25,12 +25,7 @@ export class ManagementComponent implements OnChanges, OnInit, AfterViewInit {
   defcon: number;
 
   ngAfterViewInit() {
-    this.focusMonitor.monitor(this.topleftE1).subscribe(origin =>
-      this._ngZone.run(() => {
-        this.origin = this.formatOrigin(origin);
-        this._cdr.markForCheck();
-      }),
-    );
+    this.focusMonitor.stopMonitoring(this.topleftE1);
   }
 
   formatOrigin(origin: FocusOrigin): string {
@@ -42,6 +37,12 @@ export class ManagementComponent implements OnChanges, OnInit, AfterViewInit {
   }
 
   ngOnInit(): void {
+    this.focusMonitor.monitor(this.topleftE1).subscribe(origin =>
+      this._ngZone.run(() => {
+        this.origin = this.formatOrigin(origin);
+        this._cdr.markForCheck();
+      }),
+    );
     this.reset();
   }
 
