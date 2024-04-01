@@ -1,6 +1,5 @@
-import { Component, Input, OnChanges, SimpleChanges, OnInit, AfterViewInit, ViewChild, ElementRef } from "@angular/core";
-import { FocusMonitor } from "@angular/cdk/a11y";
-import { MatAnchor } from "@angular/material/button";
+import { Component, Input, OnChanges, SimpleChanges, OnInit, AfterViewInit, ViewChild, ElementRef, NgZone, ChangeDetectorRef } from "@angular/core";
+import { FocusMonitor, FocusOrigin } from "@angular/cdk/a11y";
 
 const LOW = 3;
 const REDIRECT: string = "http://" + window.location.hostname + ":10000/dashboard";
@@ -11,14 +10,35 @@ const REDIRECT: string = "http://" + window.location.hostname + ":10000/dashboar
   styleUrls: ["./management.component.scss", "../colorscheme.scss"]
 })
 export class ManagementComponent implements OnChanges, OnInit, AfterViewInit {
+
+  @ViewChild('topleft') topleftE1: ElementRef<HTMLElement>;
+  origin = this.formatOrigin(null);
+
+  constructor(
+    private focusMonitor: FocusMonitor,
+    private _cdr: ChangeDetectorRef,
+    private _ngZone: NgZone,
+  ) {}
+  
   @Input()
   enabled: boolean;
   defcon: number;
 
-  @ViewChild("topleft") topleft: MatAnchor;
+  ngAfterViewInit() {
+    this.focusMonitor.monitor(this.topleftE1).subscribe(origin =>
+      this._ngZone.run(() => {
+        this.origin = this.formatOrigin(origin);
+        this._cdr.markForCheck();
+      }),
+    );
+  }
 
-  constructor(private _focusMonitor: FocusMonitor) {
-    this.reset();
+  formatOrigin(origin: FocusOrigin): string {
+    return origin ? origin + ' focused' : 'blurred';
+  }
+
+  ngOnDestroy() {
+    this.focusMonitor.stopMonitoring(this.topleftE1);
   }
 
   ngOnInit(): void {
@@ -28,10 +48,6 @@ export class ManagementComponent implements OnChanges, OnInit, AfterViewInit {
   ngOnChanges(changes: SimpleChanges) {
     console.log("changes: ", changes.prop);
     this.reset();
-  }
-
-  ngAfterViewInit() {
-    this._focusMonitor.stopMonitoring(this.topleft._elementRef.nativeElement);
   }
 
   public update(level: number) {
@@ -75,6 +91,5 @@ export class ManagementComponent implements OnChanges, OnInit, AfterViewInit {
 
   reset() {
     this.defcon = LOW;
-    this._focusMonitor.monitor(this.topleft._elementRef.nativeElement);
   }
 }
