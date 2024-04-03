@@ -9,17 +9,17 @@ const REDIRECT: string ="http://" + window.location.hostname + ":10000/dashboard
   styleUrls: ["./management.component.scss"]
 })
 export class ManagementComponent implements OnChanges, OnInit {
+  
   @Input()
   enabled: boolean;
   defcon: number;
-
-  @ViewChild('topleft') topleft!: ElementRef;
 
   constructor() {
     this.reset();
   }
 
   ngOnInit(): void {
+    console.log("init");
     this.reset();
   }
 
@@ -68,7 +68,6 @@ export class ManagementComponent implements OnChanges, OnInit {
   }
 
   public reset() {
-    this.topleft.nativeElement.blur();
     this.defcon = LOW;
   }
 }

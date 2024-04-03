@@ -1,7 +1,9 @@
 <div *ngIf="enabled">
     <button mat-button 
         name="defcon 3"
-        color="accent"
+        color="color"
+        (mouseover)="color = 'accent'"
+        (mouseout)="color = 'transparent'"
         class="top left button"
         (click)="update(3)">
     </button>
