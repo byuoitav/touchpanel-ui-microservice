@@ -37,3 +37,7 @@ s
 ::ng-deep .mat-mdc-button .mat-mdc-button-persistent-ripple::before {
   background-color: none !important;
 }
+
+.mat-mdc-button, .mat-mdc-outlined-button {
+  --mat-mdc-button-persistent-ripple-color: none;
+}
