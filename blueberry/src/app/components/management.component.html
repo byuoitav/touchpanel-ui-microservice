@@ -2,7 +2,9 @@
   <button #topleft
     name="defcon"
     mat-button
-    color="accent"
+    [color]="color"
+    (mouseover)="color = 'transparent'"
+    (mouseout)="color = 'accent'"
     class="top left button"
     (click)="update(3)"
   ></button>

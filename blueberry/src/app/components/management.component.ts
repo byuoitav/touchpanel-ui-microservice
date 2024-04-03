@@ -9,40 +9,18 @@ const REDIRECT: string = "http://" + window.location.hostname + ":10000/dashboar
   templateUrl: "./management.component.html",
   styleUrls: ["./management.component.scss", "../colorscheme.scss"]
 })
-export class ManagementComponent implements OnChanges, OnInit, AfterViewInit {
+export class ManagementComponent implements OnChanges, OnInit {
 
-  @ViewChild('topleft') topleftE1: ElementRef<HTMLElement>;
-  origin = this.formatOrigin(null);
-
-  constructor(
-    private focusMonitor: FocusMonitor,
-    private _cdr: ChangeDetectorRef,
-    private _ngZone: NgZone,
-  ) {}
-  
   @Input()
   enabled: boolean;
   defcon: number;
 
-  ngAfterViewInit() {
-    this.focusMonitor.stopMonitoring(this.topleftE1);
+  constructor() {
+    this.reset();
   }
 
-  formatOrigin(origin: FocusOrigin): string {
-    return origin ? origin + ' focused' : 'blurred';
-  }
-
-  ngOnDestroy() {
-    this.focusMonitor.stopMonitoring(this.topleftE1);
-  }
-
-  ngOnInit(): void {
-    this.focusMonitor.monitor(this.topleftE1).subscribe(origin =>
-      this._ngZone.run(() => {
-        this.origin = this.formatOrigin(origin);
-        this._cdr.markForCheck();
-      }),
-    );
+  ngOnInit() {
+    console.log("init");
     this.reset();
   }
 
