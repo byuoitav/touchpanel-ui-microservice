@@ -24,11 +24,9 @@ $byu-logo-color: #bec2ba;
     flex-grow: 0 !important;
 }
 
-.secondary-tab {
-    mat-mdc-tab-labels {
-        padding: 0 !important;
-        justify-content: left !important;
-    }
+.secondary-tab mat-mdc-tab-labels {
+    padding: 0;
+    align-items: left;
 }
 // make sure no sliders show up
 .mat-tab-body-content {
