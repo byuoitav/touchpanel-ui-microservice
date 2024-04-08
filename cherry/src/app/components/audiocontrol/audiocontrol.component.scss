@@ -178,7 +178,7 @@ $buffer-size: 3vw;
     align-items: stretch;
 }
 
-.audio-tab .mat-mdc-tab-labels{
+.audio-tab mat-mdc-tab-labels{
     display: flex;
     justify-content: left;
     padding: 0;
