@@ -2,7 +2,7 @@
     command.buttonPress('changed audio control tab to ' + $event.tab.textLabel)
   ">
     <ng-container *ngIf="preset?.displays?.length > 0">
-        <mat-tab label="Displays">
+        <mat-tab class="audio-tab" label="Displays">
             <!-- <div class="stretch"> -->
 
             <!-- master slider -->
@@ -96,7 +96,7 @@
     </ng-container>
 
     <ng-container *ngIf="preset?.independentAudioDevices?.length > 0">
-        <mat-tab label="Microphones">
+        <mat-tab class="audio-tab" label="Microphones">
 
             <!-- If there aren't enough to make 2 pages -->
             <div class="devices less" *ngIf="preset?.independentAudioDevices.length <= 4">
@@ -173,7 +173,7 @@
     </ng-container>
 
     <ng-container *ngIf="audioTypes?.length > 0">
-        <mat-tab *ngFor="let label of audioTypes" [label]="label">
+        <mat-tab class="audio-tab" *ngFor="let label of audioTypes" [label]="label">
             <!-- If there aren't enough to make 2 pages -->
             <div class="devices less" *ngIf="preset?.audioTypes.get(label).length <= 4">
                 <div *ngFor="let a of preset?.audioTypes.get(label); let i = index;" class="device slider-container" [id]="label + i">

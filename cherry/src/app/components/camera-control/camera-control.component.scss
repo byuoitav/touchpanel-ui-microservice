@@ -320,10 +320,10 @@ $d-pad-arrow-move: 35%;
   font-size: .9em;
 }
 
-.mat-mdc-tab-labels {
+.cam-tab {
   display: flex;
   padding: 0;
-  justify-content: left;
+  justify-content: left !important;
   align-items: center;
-  flex: 1 0 auto;
+  height: 100%;
 }

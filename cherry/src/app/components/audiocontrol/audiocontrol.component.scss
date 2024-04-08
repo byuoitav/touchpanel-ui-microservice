@@ -178,10 +178,10 @@ $buffer-size: 3vw;
     align-items: stretch;
 }
 
-.mat-mdc-tab-labels {
+.audio-tab {
     display: flex;
     padding: 0;
-    justify-content: left;
+    justify-content: left !important;
     align-items: center;
-    flex: 1 0 auto;
+    height: 100%;
 }
