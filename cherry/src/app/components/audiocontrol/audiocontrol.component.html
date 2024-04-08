@@ -1,6 +1,6 @@
 <mat-tab-group #tabs color="accent" class="mat-tab-label-darker audio-tab" (selectedTabChange)="
     command.buttonPress('changed audio control tab to ' + $event.tab.textLabel)
-  " mat-align-tabs="start">
+  " mat-stretch-tabs="false" mat-align-tabs="start">
     <ng-container *ngIf="preset?.displays?.length > 0">
         <mat-tab label="Displays">
             <!-- <div class="stretch"> -->
