@@ -12,13 +12,13 @@ $byu-logo-color: #bec2ba;
     justify-content: center;
 }
 
-.app-tab mat-mdc-tab-labels {
+::ng-deep .mat-mdc-tab-labels {
     display: flex;
     padding: 0 7em;
     justify-content: center;
     align-items: center;
     flex: 1 0 auto;
-}
+} 
 
 .mat-mdc-tab.mdc-tab {
     flex-grow: 0 !important;
