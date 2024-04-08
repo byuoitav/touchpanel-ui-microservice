@@ -319,3 +319,11 @@ $d-pad-arrow-move: 35%;
   justify-content: center;
   font-size: .9em;
 }
+
+.mat-mdc-tab-labels {
+  display: flex;
+  padding: 0;
+  justify-content: left;
+  align-items: center;
+  flex: 1 0 auto;
+}

@@ -177,3 +177,11 @@ $buffer-size: 3vw;
     // flex-flow: row nowrap;
     align-items: stretch;
 }
+
+.mat-mdc-tab-labels {
+    display: flex;
+    padding: 0;
+    justify-content: left;
+    align-items: center;
+    flex: 1 0 auto;
+}
