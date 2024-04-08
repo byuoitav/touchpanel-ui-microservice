@@ -238,7 +238,7 @@ export class CameraControlComponent implements OnInit, AfterViewInit {
     ).subscribe({
       next: data => {
         console.log("data", data);
-        this.code = data["code"];
+        this.code = data["ControlKey"];
       },
       error: err => {
         console.warn("err", err);

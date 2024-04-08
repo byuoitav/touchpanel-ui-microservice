@@ -20,6 +20,17 @@ $byu-logo-color: #bec2ba;
     flex: 1 0 auto;
 }
 
+.mat-mdc-tab.mdc-tab {
+    flex-grow: 0 !important;
+}
+
+.secondary-tab {
+    color: $accent;
+    .mat-mdc-tab-labels {
+        padding: 0 0 !important;
+        justify-content: none !important;
+    }
+}
 // make sure no sliders show up
 .mat-tab-body-content {
     overflow: hidden !important;
