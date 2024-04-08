@@ -320,9 +320,7 @@ $d-pad-arrow-move: 35%;
   font-size: .9em;
 }
 
-.cam-tab mat-mdc-tab-labels {
-  display: flex;
-  justify-content: left !important;
-  padding: 0 !important;
-  align-items: center;
+.cam-tab .mat-mdc-tab-labels {
+  justify-content: left;
+  padding: 0;
 }

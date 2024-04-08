@@ -178,10 +178,7 @@ $buffer-size: 3vw;
     align-items: stretch;
 }
 
-.audio-tab {
-    display: flex;
+.audio-tab .mat-mdc-tab-labels{
+    justify-content: left;
     padding: 0;
-    justify-content: left !important;
-    align-items: center;
-    height: 100%;
 }
