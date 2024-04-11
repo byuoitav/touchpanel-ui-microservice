@@ -16,7 +16,8 @@ import {Preset} from "../../objects/objects";
   selector: "audiocontrol",
   templateUrl: "./audiocontrol.component.html",
   styleUrls: ["./audiocontrol.component.scss"],
-  imports: [MatTabsModule]
+  imports: [MatTabsModule],
+  standalone: true
 })
 export class AudiocontrolComponent implements AfterViewInit, OnChanges {
   @ViewChild("tabs")

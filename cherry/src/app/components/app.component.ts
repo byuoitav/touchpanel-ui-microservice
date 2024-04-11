@@ -25,7 +25,8 @@ const BUFFER = "buffer";
       transition(":leave", [animate(500)])
     ])
   ],
-  imports: [MatTabsModule]
+  imports: [MatTabsModule],
+  standalone: true
 })
 export class AppComponent {
   public loaded: boolean;

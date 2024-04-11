@@ -10,7 +10,8 @@ import {MatTabsModule} from '@angular/material/tabs';
   selector: 'camera-control',
   templateUrl: './camera-control.component.html',
   styleUrls: ['./camera-control.component.scss'],
-  imports: [MatTabsModule]
+  imports: [MatTabsModule],
+  standalone: true
 })
 export class CameraControlComponent implements OnInit, AfterViewInit {
   @Input() preset: Preset;
