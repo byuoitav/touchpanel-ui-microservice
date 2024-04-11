@@ -7,6 +7,7 @@ import {
   ChangeDetectorRef
 } from "@angular/core";
 import {MatTabGroup} from "@angular/material/tabs";
+import {MatTabsModule} from '@angular/material/tabs';
 
 import {CommandService} from "../../services/command.service";
 import {Preset} from "../../objects/objects";
@@ -14,7 +15,8 @@ import {Preset} from "../../objects/objects";
 @Component({
   selector: "audiocontrol",
   templateUrl: "./audiocontrol.component.html",
-  styleUrls: ["./audiocontrol.component.scss"]
+  styleUrls: ["./audiocontrol.component.scss"],
+  imports: [MatTabsModule]
 })
 export class AudiocontrolComponent implements AfterViewInit, OnChanges {
   @ViewChild("tabs")

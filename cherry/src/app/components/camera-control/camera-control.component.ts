@@ -4,11 +4,13 @@ import {MatTabGroup} from "@angular/material/tabs";
 import { map, tap} from 'rxjs';
 import {Camera, CameraPreset, Preset} from "../../objects/objects";
 import { APIService } from '../../services/api.service';
+import {MatTabsModule} from '@angular/material/tabs';
 
 @Component({
   selector: 'camera-control',
   templateUrl: './camera-control.component.html',
-  styleUrls: ['./camera-control.component.scss']
+  styleUrls: ['./camera-control.component.scss'],
+  imports: [MatTabsModule]
 })
 export class CameraControlComponent implements OnInit, AfterViewInit {
   @Input() preset: Preset;

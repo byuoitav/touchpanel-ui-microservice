@@ -55,7 +55,7 @@
 
 		<!-- home screen if there are displays -->
 		<ng-container *ngIf="data?.panel?.preset?.displays?.length > 0">
-			<mat-tab-group backgroundColor="primary" class="app-tab" color="accent" [(selectedIndex)]="selectedTabIndex"
+			<mat-tab-group  mat-stretch-tabs="false" mat-align-tabs="center" backgroundColor="primary" class="app-tab" color="accent" [(selectedIndex)]="selectedTabIndex"
 				(selectedTabChange)="
           command.buttonPress('tab changed to ' + $event.tab.textLabel)
         ">
