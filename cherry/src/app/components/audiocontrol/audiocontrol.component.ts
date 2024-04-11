@@ -6,7 +6,6 @@ import {
   OnChanges,
   ChangeDetectorRef
 } from "@angular/core";
-import {MatTabGroup} from "@angular/material/tabs";
 import {MatTabsModule} from '@angular/material/tabs';
 
 import {CommandService} from "../../services/command.service";
@@ -15,13 +14,12 @@ import {Preset} from "../../objects/objects";
 @Component({
   selector: "audiocontrol",
   templateUrl: "./audiocontrol.component.html",
-  styleUrls: ["./audiocontrol.component.scss"],
-  imports: [MatTabsModule],
-  standalone: true
+  styleUrls: ["./audiocontrol.component.scss"]
 })
 export class AudiocontrolComponent implements AfterViewInit, OnChanges {
   @ViewChild("tabs")
-  tabs: MatTabGroup;
+  tabs: MatTabsModule;
+
   @Input()
   preset: Preset;
   @Input()
@@ -39,25 +37,10 @@ export class AudiocontrolComponent implements AfterViewInit, OnChanges {
   constructor(public command: CommandService, private ref: ChangeDetectorRef) {
 
   }
-
   ngAfterViewInit() {
     if (!this.audioGroups) {
       console.info("not showing audio groups");
     }
-
-    // this is disgusting. :(
-    // but, it moves the second line of tabs to be left aligned
-    this.tabs._elementRef.nativeElement.getElementsByClassName(
-      "mat-tab-labels"
-    )[0].style.justifyContent = "flex-start";
-
-    // this is disgusting. :(
-    // but, it moves the second line of tabs to be left aligned
-    this.tabs._elementRef.nativeElement.getElementsByClassName(
-      "mat-mdc-tab-labels"
-    )[0].style.justifyContent = "flex-start";
-
-
   }
 
   ngOnChanges(changes) {

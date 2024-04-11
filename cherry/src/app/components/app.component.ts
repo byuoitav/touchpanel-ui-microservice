@@ -7,7 +7,6 @@ import {CommandService} from "../services/command.service";
 import {HelpDialog} from "../dialogs/help.dialog";
 import {Output} from "../objects/status.objects";
 import { AudioDialog } from "../dialogs/audio.dialog";
-import {MatTabsModule} from '@angular/material/tabs';
 
 const HIDDEN = "hidden";
 const QUERY = "query";
@@ -24,9 +23,7 @@ const BUFFER = "buffer";
       transition(":enter", [animate(500)]),
       transition(":leave", [animate(500)])
     ])
-  ],
-  imports: [MatTabsModule],
-  standalone: true
+  ]
 })
 export class AppComponent {
   public loaded: boolean;

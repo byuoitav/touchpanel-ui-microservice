@@ -36,13 +36,16 @@ import { NgxSliderModule } from 'ngx-slider-v2';
 
 @NgModule({
   declarations: [
+    AppComponent,
     DisplayComponent,
     VolumeComponent,
+    AudiocontrolComponent,
     ManagementComponent,
     HelpDialog,
     ConfirmHelpDialog,
     ViaDialog,
     StreamModalComponent,
+    CameraControlComponent,
     RecordingComponent,
     AudioDialog
   ],
@@ -58,10 +61,7 @@ import { NgxSliderModule } from 'ngx-slider-v2';
     MatDialogModule,
     MatIconModule,
     MatGridListModule,
-    NgxSliderModule,
-    AppComponent,
-    AudiocontrolComponent,
-    CameraControlComponent
+    NgxSliderModule
   ],
   providers: [
     APIService,
