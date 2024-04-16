@@ -1,3 +1,4 @@
+@import '../../../styles.scss';
 $slider-height: 80%;
 .volume {
   height: 100%;
@@ -20,6 +21,10 @@ $slider-height: 80%;
   margin-top: 3vh;
 }
 
+.button {
+  color: var(--text-color) !important
+}
+
 // customize ngx-slider
 
 :ng-deep .ngx-slider {
@@ -35,11 +40,15 @@ $slider-height: 80%;
 }
 
 :ng-deep .ngx-slider .ngx-slider-pointer {
-  background-color: #0091ea !important;
+  background-color: $volume-slider-color !important;
+}
+
+::ng-deep .ngx-slider .ngx-slider-pointer {
+  background: $volume-slider-color !important;
 }
 
 ::ng-deep .ngx-slider .ngx-slider-selection {
-  background: #0091ea !important;
+  background: $volume-slider-color !important;
 }
 
 ::ng-deep .ngx-slider .ngx-slider-limit {
@@ -48,11 +57,12 @@ $slider-height: 80%;
 
 ::ng-deep .ngx-slider .ngx-slider-pointer::after {
   display: none !important;
-  background: #0091ea !important;
+  background: $volume-slider-color !important;
 }
 
 // volume tags
 ::ng-deep .ngx-slider .ngx-slider-bubble {
   margin-left: 0.3vh;
   align-self: center;
+  color: var(--text-color) !important;
 }

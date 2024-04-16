@@ -49,12 +49,66 @@ export class APIService {
       APIService.localurl = window.location.protocol + "//" + window.location.host;
 
       APIService.room = new Room();
-
+      this.fetchCouchDB();
       this.setupHostname();
     } else {
       this.loaded.emit(true);
     }
   }
+
+  //Get Colors from Couch
+  fetchCouchDB = async () => {
+    try {
+      const response = await fetch('http://localhost:5984/css/redConfig', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          // Add your credentials here
+          'Authorization': 'Basic ' + btoa('admin:admin')
+        },
+        credentials: 'include', // include cookies
+      });
+  
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      
+      const data = await response.json();
+      document.documentElement.style.setProperty('--background-color', data['background-color']);
+      document.documentElement.style.setProperty('--top-bar-color', data['top-bar-color']);
+      document.documentElement.style.setProperty('--background-color-accent', data['background-color-accent']);
+      document.documentElement.style.setProperty('--dpad-color', data['dpad-color']);
+      document.documentElement.style.setProperty('--dpad-press', data['dpad-press']);
+      document.documentElement.style.setProperty('--cam-preset-color', data['cam-preset-color']);
+      document.documentElement.style.setProperty('--volume-slider-color', data['volume-slider-color']);
+      document.documentElement.style.setProperty('--help-button-color', data['help-button-color']);
+      document.documentElement.style.setProperty('--text-color', data['text-color']);
+      document.documentElement.style.setProperty('--font-name', data['font-name']);
+
+      //import the font
+      const fontUrl = data['font-link'];
+      console.log("Font URL: ", fontUrl);
+      const linkElement = document.createElement('link');
+      linkElement.rel = 'stylesheet';
+      linkElement.href = fontUrl;
+      // Wait for the font to load
+      linkElement.onload = () => {
+        document.body.style.setProperty('font-family', data['font-name'] + ', sans-serif');
+      };
+
+      document.head.appendChild(linkElement);
+
+
+
+      console.log(data);
+    } catch (error) {
+      console.error('There was a problem with the fetch operation:', error.message);
+    }
+  };
+  
+  
+
+  
 
   //use the new subscribe syntax
   private setupHostname() {

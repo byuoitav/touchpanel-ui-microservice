@@ -6,7 +6,7 @@
 
 @import '../cherry-theme.scss';
 @import '../../styles.scss';
-$byu-logo-color: #bec2ba;
+$logo-color: #bec2ba;
 
 .mat-tab-labels {
     justify-content: center;
@@ -86,7 +86,7 @@ $buttonXOffset: .55rem;
     .text {
         margin-top: 3%;
         font-size: 150%;
-        color: $byu-logo-color;
+        color: $logo-color;
 
         &.smaller {
             transform: scale(.75);
@@ -114,8 +114,12 @@ $buttonXOffset: .55rem;
 .help {
     @extend %button;
     @extend %top-button;
-
+    background-color: var(--help-button-color) !important;
     right: $buttonXOffset;
+}
+
+h2 {
+    color: var(--text-color);
 }
 
 .loading {
@@ -162,5 +166,5 @@ $buttonXOffset: .55rem;
 }
 
 .mat-audio-button {
-    background-color: $byu-logo-color;
+    background-color: $logo-color;
 }

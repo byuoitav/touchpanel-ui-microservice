@@ -8,16 +8,31 @@ $material-design-icons-font-directory-path: '~material-design-icons-iconfont/dis
 
 @import 'material-design-icons-iconfont/src/material-design-icons';
 
-@import 'app/cherry-theme.scss';
+@import 'app/ensign-theme.scss';
 
 @import url('https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@600&display=swap');
 
 
+
+
+:root {
+    --background-color: #263238;
+    --top-bar-color: rgb(68, 26, 26);
+    --background-color-accent:rgb(0, 106, 206);
+    --dpad-color: rgb(80, 55, 55);
+    --dpad-press: rgb(95, 80, 80);
+    --cam-preset-color:rgb(5, 90, 146);
+    --cam-preset-press: red;
+    --volume-slider-color:rgb(0, 204, 255);
+    --help-button-color: rgb(255, 0, 234);
+    --text-color: green;
+    --font-name: 'Source Sans 3', sans-serif;
+}
+
 html {
     overflow: hidden;
     user-select: none;
-
-    font-family: "Source Sans 3", sans-serif;
+    font-family: var(--font-name);
     letter-spacing: 0.1px;
 }
 
@@ -35,10 +50,17 @@ html {
     overflow: hidden;
     user-select: none;
 
-    font-family: "Source Sans 3", sans-serif;
+    font-family: var(--font-name);
     letter-spacing: 0.1px;
 }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+body { 
+    margin: 0;
+    font-family: var(--font-name);
+}
 
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+html, body { 
+    height: 100%; 
+    color: black !important;
+}
+
+body { margin: 0; font-family: var(--font-name); }

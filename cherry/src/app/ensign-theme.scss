@@ -9,16 +9,16 @@
 // Be sure that you only ever include this mixin once!
 @include mat.core();
 
-$dark-primary-text: rgba(black, 0.87);
 $dark-secondary-text: rgba(black, 0.54);
 $dark-disabled-text: rgba(black, 0.38);
 $dark-dividers: rgba(black, 0.12);
 $dark-focused: rgba(black, 0.12);
-$light-primary-text: white;
 $light-secondary-text: rgba(white, 0.7);
 $light-disabled-text: rgba(white, 0.5);
 $light-dividers: rgba(white, 0.12);
 $light-focused: rgba(white, 0.12);
+$background-color: var(--background-color);
+
 
 $mat-custom: (
   50: #e8f5e9,
@@ -26,42 +26,37 @@ $mat-custom: (
   200: #a5d6a7,
   300: #81c784,
   400: #66bb6a,
-  500: #58AF58,
+  500: var(--background-color-accent),
   600: #58AF58,
-  700: #F6AA1B,
+  700: var(--top-bar-color),
   800: #2e7d32,
-  900: #006248,
+  900: var(--background-color),
   A100: #b9f6ca,
   A200: #69f0ae,
   A400: #00e676,
-  A700: #00c853,
+  A700: var(--background-color-accent),
   contrast: (
-    50: $dark-primary-text,
-    100: $dark-primary-text,
-    200: $dark-primary-text,
-    300: $dark-primary-text,
-    400: $dark-primary-text,
-    500: $dark-primary-text,
-    600: $light-primary-text,
-    700: $light-primary-text,
-    800: $light-primary-text,
-    900: $light-primary-text,
-    A100: $dark-primary-text,
-    A200: $dark-primary-text,
-    A400: $dark-primary-text,
-    A700: $dark-primary-text,
+    50: var(--text-color),
+    100: var(--text-color),
+    200: var(--text-color),
+    300: var(--text-color),
+    400: var(--text-color),
+    500: var(--text-color),
+    600: var(--text-color),
+    700: var(--text-color),
+    800: var(--text-color),
+    900: var(--text-color),
+    A100: var(--text-color),
+    A200: var(--text-color),
+    A400: var(--text-color),
+    A700: var(--text-color),
   )
 );
-$my-palette: mat.$indigo-palette;
-// Define the palettes for your theme using the Material Design palettes available in palette.scss
-// (imported above). For each palette, you can optionally specify a default, lighter, and darker
-// hue. Available color palettes: https://material.io/design/color/
+
 $cherry-primary: mat.define-palette($mat-custom, 700, 500, 900);
-$cherry-accent: mat.define-palette(mat.$light-green-palette, A700, 200, A700);
+$cherry-accent: mat.define-palette($mat-custom, A700, 200);
 $cherry-warn: mat.define-palette(mat.$red-palette, 600, 800, 400);
-// $cherry-warn: mat.define-palette(mat.$indigo-palette, 500);
-// Create the theme object. A theme consists of configurations for individual
-// theming systems such as "color" or "typography".
+
 $cherry-theme: mat.define-dark-theme((
   color: (
     primary: $cherry-primary,
@@ -93,29 +88,15 @@ $cherry-theme: mat.define-dark-theme((
     }
 }
 
-
-// secondary theme.
-// colors for help button, sliders, and other small visual elements.
-$s-primary: mat.define-palette(mat.$light-blue-palette, A700, 200, 900);
-$s-accent: mat.define-palette(mat.$teal-palette, 100);
-$s-warn: mat.define-palette(mat.$lime-palette);
-
 //camera stuff
-$d-pad-fg: #ddd;
-$d-pad-fg-hover: #ddd;
-$d-pad-bg: #006248;
+$d-pad-fg: var(--dpad-color);
+$d-pad-fg-hover: var(--dpad-press);
+$d-pad-bg: var(--background-color);
+$cam-preset-color: var(--cam-preset-color);
+$cam-preset-press: var(--cam-preset-press);
 $arrowColor: #777;
 $arrowColorPressed: #333;
 
-$secondary: mat.define-dark-theme((
-    color: (
-        primary: $s-primary,
-        accent: $s-accent,
-        warn: $s-warn,
-    ),
-    density: 0,
-));
+//slider
+$volume-slider-color: var(--volume-slider-color);
 
-.secondary-theme {
-    @include mat.core-theme($secondary);
-}

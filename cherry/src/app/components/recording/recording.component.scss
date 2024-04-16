@@ -10,5 +10,14 @@
         padding-left: 3vw;
         display: flex;
         align-items: center;
+        color: var(--text-color);
     }
+}
+
+.background-button {
+    background-color: white !important;
+}
+
+.background-button-rec {
+    background-color: red !important;
 }

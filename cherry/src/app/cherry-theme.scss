@@ -65,6 +65,9 @@ $d-pad-bg: #263238;
 $arrowColor: #777;
 $arrowColorPressed: #333;
 
+//slider
+$slider-color: var(--volume-slider-color);
+
 $secondary: mat.define-dark-theme((
     color: (
         primary: $s-primary,
