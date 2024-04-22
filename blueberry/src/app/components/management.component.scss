@@ -23,9 +23,21 @@
   min-width: 100px;
   z-index: 5000;
 
-  pointer-events: all;
+  pointer-events: auto;
 }
 
 ::ng-deep .mat-button-focus-overlay {
   opacity: 0 !important;
+}
+s
+::ng-deep .mat-mdc-button-focus-overlay {
+  opacity: 0 !important;
+}
+
+::ng-deep .mat-mdc-button .mat-mdc-button-persistent-ripple::before {
+  background-color: none !important;
+}
+
+.mat-mdc-button, .mat-mdc-outlined-button {
+  --mat-mdc-button-persistent-ripple-color: none;
 }

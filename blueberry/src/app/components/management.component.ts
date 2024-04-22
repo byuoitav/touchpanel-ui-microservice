@@ -1,11 +1,5 @@
-import {
-  Component,
-  Input,
-  OnChanges,
-  SimpleChanges,
-  OnInit
-} from "@angular/core";
-
+import { Component, Input, OnChanges, SimpleChanges, OnInit, AfterViewInit, ViewChild, ElementRef, NgZone, ChangeDetectorRef } from "@angular/core";
+import { FocusMonitor, FocusOrigin } from "@angular/cdk/a11y";
 
 const LOW = 3;
 const REDIRECT: string = "http://" + window.location.hostname + ":10000/dashboard";
@@ -16,9 +10,9 @@ const REDIRECT: string = "http://" + window.location.hostname + ":10000/dashboar
   styleUrls: ["./management.component.scss", "../colorscheme.scss"]
 })
 export class ManagementComponent implements OnChanges, OnInit {
+
   @Input()
   enabled: boolean;
-
   defcon: number;
 
   constructor() {
@@ -26,15 +20,18 @@ export class ManagementComponent implements OnChanges, OnInit {
   }
 
   ngOnInit() {
+    console.log("init");
     this.reset();
   }
 
   ngOnChanges(changes: SimpleChanges) {
+    console.log("changes: ", changes.prop);
     this.reset();
   }
 
-  update(level: number) {
+  public update(level: number) {
     console.log("defcon", this.defcon);
+
     switch (level) {
       case LOW:
         if (this.defcon === LOW) {
@@ -57,13 +54,16 @@ export class ManagementComponent implements OnChanges, OnInit {
           this.reset();
         }
         break;
-      case 0:
-        if (this.defcon === 0) {
+      case LOW - 3:
+        if (this.defcon === LOW - 3) {
           console.log("redirecting to dashboard", REDIRECT);
           location.assign(REDIRECT);
         } else {
           this.reset();
         }
+        break;
+      default:
+        this.reset();
         break;
     }
   }

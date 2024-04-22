@@ -45,6 +45,7 @@ export class HelpModal implements OnInit {
         error: err => {
           console.error("failed to request help", err);
           resolve(false);
+          reject(err);
         },
         complete: () => {
           console.log("help request completed");

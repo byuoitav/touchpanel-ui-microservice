@@ -1,4 +1,4 @@
-<mat-tab-group #tabs color="accent" class="mat-tab-label-darker" (selectedTabChange)="
+<mat-tab-group #tabs mat-stretch-tabs="false" mat-align-tabs="start" color="accent" class="mat-tab-label-darker audio-tab" (selectedTabChange)="
     command.buttonPress('changed audio control tab to ' + $event.tab.textLabel)
   ">
     <ng-container *ngIf="preset?.displays?.length > 0">

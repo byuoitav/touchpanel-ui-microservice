@@ -1,15 +1,15 @@
-import { Component, Input, OnChanges, SimpleChanges } from "@angular/core";
+import { Component, Input, OnChanges, SimpleChanges, OnInit, ViewChild, ElementRef } from "@angular/core";
 
 const LOW = 3;
-const REDIRECT: string =
-  "http://" + window.location.hostname + ":10000/dashboard";
+const REDIRECT: string ="http://" + window.location.hostname + ":10000/dashboard";
 
 @Component({
   selector: "management",
   templateUrl: "./management.component.html",
   styleUrls: ["./management.component.scss"]
 })
-export class ManagementComponent implements OnChanges {
+export class ManagementComponent implements OnChanges, OnInit {
+  
   @Input()
   enabled: boolean;
   defcon: number;
@@ -18,7 +18,13 @@ export class ManagementComponent implements OnChanges {
     this.reset();
   }
 
+  ngOnInit(): void {
+    console.log("init");
+    this.reset();
+  }
+
   ngOnChanges(changes: SimpleChanges) {
+    console.log("changes: ", changes.prop)
     this.reset();
   }
 

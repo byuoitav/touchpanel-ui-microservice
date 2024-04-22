@@ -12,6 +12,18 @@ $logo-color: #bec2ba;
     justify-content: center;
 }
 
+::ng-deep .mat-mdc-tab-labels {
+    display: flex;
+    padding: 0 7em;
+    justify-content: center;
+    align-items: center;
+    flex: 1 0 auto;
+} 
+
+.mat-mdc-tab.mdc-tab {
+    flex-grow: 0 !important;
+}
+
 // make sure no sliders show up
 .mat-tab-body-content {
     overflow: hidden !important;
@@ -109,6 +121,8 @@ $buttonXOffset: .55rem;
 
     left: $buttonXOffset;
     background-color: warn;
+    width: 105px!important;
+    min-width: unset!important;
 }
 
 .help {
@@ -116,6 +130,8 @@ $buttonXOffset: .55rem;
     @extend %top-button;
     background-color: var(--help-button-color) !important;
     right: $buttonXOffset;
+    width: 105px!important;
+    min-width: unset!important;
 }
 
 h2 {

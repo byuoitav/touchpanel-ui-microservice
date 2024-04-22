@@ -1,6 +1,6 @@
 import {Component, OnInit, Input, AfterViewInit, ViewChild} from '@angular/core';
 import {HttpClient} from "@angular/common/http";
-import {MatTabGroup} from "@angular/material/tabs";
+import {MatTabsModule} from '@angular/material/tabs';
 import { map, tap} from 'rxjs';
 import {Camera, CameraPreset, Preset} from "../../objects/objects";
 import { APIService } from '../../services/api.service';
@@ -13,8 +13,8 @@ import { APIService } from '../../services/api.service';
 export class CameraControlComponent implements OnInit, AfterViewInit {
   @Input() preset: Preset;
 
-  @ViewChild(MatTabGroup)
-  private _tabs: MatTabGroup;
+  @ViewChild(MatTabsModule)
+  private _tabs: MatTabsModule;
   code: string;
   room = APIService.building + "-" + APIService.roomName;
 
@@ -29,11 +29,6 @@ export class CameraControlComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit() {
-    // this is disgusting. :(
-    // but, it moves the second line of tabs to be left aligned
-    this._tabs._elementRef.nativeElement.getElementsByClassName(
-      "mat-tab-labels"
-    )[0].style.justifyContent = "flex-start";
   }
 
   tiltUp = (cam: Camera) => {
@@ -232,7 +227,7 @@ export class CameraControlComponent implements OnInit, AfterViewInit {
     ).subscribe({
       next: data => {
         console.log("data", data);
-        this.code = data["code"];
+        this.code = data["ControlKey"];
       },
       error: err => {
         console.warn("err", err);

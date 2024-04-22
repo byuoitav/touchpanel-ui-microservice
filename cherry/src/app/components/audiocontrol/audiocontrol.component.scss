@@ -30,6 +30,7 @@ $buffer-size: 3vw;
     margin: auto;
     height: $devices-height;
     margin-top: 2%;
+    overflow: hidden;
     // padding-right: $buffer-size;
     // padding-left: $buffer-size;
     .device {
@@ -56,6 +57,7 @@ $buffer-size: 3vw;
     margin-right: 3%;
     margin-top: 1%;
     height: $devices-height + 3vh;
+    overflow: hidden;
     .device {
         @extend %align-vert;
         height: 100%;
@@ -95,6 +97,10 @@ $buffer-size: 3vw;
     &.right {
         margin-left: 30px;
     }
+}
+
+.mat-icon {
+    position: absolute;
 }
 
 .mixers {
@@ -171,4 +177,12 @@ $buffer-size: 3vw;
     display: flex;
     // flex-flow: row nowrap;
     align-items: stretch;
+}
+
+::ng-deep .mat-mdc-tab-labels {
+    display: flex;
+    justify-content: left;
+    padding: 0;
+    align-items: center;
+    flex: 1 0 auto;
 }

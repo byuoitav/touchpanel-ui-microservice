@@ -1,23 +1,22 @@
 <div *ngIf="enabled">
-  <button
-    #topleft
+  <button #topleft
     name="defcon"
     mat-button
-    color="accent"
+    [color]="color"
+    (mouseover)="color = 'accent'"
+    (mouseout)="color = 'transparent'"
     class="top left button"
     (click)="update(3)"
   ></button>
   <div *ngIf="defcon < 3">
-    <button
-      #topright
+    <button #topright
       name="defcon"
       mat-button
       color="accent"
       class="top right button"
       (click)="update(2)"
     ></button>
-    <button
-      #bottomleft
+    <button #bottomleft
       name="defcon"
       mat-button
       color="accent"
