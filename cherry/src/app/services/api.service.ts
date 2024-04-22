@@ -59,7 +59,7 @@ export class APIService {
   //Get Colors from Couch
   fetchCouchDB = async () => {
     try {
-      const response = await fetch('http://localhost:5984/css/redConfig', {
+      const response = await fetch('http://localhost:5984/css/activeConfig', {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
