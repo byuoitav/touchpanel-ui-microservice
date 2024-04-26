@@ -21,3 +21,8 @@
 .background-button-rec {
     background-color: red !important;
 }
+
+::ng-deep .mat-mdc-fab .mdc-button__label,
+::ng-deep .mat-mdc-mini-fab .mdc-button__label {
+     display: flex !important;
+}
