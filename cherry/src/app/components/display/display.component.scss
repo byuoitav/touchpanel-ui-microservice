@@ -46,6 +46,8 @@ $inputs-height: 40vh;
 }
 
 .outputs {
+    color: var(--text-color);
+
     @extend %io-row;
     min-height: $outputs-height;
     margin-top: math.div($outputs-height, 8);
@@ -74,6 +76,8 @@ $inputs-height: 40vh;
 }
 
 .inputs {
+    color: var(--text-color);
+
     @extend %io-row;
     min-height: $inputs-height;
     margin-bottom: math.div($inputs-height, 8);
@@ -83,6 +87,7 @@ $inputs-height: 40vh;
     align-items: stretch;
 
     .input {
+
         @extend %io-button;
         margin-right: math.div($max-width, 200);
         width: math.div($max-width, 9);
@@ -93,6 +98,7 @@ $inputs-height: 40vh;
         padding-top: 0px;
 
         .icon {
+
             padding-top: 1.3vh;
             @include io-icon(200%);
             height: 100%;
@@ -102,6 +108,7 @@ $inputs-height: 40vh;
             grid-auto-rows: 30%;
             align-items: start !important;
             gap: 3px;
+
 
             i {
                 height: 100%;

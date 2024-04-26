@@ -1,8 +1,10 @@
 import {Component, ViewEncapsulation} from "@angular/core";
 import {MatDialog} from "@angular/material/dialog";
 import {trigger, animate, transition} from "@angular/animations";
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 
 import {DataService} from "../services/data.service";
+import {CouchDBService} from "../services/api.service";
 import {CommandService} from "../services/command.service";
 import {HelpDialog} from "../dialogs/help.dialog";
 import {Output} from "../objects/status.objects";
@@ -17,6 +19,7 @@ const BUFFER = "buffer";
   selector: "cherry",
   templateUrl: "./app.component.html",
   styleUrls: ["./app.component.scss"],
+  providers: [CouchDBService],
   encapsulation: ViewEncapsulation.None,
   animations: [
     trigger("delay", [
@@ -29,19 +32,46 @@ export class AppComponent {
   public loaded: boolean;
   public unlocking = false;
   public progressMode: string = QUERY;
+  logoData: string = `
+  <svg width="100" height="100">
+  <circle cx="50" cy="50" r="40" fill="blue" />
+</svg>
+`;
+  svg: SafeHtml;
 
   public selectedTabIndex: number;
 
   constructor(
+    private couchDBService: CouchDBService,
     public data: DataService,
     public command: CommandService,
-    public dialog: MatDialog
+    public dialog: MatDialog,
+    private sanitizer: DomSanitizer
   ) {
     this.loaded = false;
     this.data.loaded.subscribe(() => {
       this.loaded = true;
     });
   }
+
+  ngOnInit(): void {
+    this.svg = this.sanitizer.bypassSecurityTrustHtml(this.logoData);
+    this.loadSvg();
+  }
+
+  loadSvg(): void {
+    this.couchDBService.getLogo().subscribe(
+      svgData => {
+        // console.log('SVG Data:', svgData);
+        this.svg = this.sanitizer.bypassSecurityTrustHtml(svgData);
+      },
+      error => {
+        console.error('Error fetching SVG:', error);
+      }
+    );
+  }
+  
+  
 
   public isPoweredOff(): boolean {
     if (!this.loaded) {

@@ -23,7 +23,7 @@ import { ConfirmHelpDialog } from "./dialogs/confirmhelp.dialog";
 import { ViaDialog } from "./dialogs/via.dialog";
 import { AudioDialog } from "./dialogs/audio.dialog";
 
-import { APIService } from "./services/api.service";
+import { APIService, CouchDBService } from "./services/api.service";
 import { CommandService } from "./services/command.service";
 import { DataService } from "./services/data.service";
 import { GraphService } from "./services/graph.service";
@@ -68,7 +68,8 @@ import { NgxSliderModule } from 'ngx-slider-v2';
     CommandService,
     DataService,
     GraphService,
-    SocketService
+    SocketService,
+    CouchDBService
   ],
   bootstrap: [AppComponent]
 })

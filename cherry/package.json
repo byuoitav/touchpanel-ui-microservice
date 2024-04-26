@@ -23,7 +23,7 @@
     "@angular/http": "^5.2.0",
     "@angular/localize": "^17.2.4",
     "@angular/material": "^16.2.10",
-    "@angular/platform-browser": "^17.2.1",
+    "@angular/platform-browser": "^17.3.6",
     "@angular/platform-browser-dynamic": "^17.2.1",
     "@angular/router": "^17.2.1",
     "angular2-websocket": "^0.9.8",
