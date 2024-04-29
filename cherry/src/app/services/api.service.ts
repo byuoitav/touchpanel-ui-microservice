@@ -1,16 +1,16 @@
-import {Injectable, EventEmitter} from "@angular/core";
-import {HttpClient, HttpHeaders, HttpParams} from "@angular/common/http";
-import {Observable, of, timeout} from "rxjs";
+import { Injectable, EventEmitter } from "@angular/core";
+import { HttpClient, HttpHeaders, HttpParams } from "@angular/common/http";
+import { Observable, of, timeout } from "rxjs";
 import {
   UIConfiguration,
   Room,
   RoomConfiguration,
   RoomStatus
 } from "../objects/objects";
-import {Event} from "./socket.service";
-import {JsonConvert} from "json2typescript";
+import { Event } from "./socket.service";
+import { JsonConvert } from "json2typescript";
 
-import {deserialize} from "serializer.ts/Serializer";
+import { deserialize } from "serializer.ts/Serializer";
 import { tap } from "rxjs";
 import { catchError } from "rxjs";
 import { map } from "rxjs";
@@ -45,7 +45,7 @@ export class APIService {
     if (APIService.options == null) {
       const headers = new Headers();
       headers.append("content-type", "application/json");
-      APIService.options = {headers: headers, responseType: "text" as "json"};
+      APIService.options = { headers: headers, responseType: "text" as "json" };
       APIService.localurl = window.location.protocol + "//" + window.location.host;
 
       APIService.room = new Room();
@@ -102,7 +102,7 @@ export class APIService {
     if (next) {
       console.warn("switching to next api");
       this.getNextAPIUrl().subscribe({
-        next: data => {},
+        next: data => { },
         error: err => {
           setTimeout(() => this.setupAPIUrl(next), RETRY_TIMEOUT);
           console.error("Observer getNextAPIUrl got an error: " + err);
@@ -120,7 +120,7 @@ export class APIService {
           APIService.apihost = "http://" + data["hostname"];
         }
         APIService.apiurl = APIService.apihost + ":8000/buildings/" + APIService.building + "/rooms/" + APIService.roomName;
-        console.info("API url:", APIService.apiurl); 
+        console.info("API url:", APIService.apiurl);
 
         if (!next) {
           this.setupUIConfig();
@@ -217,9 +217,9 @@ export class APIService {
 
   get(
     url: string,
-    success: Function = func => {},
-    err: Function = func => {},
-    after: Function = func => {}
+    success: Function = func => { },
+    err: Function = func => { },
+    after: Function = func => { }
   ): void {
 
     this.http.get(url).pipe(
@@ -228,7 +228,7 @@ export class APIService {
       catchError(this.handleError("get", [])),
     ).subscribe({
       next: data => success(data),
-      error: error => {err("error:", error), err()},
+      error: error => { err("error:", error), err() },
       complete: () => after()
     });
 
@@ -283,7 +283,7 @@ export class APIService {
       map(data => deserialize<UIConfiguration>(UIConfiguration, data))
     );
   }
-  
+
   private getRoomConfig(): Observable<Object> {
     return this.http.get(APIService.apiurl + "/configuration").pipe(
       tap(data => console.log("got roomconfig", data)),
@@ -312,7 +312,7 @@ export class APIService {
   }
 
   public help(type: string): Observable<Object> {
-    const body = {building: APIService.building, room: APIService.roomName};
+    const body = { building: APIService.building, room: APIService.roomName };
 
     switch (type) {
       case "help":
@@ -320,7 +320,7 @@ export class APIService {
           tap(data => console.log("sent help", data)),
           catchError(this.handleError('help', []))
         );
-        
+
       case "confirm":
         return this.http.post(
           APIService.localurl + "/confirmhelp",
@@ -343,26 +343,28 @@ export class APIService {
     };
   }
 
+
+
 }
 
 @Injectable()
 export class CouchDBService {
-  private couchDbUrl = 'http://localhost:5984/css';
+  private couchDbUrl = 'http://localhost:5984/theme-configuration';
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   getLogo(): Observable<string> {
     const headers = new HttpHeaders({
       'Authorization': 'Basic ' + btoa('admin:admin'),
       'Content-Type': 'application/json'
     });
-  
-    return this.http.get(`${this.couchDbUrl}/Ensign_College_wordmark.svg/logo.svg`, {
+
+    return this.http.get(`${this.couchDbUrl}/logo/Ensign_College_wordmark.svg`, {
       headers: headers,
-      responseType: 'text' 
+      responseType: 'text'
     })
   }
-  
+
 
   //gets the CSS colors from the CouchDB database
   fetchCouchDB = async () => {
@@ -376,11 +378,11 @@ export class CouchDBService {
         },
         credentials: 'include', // include cookies
       });
-  
+
       if (!response.ok) {
         throw new Error('Network response was not ok');
       }
-      
+
       const data = await response.json();
       document.documentElement.style.setProperty('--background-color', data['background-color']);
       document.documentElement.style.setProperty('--top-bar-color', data['top-bar-color']);

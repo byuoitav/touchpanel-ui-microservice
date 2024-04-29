@@ -1,13 +1,13 @@
-import {Component, ViewEncapsulation} from "@angular/core";
-import {MatDialog} from "@angular/material/dialog";
-import {trigger, animate, transition} from "@angular/animations";
+import { Component, ViewEncapsulation } from "@angular/core";
+import { MatDialog } from "@angular/material/dialog";
+import { trigger, animate, transition } from "@angular/animations";
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 
-import {DataService} from "../services/data.service";
-import {CouchDBService} from "../services/api.service";
-import {CommandService} from "../services/command.service";
-import {HelpDialog} from "../dialogs/help.dialog";
-import {Output} from "../objects/status.objects";
+import { DataService } from "../services/data.service";
+import { CouchDBService } from "../services/api.service";
+import { CommandService } from "../services/command.service";
+import { HelpDialog } from "../dialogs/help.dialog";
+import { Output } from "../objects/status.objects";
 import { AudioDialog } from "../dialogs/audio.dialog";
 
 const HIDDEN = "hidden";
@@ -35,8 +35,8 @@ export class AppComponent {
   logoData: string = `
   <svg width="100" height="100">
   <circle cx="50" cy="50" r="40" fill="blue" />
-</svg>
-`;
+  </svg>
+  `;
   svg: SafeHtml;
 
   public selectedTabIndex: number;
@@ -70,8 +70,8 @@ export class AppComponent {
       }
     );
   }
-  
-  
+
+
 
   public isPoweredOff(): boolean {
     if (!this.loaded) {
