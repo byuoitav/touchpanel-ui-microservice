@@ -25,6 +25,7 @@ const (
 	DEVICE_TYPES        = "device_types"
 	ROOM_CONFIGURATIONS = "room_configurations"
 	UI_CONFIGS          = "ui-configuration"
+	THEME_CONFIGS       = "theme-configuration"
 	OPTIONS             = "options"
 	ICONS               = "Icons"
 	ROLES               = "DeviceRoles"

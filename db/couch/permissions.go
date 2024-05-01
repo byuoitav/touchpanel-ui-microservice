@@ -4,7 +4,7 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/byuoitav/common/structs"
+	"github.com/byuoitav/touchpanel-ui-microservice/structs"
 )
 
 func (c *CouchDB) GetAuth() (structs.Auth, error) {

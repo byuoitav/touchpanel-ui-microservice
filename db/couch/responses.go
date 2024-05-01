@@ -2,7 +2,7 @@ package couch
 
 import (
 	"github.com/byuoitav/common/state/statedefinition"
-	"github.com/byuoitav/common/structs"
+	"github.com/byuoitav/touchpanel-ui-microservice/structs"
 )
 
 type building struct {
@@ -69,6 +69,11 @@ type deviceTypeQueryResponse struct {
 type uiconfig struct {
 	Rev string `json:"_rev,omitempty"`
 	*structs.UIConfig
+}
+
+type themeConfig struct {
+	Rev string `json:"_rev,omitempty"`
+	*structs.ThemeConfig
 }
 
 type uiconfigQueryResponse struct {

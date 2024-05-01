@@ -5,7 +5,7 @@ import (
 	"fmt"
 
 	"github.com/byuoitav/common/log"
-	"github.com/byuoitav/common/structs"
+	"github.com/byuoitav/touchpanel-ui-microservice/structs"
 )
 
 // TEMPLATES

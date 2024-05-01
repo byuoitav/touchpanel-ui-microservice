@@ -8,10 +8,10 @@ import (
 	"time"
 
 	"github.com/byuoitav/common/log"
-	"github.com/byuoitav/common/structs"
+	"github.com/byuoitav/touchpanel-ui-microservice/structs"
 )
 
-//GetDeploymentInfo returns a config definition for a service
+// GetDeploymentInfo returns a config definition for a service
 func (c *CouchDB) GetDeploymentInfo(serviceID string) (structs.FullConfig, error) {
 	toReturn, err := c.getDeploymentInfo(serviceID)
 	return toReturn, err
@@ -23,14 +23,14 @@ func (c *CouchDB) getDeploymentInfo(serviceID string) (structs.FullConfig, error
 	return toReturn, err
 }
 
-//GetDeviceDeploymentInfo returns the the necessary elements for a device of a given designation
+// GetDeviceDeploymentInfo returns the the necessary elements for a device of a given designation
 func (c *CouchDB) GetDeviceDeploymentInfo(deviceType string) (structs.DeviceDeploymentConfig, error) {
 	var toReturn structs.DeviceDeploymentConfig
 	err := c.MakeRequest("GET", fmt.Sprintf("%s/%s", CAMPUS, deviceType), "", nil, &toReturn)
 	return toReturn, err
 }
 
-//GetServiceInfo returns a service config definition
+// GetServiceInfo returns a service config definition
 func (c *CouchDB) GetServiceInfo(serviceID string) (structs.ServiceConfigWrapper, error) {
 	toReturn, err := c.getServiceInfo(serviceID)
 	return toReturn, err

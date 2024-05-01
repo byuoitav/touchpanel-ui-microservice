@@ -9,7 +9,7 @@ import (
 	"time"
 
 	"github.com/byuoitav/common/log"
-	"github.com/byuoitav/common/structs"
+	"github.com/byuoitav/touchpanel-ui-microservice/structs"
 )
 
 // GetUIConfig returns a UIConfig file from the database.
@@ -31,6 +31,18 @@ func (c *CouchDB) getUIConfig(roomID string) (uiconfig, error) {
 	err := c.MakeRequest("GET", fmt.Sprintf("%v/%v", UI_CONFIGS, roomID), "", nil, &toReturn)
 	if err != nil {
 		err = fmt.Errorf("failed to get ui config %s: %s", roomID, err)
+	}
+
+	return toReturn, err
+}
+
+// TODO: Get the theme as well
+func (c *CouchDB) getThemeConfig(roomID string) (themeConfig, error) {
+	var toReturn themeConfig
+
+	err := c.MakeRequest("GET", fmt.Sprintf("%v/%v", THEME_CONFIGS, roomID), "", nil, &toReturn)
+	if err != nil {
+		err = fmt.Errorf("failed to get theme config %s: %s", roomID, err)
 	}
 
 	return toReturn, err
@@ -140,8 +152,12 @@ func (c *CouchDB) UpdateUIConfig(id string, update structs.UIConfig) (structs.UI
 // GetUIAttachment returns the attachment for the given ui if it exists.
 // returns the content-type header, the attachment, and an error if the request against couchdb failed.
 func (c *CouchDB) GetUIAttachment(ui, attachment string) (string, []byte, error) {
+	fmt.Println()
+	fmt.Println()
+	fmt.Println("Getting DB")
+	fmt.Println()
+	fmt.Println()
 	url := fmt.Sprintf("%v/%v/%v/%v", c.address, UI_CONFIGS, ui, attachment)
-
 	// start building the request
 	req, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
@@ -181,6 +197,16 @@ func (c *CouchDB) GetUIAttachment(ui, attachment string) (string, []byte, error)
 	}
 
 	return resp.Header.Get("content-type"), b, nil
+}
+
+func (c *CouchDB) GetTheme(ui string) ([]string, error) {
+	var toReturn []string
+	err := c.MakeRequest("GET", fmt.Sprintf("%v/%v/%v", UI_CONFIGS, ui, "_attachments"), "", nil, &toReturn)
+	if err != nil {
+		return toReturn, fmt.Errorf("failed to get attachment names for %s: %s", ui, err)
+	}
+
+	return toReturn, nil
 }
 
 // GetAllUIConfigs returns a list of all the UI Config documents in the database

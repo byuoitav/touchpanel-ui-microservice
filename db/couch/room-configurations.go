@@ -5,7 +5,7 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/byuoitav/common/structs"
+	"github.com/byuoitav/touchpanel-ui-microservice/structs"
 )
 
 func (c *CouchDB) GetRoomConfiguration(id string) (structs.RoomConfiguration, error) {
@@ -80,11 +80,11 @@ func (c *CouchDB) GetAllRoomConfigurations() ([]structs.RoomConfiguration, error
 
 /*
 CreateRoomConfiguraiton adds a room configuration. A valid room configuration must have:
-1) an ID
-2) a name
-3) at least one evaluator.
-	An Evaluator must have an ID and a CodeKey.
-	Priority will default to 1000.
+ 1. an ID
+ 2. a name
+ 3. at least one evaluator.
+    An Evaluator must have an ID and a CodeKey.
+    Priority will default to 1000.
 
 Note that if the ID is a duplicate, assuming that the `rev` field is valid.
 The existing document will get overwritten.

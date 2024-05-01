@@ -3,7 +3,7 @@ package couch
 import (
 	"testing"
 
-	"github.com/byuoitav/common/structs"
+	"github.com/byuoitav/touchpanel-ui-microservice/structs"
 )
 
 var testDevice = "new_device.json"

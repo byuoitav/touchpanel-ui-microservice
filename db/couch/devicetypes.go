@@ -5,7 +5,7 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/byuoitav/common/structs"
+	"github.com/byuoitav/touchpanel-ui-microservice/structs"
 )
 
 func (c *CouchDB) GetDeviceType(id string) (structs.DeviceType, error) {
@@ -73,25 +73,26 @@ func (c *CouchDB) GetAllDeviceTypes() ([]structs.DeviceType, error) {
 /*
 CreateDeviceType - now this may come as a shock - creates a device type.
 The device type must have the following attributes to be created:
-	1. A valid ID (3 or more characters)
-	2. A valid Name (3 or more characters) 3. A valid class (3 or more characters) Each command and Port must be validated as well. The criterea for their creation is:
+ 1. A valid ID (3 or more characters)
+ 2. A valid Name (3 or more characters) 3. A valid class (3 or more characters) Each command and Port must be validated as well. The criterea for their creation is:
+
 Port:
-	1. Must have a valid ID (3 or more characters)
-	2. Must have a valid Name (3 or more characters)
-	3. Must have a valid PortType (3 or more characters)
+ 1. Must have a valid ID (3 or more characters)
+ 2. Must have a valid Name (3 or more characters)
+ 3. Must have a valid PortType (3 or more characters)
 
 Command:
-	1. Must have a valid Microservice
-		a. Valid ID (3 or more characters)
-		b. Valid Name (3 or more characters)
-		c. Valid Address (a well formed HTTP or HTTPS host0
-	2. Must have a valid Endpoint
-		a. Valid ID (3 or more characters)
-		b. Valid Name (3 ore more characters)
-		c. Valid, well formed URI Path.
-	3. Must have a valid command
-		a. Valid ID (3 or more characters)
-		b. Valid Name (3 ore more characters)
+ 1. Must have a valid Microservice
+    a. Valid ID (3 or more characters)
+    b. Valid Name (3 or more characters)
+    c. Valid Address (a well formed HTTP or HTTPS host0
+ 2. Must have a valid Endpoint
+    a. Valid ID (3 or more characters)
+    b. Valid Name (3 ore more characters)
+    c. Valid, well formed URI Path.
+ 3. Must have a valid command
+    a. Valid ID (3 or more characters)
+    b. Valid Name (3 ore more characters)
 
 If a device type is submitted with a valid 'rev' field, the device type will be overwritten.
 */

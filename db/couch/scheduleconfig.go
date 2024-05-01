@@ -3,7 +3,7 @@ package couch
 import (
 	"fmt"
 
-	"github.com/byuoitav/common/structs"
+	"github.com/byuoitav/touchpanel-ui-microservice/structs"
 )
 
 // GetScheduleConfig returns the Scheduling Panel Configuration for the given room

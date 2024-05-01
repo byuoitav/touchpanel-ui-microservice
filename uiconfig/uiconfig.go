@@ -9,8 +9,8 @@ import (
 	"os"
 	"strings"
 
-	"github.com/byuoitav/common/structs"
 	"github.com/byuoitav/touchpanel-ui-microservice/db"
+	"github.com/byuoitav/touchpanel-ui-microservice/structs"
 	"github.com/fatih/color"
 )
 

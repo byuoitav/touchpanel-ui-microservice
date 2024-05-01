@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/byuoitav/common/structs"
+	"github.com/byuoitav/touchpanel-ui-microservice/structs"
 )
 
 func (c *CouchDB) GetBuilding(id string) (structs.Building, error) {

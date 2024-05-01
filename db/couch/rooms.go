@@ -11,7 +11,7 @@ import (
 
 	"github.com/byuoitav/common/log"
 	"github.com/byuoitav/common/nerr"
-	"github.com/byuoitav/common/structs"
+	"github.com/byuoitav/touchpanel-ui-microservice/structs"
 )
 
 func (c *CouchDB) GetRoom(id string) (structs.Room, error) {
@@ -129,14 +129,18 @@ func (c *CouchDB) GetRoomsByBuilding(id string) ([]structs.Room, error) {
 
 /*
 CreateRoom creates a room. Required information:
-	1. The room must have a valid roomID, that roomID must have a valid BuildingID as a component
-	2. The configurationID of the sub configuration item must have at least a valid ID. If the ID doesn't exist currently in the database, the room configuraiton object must meet all requirements to be a valid roomConfiguration.
-	3. The room must have a name.
-	4. The room must have a designation
 
-	It is important to note that the function will overwrite a room with the same roomID if the Rev field is valid.
+ 1. The room must have a valid roomID, that roomID must have a valid BuildingID as a component
 
-	Any devices included in the room will be evaluated for adding, but the room will be evaluated for creation first. If any devices fail creation, this will NOT roll back the creation of the room, or any other devices. All devices wil  be checked for a device ID before moving to creation. If any are lacking, the no cration of ANY device will proceed.
+ 2. The configurationID of the sub configuration item must have at least a valid ID. If the ID doesn't exist currently in the database, the room configuraiton object must meet all requirements to be a valid roomConfiguration.
+
+ 3. The room must have a name.
+
+ 4. The room must have a designation
+
+    It is important to note that the function will overwrite a room with the same roomID if the Rev field is valid.
+
+    Any devices included in the room will be evaluated for adding, but the room will be evaluated for creation first. If any devices fail creation, this will NOT roll back the creation of the room, or any other devices. All devices wil  be checked for a device ID before moving to creation. If any are lacking, the no cration of ANY device will proceed.
 */
 func (c *CouchDB) CreateRoom(toAdd structs.Room) (structs.Room, error) {
 	var toReturn structs.Room
