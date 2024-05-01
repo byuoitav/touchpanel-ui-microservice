@@ -9,8 +9,8 @@ import (
 	"os"
 	"strings"
 
-	"github.com/byuoitav/common/db"
 	"github.com/byuoitav/common/structs"
+	"github.com/byuoitav/touchpanel-ui-microservice/db"
 	"github.com/fatih/color"
 )
 
@@ -103,7 +103,7 @@ const (
 	letterIdxMax  = 63 / letterIdxBits   // # of letter indices fitting in 63 bits
 )
 
-//GenRandString .
+// GenRandString .
 func GenRandString(n int) string {
 	b := make([]byte, n)
 	// A rand.Int63() generates 63 random bits, enough for letterIdxMax letters!

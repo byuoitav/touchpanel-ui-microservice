@@ -10,8 +10,9 @@ import (
 
 	"github.com/byuoitav/central-event-system/hub/base"
 	"github.com/byuoitav/central-event-system/messenger"
+	"github.com/byuoitav/touchpanel-ui-microservice/db"
+
 	"github.com/byuoitav/common"
-	"github.com/byuoitav/common/db"
 	"github.com/byuoitav/common/log"
 	commonEvents "github.com/byuoitav/common/v2/events"
 	"github.com/byuoitav/touchpanel-ui-microservice/events"
@@ -85,7 +86,6 @@ func main() {
 	router.GET("/api", uiconfig.GetAPI)
 	router.GET("/nextapi", uiconfig.NextAPI)
 	router.GET("/control-key/:room/:controlGroup", handlers.GetControlKey)
-
 	router.POST("/help", handlers.GenerateHelpFunction("request", messenger))
 	router.POST("/confirmhelp", handlers.GenerateHelpFunction("confirm", messenger))
 	router.POST("/cancelhelp", handlers.GenerateHelpFunction("cancel", messenger))
