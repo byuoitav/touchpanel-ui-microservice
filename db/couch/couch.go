@@ -175,6 +175,19 @@ func (c *CouchDB) MakeRequest(method, endpoint, contentType string, body []byte,
 	return nil
 }
 
+func (c *CouchDB) MakeRequestSVG(method, endpoint, contentType string, body []byte) ([]byte, error) {
+	respType, body, err := c.req(method, endpoint, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+
+	if !strings.EqualFold(respType, "image/svg+xml") {
+		return nil, fmt.Errorf("unexpected response content-type: expected %s, but got %s", "image/svg+xml", respType)
+	}
+
+	return body, nil
+}
+
 func (c *CouchDB) ExecuteQuery(query IDPrefixQuery, responseToFill interface{}) error {
 	//	var toFill interface{}
 

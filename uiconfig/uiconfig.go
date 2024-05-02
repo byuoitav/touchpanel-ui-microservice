@@ -16,6 +16,7 @@ import (
 
 // UI_CONFIG_FILE is the name for the local file on the touchpanel
 const UI_CONFIG_FILE = "ui-config.json"
+const THEME_CONFIG_FILE = "theme-config.json"
 
 func getUIConfig() (structs.UIConfig, error) {
 	hn := os.Getenv("SYSTEM_ID")
@@ -44,6 +45,58 @@ func getUIConfig() (structs.UIConfig, error) {
 	return config, nil
 }
 
+func getThemeConfig() (structs.ThemeConfig, error) {
+	hn := os.Getenv("SYSTEM_ID")
+
+	split := strings.Split(hn, "-")
+	building := split[0]
+	room := split[1]
+
+	if len(hn) == 0 {
+		logError("SYSTEM_ID is not set")
+		return getThemeConfigFromFile()
+	}
+
+	color.Set(color.FgYellow)
+	log.Printf("Getting Theme Config for %s-%s from database.", building, room)
+	color.Unset()
+
+	config, err := db.GetDB().GetThemeConfig(fmt.Sprintf("%s-%s", building, room))
+	if err != nil {
+		logError(fmt.Sprintf("Failed to get Theme Config for %s-%s from database: %v", building, room, err))
+		return getThemeConfigFromFile()
+	}
+
+	writeThemeConfigToFile(config)
+
+	return config, nil
+}
+
+func getLogo() ([]byte, error) {
+	hn := os.Getenv("SYSTEM_ID")
+
+	split := strings.Split(hn, "-")
+	building := split[0]
+	room := split[1]
+
+	if len(hn) == 0 {
+		logError("SYSTEM_ID is not set")
+		return nil, fmt.Errorf("SYSTEM_ID is not set")
+	}
+
+	color.Set(color.FgYellow)
+	log.Printf("Getting Logo for %s-%s from database.", building, room)
+	color.Unset()
+
+	logo, err := db.GetDB().GetLogo(fmt.Sprintf("%s-%s", building, room))
+	if err != nil {
+		logError(fmt.Sprintf("Failed to get Logo for %s-%s from database: %v", building, room, err))
+		return nil, err
+	}
+
+	return logo, nil
+}
+
 func getUIConfigFromFile() (structs.UIConfig, error) {
 	color.Set(color.FgCyan)
 	log.Printf("Getting UI Config from file: %s", UI_CONFIG_FILE)
@@ -69,6 +122,31 @@ func getUIConfigFromFile() (structs.UIConfig, error) {
 	return config, nil
 }
 
+func getThemeConfigFromFile() (structs.ThemeConfig, error) {
+	color.Set(color.FgCyan)
+	log.Printf("Getting Theme Config from file: %s", THEME_CONFIG_FILE)
+	color.Unset()
+
+	body, err := ioutil.ReadFile(THEME_CONFIG_FILE)
+	if err != nil {
+		logError(fmt.Sprintf("Failed to read body from file %s: %s", THEME_CONFIG_FILE, err))
+		return structs.ThemeConfig{}, err
+	}
+
+	var config structs.ThemeConfig
+	err = json.Unmarshal(body, &config)
+	if err != nil {
+		logError(fmt.Sprintf("Failed to unmarshal body from file %s: %s", THEME_CONFIG_FILE, err))
+		return structs.ThemeConfig{}, err
+	}
+
+	color.Set(color.FgHiGreen, color.Bold)
+	log.Printf("Returning config from file")
+	color.Unset()
+
+	return config, nil
+}
+
 func writeUIConfigToFile(config structs.UIConfig) {
 	color.Set(color.FgCyan)
 	log.Printf("Writing UI Config to file: %s", UI_CONFIG_FILE)
@@ -77,6 +155,27 @@ func writeUIConfigToFile(config structs.UIConfig) {
 	f, err := os.Create(UI_CONFIG_FILE)
 	if err != nil {
 		logError(fmt.Sprintf("Failed create file %s: %s", UI_CONFIG_FILE, err))
+		return
+	}
+
+	bytes, err := json.Marshal(config)
+	if err != nil {
+		logError(fmt.Sprintf("Failed to marshal config: %s", err))
+		return
+	}
+
+	f.Write(bytes)
+	f.Sync()
+}
+
+func writeThemeConfigToFile(config structs.ThemeConfig) {
+	color.Set(color.FgCyan)
+	log.Printf("Writing Theme Config to file: %s", THEME_CONFIG_FILE)
+	color.Unset()
+
+	f, err := os.Create(THEME_CONFIG_FILE)
+	if err != nil {
+		logError(fmt.Sprintf("Failed create file %s: %s", THEME_CONFIG_FILE, err))
 		return
 	}
 

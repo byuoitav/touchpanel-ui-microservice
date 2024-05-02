@@ -36,7 +36,29 @@ func (c *CouchDB) getUIConfig(roomID string) (uiconfig, error) {
 	return toReturn, err
 }
 
-// TODO: Get the theme as well
+func (c *CouchDB) GetThemeConfig(roomID string) (structs.ThemeConfig, error) {
+	config, err := c.getThemeConfig(roomID)
+	switch {
+	case err != nil:
+		return structs.ThemeConfig{}, err
+	case config.ThemeConfig == nil:
+		return structs.ThemeConfig{}, errors.New("idk how this happened")
+	}
+
+	return *config.ThemeConfig, nil
+}
+
+func (c *CouchDB) GetLogo(roomID string) ([]byte, error) {
+	var toReturn []byte
+
+	toReturn, err := c.MakeRequestSVG("GET", fmt.Sprintf("%v/%v/%v", THEME_CONFIGS, roomID, "logo.svg"), "", nil)
+	if err != nil {
+		return toReturn, fmt.Errorf("failed to get logo for %s: %s", roomID, err)
+	}
+
+	return toReturn, nil
+}
+
 func (c *CouchDB) getThemeConfig(roomID string) (themeConfig, error) {
 	var toReturn themeConfig
 

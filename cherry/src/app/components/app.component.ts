@@ -4,7 +4,7 @@ import { trigger, animate, transition } from "@angular/animations";
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 
 import { DataService } from "../services/data.service";
-import { CouchDBService } from "../services/api.service";
+import { ThemeService } from "../services/api.service";
 import { CommandService } from "../services/command.service";
 import { HelpDialog } from "../dialogs/help.dialog";
 import { Output } from "../objects/status.objects";
@@ -19,7 +19,7 @@ const BUFFER = "buffer";
   selector: "cherry",
   templateUrl: "./app.component.html",
   styleUrls: ["./app.component.scss"],
-  providers: [CouchDBService],
+  providers: [ThemeService],
   encapsulation: ViewEncapsulation.None,
   animations: [
     trigger("delay", [
@@ -42,7 +42,7 @@ export class AppComponent {
   public selectedTabIndex: number;
 
   constructor(
-    private couchDBService: CouchDBService,
+    private themeService: ThemeService,
     public data: DataService,
     public command: CommandService,
     public dialog: MatDialog,
@@ -60,7 +60,7 @@ export class AppComponent {
   }
 
   loadSvg(): void {
-    this.couchDBService.getLogo().subscribe(
+    this.themeService.getLogo().subscribe(
       svgData => {
         // console.log('SVG Data:', svgData);
         this.svg = this.sanitizer.bypassSecurityTrustHtml(svgData);

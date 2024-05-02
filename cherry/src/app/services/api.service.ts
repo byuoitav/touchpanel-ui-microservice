@@ -37,7 +37,7 @@ export class APIService {
   private static localurl: string;
   private static options: {};
 
-  constructor(private http: HttpClient, private couchDBService: CouchDBService) {
+  constructor(private http: HttpClient, private themeService: ThemeService) {
     this.loaded = new EventEmitter<boolean>();
     this.jsonConvert = new JsonConvert();
     this.jsonConvert.ignorePrimitiveChecks = false;
@@ -46,10 +46,12 @@ export class APIService {
       const headers = new Headers();
       headers.append("content-type", "application/json");
       APIService.options = { headers: headers, responseType: "text" as "json" };
-      APIService.localurl = window.location.protocol + "//" + window.location.host;
+      // APIService.localurl = window.location.protocol + "//" + window.location.host;
+      APIService.localurl = "http://localhost:8888";
+      console.log("localurl:", APIService.localurl);
 
       APIService.room = new Room();
-      couchDBService.fetchCouchDB();
+      themeService.fetchTheme();
       this.setupHostname();
     } else {
       this.loaded.emit(true);
@@ -342,24 +344,21 @@ export class APIService {
       return of(result as T);
     };
   }
-
-
-
 }
 
 @Injectable()
-export class CouchDBService {
-  private couchDbUrl = 'http://localhost:5984/theme-configuration';
+export class ThemeService {
+  // localurl = window.location.protocol + "//" + window.location.host;
+  localurl = "http://localhost:8888";
 
   constructor(private http: HttpClient) { }
 
   getLogo(): Observable<string> {
     const headers = new HttpHeaders({
-      'Authorization': 'Basic ' + btoa('admin:admin'),
-      'Content-Type': 'application/json'
+      'Content-Type': 'img/svg+xml'
     });
 
-    return this.http.get(`${this.couchDbUrl}/logo/Ensign_College_wordmark.svg`, {
+    return this.http.get(this.localurl + "/logo", {
       headers: headers,
       responseType: 'text'
     })
@@ -367,50 +366,59 @@ export class CouchDBService {
 
 
   //gets the CSS colors from the CouchDB database
-  fetchCouchDB = async () => {
+  fetchTheme = async () => {
     try {
-      const response = await fetch(this.couchDbUrl + '/activeConfig', {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          // Add your credentials here
-          'Authorization': 'Basic ' + btoa('admin:admin')
+      this.getThemeConfig().subscribe({
+        next: data => {
+          console.log(data);
+          document.documentElement.style.setProperty('--background-color', data['background-color']);
+          document.documentElement.style.setProperty('--top-bar-color', data['top-bar-color']);
+          document.documentElement.style.setProperty('--background-color-accent', data['background-color-accent']);
+          document.documentElement.style.setProperty('--dpad-color', data['dpad-color']);
+          document.documentElement.style.setProperty('--dpad-press', data['dpad-press']);
+          document.documentElement.style.setProperty('--cam-preset-color', data['cam-preset-color']);
+          document.documentElement.style.setProperty('--cam-preset-press', data['cam-preset-press']);
+          document.documentElement.style.setProperty('--volume-slider-color', data['volume-slider-color']);
+          document.documentElement.style.setProperty('--help-button-color', data['help-button-color']);
+          document.documentElement.style.setProperty('--text-color', data['text-color']);
+          document.documentElement.style.setProperty('--font-name', data['font-name']);
+
+          //import the font
+          const fontUrl = data['font-link'];
+          console.log("Font URL: ", fontUrl);
+          const linkElement = document.createElement('link');
+          linkElement.rel = 'stylesheet';
+          linkElement.href = fontUrl;
+          // Wait for the font to load
+          linkElement.onload = () => {
+            document.body.style.setProperty('font-family', data['font-name'] + ', sans-serif');
+          };
+
+          document.head.appendChild(linkElement);
+
+          console.log(data);
         },
-        credentials: 'include', // include cookies
+        error: error => {
+          console.error('There was a problem with the fetch operation:', error.message);
+        }
       });
-
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
-
-      const data = await response.json();
-      document.documentElement.style.setProperty('--background-color', data['background-color']);
-      document.documentElement.style.setProperty('--top-bar-color', data['top-bar-color']);
-      document.documentElement.style.setProperty('--background-color-accent', data['background-color-accent']);
-      document.documentElement.style.setProperty('--dpad-color', data['dpad-color']);
-      document.documentElement.style.setProperty('--dpad-press', data['dpad-press']);
-      document.documentElement.style.setProperty('--cam-preset-color', data['cam-preset-color']);
-      document.documentElement.style.setProperty('--volume-slider-color', data['volume-slider-color']);
-      document.documentElement.style.setProperty('--help-button-color', data['help-button-color']);
-      document.documentElement.style.setProperty('--text-color', data['text-color']);
-      document.documentElement.style.setProperty('--font-name', data['font-name']);
-
-      //import the font
-      const fontUrl = data['font-link'];
-      console.log("Font URL: ", fontUrl);
-      const linkElement = document.createElement('link');
-      linkElement.rel = 'stylesheet';
-      linkElement.href = fontUrl;
-      // Wait for the font to load
-      linkElement.onload = () => {
-        document.body.style.setProperty('font-family', data['font-name'] + ', sans-serif');
-      };
-
-      document.head.appendChild(linkElement);
-
-      console.log(data);
     } catch (error) {
       console.error('There was a problem with the fetch operation:', error.message);
     }
   };
+
+  private getThemeConfig(): Observable<Object> {
+    return this.http.get(this.localurl + "/themeconfig").pipe(
+      tap(data => console.log("got themeconfig", data)),
+      catchError(this.handleError("getThemeConfig", [])),
+      map(data => data)
+    );
+  }
+
+  private handleError<T>(operation: string, result?: T) {
+    return (error: any): Observable<T> => {
+      console.error("error doing:", operation, "err:", error)
+      return of(result as T);
+    };
+  }
 }

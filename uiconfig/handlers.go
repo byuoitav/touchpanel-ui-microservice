@@ -50,6 +50,22 @@ func GetUIConfig(context echo.Context) error {
 	return context.JSON(http.StatusOK, j)
 }
 
+func GetThemeConfig(context echo.Context) error {
+	j, err := getThemeConfig()
+	if err != nil {
+		return context.JSON(http.StatusInternalServerError, err.Error())
+	}
+	return context.JSON(http.StatusOK, j)
+}
+
+func GetLogo(context echo.Context) error {
+	j, err := getLogo()
+	if err != nil {
+		return context.JSON(http.StatusInternalServerError, err.Error())
+	}
+	return context.Blob(http.StatusOK, "image/svg+xml", j)
+}
+
 func GetUIPath(context echo.Context) error {
 	config, err := getUIConfig()
 	if err != nil {

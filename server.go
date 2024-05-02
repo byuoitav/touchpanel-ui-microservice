@@ -90,6 +90,10 @@ func main() {
 	router.POST("/confirmhelp", handlers.GenerateHelpFunction("confirm", messenger))
 	router.POST("/cancelhelp", handlers.GenerateHelpFunction("cancel", messenger))
 
+	// theme
+	router.GET("/themeconfig", uiconfig.GetThemeConfig)
+	router.GET("/logo", uiconfig.GetLogo)
+
 	// all the different ui's
 	router.Static("/", "redirect.html")
 	router.Any("/404", redirect)

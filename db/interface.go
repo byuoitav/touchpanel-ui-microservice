@@ -54,6 +54,10 @@ type DB interface {
 	DeleteUIConfig(id string) error
 	GetUIAttachment(ui, attachment string) (string, []byte, error)
 
+	// theme configs
+	GetThemeConfig(roomID string) (structs.ThemeConfig, error)
+	GetLogo(roomID string) ([]byte, error)
+
 	// lab configs
 	GetLabConfig(roomID string) (structs.LabConfig, error)
 

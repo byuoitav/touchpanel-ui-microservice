@@ -21,6 +21,7 @@ type ThemeConfig struct {
 	DPADColor             string `json:"dpad-color"`
 	DPADPress             string `json:"dpad-press"`
 	CamPresetColor        string `json:"cam-preset-color"`
+	CamPressColor         string `json:"cam-preset-press"`
 	VolumeSliderColor     string `json:"volume-slider-color"`
 	HelpButtonColor       string `json:"help-button-color"`
 	TextColor             string `json:"text-color"`
