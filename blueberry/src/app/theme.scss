@@ -39,15 +39,15 @@ $blueberry-theme: mat.define-light-theme((
   @include mat.core-theme($blueberry-theme);
 }
 
-//.primary-background {
-  //background-color: mat.core-color($blueberry-theme);
-//}
-
-/*
-.mat-app-background {
-  background-color: mat-color($primary, darker);
+.primary-background {
+  background-color: mat.get-color-from-palette($blueberry-primary, darker);
 }
 
+.mat-app-background {
+  //background-color: mat.core-color($cherry-primary);
+  background-color: mat.get-color-from-palette($blueberry-primary, darker);
+}
+/*
 .mat-tab-label-darker {
   .mat-tab-label-container {
     background-color: mat-color($mat-blue-grey, 800);

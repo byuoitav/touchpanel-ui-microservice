@@ -5,3 +5,4 @@ touchpanel-ui-microservice-arm
 touchpanel-ui-microservice-bin
 dist/
 .angular/
+node_modules/
