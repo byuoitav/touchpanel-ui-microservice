@@ -46,9 +46,7 @@ export class APIService {
       const headers = new Headers();
       headers.append("content-type", "application/json");
       APIService.options = { headers: headers, responseType: "text" as "json" };
-      // APIService.localurl = window.location.protocol + "//" + window.location.host;
-      APIService.localurl = "http://localhost:8888";
-      console.log("localurl:", APIService.localurl);
+      APIService.localurl = window.location.protocol + "//" + window.location.host;
 
       APIService.room = new Room();
       themeService.fetchTheme();
@@ -396,7 +394,15 @@ export class ThemeService {
 
           document.head.appendChild(linkElement);
 
-          console.log(data);
+          // Display Camera Text or Not
+          if (data['show-cam-text'] === true) {
+            console.log("Displaying Camera Text");
+            document.documentElement.style.setProperty('--show-cam-text', 'flex');
+          } else {
+            console.log("Not Displaying Camera Text");
+            document.documentElement.style.setProperty('--show-cam-text', 'none');
+          }
+
         },
         error: error => {
           console.error('There was a problem with the fetch operation:', error.message);
