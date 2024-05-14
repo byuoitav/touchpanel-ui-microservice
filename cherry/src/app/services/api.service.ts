@@ -346,8 +346,7 @@ export class APIService {
 
 @Injectable()
 export class ThemeService {
-  // localurl = window.location.protocol + "//" + window.location.host;
-  localurl = "http://localhost:8888";
+  localurl = window.location.protocol + "//" + window.location.host;
 
   constructor(private http: HttpClient) { }
 
