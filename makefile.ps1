@@ -107,7 +107,7 @@ function Build {
     if (Test-Path "blueberry") {
         Set-Location "blueberry"
         Write-Output "Entering \blueberry"
-        Invoke-Expression "ng build --prod --aot --build-optimizer --base-href='./blueberry/'"
+        Invoke-Expression "ng build --configuration production --aot --build-optimizer --base-href='./blueberry/'"
         Invoke-Expression "cd .."
         Write-Output "Exiting \blueberry and moving files to \dist"
         Move-Item "$location\blueberry\dist\" -Destination "$location\dist\blueberry-dist\"
@@ -118,7 +118,7 @@ function Build {
     if (Test-Path "cherry") {
         Set-Location "cherry"
         Write-Output "Entering \cherry"
-        Invoke-Expression "ng build --prod --aot --build-optimizer --base-href='./cherry/'"
+        Invoke-Expression "ng build --configuration production --aot --build-optimizer --base-href='./cherry/'"
         Invoke-Expression "cd .."
         Write-Output "Exiting \cherry and moving files to \dist"
         Move-Item "$location\cherry\dist\" -Destination "$location\dist\cherry-dist\"
@@ -142,17 +142,17 @@ function DockerFunc {   #can not just be docker because it creates an infinite l
         Write-Output "Building dev containers with tag $COMMIT_HASH"
 
         Write-Output "Building container $DOCKER_PKG/$NAME-dev:$COMMIT_HASH"
-        Invoke-Expression "docker build -f dockerfile --build-arg NAME=$NAME-arm -t $DOCKER_PKG/$NAME-dev:$COMMIT_HASH dist"
+        Invoke-Expression "docker build -f Dockerfile --build-arg NAME=$NAME-arm -t $DOCKER_PKG/$NAME-dev:$COMMIT_HASH dist"
     } elseif ($TAG -match $DEV_TAG_REGEX) {
         Write-Output "Building dev containers with tag $TAG"
 
     	Write-Output "Building container $DOCKER_PKG/$NAME-dev:$TAG"
-    	Invoke-Expression "docker build -f dockerfile --build-arg NAME=$NAME-arm -t $DOCKER_PKG/$NAME-dev:$TAG dist"
+    	Invoke-Expression "docker build -f Dockerfile --build-arg NAME=$NAME-arm -t $DOCKER_PKG/$NAME-dev:$TAG dist"
     } elseif ($TAG -match $PRD_TAG_REGEX) {
         Write-Output "Building prd containers with tag $TAG"
 
     	Write-Output "Building container $DOCKER_PKG/${NAME}:$TAG"
-    	Invoke-Expression "docker build -f dockerfile --build-arg NAME=$NAME-arm -t $DOCKER_PKG/${NAME}:$TAG dist"
+    	Invoke-Expression "docker build -f Dockerfile --build-arg NAME=$NAME-arm -t $DOCKER_PKG/${NAME}:$TAG dist"
     } else {
         Write-Output "Docker function quit unexpectedly. Commit Hash: $COMMIT_HASH     Tag: $TAG"
     }
