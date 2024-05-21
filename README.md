@@ -1,7 +1,7 @@
 # touchpanel-ui-microservice
 [![Apache 2 License](https://img.shields.io/hexpm/l/plug.svg)](https://raw.githubusercontent.com/byuoitav/touchpanel-ui-microservice/master/LICENSE)  
 
-A microservice for the touchpanel UI containing both Blueberry and Cherry. Provides room control for AV devices and camera control through a touch screen display on a raspberry pi. 
+A microservice for the touchpanel UI containing both Blueberry and Cherry. Blueberry and Cherry are the interfaces written in Angular. Provides room control for AV devices and camera control through a touch screen display on a raspberry pi. 
 ## Endpoints
 ### Status
 * <mark>GET</mark> `/status`
@@ -24,38 +24,38 @@ A microservice for the touchpanel UI containing both Blueberry and Cherry. Provi
 * <mark>GET</mark> `/deviceinfo`
 * <mark>GET</mark>  `/reboot`
 * <mark>GET</mark>  `/uiconfig`
-  * returns the UI config
+  * Returns the UI config
 * <mark>GET</mark>  `/uipath`
-  * gets the UI Config and then returns the path for the url to where the UI is hosted
-  * ex: "hostname": "/cherry?1.1.15=BDumwFSa"
+  * Gets the UI Config and then returns the path for the url to where the UI is hosted
+  * Ex: "hostname": "/cherry?1.1.15=BDumwFSa"
 ####
 * <mark>GET</mark>  `/api`
-  * gets the UI Config and then returns the hostname
+  * Gets the UI Config and then returns the hostname
 * <mark>GET</mark>  `/nextapi`
 * <mark>GET</mark> `/control-key/:room/:controlGroup`
-  * returns the camera control key for the specified room and control group
+  * Returns the camera control key for the specified room and control group
 * <mark>POST</mark>  `/help`
-  * sends a help request event with device info
+  * Sends a help request event with device info
 * <mark>POST</mark>  `/confirmhelp`
 * <mark>POST</mark>  `/cancelhelp`
 ####
 * <mark>GET</mark> `/themeconfig`
-  * returns the theme config to set css values and related theme variables in the UI
+  * Returns the theme config to set css values and related theme variables in the UI
 * <mark>GET</mark>  `/logo`
-  * returns the logo for the UI that is displayed on the standby screen
+  * Returns the logo for the UI that is displayed on the standby screen
 * <mark>GET</mark> `/blueberry/db/:attachment`
 * <mark>GET</mark> `/cherry/db/:attachment`
 
 ## Environment Variables
 * PI_HOSTNAME
-  * ex: PI_HOSTNAME=JET-1234-PI1
+  * Ex: PI_HOSTNAME=JET-1234-PI1
 * SYSTEM_ID
-  * ex: SYSTEM_ID="JET-1234-PI1"
+  * Ex: SYSTEM_ID="JET-1234-PI1"
 * DB_ADDRESS
   * CouchDB address
 * DP_PASSWORD
 * STOP_REPLICATION (boolean)
-  * stop replication of CouchDB
+  * Stop replication of CouchDB
 * HUB_ADDRESS
 
 Hostname/SystemID should be set [according to the documentation](https://github.com/byuoitav/team/wiki/Hostname-Naming-Conventions).
