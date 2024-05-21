@@ -14,8 +14,6 @@ import { deserialize } from "serializer.ts/Serializer";
 import { tap } from "rxjs";
 import { catchError } from "rxjs";
 import { map } from "rxjs";
-import { subscribe } from "diagnostics_channel";
-import { response } from "express";
 
 const RETRY_TIMEOUT = 5 * 1000;
 const MONITOR_TIMEOUT = 30 * 1000;
@@ -30,6 +28,8 @@ export class APIService {
   public static piHostname: string;
   public static hostname: string;
   public static apiurl: string;
+  public static camLink: string;
+
 
   public static room: Room;
 
@@ -345,7 +345,7 @@ export class APIService {
 }
 
 @Injectable()
-export class ThemeService {
+export class ThemeService { 
   localurl = window.location.protocol + "//" + window.location.host;
 
   constructor(private http: HttpClient) { }
@@ -401,6 +401,9 @@ export class ThemeService {
             console.log("Not Displaying Camera Text");
             document.documentElement.style.setProperty('--show-cam-text', 'none');
           }
+
+          // Get the camera link
+          APIService.camLink = data['cam-link'];
 
         },
         error: error => {

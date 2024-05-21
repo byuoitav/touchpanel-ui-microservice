@@ -29,11 +29,11 @@ $d-pad-arrow-move: 35%;
 	flex-direction: row;
 	justify-content: space-around;
 
-	height: 30%; 
+	height: 20%; 
 
 	button {
 		width: 28%;
-		height: 67%;
+		height: 100%;
 		background-color: $d-pad-fg;
     color: var(--text-color);
 		mat-icon {
@@ -114,7 +114,7 @@ $d-pad-arrow-move: 35%;
 	text-align: center;
 	height: 50vh;
 	padding-top: 7vh;
-	margin-bottom: 5vh;
+	margin-bottom: 1.5vh;
 
 	.d-pad {
 		display: inline-block;
