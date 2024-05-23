@@ -24,5 +24,7 @@
 
 ::ng-deep .mat-mdc-fab .mdc-button__label,
 ::ng-deep .mat-mdc-mini-fab .mdc-button__label {
-     display: flex !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
 }

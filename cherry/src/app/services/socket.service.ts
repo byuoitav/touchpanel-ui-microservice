@@ -1,9 +1,8 @@
 import {Injectable, EventEmitter} from "@angular/core";
-import {HttpClient} from "@angular/common/http";
-import {
-  $WebSocket,
-  WebSocketConfig
-} from "angular2-websocket/angular2-websocket";
+import {map} from 'rxjs/operators'
+import { Observable, tap } from "rxjs";
+import {webSocket} from 'rxjs/webSocket';
+
 import {
   JsonConvert,
   JsonObject,
@@ -16,74 +15,58 @@ import {
 export const OPEN = "open";
 export const CLOSE = "close";
 export const MESSAGE = "message";
-@Injectable()
+@Injectable({
+  providedIn: "root"
+})
 export class SocketService {
-  private url: string;
-
-  private socket: $WebSocket;
-  private listener: EventEmitter<any>;
-  private http: HttpClient;
-  private webSocketConfig: WebSocketConfig = {
-    initialTimeout: 100,
-    maxTimeout: 500,
-    reconnectIfNotNormalClose: true
-  };
-
   public screenoff: boolean;
+  private listener: EventEmitter<any>;
 
-  public constructor() {
-    this.url = "ws://" + window.location.host + "/websocket";
-    this.socket = new $WebSocket(this.url, null, this.webSocketConfig);
-    this.listener = new EventEmitter();
+  constructor() {
     this.screenoff = false;
+    this.listener = new EventEmitter();
+  }
 
+  public getEventListener(): Observable<any> {
     const jsonConvert = new JsonConvert();
     jsonConvert.ignorePrimitiveChecks = false;
 
-    this.socket.onMessage(
-      msg => {
-        if (msg.data.includes("keepalive")) {
-          // TODO send a pong back
-        } else if (msg.data.includes("refresh")) {
-          console.log("refreshing!");
-          location.assign("http://" + location.hostname + ":8888/");
-        } else if (msg.data.includes("screenoff")) {
-          console.log("adding screenoff element");
-          this.screenoff = true;
-        } else if (msg.data.includes("websocketTest")) {
-          console.log("socket test");
-        } else {
-          const data = JSON.parse(msg.data);
-          const event = jsonConvert.deserialize(data, Event);
+    return new Observable<any>(observer => {
+      const subject = webSocket('ws://localhost:8888/websocket');
 
-          console.debug("received event", event);
-          this.listener.emit({type: MESSAGE, data: event});
+      subject.subscribe({
+        next: (msg: any) => {
+          console.log(msg.message);
+          if (msg.message.includes("keepalive")) {
+            //send a ping back
+            subject.next({type: "ping"});
+          } else if (msg.message.includes("refresh")) {
+            console.log("refreshing");
+            location.assign("http://" + location.hostname + ":8888/");
+          } else if (msg.message.includes("screenoff")) {
+            console.log("adding screenoff element");
+            this.screenoff = true;
+          } else if (msg.message.includes("websocketTest")) {
+            console.log("Received Websocket Test Message");
+            subject.next({type: "websocketTest"});
+          } else {
+            const data = JSON.parse(msg);
+            const event = jsonConvert.deserialize(data, Event);
+
+            console.debug("Received event: ", event);
+            this.listener.emit({type: MESSAGE, data: event});
+          }
+          observer.next(msg);
+        },
+        error: (err: any) => {
+          observer.error(err);
+        },
+        complete: () => {
+          observer.complete();
         }
-      },
-      {autoApply: false}
-    );
+      });
 
-    this.socket.onOpen(msg => {
-      console.log("Websocket opened with", this.url, ":", msg);
-      this.listener.emit({type: OPEN});
     });
-
-    this.socket.onError(msg => {
-      console.log("websocket closed.", msg);
-      this.listener.emit({type: CLOSE});
-    });
-
-    this.socket.onClose(msg => {
-      console.log("trying again", msg);
-    });
-  }
-
-  public close() {
-    this.socket.close(false);
-  }
-
-  public getEventListener() {
-    return this.listener;
   }
 }
 

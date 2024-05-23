@@ -32,8 +32,7 @@ import { ManagementComponent } from "./components/management/management.componen
 import { StreamModalComponent } from "./dialogs/streammodal/streammodal.component";
 import { CameraControlComponent } from './components/camera-control/camera-control.component';
 import { RecordingComponent } from './components/recording/recording.component';
-import { NgxSliderModule } from 'ngx-slider-v2';
-
+import { NgxSliderModule } from '@angular-slider/ngx-slider';
 @NgModule({
   declarations: [
     AppComponent,
