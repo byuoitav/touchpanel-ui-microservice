@@ -101,14 +101,14 @@ func main() {
 	// router.Static("/cherry", "cherry-dist")
 
 	router.Group("/blueberry", middleware.StaticWithConfig(middleware.StaticConfig{
-		Root:   "dist/blueberry-dist",
+		Root:   "blueberry-dist",
 		Index:  "index.html",
 		HTML5:  true,
 		Browse: true,
 	}))
 
 	router.Group("/cherry", middleware.StaticWithConfig(middleware.StaticConfig{
-		Root:   "dist/cherry-dist",
+		Root:   "cherry-dist",
 		Index:  "index.html",
 		HTML5:  true,
 		Browse: true,
