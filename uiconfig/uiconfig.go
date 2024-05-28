@@ -82,24 +82,28 @@ func getThemeConfig() (structs.ThemeConfig, error) {
 }
 
 func getLogo() ([]byte, error) {
-	hn := os.Getenv("SYSTEM_ID")
+	UIConfig, err := getUIConfig()
 
-	split := strings.Split(hn, "-")
-	building := split[0]
-	room := split[1]
+	if err != nil {
+		logError(fmt.Sprintf("Failed to get UI Config while getting Theme: %v", err))
+		return nil, err
+	}
 
-	if len(hn) == 0 {
-		logError("SYSTEM_ID is not set")
-		return nil, fmt.Errorf("SYSTEM_ID is not set")
+	Panels := UIConfig.Panels
+	theme := Panels[0].Theme
+
+	if len(theme) == 0 {
+		logError("Theme not defined in UIConfig")
+		theme = "default"
 	}
 
 	color.Set(color.FgYellow)
-	log.Printf("Getting Logo for %s-%s from database.", building, room)
+	log.Printf("Getting Logo from Database")
 	color.Unset()
 
-	logo, err := db.GetDB().GetLogo(fmt.Sprintf("%s-%s", building, room))
+	logo, err := db.GetDB().GetLogo(theme)
 	if err != nil {
-		logError(fmt.Sprintf("Failed to get Logo for %s-%s from database: %v", building, room, err))
+		logError(fmt.Sprintf("Failed to get Logo for %s from database: %v", theme, err))
 		return nil, err
 	}
 

@@ -48,12 +48,12 @@ func (c *CouchDB) GetThemeConfig(theme string) (structs.ThemeConfig, error) {
 	return *config.ThemeConfig, nil
 }
 
-func (c *CouchDB) GetLogo(roomID string) ([]byte, error) {
+func (c *CouchDB) GetLogo(theme string) ([]byte, error) {
 	var toReturn []byte
 
-	toReturn, err := c.MakeRequestSVG("GET", fmt.Sprintf("%v/%v/%v", THEME_CONFIGS, roomID, "logo.svg"), "", nil)
+	toReturn, err := c.MakeRequestSVG("GET", fmt.Sprintf("%v/%v/%v", THEME_CONFIGS, theme, "logo.svg"), "", nil)
 	if err != nil {
-		return toReturn, fmt.Errorf("failed to get logo for %s: %s", roomID, err)
+		return toReturn, fmt.Errorf("failed to get logo for %s: %s", theme, err)
 	}
 
 	return toReturn, nil
