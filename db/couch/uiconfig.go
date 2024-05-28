@@ -36,8 +36,8 @@ func (c *CouchDB) getUIConfig(roomID string) (uiconfig, error) {
 	return toReturn, err
 }
 
-func (c *CouchDB) GetThemeConfig(roomID string) (structs.ThemeConfig, error) {
-	config, err := c.getThemeConfig(roomID)
+func (c *CouchDB) GetThemeConfig(theme string) (structs.ThemeConfig, error) {
+	config, err := c.getThemeConfig(theme)
 	switch {
 	case err != nil:
 		return structs.ThemeConfig{}, err
@@ -59,12 +59,12 @@ func (c *CouchDB) GetLogo(roomID string) ([]byte, error) {
 	return toReturn, nil
 }
 
-func (c *CouchDB) getThemeConfig(roomID string) (themeConfig, error) {
+func (c *CouchDB) getThemeConfig(theme string) (themeConfig, error) {
 	var toReturn themeConfig
 
-	err := c.MakeRequest("GET", fmt.Sprintf("%v/%v", THEME_CONFIGS, roomID), "", nil, &toReturn)
+	err := c.MakeRequest("GET", fmt.Sprintf("%v/%v", THEME_CONFIGS, theme), "", nil, &toReturn)
 	if err != nil {
-		err = fmt.Errorf("failed to get theme config %s: %s", roomID, err)
+		err = fmt.Errorf("failed to get theme config %s: %s", theme, err)
 	}
 
 	return toReturn, err

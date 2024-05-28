@@ -55,7 +55,7 @@ type DB interface {
 	GetUIAttachment(ui, attachment string) (string, []byte, error)
 
 	// theme configs
-	GetThemeConfig(roomID string) (structs.ThemeConfig, error)
+	GetThemeConfig(theme string) (structs.ThemeConfig, error)
 	GetLogo(roomID string) ([]byte, error)
 
 	// lab configs

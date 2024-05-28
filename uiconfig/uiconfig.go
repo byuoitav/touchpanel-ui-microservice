@@ -46,25 +46,34 @@ func getUIConfig() (structs.UIConfig, error) {
 }
 
 func getThemeConfig() (structs.ThemeConfig, error) {
-	hn := os.Getenv("SYSTEM_ID")
+	UIConfig, err := getUIConfig()
 
-	split := strings.Split(hn, "-")
-	building := split[0]
-	room := split[1]
+	if err != nil {
+		logError(fmt.Sprintf("Failed to get UI Config while getting Theme: %v", err))
+		return structs.ThemeConfig{}, err
+	}
 
-	if len(hn) == 0 {
-		logError("SYSTEM_ID is not set")
-		return getThemeConfigFromFile()
+	Panels := UIConfig.Panels
+	theme := Panels[0].Theme
+
+	if len(theme) == 0 {
+		logError("Theme not defined in UIConfig")
+		theme = "default"
 	}
 
 	color.Set(color.FgYellow)
-	log.Printf("Getting Theme Config for %s-%s from database.", building, room)
+	log.Printf("Getting %s Theme Config from database.", theme)
 	color.Unset()
 
-	config, err := db.GetDB().GetThemeConfig(fmt.Sprintf("%s-%s", building, room))
+	config, err := db.GetDB().GetThemeConfig(theme)
 	if err != nil {
-		logError(fmt.Sprintf("Failed to get Theme Config for %s-%s from database: %v", building, room, err))
-		return getThemeConfigFromFile()
+		logError(fmt.Sprintf("Failed to get Theme Config from database: %v", err))
+		logError("Attempting to Retrieve Default Theme Config")
+		config, err = db.GetDB().GetThemeConfig("default")
+		if err != nil {
+			logError(fmt.Sprintf("Failed to get Default Theme Config from database: %v", err))
+			return getThemeConfigFromFile()
+		}
 	}
 
 	writeThemeConfigToFile(config)

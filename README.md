@@ -60,40 +60,8 @@ A microservice for the touchpanel UI containing both Blueberry and Cherry. Blueb
 
 Hostname/SystemID should be set [according to the documentation](https://github.com/byuoitav/team/wiki/Hostname-Naming-Conventions).
 
-## Theme Configuration (Cherry)
-Configures the appearance of the UI through CSS variables. Gives control over setting the font and allows for the standby screen logo to be uploaded as an attachment in Couch called logo.svg.
-``` 
-{
-  "_id": "JET-1234",
-  "_rev": "7-85d0a5e2bfe58b92c8edbd43a017945b",
-  "background-color": "#633834",
-  "top-bar-color": "#2e2322",
-  "background-color-accent": "#de5a4d",
-  "dpad-color": "#e3e3e3",
-  "dpad-press": "#777777",
-  "cam-preset-color": "#455a64",
-  "cam-preset-press": "orange",
-  "show-cam-text": true,
-  "cam-link": "cameras.example.com",
-  "volume-slider-color": "#20956b",
-  "help-button-color": "#214e4b",
-  "text-color": "white",
-  "font-link": "https://cdn.example.com/theme-fonts/1.x.x/ringside/fonts.css",
-  "font-name": "HCo Ringside Narrow SSm",
-  "_attachments": {
-    "logo.svg": {
-      "content_type": "image/svg+xml",
-      "revpos": 3,
-      "digest": "md5-JcROa8W/ytaYTyB47XprDg==",
-      "length": 9622,
-      "stub": true
-    }
-  }
-}
-```
-
 ## UI Config (Cherry)
-Lists the devices and features for the room. Configures what options and devices appear in the UI. Provides endpoints for camera control if applicable. 
+Lists the devices and features for the room. Configures what options and devices appear in the UI. Provides endpoints for camera control if applicable. Holds the name of the theme document in CouchDB.
 ```
 {
     "_id": "JET-1234",
@@ -105,7 +73,8 @@ Lists the devices and features for the room. Configures what options and devices
             "hostname": "JET-1234-PI1",
             "uipath": "/cherry",
             "preset": "JET 1234",
-            "features": []
+            "features": [],
+            "theme": "jetTheme"
         }
     ],
     "presets": [
@@ -203,5 +172,50 @@ Lists the devices and features for the room. Configures what options and devices
     "audioConfiguration": []
 }
 ```
+
+## Theme Configuration (Cherry)
+Configures the appearance of the UI through CSS variables. Gives control over setting the font and allows for the standby screen logo to be uploaded as an attachment in Couch called logo.svg.
+``` 
+{
+  "_id": "JET-1234",
+  "_rev": "7-85d0a5e2bfe58b92c8edbd43a017945b",
+  "background-color": "#633834",
+  "top-bar-color": "#2e2322",
+  "background-color-accent": "#de5a4d",
+  "dpad-color": "#e3e3e3",
+  "dpad-press": "#777777",
+  "cam-preset-color": "#455a64",
+  "cam-preset-press": "orange",
+  "show-cam-text": true,
+  "cam-link": "cameras.example.com",
+  "volume-slider-color": "#20956b",
+  "help-button-color": "#214e4b",
+  "text-color": "white",
+  "font-link": "https://cdn.example.com/theme-fonts/1.x.x/ringside/fonts.css",
+  "font-name": "HCo Ringside Narrow SSm",
+  "_attachments": {
+    "logo.svg": {
+      "content_type": "image/svg+xml",
+      "revpos": 3,
+      "digest": "md5-JcROa8W/ytaYTyB47XprDg==",
+      "length": 9622,
+      "stub": true
+    }
+  }
+}
+```
+### CouchDB Structure
+```
+Databases
+├─theme-configuration
+| ├── defaultTheme
+| ├── jetTheme
+|
+├─ui-configuration
+| ├── JET-1234   
+| ├── BLDG-1235
+```
+
+
 
 

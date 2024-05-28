@@ -55,6 +55,7 @@ type Panel struct {
 	UIPath   string   `json:"uipath"`
 	Preset   string   `json:"preset"`
 	Features []string `json:"features"`
+	Theme    string   `json:"theme"`
 }
 
 // Commands - a representation of commands to be sent through the UI.
