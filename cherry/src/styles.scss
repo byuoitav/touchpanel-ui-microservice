@@ -17,15 +17,15 @@ $material-design-icons-font-directory-path: '~material-design-icons-iconfont/dis
 
 :root {
     --background-color: #263238;
-    --top-bar-color: rgb(68, 26, 26);
-    --background-color-accent:rgb(0, 106, 206);
-    --dpad-color: rgb(80, 55, 55);
-    --dpad-press: rgb(95, 80, 80);
-    --cam-preset-color:rgb(5, 90, 146);
-    --cam-preset-press: red;
+    --top-bar-color: #455a64;
+    --background-color-accent:#0091e9;
+    --dpad-color: #e3e3e3;
+    --dpad-press: #777777;
+    --cam-preset-color:#455a64;
+    --cam-preset-press: blue;
     --show-cam-text: none;
     --volume-slider-color:red;
-    --help-button-color: rgb(255, 0, 234);
+    --help-button-color: #b2dfdb;
     --text-color: white;
     --font-name: 'Source Sans 3', sans-serif;
     font-size: .85em;

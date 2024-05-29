@@ -61,7 +61,7 @@ A microservice for the touchpanel UI containing both Blueberry and Cherry. Blueb
 Hostname/SystemID should be set [according to the documentation](https://github.com/byuoitav/team/wiki/Hostname-Naming-Conventions).
 
 ## UI Config (Cherry)
-Lists the devices and features for the room. Configures what options and devices appear in the UI. Provides endpoints for camera control if applicable. Holds the name of the theme document in CouchDB.
+Lists the devices and features for the room. Configures what options and devices appear in the UI. Provides endpoints for camera control if applicable. Holds the name of the theme document in CouchDB. If the theme is not found, the UI will look for a theme called "default".
 ```
 {
     "_id": "JET-1234",
@@ -208,7 +208,7 @@ Configures the appearance of the UI through CSS variables. Gives control over se
 ```
 Databases
 ├─theme-configuration
-| ├── defaultTheme
+| ├── default
 | ├── jetTheme
 |
 ├─ui-configuration
