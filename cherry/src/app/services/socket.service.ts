@@ -32,7 +32,7 @@ export class SocketService {
     jsonConvert.ignorePrimitiveChecks = false;
 
     return new Observable<any>(observer => {
-      const subject = webSocket('ws://localhost:8888/websocket');
+      const subject = webSocket("ws://" + window.location.host + "/websocket");
 
       subject.subscribe({
         next: (msg: any) => {
