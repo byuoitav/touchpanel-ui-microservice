@@ -84,7 +84,7 @@ export class DataService {
           : input.display_name;
 
         const subs: Input[] = [];
-        console.log("does the input have subInputs?", config);
+        // console.log("does the input have subInputs?", config);
         if (config.subInputs !== undefined) {
           for (const io of config.subInputs) {
             subs.push(new Input(io.name, io.displayname, io.icon, []));
@@ -99,7 +99,7 @@ export class DataService {
       }
     }
 
-    console.info("inputs", this.inputs);
+    // console.info("inputs", this.inputs);
   }
 
   private createOutputs() {
@@ -147,7 +147,7 @@ export class DataService {
       }
     }
 
-    console.info("Displays", this.displays);
+    // console.info("Displays", this.displays);
 
     // create audioDevices
     if (APIService.room.status.audioDevices != null) {
@@ -188,7 +188,7 @@ export class DataService {
       }
     }
 
-    console.info("AudioDevices", this.audioDevices);
+    // console.info("AudioDevices", this.audioDevices);
 
     // create room wide audio map
     if (APIService.room.uiconfig.audioConfiguration != null) {
@@ -228,7 +228,7 @@ export class DataService {
         }
       }
 
-      console.log("AudioConfig", this.audioConfig);
+      // console.log("AudioConfig", this.audioConfig);
     } else {
       console.warn("No AudioConfig present.");
     }
@@ -256,7 +256,7 @@ export class DataService {
         this.audioDevices
       );
       const inputs = Device.filterDevices<Input>(preset.inputs, this.inputs);
-      console.log("preset:", preset.name, preset.independentAudioDevices);
+      // console.log("preset:", preset.name, preset.independentAudioDevices);
       const independentAudioDevices = Device.filterDevices<AudioDevice>(
         preset.independentAudioDevices,
         this.audioDevices
@@ -291,7 +291,7 @@ export class DataService {
       this.presets.push(p);
     }
 
-    console.info("Presets", this.presets);
+    // console.info("Presets", this.presets);
   }
 
   private createPanels() {
@@ -303,13 +303,13 @@ export class DataService {
       );
     }
 
-    console.info("pi hostname", APIService.piHostname);
-    console.info("Panels", this.panels);
+    // console.info("pi hostname", APIService.piHostname);
+    // console.info("Panels", this.panels);
 
     this.panel = this.panels.find(p => p.hostname === APIService.piHostname);
     this.panel.render = true;
 
-    console.info("Panel", this.panel);
+    // console.info("Panel", this.panel);
   }
 
   setCurrentPreset = () => {

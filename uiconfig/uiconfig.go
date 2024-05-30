@@ -17,6 +17,7 @@ import (
 // UI_CONFIG_FILE is the name for the local file on the touchpanel
 const UI_CONFIG_FILE = "ui-config.json"
 const THEME_CONFIG_FILE = "theme-config.json"
+const DEFAULT_THEME = "default"
 
 func getUIConfig() (structs.UIConfig, error) {
 	hn := os.Getenv("SYSTEM_ID")
@@ -58,7 +59,7 @@ func getThemeConfig() (structs.ThemeConfig, error) {
 
 	if len(theme) == 0 {
 		logError("Theme not defined in UIConfig")
-		theme = "default"
+		theme = DEFAULT_THEME
 	}
 
 	color.Set(color.FgYellow)
@@ -69,7 +70,7 @@ func getThemeConfig() (structs.ThemeConfig, error) {
 	if err != nil {
 		logError(fmt.Sprintf("Failed to get Theme Config from database: %v", err))
 		logError("Attempting to Retrieve Default Theme Config")
-		config, err = db.GetDB().GetThemeConfig("default")
+		config, err = db.GetDB().GetThemeConfig(DEFAULT_THEME)
 		if err != nil {
 			logError(fmt.Sprintf("Failed to get Default Theme Config from database: %v", err))
 			return getThemeConfigFromFile()
@@ -94,7 +95,7 @@ func getLogo() ([]byte, error) {
 
 	if len(theme) == 0 {
 		logError("Theme not defined in UIConfig")
-		theme = "default"
+		theme = DEFAULT_THEME
 	}
 
 	color.Set(color.FgYellow)
@@ -104,7 +105,12 @@ func getLogo() ([]byte, error) {
 	logo, err := db.GetDB().GetLogo(theme)
 	if err != nil {
 		logError(fmt.Sprintf("Failed to get Logo for %s from database: %v", theme, err))
-		return nil, err
+		logError("Attempting to Retrieve Default Logo")
+		logo, err = db.GetDB().GetLogo(DEFAULT_THEME)
+		if err != nil {
+			logError(fmt.Sprintf("Failed to get Default Logo from database: %v", err))
+			return nil, err
+		}
 	}
 
 	return logo, nil

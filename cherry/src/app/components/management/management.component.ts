@@ -19,12 +19,10 @@ export class ManagementComponent implements OnChanges, OnInit {
   }
 
   ngOnInit(): void {
-    console.log("init");
     this.reset();
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    console.log("changes: ", changes.prop)
     this.reset();
   }
 

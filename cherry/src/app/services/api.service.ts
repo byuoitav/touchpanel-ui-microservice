@@ -61,7 +61,7 @@ export class APIService {
     this.getHostname().subscribe({
       next: data => {
         APIService.hostname = String(data);
-        console.log("got hostname", APIService.hostname);
+        // console.log("got hostname", APIService.hostname);
         this.setupPiHostname();
       },
       error: err => {
@@ -69,7 +69,7 @@ export class APIService {
         console.error("Observer getHostname got an error: " + err);
       },
       complete: () => {
-        console.log("Observer getHostname got a complete notification");
+        // console.log("Observer getHostname got a complete notification");
       }
     });
   }
@@ -79,12 +79,12 @@ export class APIService {
     this.getPiHostname().subscribe({
       next: data => {
         APIService.piHostname = String(data);
-        console.log("got pihostname", APIService.piHostname);
+        // console.log("got pihostname", APIService.piHostname);
 
         const split = APIService.piHostname.split("-");
         APIService.building = split[0];
         APIService.roomName = split[1];
-        console.log("building:", APIService.building, "room:", APIService.roomName);
+        // console.log("building:", APIService.building, "room:", APIService.roomName);
 
         this.setupAPIUrl(false);
       },
@@ -93,7 +93,7 @@ export class APIService {
         console.error("Observer getPiHostname got an error: " + err);
       },
       complete: () => {
-        console.log("Observer getPiHostname got a complete notification");
+        // console.log("Observer getPiHostname got a complete notification");
       }
     });
   }
@@ -108,7 +108,7 @@ export class APIService {
           console.error("Observer getNextAPIUrl got an error: " + err);
         },
         complete: () => {
-          console.log("Observer getNextAPIUrl got a complete notification");
+          // console.log("Observer getNextAPIUrl got a complete notification");
         }
       });
     }
@@ -131,7 +131,7 @@ export class APIService {
         console.error("Observer getAPIUrl got an error: " + err);
       },
       complete: () => {
-        console.log("Observer getAPIUrl got a complete notification");
+        // console.log("Observer getAPIUrl got a complete notification");
       }
     });
   }
@@ -151,7 +151,7 @@ export class APIService {
         setTimeout(() => this.monitorAPI(), MONITOR_TIMEOUT);
       },
       complete: () => {
-        console.log("Observer getAPIHealth got a complete notification");
+        // console.log("Observer getAPIHealth got a complete notification");
       }
     });
   }
@@ -159,7 +159,7 @@ export class APIService {
   private setupUIConfig() {
     this.getUIConfig().subscribe({
       next: data => {
-        console.info("ui-config:", data);
+        // console.info("ui-config:", data);
         APIService.room.uiconfig = new UIConfiguration();
         Object.assign(APIService.room.uiconfig, data);
         console.info("UI Configuration:", APIService.room.uiconfig);
@@ -171,7 +171,7 @@ export class APIService {
         console.error("Observer getUIConfig got an error: " + err);
       },
       complete: () => {
-        console.log("Observer getUIConfig got a complete notification");
+        // console.log("Observer getUIConfig got a complete notification");
       }
     });
   }
@@ -191,7 +191,7 @@ export class APIService {
         console.error("Observer getRoomConfig got an error: " + err);
       },
       complete: () => {
-        console.log("Observer getRoomConfig got a complete notification");
+        // console.log("Observer getRoomConfig got a complete notification");
       }
     });
   }
@@ -201,7 +201,7 @@ export class APIService {
       next: data => {
         APIService.room.status = new RoomStatus();
         Object.assign(APIService.room.status, data);
-        console.info("Room Status:", APIService.room.status);
+        // console.info("Room Status:", APIService.room.status);
 
         this.loaded.emit(true);
       },
@@ -210,7 +210,7 @@ export class APIService {
         console.error("Observer getRoomStatus got an error: " + err);
       },
       complete: () => {
-        console.log("Observer getRoomStatus got a complete notification");
+        // console.log("Observer getRoomStatus got a complete notification");
       }
     });
   }
@@ -236,7 +236,7 @@ export class APIService {
 
   private getHostname(): Observable<Object> {
     return this.http.get(APIService.localurl + "/hostname").pipe(
-      tap(data => console.log("got hostname", data)),
+      // tap(data => console.log("got hostname", data)),
       catchError(this.handleError("getHostname", [])),
       map(data => data)
     );
@@ -244,7 +244,7 @@ export class APIService {
 
   private getPiHostname(): Observable<Object> {
     return this.http.get(APIService.localurl + "/pihostname").pipe(
-      tap(data => console.log("got pihostname", data)),
+      // tap(data => console.log("got pihostname", data)),
       catchError(this.handleError("getPiHostname", [])),
       map(data => data)
     );
@@ -252,7 +252,7 @@ export class APIService {
 
   private getAPIUrl(): Observable<Object> {
     return this.http.get(APIService.localurl + "/api").pipe(
-      tap(data => console.log("got apiurl", data)),
+      // tap(data => console.log("got apiurl", data)),
       catchError(this.handleError("getAPIUrl", [])),
       map(data => data)
     );
@@ -260,7 +260,7 @@ export class APIService {
 
   private getAPIHealth(): Observable<Object> {
     return this.http.get(APIService.apihost + ":8000/mstatus").pipe(
-      tap(data => console.log("got api health", data)),
+      // tap(data => console.log("got api health", data)),
       catchError(this.handleError("getAPIHealth", [])),
       map(data => data),
       timeout(RETRY_TIMEOUT),
@@ -269,7 +269,7 @@ export class APIService {
 
   private getNextAPIUrl(): Observable<Object> {
     return this.http.get(APIService.localurl + "/nextapi").pipe(
-      tap(data => console.log("got nextapi", data)),
+      // tap(data => console.log("got nextapi", data)),
       catchError(this.handleError("getNextAPIUrl", [])),
       map(data => data)
     );
@@ -277,7 +277,7 @@ export class APIService {
 
   private getUIConfig(): Observable<Object> {
     return this.http.get(APIService.localurl + "/uiconfig").pipe(
-      tap(data => console.log("got uiconfig", data)),
+      // tap(data => console.log("got uiconfig", data)),
       catchError(this.handleError("getUIConfig", [])),
       map(data => data),
       map(data => deserialize<UIConfiguration>(UIConfiguration, data))
@@ -286,7 +286,7 @@ export class APIService {
 
   private getRoomConfig(): Observable<Object> {
     return this.http.get(APIService.apiurl + "/configuration").pipe(
-      tap(data => console.log("got roomconfig", data)),
+      // tap(data => console.log("got roomconfig", data)),
       catchError(this.handleError("getRoomConfig", [])),
       map(data => data),
       map(data => deserialize<RoomConfiguration>(RoomConfiguration, data))
@@ -295,7 +295,7 @@ export class APIService {
 
   private getRoomStatus(): Observable<Object> {
     return this.http.get(APIService.apiurl).pipe(
-      tap(data => console.log("got roomstatus", data)),
+      // tap(data => console.log("got roomstatus", data)),
       catchError(this.handleError("getRoomStatus", [])),
       map(data => data),
       map(data => deserialize<RoomStatus>(RoomStatus, data))
@@ -367,44 +367,48 @@ export class ThemeService {
     try {
       this.getThemeConfig().subscribe({
         next: data => {
-          console.log(data);
-          document.documentElement.style.setProperty('--background-color', data['background-color']);
-          document.documentElement.style.setProperty('--top-bar-color', data['top-bar-color']);
-          document.documentElement.style.setProperty('--background-color-accent', data['background-color-accent']);
-          document.documentElement.style.setProperty('--dpad-color', data['dpad-color']);
-          document.documentElement.style.setProperty('--dpad-press', data['dpad-press']);
-          document.documentElement.style.setProperty('--cam-preset-color', data['cam-preset-color']);
-          document.documentElement.style.setProperty('--cam-preset-press', data['cam-preset-press']);
-          document.documentElement.style.setProperty('--volume-slider-color', data['volume-slider-color']);
-          document.documentElement.style.setProperty('--help-button-color', data['help-button-color']);
-          document.documentElement.style.setProperty('--text-color', data['text-color']);
-          document.documentElement.style.setProperty('--font-name', data['font-name']);
+            console.log("Theme Config: ", data);
+            if ((data as any[]).length != 0) {
+            document.documentElement.style.setProperty('--background-color', data['background-color']);
+            document.documentElement.style.setProperty('--top-bar-color', data['top-bar-color']);
+            document.documentElement.style.setProperty('--background-color-accent', data['background-color-accent']);
+            document.documentElement.style.setProperty('--dpad-color', data['dpad-color']);
+            document.documentElement.style.setProperty('--dpad-press', data['dpad-press']);
+            document.documentElement.style.setProperty('--cam-preset-color', data['cam-preset-color']);
+            document.documentElement.style.setProperty('--cam-preset-press', data['cam-preset-press']);
+            document.documentElement.style.setProperty('--volume-slider-color', data['volume-slider-color']);
+            document.documentElement.style.setProperty('--help-button-color', data['help-button-color']);
+            document.documentElement.style.setProperty('--text-color', data['text-color']);
+            document.documentElement.style.setProperty('--font-name', data['font-name']);
 
-          //import the font
-          const fontUrl = data['font-link'];
-          console.log("Font URL: ", fontUrl);
-          const linkElement = document.createElement('link');
-          linkElement.rel = 'stylesheet';
-          linkElement.href = fontUrl;
-          // Wait for the font to load
-          linkElement.onload = () => {
-            document.body.style.setProperty('font-family', data['font-name'] + ', sans-serif');
-          };
+            //import the font
+            const fontUrl = data['font-link'];
+            console.log("Font URL: ", fontUrl);
+            const linkElement = document.createElement('link');
+            linkElement.rel = 'stylesheet';
+            linkElement.href = fontUrl;
+            // Wait for the font to load
+            linkElement.onload = () => {
+              document.body.style.setProperty('font-family', data['font-name'] + ', sans-serif');
+            };
 
-          document.head.appendChild(linkElement);
+            document.head.appendChild(linkElement);
 
-          // Display Camera Text or Not
-          if (data['show-cam-text'] === true) {
-            console.log("Displaying Camera Text");
-            document.documentElement.style.setProperty('--show-cam-text', 'flex');
+            // Display Camera Text or Not
+            if (data['show-cam-text'] === true) {
+              console.log("Displaying Camera Text");
+              document.documentElement.style.setProperty('--show-cam-text', 'flex');
+            } else {
+              console.log("Not Displaying Camera Text");
+              document.documentElement.style.setProperty('--show-cam-text', 'none');
+            }
+
+            // Get the camera link
+            APIService.camLink = data['cam-link'];
+
           } else {
-            console.log("Not Displaying Camera Text");
-            document.documentElement.style.setProperty('--show-cam-text', 'none');
+            console.log("Error: No theme configuration received. Using default values.");
           }
-
-          // Get the camera link
-          APIService.camLink = data['cam-link'];
-
         },
         error: error => {
           console.error('There was a problem with the fetch operation:', error.message);
@@ -417,7 +421,7 @@ export class ThemeService {
 
   private getThemeConfig(): Observable<Object> {
     return this.http.get(this.localurl + "/themeconfig").pipe(
-      tap(data => console.log("got themeconfig", data)),
+      // tap(data => console.log("got themeconfig", data)),
       catchError(this.handleError("getThemeConfig", [])),
       map(data => data)
     );
