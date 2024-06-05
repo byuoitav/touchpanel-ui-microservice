@@ -6,7 +6,8 @@
     "ng": "ng",
     "start": "ng serve --proxy-config proxy.conf.json --host 0.0.0.0 --port 4500 --disable-host-check",
     "build": "ng build --prod",
-    "test": "ng test",
+    "test": "jest",
+    "test:suite": "jest --testPathPattern",
     "lint": "ng lint",
     "e2e": "ng e2e"
   },
@@ -40,14 +41,19 @@
     "@angular/cli": "^17.2.0",
     "@angular/compiler-cli": "^17.1.1",
     "@angular/language-service": "^17.1.1",
-    "@types/jasmine": "~4.3.5",
-    "@types/jasminewd2": "~2.0.10",
+    "@types/jest": "^29.5.12",
     "@types/node": "~20.4.2",
-    "jasmine-core": "~5.1.2",
-    "jasmine-spec-reporter": "~7.0.0",
+    "eslint": "9.3.0",
+    "jest": "^29.7.0",
+    "jest-preset-angular": "^14.1.0",
     "node-sass": "^9.0.0",
     "ts-node": "~10.9.1",
-    "eslint": "9.3.0",
     "typescript": "^5.1.6"
+  },
+  "jest": {
+    "preset": "jest-preset-angular",
+    "setupFilesAfterEnv": [
+      "<rootDir>/src/setup-jest.ts"
+    ]
   }
 }

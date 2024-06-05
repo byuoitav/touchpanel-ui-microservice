@@ -37,18 +37,26 @@ export class SocketService {
       subject.subscribe({
         next: (msg: any) => {
           console.log(msg.message);
-          if (msg.message.includes("keepalive")) {
-            //send a ping back
-            subject.next({type: "ping"});
-          } else if (msg.message.includes("refresh")) {
-            console.log("refreshing");
-            location.assign("http://" + location.hostname + ":8888/");
-          } else if (msg.message.includes("screenoff")) {
-            console.log("adding screenoff element");
-            this.screenoff = true;
-          } else if (msg.message.includes("websocketTest")) {
-            console.log("Received Websocket Test Message");
-            subject.next({type: "websocketTest"});
+          if (msg.message != undefined) {
+            if (msg.message.includes("keepalive")) {
+              //send a ping back
+              subject.next({type: "ping"});
+            } else if (msg.message.includes("refresh")) {
+              console.log("refreshing");
+              location.assign("http://" + location.hostname + ":8888/");
+            } else if (msg.message.includes("screenoff")) {
+              console.log("adding screenoff element");
+              this.screenoff = true;
+            } else if (msg.message.includes("websocketTest")) {
+              console.log("Received Websocket Test Message");
+              subject.next({type: "websocketTest"});
+            } else {
+              const data = JSON.parse(msg);
+              const event = jsonConvert.deserialize(data, Event);
+
+              console.debug("Received event: ", event);
+              this.listener.emit({type: MESSAGE, data: event});
+            }
           } else {
             const data = JSON.parse(msg);
             const event = jsonConvert.deserialize(data, Event);

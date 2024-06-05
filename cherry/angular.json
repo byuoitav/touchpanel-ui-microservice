@@ -61,6 +61,16 @@
           "options": {
             "buildTarget": "cherry:build"
           }
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:jest",
+          "options": {
+            "tsConfig": "tsconfig.spec.json",
+            "polyfills": [
+              "zone.js",
+              "zone.js/testing"
+            ]
+          }
         }
       }
     },
@@ -68,8 +78,7 @@
       "root": "e2e",
       "sourceRoot": "e2e",
       "projectType": "application",
-      "architect": {
-      }
+      "architect": {}
     }
   },
   "schematics": {
