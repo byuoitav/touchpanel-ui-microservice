@@ -37,10 +37,18 @@ export class APIService {
   private static localurl: string;
   private static options: {};
 
+  //resets static variables for Jest testing
+  static resetForTesting() { 
+    APIService.apihost = null;
+    APIService.localurl = null;
+    APIService.options = null;  
+  }
+
   constructor(private http: HttpClient, private themeService: ThemeService) {
     this.loaded = new EventEmitter<boolean>();
     this.jsonConvert = new JsonConvert();
     this.jsonConvert.ignorePrimitiveChecks = false;
+    console.log("OPTIONS: ", APIService.options);
 
     if (APIService.options == null) {
       const headers = new Headers();
@@ -65,11 +73,12 @@ export class APIService {
         this.setupPiHostname();
       },
       error: err => {
+
         setTimeout(() => this.setupHostname(), RETRY_TIMEOUT);
         console.error("Observer getHostname got an error: " + err);
       },
       complete: () => {
-        // console.log("Observer getHostname got a complete notification");
+        console.debug("Observer getHostname got a complete notification");
       }
     });
   }
@@ -93,7 +102,7 @@ export class APIService {
         console.error("Observer getPiHostname got an error: " + err);
       },
       complete: () => {
-        // console.log("Observer getPiHostname got a complete notification");
+        console.debug("Observer getPiHostname got a complete notification");
       }
     });
   }
@@ -345,7 +354,7 @@ export class APIService {
 }
 
 @Injectable()
-export class ThemeService { 
+export class ThemeService {
   localurl = window.location.protocol + "//" + window.location.host;
 
   constructor(private http: HttpClient) { }
@@ -367,8 +376,9 @@ export class ThemeService {
     try {
       this.getThemeConfig().subscribe({
         next: data => {
-            console.log("Theme Config: ", data);
-            if ((data as any[]).length != 0) {
+          console.log("Theme Config: ", data);
+          console.log("LENGTH: ", (data as any[]).length);
+          if ((data as any[]).length != 0 && data != null && data['background-color'] != undefined) {
             document.documentElement.style.setProperty('--background-color', data['background-color']);
             document.documentElement.style.setProperty('--top-bar-color', data['top-bar-color']);
             document.documentElement.style.setProperty('--background-color-accent', data['background-color-accent']);
@@ -419,7 +429,7 @@ export class ThemeService {
     }
   };
 
-  private getThemeConfig(): Observable<Object> {
+  public getThemeConfig(): Observable<Object> {
     return this.http.get(this.localurl + "/themeconfig").pipe(
       // tap(data => console.log("got themeconfig", data)),
       catchError(this.handleError("getThemeConfig", [])),

@@ -4,17 +4,18 @@ import { Observable, tap } from "rxjs";
 import {webSocket} from 'rxjs/webSocket';
 
 import {
-  JsonConvert,
-  JsonObject,
-  JsonProperty,
   Any,
+  JsonConvert,
+  JsonConverter,
   JsonCustomConvert,
-  JsonConverter
+  JsonObject,
+  JsonProperty
 } from "json2typescript";
 
 export const OPEN = "open";
 export const CLOSE = "close";
 export const MESSAGE = "message";
+
 @Injectable({
   providedIn: "root"
 })
@@ -53,23 +54,23 @@ export class SocketService {
             } else {
               const data = JSON.parse(msg);
               const event = jsonConvert.deserialize(data, Event);
-
               console.debug("Received event: ", event);
               this.listener.emit({type: MESSAGE, data: event});
             }
           } else {
             const data = JSON.parse(msg);
             const event = jsonConvert.deserialize(data, Event);
-
-            console.debug("Received event: ", event);
+            console.log("Received event: ", event);
             this.listener.emit({type: MESSAGE, data: event});
           }
           observer.next(msg);
         },
         error: (err: any) => {
+          console.debug("Observer Error:", err);
           observer.error(err);
         },
         complete: () => {
+          console.debug("Observer Complete");
           observer.complete();
         }
       });
@@ -90,7 +91,6 @@ export class BasicRoomInfo {
     if (roomID == null || roomID === undefined) {
       return;
     }
-
     const split = roomID.split("-");
 
     if (split.length === 2) {
@@ -115,7 +115,6 @@ export class BasicDeviceInfo {
     if (deviceID == null || deviceID === undefined) {
       return;
     }
-
     const split = deviceID.split("-");
 
     if (split.length === 3) {
