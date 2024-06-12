@@ -1,7 +1,7 @@
 # touchpanel-ui-microservice
 [![Apache 2 License](https://img.shields.io/hexpm/l/plug.svg)](https://raw.githubusercontent.com/byuoitav/touchpanel-ui-microservice/master/LICENSE)  
 
-A microservice for the touchpanel UI containing both Blueberry and Cherry. Blueberry and Cherry are the interfaces written in Angular. Provides room control for AV devices and camera control through a touch screen display on a raspberry pi. 
+A microservice for the touchpanel UI containing both Blueberry and Cherry. Blueberry and Cherry are the interfaces written in Angular. Provides room control for AV devices and camera control through a touch screen display on a raspberry pi. Angular specific testing information can be found in the `README.md` in `/cherry`.
 ## Endpoints
 ### Status
 * <mark>GET</mark> `/status`
