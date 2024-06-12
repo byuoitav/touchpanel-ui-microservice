@@ -121,7 +121,7 @@ describe("Websocket", () => {
             "key": "heartbeat",
             "value": "System_Active",
             "user": "",
-            "data": "EVENT~JET-1234-CP1~10.66.54.110~2024-06-10T11:52:46-06:00~health~auto-generated~CP1~heartbeat~System_Active"
+            "data": "EVENT~JET-1234-CP1~192.168.0.1~2024-06-10T11:52:46-06:00~health~auto-generated~CP1~heartbeat~System_Active"
         };
         mockObserver.next(JSON.stringify(data));
         expect(eventEmitterSpy).toHaveBeenCalled();
@@ -251,6 +251,7 @@ describe('API Service', () => {
         });
     });
 });
+
 
 //-----------------------------------THEME SERVICE-----------------------------------------
 describe('Theme Service', () => {

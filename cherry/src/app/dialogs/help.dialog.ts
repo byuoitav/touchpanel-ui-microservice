@@ -22,11 +22,11 @@ import { ConfirmHelpDialog } from "./confirmhelp.dialog";
         </div>
 
         <div mat-dialog-actions class="items secondary-theme">
-            <button mat-raised-button
+            <button id="cancelButton" mat-raised-button
                 color="warn"
                 (click)="cancel(); command.buttonPress('exit help modal')">Cancel
             </button>
-            <button mat-raised-button
+            <button id="requestHelpButton" mat-raised-button
                 *ngIf="!isAfterHours()"
                 color="primary"
                 (click)="requestHelp(); command.buttonPress('request help')">Request Help

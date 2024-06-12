@@ -71,6 +71,37 @@
               "zone.js/testing"
             ]
           }
+        },
+        "cypress-run": {
+          "builder": "@cypress/schematic:cypress",
+          "options": {
+            "devServerTarget": "cherry:serve"
+          },
+          "configurations": {
+            "production": {
+              "devServerTarget": "cherry:serve:production"
+            }
+          }
+        },
+        "cypress-open": {
+          "builder": "@cypress/schematic:cypress",
+          "options": {
+            "watch": true,
+            "headless": false
+          }
+        },
+        "e2e": {
+          "builder": "@cypress/schematic:cypress",
+          "options": {
+            "devServerTarget": "cherry:serve",
+            "watch": true,
+            "headless": false
+          },
+          "configurations": {
+            "production": {
+              "devServerTarget": "cherry:serve:production"
+            }
+          }
         }
       }
     },
@@ -78,7 +109,41 @@
       "root": "e2e",
       "sourceRoot": "e2e",
       "projectType": "application",
-      "architect": {}
+      "architect": {
+        "cypress-run": {
+          "builder": "@cypress/schematic:cypress",
+          "options": {
+            "devServerTarget": "cherry-e2e:serve",
+            "configFile": "e2e/cypress.config.js"
+          },
+          "configurations": {
+            "production": {
+              "devServerTarget": "cherry-e2e:serve:production"
+            }
+          }
+        },
+        "cypress-open": {
+          "builder": "@cypress/schematic:cypress",
+          "options": {
+            "watch": true,
+            "headless": false,
+            "configFile": "e2e/cypress.config.js"
+          }
+        },
+        "e2e": {
+          "builder": "@cypress/schematic:cypress",
+          "options": {
+            "devServerTarget": "cherry-e2e:serve",
+            "watch": true,
+            "headless": false
+          },
+          "configurations": {
+            "production": {
+              "devServerTarget": "cherry-e2e:serve:production"
+            }
+          }
+        }
+      }
     }
   },
   "schematics": {
@@ -91,6 +156,10 @@
     }
   },
   "cli": {
-    "analytics": "fdb97ea3-d7ca-4b78-b0ac-3fed8e328759"
+    "analytics": "fdb97ea3-d7ca-4b78-b0ac-3fed8e328759",
+    "schematicCollections": [
+      "@cypress/schematic",
+      "@schematics/angular"
+    ]
   }
 }
