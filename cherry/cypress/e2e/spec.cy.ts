@@ -22,9 +22,7 @@ describe('Loading and Navigation', () => {
     // power button visible
     cy.get('.power > .mat-mdc-button-touch-target').should('be.visible');
     // help button visible
-    cy.get(HelpButton).should('be.visible');
-
-    
+    cy.get(HelpButton).should('be.visible');  
   })
 
   describe('Navigation to Display Control', () => {
@@ -33,7 +31,6 @@ describe('Loading and Navigation', () => {
 
       // Click the audio tab
       cy.get(AudioTab).click();
-      // Click the display tab
       cy.get(DisplayTab).click();
     
       shouldBeVisible(DisplayControl);
@@ -43,9 +40,7 @@ describe('Loading and Navigation', () => {
     it('should navigate from Camera Control', () => {    
       cy.visit('/')
 
-      // Click the camera tab
       cy.get(CameraTab).click();
-      // Click the display tab
       cy.get(DisplayTab).click();
     
       shouldBeVisible(DisplayControl);
@@ -61,20 +56,17 @@ describe('Loading and Navigation', () => {
       cy.get(AudioTab).click();
     
       shouldBeVisible(AudioCameraControl);
-      // the display body
       shouldBeHidden(DisplayControl);
     })
 
     it('should navigate from Camera Control', () => {    
       cy.visit('/')
 
-      // Click the camera tab
       cy.get(CameraTab).click();
       // Click the audio tab
       cy.get(AudioTab).click();
     
       shouldBeVisible(AudioCameraControl);
-      // the display body
       shouldBeHidden(DisplayControl);
     })
   });
@@ -82,11 +74,9 @@ describe('Loading and Navigation', () => {
   describe('Navigation to Camera Control', () => {
     it('should navigate from Display', () => {
       cy.visit('/')
-      // Click the camera tab
       cy.get(CameraTab).click();
 
       shouldBeVisible(AudioCameraControl);
-      // the display body
       shouldBeHidden(DisplayControl);
     });
 
@@ -94,21 +84,57 @@ describe('Loading and Navigation', () => {
       cy.visit('/')
       // Click the audio tab
       cy.get(AudioTab).click();
-      // Click the camera tab
       cy.get(CameraTab).click();
 
       shouldBeVisible(AudioCameraControl);
-      // the display body
       shouldBeHidden(DisplayControl);
     });
   });
 
   describe('Display Control', () => {
+    const VolumeSlider = '.ngx-slider-full-bar';
+    const VolumeValue = '.ngx-slider-model-value';
+
+    it('should load the display page', () => {
+      cy.visit('/');
+      cy.get('#mat-tab-label-0-0').click();
+      cy.get('#mat-tab-content-0-0').should('be.visible');
+    })
+  
+    it('should change audio to 100%', () => {
+      cy.visit('/your-page-url');
+      cy.get(VolumeSlider).click('top');
+      cy.get(VolumeValue).should('contain', '100');``
+    });
+  
+    it('should change audio to 0%', () => {
+      cy.visit('/your-page-url');
+      cy.get(VolumeSlider).click('bottomLeft', { force: true });
+      cy.get(VolumeValue).should('contain', '0');``
+    });
+  
+    it('should change audio to 50%', () => {
+      cy.visit('/your-page-url');
+      cy.get(VolumeSlider).click('center', { force: true });
+      cy.get(VolumeValue).should('contain', '0');``
+    });
+  
+    it('should click mute, become unmute', () => {
+      cy.visit('/your-page-url');
+      cy.get('#mute').click();
+      cy.get('#mute').should('contain', 'Unmute');
+    });
+    it('should click unmute, become mute', () => {
+      cy.visit('/your-page-url');
+      cy.get('#mute').click();
+      cy.get('#mute').click();
+      cy.get('#mute').should('contain', 'Mute');
+    });
+
     it('should open the help dialog', () => {
       cy.visit('/')
       cy.get(HelpDialog).should('not.exist');
 
-      // Click the help button
       cy.get(HelpButton).click();
       cy.get(HelpDialog).should('be.visible');
     });
@@ -117,17 +143,55 @@ describe('Loading and Navigation', () => {
       cy.visit('/')
       cy.get(HelpDialog).should('not.exist');
 
-      // Click the help button
       cy.get(HelpButton).click();
       cy.get(HelpDialog).should('be.visible');
 
-      // Click the close button
       cy.get('#cancelButton').click();
       cy.get(HelpDialog).should('not.exist');
     });
   });
 
   describe('Audio Control', () => {
+    const VolumeSlider = '.ngx-slider-full-bar';
+    const VolumeValue = '.ngx-slider-model-value';
+    const AudioTab = '#mat-tab-label-0-1';
+  
+    it('should change volume sliders to 100%', () => {
+      cy.visit('/your-page-url');
+      cy.get(AudioTab).click();
+      cy.get(VolumeSlider).click('top', { multiple: true, force: true});
+      cy.get(VolumeValue).should('contain', '100');``
+    });
+  
+    it('should change volume sliders to 50%', () => {
+      cy.visit('/your-page-url');
+      cy.get(AudioTab).click();
+      cy.get(VolumeSlider).click('center', { multiple: true, force: true});
+      cy.get(VolumeValue).should('contain', '50');``
+    });
+  
+    it('should change volume sliders to 0%', () => {
+      cy.visit('/your-page-url');
+      cy.get(AudioTab).click();
+      cy.get(VolumeSlider).click('bottom', { multiple: true, force: true});
+      cy.get(VolumeValue).should('contain', '0');``
+    });
+
+    it('should click mute, become unmute', () => {
+      cy.visit('/your-page-url');
+      cy.get(AudioTab).click({force: true, multiple: true});
+      cy.get('#mute').click({force: true, multiple: true});
+      cy.get('#mute').should('contain', 'Unmute');
+    });
+
+    it('should click unmute, become mute', () => {
+      cy.visit('/your-page-url');
+      cy.get(AudioTab).click();
+      cy.get('#mute').click({force: true, multiple: true});
+      cy.get('#mute').click({force: true, multiple: true});
+      cy.get('#mute').should('contain', 'Mute');
+    });
+
     it('should open the help dialog', () => {
       cy.visit('/')
       // Click the audio tab
@@ -135,7 +199,6 @@ describe('Loading and Navigation', () => {
 
       cy.get(HelpDialog).should('not.exist');
 
-      // Click the help button
       cy.get(HelpButton).click();
       cy.get(HelpDialog).should('be.visible');
     });
@@ -147,11 +210,9 @@ describe('Loading and Navigation', () => {
 
       cy.get(HelpDialog).should('not.exist');
 
-      // Click the help button
       cy.get(HelpButton).click();
       cy.get(HelpDialog).should('be.visible');
 
-      // Click the close button
       cy.get('#cancelButton').click();
       cy.get(HelpDialog).should('not.exist');
     });
@@ -160,40 +221,26 @@ describe('Loading and Navigation', () => {
   describe('Camera Control', () => {
     it('should open the help dialog', () => {
       cy.visit('/')
-      // Click the camera tab
       cy.get(CameraTab).click();
 
       cy.get(HelpDialog).should('not.exist');
 
-      // Click the help button
       cy.get(HelpButton).click();
       cy.get(HelpDialog).should('be.visible');
     });
 
     it('should close the help dialog', () => {
       cy.visit('/')
-      // Click the camera tab
       cy.get(CameraTab).click();
 
       cy.get(HelpDialog).should('not.exist');
 
-      // Click the help button
       cy.get(HelpButton).click();
       cy.get(HelpDialog).should('be.visible');
 
-      // Click the close button
       cy.get('#cancelButton').click();
       cy.get(HelpDialog).should('not.exist');
     });
   });
-
-
 })
 
-describe('Display', () => {
-  it('should load the display page', () => {
-    cy.visit('/')
-    cy.get('#mat-tab-label-0-0').click();
-    cy.get('#mat-tab-content-0-0').should('be.visible');
-  })
-});
