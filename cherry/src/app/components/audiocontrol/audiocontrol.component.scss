@@ -25,7 +25,7 @@ $buffer-size: 3vw;
 
 .devices {
     @extend %align-horiz;
-    justify-content: space-around;
+    justify-content: center;
     max-width: $devices-width - (2 * $button-width);
     margin: auto;
     height: $devices-height;
