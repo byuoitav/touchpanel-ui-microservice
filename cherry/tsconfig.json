@@ -22,5 +22,8 @@
   },
   "angularCompilerOptions": {
     "disableTypeScriptVersionCheck": true
-  }
+  },
+  "exclude": [
+    "e2e/cypress/e2e/spec.cy.ts"
+  ]
 }

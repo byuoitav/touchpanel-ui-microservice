@@ -114,7 +114,7 @@
           "builder": "@cypress/schematic:cypress",
           "options": {
             "devServerTarget": "cherry-e2e:serve",
-            "configFile": "cypress.config.ts"
+            "configFile": "e2e/cypress.config.js"
           },
           "configurations": {
             "production": {
@@ -127,7 +127,7 @@
           "options": {
             "watch": true,
             "headless": false,
-            "configFile": "cypress.config.ts"
+            "configFile": "e2e/cypress.config.js"
           }
         },
         "e2e": {
@@ -158,6 +158,7 @@
   "cli": {
     "analytics": "fdb97ea3-d7ca-4b78-b0ac-3fed8e328759",
     "schematicCollections": [
+      "@cypress/schematic",
       "@cypress/schematic",
       "@schematics/angular"
     ]

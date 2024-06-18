@@ -1,3 +1,6 @@
+import axios from 'axios';
+import MockAdapter from 'axios-mock-adapter';
+
 describe('Loading and Navigation', () => {
   const DisplayTab = '#mat-tab-label-0-0'
   const DisplayControl = "#mat-tab-content-0-0"
@@ -243,4 +246,17 @@ describe('Loading and Navigation', () => {
     });
   });
 })
+
+describe('API TESTS', () => { 
+  describe('Theme API', () => {
+    const mock = new MockAdapter(axios);
+    const themeConfig = require(`../fixtures/themeMock.json`);
+    
+    it('should get the theme', () => {
+      //intercept the get request to the theme endpoint
+      mock.onGet('/themeconfig').reply(404, themeConfig);
+      cy.visit('/');
+    });
+  });
+});
 
