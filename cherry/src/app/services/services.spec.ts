@@ -106,24 +106,26 @@ describe("Websocket", () => {
 
         socketService.getEventListener().subscribe();
         var data = `  
-{ 
-  "generating-system": "ENSN-506-CP1", 
-  "timestamp": "2024-07-01T17:40:59.682468099Z", 
-  "event-tags": ["core-state", "user-generated", "room-system"], 
-  "target-device": { 
-    "buildingID": "ENSN", 
-    "roomID": "ENSN-506", 
-    "deviceID": "ENSN-506-D1"
-  }, 
-  "affected-room": { 
-    "buildingID": "ENSN", 
-    "roomID": "ENSN-506"
-  }, 
-  "key": "input", 
-  "value": "HDMI1",
-  "user": "10.0.93.22" 
+{
+    "generating-system": "ENSN-506-CP1",
+    "timestamp": "2024-07-01T20:24:27.424561765Z",
+    "event-tags": [
+        "error",
+        "room-system"
+    ],
+    "target-device": {
+        "buildingID": "ENSN",
+        "roomID": "ENSN-506",
+        "deviceID": "ENSN-506-SW1"
+    },
+    "affected-room": {
+        "buildingID": "ENSN",
+        "roomID": "ENSN-506"
+    },
+    "key": "ChangeInput",
+    "value": "error sending request: Get http://localhost:8041/api/v1/AT-OME-PS62/ENSN-506-SW1.avhw.ensign.edu/output/1/input/2: net/http: request canceled (Client.Timeout exceeded while awaiting headers)",
+    "user": "10.0.93.42"
 }`;
-        mockObserver.next(JSON.stringify(data));
         expect(eventEmitterSpy).toHaveBeenCalled();
         data = `  
             {"generating-system":"ENSN-506-CP1","timestamp":"2024-07-01T11:58:06.081131933-06:00","event-tags":["core-state","auto-generated"],"target-device":{"buildingID":"ENSN","roomID":"ENSN-506","deviceID":"ENSN-506-D1"},"affected-room":{"buildingID":"ENSN","roomID":"ENSN-506"},"key":"blanked","value":"false","user":""}
@@ -136,6 +138,26 @@ describe("Websocket", () => {
         mockObserver.next(JSON.stringify(data));
         expect(eventEmitterSpy).toHaveBeenCalledTimes(3);
 
+        const data1 = {
+            "generating-system": "JET-1234-PI1",
+            "timestamp": "2024-06-10T11:52:46-06:00",
+            "event-tags": ["health", "auto-generated", "heartbeat"],
+            "target-device": {
+                "buildingID": "JET",
+                "roomID": "JET-1234",
+                "deviceID": "JET-1234-PI1"
+            },
+            "affected-room": {
+                "buildingID": "JET",
+                "roomID": "JET-1234"
+            },
+            "key": "heartbeat",
+            "value": "System_Active",
+            "user": "",
+            "data": "EVENT~JET-1234-CP1~192.168.0.1~2024-06-10T11:52:46-06:00~health~auto-generated~CP1~heartbeat~System_Active"
+        };
+        mockObserver.next(JSON.stringify(data1));
+        expect(eventEmitterSpy).toHaveBeenCalledTimes(4);
 
     });
 
