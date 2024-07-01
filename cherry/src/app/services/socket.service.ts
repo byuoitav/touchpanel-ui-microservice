@@ -52,14 +52,14 @@ export class SocketService {
               console.log("Received Websocket Test Message");
               subject.next({type: "websocketTest"});
             } else {
-              const data = JSON.parse(msg);
+              const data = JSON.parse(JSON.parse(msg));
               const event = jsonConvert.deserialize(data, Event);
-              console.debug("Received event: ", event);
+              console.log("Received event: ", event);
               this.listener.emit({type: MESSAGE, data: event});
             }
           } else {
-            const data = JSON.parse(msg);
-            const event = jsonConvert.deserialize(data, Event);
+            const data = JSON.parse(JSON.parse(msg));
+            const event = jsonConvert.deserializeObject(data, Event);
             console.log("Received event: ", event);
             this.listener.emit({type: MESSAGE, data: event});
           }

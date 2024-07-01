@@ -105,26 +105,38 @@ describe("Websocket", () => {
         const eventEmitterSpy = jest.spyOn(socketService['listener'], 'emit');
 
         socketService.getEventListener().subscribe();
-        const data = {
-            "generating-system": "JET-1234-PI1",
-            "timestamp": "2024-06-10T11:52:46-06:00",
-            "event-tags": ["health", "auto-generated", "heartbeat"],
-            "target-device": {
-                "buildingID": "JET",
-                "roomID": "JET-1234",
-                "deviceID": "JET-1234-PI1"
-            },
-            "affected-room": {
-                "buildingID": "JET",
-                "roomID": "JET-1234"
-            },
-            "key": "heartbeat",
-            "value": "System_Active",
-            "user": "",
-            "data": "EVENT~JET-1234-CP1~192.168.0.1~2024-06-10T11:52:46-06:00~health~auto-generated~CP1~heartbeat~System_Active"
-        };
+        var data = `  
+{ 
+  "generating-system": "ENSN-506-CP1", 
+  "timestamp": "2024-07-01T17:40:59.682468099Z", 
+  "event-tags": ["core-state", "user-generated", "room-system"], 
+  "target-device": { 
+    "buildingID": "ENSN", 
+    "roomID": "ENSN-506", 
+    "deviceID": "ENSN-506-D1"
+  }, 
+  "affected-room": { 
+    "buildingID": "ENSN", 
+    "roomID": "ENSN-506"
+  }, 
+  "key": "input", 
+  "value": "HDMI1",
+  "user": "10.0.93.22" 
+}`;
         mockObserver.next(JSON.stringify(data));
         expect(eventEmitterSpy).toHaveBeenCalled();
+        data = `  
+            {"generating-system":"ENSN-506-CP1","timestamp":"2024-07-01T11:58:06.081131933-06:00","event-tags":["core-state","auto-generated"],"target-device":{"buildingID":"ENSN","roomID":"ENSN-506","deviceID":"ENSN-506-D1"},"affected-room":{"buildingID":"ENSN","roomID":"ENSN-506"},"key":"blanked","value":"false","user":""}
+        `;
+        mockObserver.next(JSON.stringify(data));
+        expect(eventEmitterSpy).toHaveBeenCalledTimes(2);
+        data = `  
+           {"generating-system":"ENSN-506-CP1","timestamp":"2024-07-01T18:04:57.81574701Z","event-tags":["core-state","user-generated","room-system"],"target-device":{"buildingID":"ENSN","roomID":"ENSN-506","deviceID":"ENSN-506-D1"},"affected-room":{"buildingID":"ENSN","roomID":"ENSN-506"},"key":"input","value":"HDMI1","user":"10.0.93.42"}
+        `;
+        mockObserver.next(JSON.stringify(data));
+        expect(eventEmitterSpy).toHaveBeenCalledTimes(3);
+
+
     });
 
     it('should handle errors', () => {
@@ -257,7 +269,7 @@ describe('API Service', () => {
 describe('Theme Service', () => {
     let httpMock;
     let fixture: ThemeService;
-    const mockLogoUrl = '<svg>...</svg>'; 
+    const mockLogoUrl = '<svg>...</svg>';
 
     const mockThemeConfig = {
         'background-color': '#ffffff',
@@ -274,9 +286,9 @@ describe('Theme Service', () => {
         'font-link': 'https://example.com/font.css',
         'show-cam-text': true,
         'cam-link': 'https://example.com/cam'
-      };
+    };
 
-      const mockThemeConfigNoCam = {
+    const mockThemeConfigNoCam = {
         'background-color': '#ffffff',
         'top-bar-color': '#000000',
         'background-color-accent': '#cccccc',
@@ -291,8 +303,8 @@ describe('Theme Service', () => {
         'font-link': 'https://example.com/font.css',
         'show-cam-text': false,
         'cam-link': 'https://example.com/cam'
-      };
-      
+    };
+
 
 
 
@@ -317,7 +329,7 @@ describe('Theme Service', () => {
 
     it('should return the logo URL', () => {
         fixture.getLogo().subscribe((logo: string) => {
-          expect(logo).toBe(mockLogoUrl);
+            expect(logo).toBe(mockLogoUrl);
         });
     });
 
@@ -327,7 +339,7 @@ describe('Theme Service', () => {
         const setPropertySpy = jest.spyOn(document.documentElement.style, 'setProperty');
 
         await fixture.fetchTheme();
-    
+
         expect(setPropertySpy).toHaveBeenCalledWith('--background-color', '#ffffff');
         expect(setPropertySpy).toHaveBeenCalledWith('--top-bar-color', '#000000');
         expect(setPropertySpy).toHaveBeenCalledWith('--background-color-accent', '#cccccc');
@@ -343,13 +355,13 @@ describe('Theme Service', () => {
 
     it('should hide cam text if show-cam-text is false', async () => {
         const mockThemeConfig = mockThemeConfigNoCam;
-        
+
         const getThemeConfigSpy = jest.spyOn(fixture, 'getThemeConfig');
         getThemeConfigSpy.mockReturnValue(of(mockThemeConfig));
         const setPropertySpy = jest.spyOn(document.documentElement.style, 'setProperty');
 
         await fixture.fetchTheme();
-    
+
         expect(setPropertySpy).toHaveBeenCalledWith('--show-cam-text', 'none');
     });
 
@@ -361,15 +373,15 @@ describe('Theme Service', () => {
         const setPropertySpy = jest.spyOn(document.documentElement.style, 'setProperty');
 
         await fixture.fetchTheme();
-    
+
         expect(setPropertySpy).not.toHaveBeenCalled();
-        
-        expect(consoleSpy).toHaveBeenCalledWith('Error: No theme configuration received. Using default values.');    
+
+        expect(consoleSpy).toHaveBeenCalledWith('Error: No theme configuration received. Using default values.');
     });
 
     it('should handle errors in getThemeConfig()', async () => {
         jest.spyOn(fixture, 'getThemeConfig').mockReturnValue(throwError(new Error('Network error')));
-        const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+        const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => { });
 
         await fixture.fetchTheme();
 
@@ -378,14 +390,14 @@ describe('Theme Service', () => {
 
     it('should handle errors in getThemeConfig', async () => {
         jest.spyOn(fixture, 'getThemeConfig').mockReturnValue(throwError(new Error('Network error')));
-        const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+        const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => { });
 
         await fixture.fetchTheme();
 
         expect(consoleErrorSpy).toHaveBeenCalledWith('There was a problem with the fetch operation:', 'Network error');
     });
 
-    it ('should get the theme config ( getThemeConfig() )', () => {
+    it('should get the theme config ( getThemeConfig() )', () => {
         httpMock.get.mockReturnValue(of(mockThemeConfig));
         fixture.getThemeConfig().subscribe((config: any) => {
             expect(config).toBe(mockThemeConfig);
