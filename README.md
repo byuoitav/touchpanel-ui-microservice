@@ -53,7 +53,10 @@ A microservice for the touchpanel UI containing both Blueberry and Cherry. Blueb
   * Ex: SYSTEM_ID="JET-1234-PI1"
 * DB_ADDRESS
   * CouchDB address
+* DB_USERNAME
+  * CouchDB Username
 * DB_PASSWORD
+  * CouchDB Password
 * STOP_REPLICATION (boolean)
   * Stop replication of CouchDB
 * HUB_ADDRESS
