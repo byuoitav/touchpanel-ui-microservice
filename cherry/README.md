@@ -30,7 +30,9 @@ Specific test suites can be run by passing the path to the test file as an argum
 ### E2E Testing
 End-to-end testing is done using Cypress. The tests are in cypress/e2e/spec.cy.ts
 
-Run `npx cypress open` then click the following: `E2E Testing` > `Start E2E Testing in Chrome` > `spec.cy.ts`
+In one terminal run `ng serve` to run a dev server on localhost:4200 (see `Development Server` section above :arrow_up: if the app does not load)
+
+In a second terminal run `npx cypress open` then click the following: `E2E Testing` > `Start E2E Testing in Chrome` > `spec.cy.ts`
 
 ![e2e](https://github.com/byuoitav/touchpanel-ui-microservice/assets/13169205/cc613954-5c09-4195-b0bd-1d45034c4072)
 
