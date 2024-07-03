@@ -19,6 +19,7 @@ export const MESSAGE = "message";
 @Injectable({
   providedIn: "root"
 })
+
 export class SocketService {
   public screenoff: boolean;
   private listener: EventEmitter<any>;
@@ -26,64 +27,58 @@ export class SocketService {
   constructor() {
     this.screenoff = false;
     this.listener = new EventEmitter();
-  }
 
-  public getEventListener(): Observable<any> {
     const jsonConvert = new JsonConvert();
     jsonConvert.ignorePrimitiveChecks = false;
 
-    return new Observable<any>(observer => {
-      const subject = webSocket("ws://" + window.location.host + "/websocket");
-
-      subject.subscribe({
-        next: (msg: any) => {
-          console.log(msg.message);
-          if (msg.message != undefined) {
-            if (msg.message.includes("keepalive")) {
-              //send a ping back
-              subject.next({type: "ping"});
-            } else if (msg.message.includes("refresh")) {
-              console.log("refreshing");
-              location.assign("http://" + location.hostname + ":8888/");
-            } else if (msg.message.includes("screenoff")) {
-              console.log("adding screenoff element");
-              this.screenoff = true;
-            } else if (msg.message.includes("websocketTest")) {
-              console.log("Received Websocket Test Message");
-              subject.next({type: "websocketTest"});
-            } else {
-              const data = JSON.parse(JSON.parse(msg));
-              const event = jsonConvert.deserialize(data, Event);
-              console.log("Received event: ", event);
-              this.listener.emit({type: MESSAGE, data: event});
-            }
+    const subject = webSocket("ws://" + window.location.host + "/websocket");
+    // console.log("Connecting to websocket...", subject)
+    subject.subscribe({
+      next: (msg: any) => {
+        console.log(msg.message);
+        if (msg.message != undefined) {
+          if (msg.message.includes("keepalive")) {
+            //send a ping back
+            subject.next({type: "ping"});
+          } else if (msg.message.includes("refresh")) {
+            console.log("refreshing");
+            location.assign("http://" + location.hostname + ":8888/");
+          } else if (msg.message.includes("screenoff")) {
+            console.log("adding screenoff element");
+            this.screenoff = true;
+          } else if (msg.message.includes("websocketTest")) {
+            console.log("Received Websocket Test Message");
+            subject.next({type: "websocketTest"});
           } else {
-            var data = msg;
-            if (typeof data !== "object") {
-              data = JSON.parse(data);
-            }
-            if (typeof data !== "object") { // checks if output should be parsed again
-              data = JSON.parse(data);
-            }
-            const event = jsonConvert.deserializeObject(data, Event);
-            console.log("Received event: ", event);
+            const data = JSON.parse(JSON.parse(msg));
+            const event = jsonConvert.deserialize(data, Event);
+            // console.log("Received event: ", event);
             this.listener.emit({type: MESSAGE, data: event});
           }
-          observer.next(msg);
-        },
-        error: (err: any) => {
-          console.debug("Observer Error:", err);
-          observer.error(err);
-        },
-        complete: () => {
-          console.debug("Observer Complete");
-          observer.complete();
-        }
-      });
-
+        } else {
+          var data = msg;
+          if (typeof data !== "object") {
+            data = JSON.parse(data);
+          }
+          if (typeof data !== "object") { // checks if output should be parsed again
+            data = JSON.parse(data);
+          }
+          const event = jsonConvert.deserializeObject(data, Event);
+          // console.log("Received event: ", event);
+          // console.log("Emitting event: ", {type: MESSAGE, data: event});
+          this.listener.emit({type: MESSAGE, data: event});
+        }  
+      }
     });
   }
+
+  public getEventListener() {
+    return this.listener;
+  }
+
 }
+
+
 
 @JsonObject("BasicRoomInfo")
 export class BasicRoomInfo {
