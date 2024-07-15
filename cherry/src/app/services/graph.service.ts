@@ -169,15 +169,15 @@ export class GraphService {
 
   private setCurrentPreset() {
 
-    this.http.get("http://" + this.dividerSensor.address + ":10000/divider/preset/" + APIService.piHostname).pipe(
-      map(data => data),
+    this.http.get(`http://${this.dividerSensor.address}:10000/divider/preset/${APIService.piHostname}`, { responseType: 'text' }).pipe(
       tap(data => console.log("setCurrentPreset", data)),
       catchError(this.handleError("setCurrentPreset", []))
     ).subscribe({
       next: data => {
+        const body = (<String>data);
         const preset = this.data.presets.find(
-          p => p.name.toLowerCase() === data.toString().toLowerCase()
-          );
+          p => p.name.toLowerCase() === body.toLowerCase()
+        );
 
         if (preset != null) {
           console.log("setting initial preset to", preset);
