@@ -317,12 +317,12 @@ export class DataService {
       return;
     }
 
-    this.http.get("http://" + this.dividerSensor.address + ":10000/divider/preset/" + APIService.piHostname).pipe(
+    this.http.get(`http://${this.dividerSensor.address}:10000/divider/preset/${APIService.piHostname}`, { responseType: 'text' }).pipe(
       tap(data => {console.log(data);}),
       catchError(this.handleError("getCurrentPreset", []))
     ).subscribe({
       next: data => {
-        const body = (<any>data)._body;
+        const body = (<String>data);
         const preset = this.presets.find(
           p => p.name.toLowerCase() === body.toLowerCase()
         );
