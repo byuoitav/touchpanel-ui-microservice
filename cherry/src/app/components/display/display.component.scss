@@ -2,8 +2,8 @@
 
 $max-width: 90vw;
 $volume-width: math.div($max-width, 8);
-$outputs-height: 35vh;
-$inputs-height: 40vh;
+$outputs-height: 40vh;
+$inputs-height: 50vh;
 %align {
     display: flex;
     align-content: center;
@@ -46,10 +46,12 @@ $inputs-height: 40vh;
 }
 
 .outputs {
+    color: var(--text-color);
+
     @extend %io-row;
     min-height: $outputs-height;
-    margin-top: math.div($outputs-height, 8);
-    margin-bottom: math.div($outputs-height, 8);
+    // margin-top: math.div($outputs-height, 16);
+    // margin-bottom: math.div($outputs-height, 16);
     flex-wrap: wrap;
     text-align: center;
     .output {
@@ -59,7 +61,7 @@ $inputs-height: 40vh;
         height: 100%;
         line-height: 160%;
         align-items: stretch;
-        padding-top: 0px;
+        padding: 10px;
         .icon {
             @include io-icon(400%);
             grid-template-areas: 
@@ -74,25 +76,29 @@ $inputs-height: 40vh;
 }
 
 .inputs {
+    color: var(--text-color);
+
     @extend %io-row;
     min-height: $inputs-height;
-    margin-bottom: math.div($inputs-height, 8);
-    margin-top: math.div($inputs-height, 10);
+    // margin-bottom: math.div($inputs-height, 16);
+    // margin-top: math.div($inputs-height, 20);
     // overflowing inputs line
     flex-wrap: wrap-reverse;
     align-items: stretch;
 
     .input {
+
         @extend %io-button;
         margin-right: math.div($max-width, 200);
         width: math.div($max-width, 9);
         margin-bottom: math.div($inputs-height, 23);
-        height: 100%;
+        height: 95%;
         line-height: 160%;
         align-items: stretch;
         padding-top: 0px;
-
+        font-size: .85rem;
         .icon {
+
             padding-top: 1.3vh;
             @include io-icon(200%);
             height: 100%;
@@ -102,6 +108,7 @@ $inputs-height: 40vh;
             grid-auto-rows: 30%;
             align-items: start !important;
             gap: 3px;
+
 
             i {
                 height: 100%;
@@ -144,5 +151,6 @@ $inputs-height: 40vh;
     right: 1%;
     width: $volume-width;
     text-align: center;
-    font-size: 10pt;
+    font-size: 8pt;
+    color: var(--text-color);
 }
