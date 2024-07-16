@@ -2,8 +2,8 @@
 
 $max-width: 90vw;
 $volume-width: math.div($max-width, 8);
-$outputs-height: 35vh;
-$inputs-height: 40vh;
+$outputs-height: 40vh;
+$inputs-height: 50vh;
 %align {
     display: flex;
     align-content: center;
@@ -50,8 +50,8 @@ $inputs-height: 40vh;
 
     @extend %io-row;
     min-height: $outputs-height;
-    margin-top: math.div($outputs-height, 8);
-    margin-bottom: math.div($outputs-height, 8);
+    // margin-top: math.div($outputs-height, 16);
+    // margin-bottom: math.div($outputs-height, 16);
     flex-wrap: wrap;
     text-align: center;
     .output {
@@ -61,7 +61,7 @@ $inputs-height: 40vh;
         height: 100%;
         line-height: 160%;
         align-items: stretch;
-        padding-top: 0px;
+        padding: 10px;
         .icon {
             @include io-icon(400%);
             grid-template-areas: 
@@ -80,8 +80,8 @@ $inputs-height: 40vh;
 
     @extend %io-row;
     min-height: $inputs-height;
-    margin-bottom: math.div($inputs-height, 8);
-    margin-top: math.div($inputs-height, 10);
+    // margin-bottom: math.div($inputs-height, 16);
+    // margin-top: math.div($inputs-height, 20);
     // overflowing inputs line
     flex-wrap: wrap-reverse;
     align-items: stretch;
@@ -92,11 +92,11 @@ $inputs-height: 40vh;
         margin-right: math.div($max-width, 200);
         width: math.div($max-width, 9);
         margin-bottom: math.div($inputs-height, 23);
-        height: 100%;
+        height: 95%;
         line-height: 160%;
         align-items: stretch;
         padding-top: 0px;
-
+        font-size: 1rem;
         .icon {
 
             padding-top: 1.3vh;
