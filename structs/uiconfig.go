@@ -24,6 +24,7 @@ type ThemeConfig struct {
 	CamPressColor         string `json:"cam-preset-press"`
 	CamLinkColor          string `json:"cam-link"`
 	ShowCamText           bool   `json:"show-cam-text"`
+	PhoneNumber           string `json:"phone-number"`
 	VolumeSliderColor     string `json:"volume-slider-color"`
 	HelpButtonColor       string `json:"help-button-color"`
 	TextColor             string `json:"text-color"`

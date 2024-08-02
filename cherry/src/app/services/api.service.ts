@@ -29,6 +29,7 @@ export class APIService {
   public static hostname: string;
   public static apiurl: string;
   public static camLink: string;
+  public static phoneNumber: string;
 
 
   public static room: Room;
@@ -415,6 +416,9 @@ export class ThemeService {
 
             // Get the camera link
             APIService.camLink = data['cam-link'];
+
+            // Get support phone number
+            APIService.phoneNumber = data['phone-number'];
 
           } else {
             console.log("Error: No theme configuration received. Using default values.");

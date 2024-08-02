@@ -190,6 +190,7 @@ Configures the appearance of the UI through CSS variables. Gives control over se
   "cam-preset-color": "#455a64",
   "cam-preset-press": "orange",
   "show-cam-text": true,
+  "phone-number": "801-422-7671",
   "cam-link": "cameras.example.com",
   "volume-slider-color": "#20956b",
   "help-button-color": "#214e4b",
