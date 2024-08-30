@@ -1,6 +1,8 @@
 <div class="recording-wrapper">
   <div>
-    <button mat-mini-fab [color]="isRecording ? 'warn' : 'primary'" (click)="onClick()">
+    <button class="background-button" [ngClass]="{'background-button' : !isRecording, 'background-button-rec' : isRecording}"
+     mat-mini-fab (click)="onClick()"
+    style="display: flex; justify-content: center; align-items: center;">
       <ng-container *ngIf="!isRecording"><mat-icon color="warn">fiber_manual_record</mat-icon></ng-container>
       <ng-container *ngIf="isRecording"><mat-icon>stop</mat-icon></ng-container>
     </button>

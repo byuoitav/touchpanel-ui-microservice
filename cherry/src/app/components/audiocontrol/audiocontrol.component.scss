@@ -167,9 +167,10 @@ $buffer-size: 3vw;
 //     }
 // }
 .volume-label {
-    width: 12vw;
+    width: 13vw;
     text-align: center;
     font-size: 10.5pt;
+    color: var(--text-color);
 }
 
 .stretch {

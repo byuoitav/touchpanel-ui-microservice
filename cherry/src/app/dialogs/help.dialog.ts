@@ -14,19 +14,19 @@ import { ConfirmHelpDialog } from "./confirmhelp.dialog";
 
         <div mat-dialog-content class="text">
             <p *ngIf="!isAfterHours()">
-              Please call AV Support at 801-422-7671 for help, or request help by pressing <i>Request Help</i> to send support staff to you.
+              Please call AV Support at {{phoneNumber}} for help, or request help by pressing <i>Request Help</i> to send support staff to you.
             </p>
             <p *ngIf="isAfterHours()">
-              No technicians are currently available. For emergencies please call 801-422-7671.
+              No technicians are currently available. For emergencies please call {{phoneNumber}}.
             </p>
         </div>
 
         <div mat-dialog-actions class="items secondary-theme">
-            <button mat-raised-button
+            <button id="cancelButton" mat-raised-button
                 color="warn"
                 (click)="cancel(); command.buttonPress('exit help modal')">Cancel
             </button>
-            <button mat-raised-button
+            <button id="requestHelpButton" mat-raised-button
                 *ngIf="!isAfterHours()"
                 color="primary"
                 (click)="requestHelp(); command.buttonPress('request help')">Request Help
@@ -50,6 +50,8 @@ import { ConfirmHelpDialog } from "./confirmhelp.dialog";
   ]
 })
 export class HelpDialog {
+  public phoneNumber = APIService.phoneNumber;
+
   constructor(
     public dialogRef: MatDialogRef<HelpDialog>,
     @Inject(MAT_DIALOG_DATA) public data: any,

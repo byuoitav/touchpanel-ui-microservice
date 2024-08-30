@@ -5,4 +5,7 @@ touchpanel-ui-microservice-arm
 touchpanel-ui-microservice-bin
 dist/
 .angular/
+.vscode/
+theme-config.json
+.vscode/launch.json
 node_modules/

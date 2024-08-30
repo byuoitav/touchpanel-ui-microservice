@@ -2,13 +2,14 @@
   "compileOnSave": false,
   "compilerOptions": {
     "importHelpers": true,
-    "outDir": "./dist/out-tsc",
+    "outDir": "../cherry-dist/out-tscc",
     "sourceMap": true,
     "declaration": false,
     "moduleResolution": "node",
     "emitDecoratorMetadata": false,
     "experimentalDecorators": true,
     "target": "ES2022",
+    "esModuleInterop": true,
     "typeRoots": [
       "node_modules/@types"
     ],
@@ -21,5 +22,8 @@
   },
   "angularCompilerOptions": {
     "disableTypeScriptVersionCheck": true
-  }
+  },
+  "exclude": [
+    "e2e/cypress/e2e/spec.cy.ts"
+  ]
 }

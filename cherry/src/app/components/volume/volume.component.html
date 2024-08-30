@@ -11,7 +11,7 @@
 
     <!-- mute button -->
     <div [class.secondary-theme]="!mute">
-      <button mat-raised-button [color]="mute ? 'warn' : 'primary'" (click)="muteClick()" (press)="muteClick()" class="button" [class.muted]="mute">
+      <button id="mute" mat-raised-button [color]="mute ? 'warn' : 'primary'" (click)="muteClick()" (press)="muteClick()" class="button" [class.muted]="mute">
         <ng-container *ngIf="!mute">Mute</ng-container>
         <ng-container *ngIf="mute">Unmute</ng-container>
       </button>

@@ -23,7 +23,7 @@ import { ConfirmHelpDialog } from "./dialogs/confirmhelp.dialog";
 import { ViaDialog } from "./dialogs/via.dialog";
 import { AudioDialog } from "./dialogs/audio.dialog";
 
-import { APIService } from "./services/api.service";
+import { APIService, ThemeService } from "./services/api.service";
 import { CommandService } from "./services/command.service";
 import { DataService } from "./services/data.service";
 import { GraphService } from "./services/graph.service";
@@ -32,8 +32,7 @@ import { ManagementComponent } from "./components/management/management.componen
 import { StreamModalComponent } from "./dialogs/streammodal/streammodal.component";
 import { CameraControlComponent } from './components/camera-control/camera-control.component';
 import { RecordingComponent } from './components/recording/recording.component';
-import { NgxSliderModule } from 'ngx-slider-v2';
-
+import { NgxSliderModule } from '@angular-slider/ngx-slider';
 @NgModule({
   declarations: [
     AppComponent,
@@ -68,7 +67,8 @@ import { NgxSliderModule } from 'ngx-slider-v2';
     CommandService,
     DataService,
     GraphService,
-    SocketService
+    SocketService,
+    ThemeService
   ],
   bootstrap: [AppComponent]
 })

@@ -9,13 +9,15 @@ import (
 	"os"
 	"strings"
 
-	"github.com/byuoitav/common/db"
-	"github.com/byuoitav/common/structs"
+	"github.com/byuoitav/touchpanel-ui-microservice/db"
+	"github.com/byuoitav/touchpanel-ui-microservice/structs"
 	"github.com/fatih/color"
 )
 
 // UI_CONFIG_FILE is the name for the local file on the touchpanel
 const UI_CONFIG_FILE = "ui-config.json"
+const THEME_CONFIG_FILE = "theme-config.json"
+const DEFAULT_THEME = "default"
 
 func getUIConfig() (structs.UIConfig, error) {
 	hn := os.Getenv("SYSTEM_ID")
@@ -44,6 +46,76 @@ func getUIConfig() (structs.UIConfig, error) {
 	return config, nil
 }
 
+func getThemeConfig() (structs.ThemeConfig, error) {
+	UIConfig, err := getUIConfig()
+
+	if err != nil {
+		logError(fmt.Sprintf("Failed to get UI Config while getting Theme: %v", err))
+		return structs.ThemeConfig{}, err
+	}
+
+	Panels := UIConfig.Panels
+	theme := Panels[0].Theme
+
+	if len(theme) == 0 {
+		logError("Theme not defined in UIConfig")
+		theme = DEFAULT_THEME
+	}
+
+	color.Set(color.FgYellow)
+	log.Printf("Getting %s Theme Config from database.", theme)
+	color.Unset()
+
+	config, err := db.GetDB().GetThemeConfig(theme)
+	if err != nil {
+		logError(fmt.Sprintf("Failed to get Theme Config from database: %v", err))
+		logError("Attempting to Retrieve Default Theme Config")
+		config, err = db.GetDB().GetThemeConfig(DEFAULT_THEME)
+		if err != nil {
+			logError(fmt.Sprintf("Failed to get Default Theme Config from database: %v", err))
+			return getThemeConfigFromFile()
+		}
+	}
+
+	writeThemeConfigToFile(config)
+
+	return config, nil
+}
+
+func getLogo() ([]byte, error) {
+	UIConfig, err := getUIConfig()
+
+	if err != nil {
+		logError(fmt.Sprintf("Failed to get UI Config while getting Theme: %v", err))
+		return nil, err
+	}
+
+	Panels := UIConfig.Panels
+	theme := Panels[0].Theme
+
+	if len(theme) == 0 {
+		logError("Theme not defined in UIConfig")
+		theme = DEFAULT_THEME
+	}
+
+	color.Set(color.FgYellow)
+	log.Printf("Getting Logo from Database")
+	color.Unset()
+
+	logo, err := db.GetDB().GetLogo(theme)
+	if err != nil {
+		logError(fmt.Sprintf("Failed to get Logo for %s from database: %v", theme, err))
+		logError("Attempting to Retrieve Default Logo")
+		logo, err = db.GetDB().GetLogo(DEFAULT_THEME)
+		if err != nil {
+			logError(fmt.Sprintf("Failed to get Default Logo from database: %v", err))
+			return nil, err
+		}
+	}
+
+	return logo, nil
+}
+
 func getUIConfigFromFile() (structs.UIConfig, error) {
 	color.Set(color.FgCyan)
 	log.Printf("Getting UI Config from file: %s", UI_CONFIG_FILE)
@@ -60,6 +132,31 @@ func getUIConfigFromFile() (structs.UIConfig, error) {
 	if err != nil {
 		logError(fmt.Sprintf("Failed to unmarshal body from file %s: %s", UI_CONFIG_FILE, err))
 		return structs.UIConfig{}, err
+	}
+
+	color.Set(color.FgHiGreen, color.Bold)
+	log.Printf("Returning config from file")
+	color.Unset()
+
+	return config, nil
+}
+
+func getThemeConfigFromFile() (structs.ThemeConfig, error) {
+	color.Set(color.FgCyan)
+	log.Printf("Getting Theme Config from file: %s", THEME_CONFIG_FILE)
+	color.Unset()
+
+	body, err := ioutil.ReadFile(THEME_CONFIG_FILE)
+	if err != nil {
+		logError(fmt.Sprintf("Failed to read body from file %s: %s", THEME_CONFIG_FILE, err))
+		return structs.ThemeConfig{}, err
+	}
+
+	var config structs.ThemeConfig
+	err = json.Unmarshal(body, &config)
+	if err != nil {
+		logError(fmt.Sprintf("Failed to unmarshal body from file %s: %s", THEME_CONFIG_FILE, err))
+		return structs.ThemeConfig{}, err
 	}
 
 	color.Set(color.FgHiGreen, color.Bold)
@@ -90,6 +187,27 @@ func writeUIConfigToFile(config structs.UIConfig) {
 	f.Sync()
 }
 
+func writeThemeConfigToFile(config structs.ThemeConfig) {
+	color.Set(color.FgCyan)
+	log.Printf("Writing Theme Config to file: %s", THEME_CONFIG_FILE)
+	color.Unset()
+
+	f, err := os.Create(THEME_CONFIG_FILE)
+	if err != nil {
+		logError(fmt.Sprintf("Failed create file %s: %s", THEME_CONFIG_FILE, err))
+		return
+	}
+
+	bytes, err := json.Marshal(config)
+	if err != nil {
+		logError(fmt.Sprintf("Failed to marshal config: %s", err))
+		return
+	}
+
+	f.Write(bytes)
+	f.Sync()
+}
+
 func logError(err string) {
 	color.Set(color.FgRed)
 	log.Printf("%s", err)
@@ -103,7 +221,7 @@ const (
 	letterIdxMax  = 63 / letterIdxBits   // # of letter indices fitting in 63 bits
 )
 
-//GenRandString .
+// GenRandString .
 func GenRandString(n int) string {
 	b := make([]byte, n)
 	// A rand.Int63() generates 63 random bits, enough for letterIdxMax letters!

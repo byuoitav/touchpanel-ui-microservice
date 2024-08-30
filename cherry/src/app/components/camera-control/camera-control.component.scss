@@ -29,13 +29,13 @@ $d-pad-arrow-move: 35%;
 	flex-direction: row;
 	justify-content: space-around;
 
-	height: 30%; 
+	height: 20%; 
 
 	button {
 		width: 28%;
-		height: 67%;
+		height: 100%;
 		background-color: $d-pad-fg;
-
+    color: var(--text-color);
 		mat-icon {
 			color: $arrowColor;
 			transform: scale(3);
@@ -95,10 +95,18 @@ $d-pad-arrow-move: 35%;
 		width: 57%;
 		white-space: normal;
 		line-height: unset;
+    background-color: $cam-preset-color;
 
 		max-height: 5em;
 		font-size: .8em;
+    
 	}
+  :active {
+    background-color: $cam-preset-press;
+  }
+  :hover {
+    background-color: $cam-preset-press;
+  }
 }
 
 .d-pad-container {
@@ -106,7 +114,7 @@ $d-pad-arrow-move: 35%;
 	text-align: center;
 	height: 50vh;
 	padding-top: 7vh;
-	margin-bottom: 5vh;
+	margin-bottom: 1.5vh;
 
 	.d-pad {
 		display: inline-block;
@@ -312,12 +320,13 @@ $d-pad-arrow-move: 35%;
 .d-pad.right a.right:before { border-left-color: $arrowColorPressed; }
 
 .code-text {
-  display: flex;
+  display: var(--show-cam-text);
   text-align: center;
   margin-bottom: 1%;
   margin-top: 1%;
   justify-content: center;
   font-size: .9em;
+  color: var(--text-color);
 }
 
 ::ng-deep .mat-mdc-tab-labels {

@@ -8,8 +8,7 @@
 			<!-- unlock(); command.buttonPress() -->
 			<ng-container *ngIf="!unlocking; else poweringOn">
 				<!-- byu logo -->
-				<object type="image/svg+xml" data="./assets/byu_medallion_white.svg" class="logo">
-				</object>
+				<div class="logo" [innerHTML]="svg"></div>
 
 				<!-- unlock text -->
 				<span class="text">Touch anywhere to start</span>
@@ -45,7 +44,7 @@
 		</ng-container>
 
 		<div class="secondary-theme">
-			<button mat-raised-button class="help" color="accent"
+			<button mat-raised-button class="help" 
 				(click)="openHelpDialog(); command.buttonPress('open help modal')" (press)="
           openHelpDialog(); command.buttonPress('long press open help modal')
         ">
@@ -105,7 +104,7 @@
 
 		<div class="loading">
 			<mat-spinner color="accent"></mat-spinner>
-			<span style="font-family: Roboto, 'Helvetica Neue', sans-serif;">loading, please wait</span>
+			<span >loading, please wait</span>
 		</div>
 	</ng-template>
 </div>

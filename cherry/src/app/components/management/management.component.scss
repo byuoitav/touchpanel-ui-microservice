@@ -26,9 +26,15 @@
     min-height: 100px;
     min-width: 100px;
     z-index: 5000;
-
+    cursor: default;
     pointer-events: auto;    
 }
+
+
+button:hover {
+    opacity: 0; /* Make the button invisible on hover */
+    pointer-events: all;
+  }
 
 ::ng-deep .mat-button-focus-overlay {
     opacity: 0 !important;

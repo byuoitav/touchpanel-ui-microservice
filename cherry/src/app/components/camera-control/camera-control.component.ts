@@ -17,6 +17,7 @@ export class CameraControlComponent implements OnInit, AfterViewInit {
   private _tabs: MatTabsModule;
   code: string;
   room = APIService.building + "-" + APIService.roomName;
+  camLink = APIService.camLink;
 
   constructor(private http: HttpClient) {}
 
@@ -237,6 +238,5 @@ export class CameraControlComponent implements OnInit, AfterViewInit {
       }
     });
   }
-
 }
  

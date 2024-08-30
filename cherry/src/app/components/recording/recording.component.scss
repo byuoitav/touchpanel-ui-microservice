@@ -10,5 +10,21 @@
         padding-left: 3vw;
         display: flex;
         align-items: center;
+        color: var(--text-color);
     }
+}
+
+.background-button {
+    background-color: white !important;
+}
+
+.background-button-rec {
+    background-color: red !important;
+}
+
+::ng-deep .mat-mdc-fab .mdc-button__label,
+::ng-deep .mat-mdc-mini-fab .mdc-button__label {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
 }

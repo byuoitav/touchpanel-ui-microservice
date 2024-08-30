@@ -127,8 +127,8 @@ export class CommandService {
       }
     }
 
-    console.log("preset:", preset);
-    console.log("executing requests:", requests);
+    // console.log("preset:", preset);
+    // console.log("executing requests:", requests);
 
     this.executeRequests(requests, 1, 14 * 1000).subscribe(success => {
       if (!success) {

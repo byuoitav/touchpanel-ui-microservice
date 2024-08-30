@@ -10,7 +10,7 @@ import { map, tap, Observable, of, catchError } from "rxjs"
 /*
  *
  *  When the GraphService recieves an event from a Pi that is monitoring contact points,
- *      it will find the node who's display field matches the full set of displays on one half
+ *      it will find the node whose display field matches the full set of displays on one half
  *      of the eventInfoValue (shown below). Once it finds that node (1), it will create a new node (2) with
  *      displays equal to the other half of the eventInfoValue as a child of the node (1).
  *

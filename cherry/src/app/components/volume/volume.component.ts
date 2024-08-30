@@ -1,4 +1,4 @@
-import { NgxSliderModule } from "ngx-slider-v2";
+import { NgxSliderModule } from "@angular-slider/ngx-slider";
 import {
   Component,
   Input,
@@ -9,7 +9,7 @@ import {
 } from "@angular/core";
 import { MatSliderModule, MatSliderThumb } from "@angular/material/slider";
 
-import { Options, ChangeContext, PointerType } from 'ngx-slider-v2';
+import { Options, ChangeContext, PointerType } from '@angular-slider/ngx-slider';
 
 @Component({
   selector: "volume",

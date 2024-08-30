@@ -4,9 +4,9 @@
 
 @include mat.core();
 
-@import '../cherry-theme.scss';
+@import '../custom-theme.scss';
 @import '../../styles.scss';
-$byu-logo-color: #bec2ba;
+$logo-color: #bec2ba;
 
 .mat-tab-labels {
     justify-content: center;
@@ -98,7 +98,7 @@ $buttonXOffset: .55rem;
     .text {
         margin-top: 3%;
         font-size: 150%;
-        color: $byu-logo-color;
+        color: var(--text-color);
 
         &.smaller {
             transform: scale(.75);
@@ -128,17 +128,21 @@ $buttonXOffset: .55rem;
 .help {
     @extend %button;
     @extend %top-button;
-
+    background-color: var(--help-button-color) !important;
     right: $buttonXOffset;
     width: 105px!important;
     min-width: unset!important;
+}
+
+h2 {
+    color: var(--text-color);
 }
 
 .loading {
     position: absolute;
     height: 100%;
     width: 100%;
-
+    color: var(--text-color);
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -178,5 +182,5 @@ $buttonXOffset: .55rem;
 }
 
 .mat-audio-button {
-    background-color: $byu-logo-color;
+    background-color: $logo-color;
 }

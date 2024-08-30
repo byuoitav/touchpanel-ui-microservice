@@ -1,0 +1,102 @@
+
+// Custom Theming for Angular Material
+// For more information: https://material.angular.io/guide/theming
+@use '@angular/material' as mat;
+// Plus imports for other components in your app.
+
+// Include the common styles for Angular Material. We include this here so that you only
+// have to load a single css file for Angular Material in your app.
+// Be sure that you only ever include this mixin once!
+@include mat.core();
+
+$dark-secondary-text: rgba(black, 0.54);
+$dark-disabled-text: rgba(black, 0.38);
+$dark-dividers: rgba(black, 0.12);
+$dark-focused: rgba(black, 0.12);
+$light-secondary-text: rgba(white, 0.7);
+$light-disabled-text: rgba(white, 0.5);
+$light-dividers: rgba(white, 0.12);
+$light-focused: rgba(white, 0.12);
+$background-color: var(--background-color);
+
+
+$mat-custom: (
+  50: #e8f5e9,
+  100: #c8e6c9,
+  200: #a5d6a7,
+  300: #81c784,
+  400: #66bb6a,
+  500: var(--background-color-accent),
+  600: #58AF58,
+  700: var(--top-bar-color),
+  800: #2e7d32,
+  900: var(--background-color),
+  A100: #b9f6ca,
+  A200: #69f0ae,
+  A400: #00e676,
+  A700: var(--background-color-accent),
+  contrast: (
+    50: var(--text-color),
+    100: var(--text-color),
+    200: var(--text-color),
+    300: var(--text-color),
+    400: var(--text-color),
+    500: var(--text-color),
+    600: var(--text-color),
+    700: var(--text-color),
+    800: var(--text-color),
+    900: var(--text-color),
+    A100: var(--text-color),
+    A200: var(--text-color),
+    A400: var(--text-color),
+    A700: var(--text-color),
+  )
+);
+
+$cherry-primary: mat.define-palette($mat-custom, 700, 500, 900);
+$cherry-accent: mat.define-palette($mat-custom, A700, 200);
+$cherry-warn: mat.define-palette(mat.$red-palette, 600, 800, 400);
+
+$cherry-theme: mat.define-dark-theme((
+  color: (
+    primary: $cherry-primary,
+    accent: $cherry-accent,
+    warn: $cherry-warn,
+  )
+));
+
+// Include theme styles for core and each component used in your app.
+// Alternatively, you can import and @include the theme mixins for each component
+// that you are using.
+@include mat.all-component-themes($cherry-theme);
+
+@include mat.core-theme($cherry-theme);
+
+.cherry-theme {
+    @include mat.core-theme($cherry-theme);
+}
+
+.mat-app-background {
+    //background-color: mat.core-color($cherry-primary);
+    background-color: mat.get-color-from-palette($cherry-primary, darker);
+}
+
+.mat-tab-label-darker {
+    .mat-tab-label-container {
+        //background-color: mat.mat-color($mat-blue-grey, 800);
+        background-color: mat.get-color-from-palette(mat.$blue-grey-palette, 800);
+    }
+}
+
+//camera stuff
+$d-pad-fg: var(--dpad-color);
+$d-pad-fg-hover: var(--dpad-press);
+$d-pad-bg: var(--background-color);
+$cam-preset-color: var(--cam-preset-color);
+$cam-preset-press: var(--cam-preset-press);
+$arrowColor: #777;
+$arrowColorPressed: #333;
+
+//slider
+$volume-slider-color: var(--volume-slider-color);
+
