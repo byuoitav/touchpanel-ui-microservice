@@ -16,6 +16,8 @@ Example:
 
 `APIService.localurl = window.location.protocol + "//localhost:8888";`
 
+If the dev app stops loading at any point or `ng serve` starts erroring after working fine before, delete the .angular folder and run `ng serve` again.
+
 
 ## Testing
 ### Unit Testing
