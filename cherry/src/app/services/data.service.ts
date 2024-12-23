@@ -318,7 +318,8 @@ export class DataService {
     }
   
     try {
-      const data = await this.http.get(`http://localhost:10000/divider/preset/${APIService.piHostname}`, { responseType: 'text' }).pipe(
+
+      const data = await this.http.get(`http://${this.dividerSensor.address}:10000/divider/preset/${APIService.piHostname}`, { responseType: 'text' }).pipe(
         tap(data => {console.log(data);}),
         catchError(this.handleError("getCurrentPreset", []))
       ).toPromise();
@@ -347,6 +348,7 @@ export class DataService {
 
   private update() {
     this.socket.getEventListener().subscribe(event => {
+      console.log("event", event);
       if (event.type === MESSAGE) {
         const e = event.data;
 
