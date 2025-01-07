@@ -1,4 +1,4 @@
-import { Component, Input as AngularInput } from "@angular/core";
+import { Component, Input as AngularInput, SimpleChanges, OnChanges, OnInit } from "@angular/core";
 import { MatDialog } from "@angular/material/dialog";
 
 import { DataService } from "../../services/data.service";
@@ -8,57 +8,67 @@ import { ViaDialog } from "../../dialogs/via.dialog";
 import { Panel } from "../../objects/objects";
 import { Display, Input } from "../../objects/status.objects";
 import { StreamModalComponent } from "../../dialogs/streammodal/streammodal.component";
-import { MatButtonModule } from "@angular/material/button";
+
+
 
 @Component({
   selector: "display",
   templateUrl: "./display.component.html",
-  styleUrls: ["./display.component.scss"]
+  styleUrls: ["./display.component.scss"],
 })
-export class DisplayComponent {
+export class DisplayComponent implements OnInit, OnChanges {
   @AngularInput() panel: Panel;
+  @AngularInput()
+  presetName: string;
 
   selectedDisplays: Set<Display> = new Set();
-  inputs: Input[];
+  inputs: Input[] = [];
   displays: Display[] = [];
 
   constructor(
     private data: DataService,
     public command: CommandService,
     private dialog: MatDialog
-  ) {
-    // default to the first display being selected
-  }
+  ) { }
 
   ngOnInit() {
-    if (this.panel && this.panel.preset) {
-      this.panel.preset.displays.forEach(display => {
-        if (!display.hidden) {
-          this.displays.push(display);
-        }
-      });
-    }
-
-    setTimeout(() => {
-      if (this.panel.preset.displays.length > 0) {
-        this.selectedDisplays.add(this.displays[0]);
-        this.getInputsForDisplay(this.displays[0])
-      }
-    }, 0);
+    this.updateDisplaysAndInputs();
   }
 
+  ngOnChanges(changes: SimpleChanges) {
+    this.updateDisplaysAndInputs();
+  }
+
+  private updateDisplaysAndInputs(): void {
+    console.log("updating displays and inputs");
+    if (this.panel && this.panel.preset) {
+      this.displays = [...this.panel.preset.displays.filter((display) => !display.hidden)];
+
+      // Automatically select the first display if none are selected
+      if (this.displays.length > 0 && this.selectedDisplays.size === 0) {
+        this.selectedDisplays.clear();
+        this.selectedDisplays.add(this.displays[0]);
+        this.getInputsForDisplay(this.displays[0]);
+      }
+    }
+  }
 
   public toggleDisplay(d: Display) {
     this.selectedDisplays.clear();
     this.selectedDisplays.add(d);
     this.getInputsForDisplay(d);
+  }
 
-    /* This code makes it so that the displays toggle
-        if (this.selectedDisplays.has(d))
-            this.selectedDisplays.delete(d);
-        else
-            this.selectedDisplays.add(d);
-        */
+  public getInputsForDisplay(d: Display) {
+    const tempInputs: Input[] = [];
+
+    for (const [key, value] of Object.entries(this.data.inputReachability)) {
+      if (value.includes(d.name)) {
+        tempInputs.push(this.panel.preset.inputs.find((x) => x.name === key));
+      }
+    }
+
+    this.inputs = tempInputs;
   }
 
   public changeInput(i: Input) {
@@ -67,21 +77,21 @@ export class DisplayComponent {
         if (theChosenOne !== undefined) {
           const input = theChosenOne as Input;
           this.command.setInput(this.panel.preset, input, Array.from(this.selectedDisplays))
-          .subscribe(success => {
-            if (!success) {
-              console.warn("failed to change input");
-            }
-          });
+            .subscribe(success => {
+              if (!success) {
+                console.warn("failed to change input");
+              }
+            });
         }
       });
     } else {
       this.command
-      .setInput(this.panel.preset, i, Array.from(this.selectedDisplays))
-      .subscribe(success => {
-        if (!success) {
-          console.warn("failed to change input");
-        }
-      });
+        .setInput(this.panel.preset, i, Array.from(this.selectedDisplays))
+        .subscribe(success => {
+          if (!success) {
+            console.warn("failed to change input");
+          }
+        });
     }
   }
 
@@ -175,15 +185,4 @@ export class DisplayComponent {
     return p.features.includes("displaysSeparateInputs")
   }
 
-  public getInputsForDisplay(d: Display) {
-    var tempInputs = new Array<Input>();
-
-    for (const [key, value] of Object.entries(this.data.inputReachability)) {
-      if (value.includes(d.name)) {
-        tempInputs.push(this.panel.preset.inputs.find(x => x.name == key))
-      }
-    }
-
-    this.inputs = tempInputs;
-  }
 }

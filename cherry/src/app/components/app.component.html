@@ -60,7 +60,7 @@
         ">
 				<mat-tab label="Display">
 					<!-- display component -->
-					<display [panel]="data?.panel"> </display>
+					<display [panel]="data?.panel" [presetName]="data?.panel.preset.name"> </display>
 				</mat-tab>
 
 				<ng-container *ngIf="data?.panel?.preset?.independentAudioDevices?.length > 0 || 

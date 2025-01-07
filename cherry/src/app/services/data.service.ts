@@ -23,14 +23,14 @@ import {
 } from "../objects/status.objects";
 
 import { catchError, tap } from "rxjs/operators";
-import { Observable, of } from "rxjs";
+import { BehaviorSubject, Observable, of } from "rxjs";
 
 const PRESET_SWITCH = "preset-switch";
 
 @Injectable()
 export class DataService {
   public loaded: EventEmitter<boolean>;
-
+  
   public panel: Panel;
   public inputs: Input[] = [];
   public displays: Display[] = [];
@@ -49,7 +49,7 @@ export class DataService {
   ) {
     this.loaded = new EventEmitter<boolean>();
 
-    this.api.loaded.subscribe(() => {
+    this.api.loaded.subscribe(async () => {
       this.createInputs();
       this.createOutputs();
       this.createPseudoInputs();
@@ -64,7 +64,7 @@ export class DataService {
       );
       if (this.dividerSensor != null) {
         console.log("dividerSensor: ", this.dividerSensor);
-        this.setCurrentPreset();
+        await this.setCurrentPreset();
       }
 
       this.update();
@@ -312,45 +312,43 @@ export class DataService {
     // console.info("Panel", this.panel);
   }
 
-  setCurrentPreset = () => {
+  setCurrentPreset = async () => {
     if (!this.panel.features.includes(PRESET_SWITCH)) {
       return;
     }
+  
+    try {
 
-    this.http.get(`http://${this.dividerSensor.address}:10000/divider/preset/${APIService.piHostname}`, { responseType: 'text' }).pipe(
-      tap(data => {console.log(data);}),
-      catchError(this.handleError("getCurrentPreset", []))
-    ).subscribe({
-      next: data => {
-        const body = (<String>data);
-        const preset = this.presets.find(
-          p => p.name.toLowerCase() === body.toLowerCase()
+      const data = await this.http.get(`http://${this.dividerSensor.address}:10000/divider/preset/${APIService.piHostname}`, { responseType: 'text' }).pipe(
+        tap(data => {console.log(data);}),
+        catchError(this.handleError("getCurrentPreset", []))
+      ).toPromise();
+  
+      const body = (<String>data);
+      const preset = this.presets.find(
+        p => p.name.toLowerCase() === body.toLowerCase()
+      );
+  
+      if (preset != null) {
+        console.log("setting initial preset1 to", preset);
+        this.panel.preset = preset;
+      } else {
+        console.error(
+          "current preset response doesn't exist. response: ",
+          data
         );
-
-        if (preset != null) {
-          console.log("setting initial preset to", preset);
-          this.panel.preset = preset;
-        } else {
-          console.error(
-            "current preset response doesn't exist. response: ",
-            data
-          );
-        }
-      },
-      error: err => {
-        console.log(
-          "failed to get intial preset from divider sensor, trying again...", err
-        );
-        setTimeout(this.setCurrentPreset, 5000);
-      },
-      complete: () => {
-        console.log("complete");
       }
-    });
+    } catch (err) {
+      console.log(
+        "failed to get initial preset from divider sensor, trying again...", err
+      );
+      setTimeout(this.setCurrentPreset, 5000);
+    }
   };
 
   private update() {
     this.socket.getEventListener().subscribe(event => {
+      console.log("event", event);
       if (event.type === MESSAGE) {
         const e = event.data;
 
