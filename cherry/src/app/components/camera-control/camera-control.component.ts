@@ -19,7 +19,9 @@ export class CameraControlComponent implements OnInit, AfterViewInit {
   room = APIService.building + "-" + APIService.roomName;
   camLink = APIService.camLink;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) {
+
+  }
 
   ngOnInit() {
     console.log("cameras", this.preset.cameras);
@@ -222,21 +224,23 @@ export class CameraControlComponent implements OnInit, AfterViewInit {
   }
 
   getControlKey = () => {
-    this.http.get(window.location.protocol + "//" + window.location.host +"/control-key/" + this.room + "/" + this.preset.name).pipe(
-      tap(data => console.log("getControlKey response:", data)),
-      map(data => data)
-    ).subscribe({
-      next: data => {
-        console.log("data", data);
-        this.code = data["ControlKey"];
-      },
-      error: err => {
-        console.warn("err", err);
-      },
-      complete: () => {
-        console.log("complete");
-      }
-    });
+    this.http.get(window.location.protocol + "//" + window.location.host + "/control-key/" + this.room + "/" + this.preset.name)
+      .pipe(
+        tap(data => console.log("getControlKey response:", data))
+      )
+      .subscribe({
+        next: data => {
+          console.log("data", data);
+          this.code = data["ControlKey"];
+          document.cookie = `control-key=${this.code}; path=/;`;
+        },
+        error: err => {
+          console.warn("err", err);
+        },
+        complete: () => {
+          console.log("complete");
+        }
+      });
   }
 }
  
