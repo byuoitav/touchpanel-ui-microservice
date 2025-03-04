@@ -15,7 +15,7 @@ export class CameraControlComponent implements OnInit, AfterViewInit {
 
   @ViewChild(MatTabsModule)
   private _tabs: MatTabsModule;
-  code: number;
+  code: string;
   room = APIService.building + "-" + APIService.roomName;
   camLink = APIService.camLink;
 
@@ -206,7 +206,7 @@ export class CameraControlComponent implements OnInit, AfterViewInit {
       .subscribe({
         next: data => {
           console.log("data", data);
-          this.code = Number(data["ControlKey"]);
+          this.code = data["ControlKey"];
           document.cookie = `control-key=${this.code}; `;
         },
         error: err => {
@@ -218,7 +218,7 @@ export class CameraControlComponent implements OnInit, AfterViewInit {
       });
   }
 
-  sendCamCommand(url: string, code: number): Observable<any> {
+  sendCamCommand(url: string, code: string): Observable<any> {
     const body = { url, code };
     return this.http.post(APIService.localurl + "/camera-control", body).pipe(
       tap(response => console.log("response from backend:", response)),
