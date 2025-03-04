@@ -4,7 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"log"
 	"net/http"
 	"os"
@@ -13,6 +13,7 @@ import (
 	"github.com/byuoitav/central-event-system/messenger"
 	"github.com/byuoitav/common/v2/events"
 	"github.com/byuoitav/touchpanel-ui-microservice/helpers"
+	"github.com/byuoitav/touchpanel-ui-microservice/structs"
 	"github.com/labstack/echo"
 )
 
@@ -107,7 +108,7 @@ func GetControlKey(c echo.Context) error {
 	}
 	defer resp.Body.Close()
 
-	body, err := ioutil.ReadAll(resp.Body)
+	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return c.String(http.StatusInternalServerError, fmt.Sprintf("unable to read response: %s", err))
 	}
@@ -125,4 +126,40 @@ func GetControlKey(c echo.Context) error {
 	}
 
 	return c.JSON(http.StatusOK, key)
+}
+
+func HandleCameraControl(ctx echo.Context) error {
+	// Bind the incoming request body to the CameraControlRequest struct
+	var request structs.CameraControlRequest
+	if err := ctx.Bind(&request); err != nil {
+		return ctx.JSON(http.StatusBadRequest, "Invalid request")
+	}
+
+	// Create the GET request to the specified URL
+	req, err := http.NewRequest(http.MethodGet, request.URL, nil)
+	if err != nil {
+		return ctx.JSON(http.StatusInternalServerError, "Error creating GET request")
+	}
+
+	// Add the cookie to the request
+	req.AddCookie(&http.Cookie{
+		Name:  "control-key",
+		Value: request.Code,
+	})
+
+	// Send the GET request
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		return ctx.JSON(http.StatusInternalServerError, "Error making GET request")
+	}
+	defer resp.Body.Close()
+
+	// Respond to the frontend
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return ctx.JSON(http.StatusInternalServerError, "Error reading response body")
+	}
+
+	return ctx.JSON(resp.StatusCode, fmt.Sprintf("Response: %s, Response Body: %s", resp.Status, string(body)))
 }

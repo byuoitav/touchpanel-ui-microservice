@@ -90,6 +90,9 @@ func main() {
 	router.POST("/confirmhelp", handlers.GenerateHelpFunction("confirm", messenger))
 	router.POST("/cancelhelp", handlers.GenerateHelpFunction("cancel", messenger))
 
+	// camera commands
+	router.POST("/camera-control", handlers.HandleCameraControl)
+
 	// theme
 	router.GET("/themeconfig", uiconfig.GetThemeConfig)
 	router.GET("/logo", uiconfig.GetLogo)

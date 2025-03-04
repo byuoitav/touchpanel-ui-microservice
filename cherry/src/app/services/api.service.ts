@@ -35,7 +35,7 @@ export class APIService {
   public static room: Room;
 
   public static apihost: string;
-  private static localurl: string;
+  public static localurl: string;
   private static options: {};
 
   //resets static variables for Jest testing

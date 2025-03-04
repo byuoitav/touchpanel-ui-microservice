@@ -1,7 +1,7 @@
 import {Component, OnInit, Input, AfterViewInit, ViewChild} from '@angular/core';
 import {HttpClient} from "@angular/common/http";
 import {MatTabsModule} from '@angular/material/tabs';
-import { map, tap} from 'rxjs';
+import { map, Observable, tap} from 'rxjs';
 import {Camera, CameraPreset, Preset} from "../../objects/objects";
 import { APIService } from '../../services/api.service';
 
@@ -15,7 +15,7 @@ export class CameraControlComponent implements OnInit, AfterViewInit {
 
   @ViewChild(MatTabsModule)
   private _tabs: MatTabsModule;
-  code: string;
+  code: number;
   room = APIService.building + "-" + APIService.roomName;
   camLink = APIService.camLink;
 
@@ -39,81 +39,69 @@ export class CameraControlComponent implements OnInit, AfterViewInit {
     if (!cam.tiltUp) {
       return;
     }
-
-    this.http.get(cam.tiltUp).pipe(
-      tap(data => console.log("tiltUp response:", data))
-    ).subscribe({
+        this.sendCamCommand(cam.tiltUp, this.code).subscribe({
       next: data => {
-        console.log("data", data);
+        console.log("Tilt Up response:", data);
       },
       error: err => {
-        console.warn("err", err);
+        console.warn("Error:", err);
       },
       complete: () => {
-        console.log("complete");
+        console.log("Tilt Up command complete.");
       }
     });
   }
-
+  
   tiltDown = (cam: Camera) => {
     console.log("tilting down", cam.tiltDown);
     if (!cam.tiltDown) {
       return;
     }
-
-    this.http.get(cam.tiltDown).pipe(
-      tap(data => console.log("tiltDown response:", data))
-    ).subscribe({
+      this.sendCamCommand(cam.tiltDown, this.code).subscribe({
       next: data => {
-        console.log("data", data);
+        console.log("Tilt Down response:", data);
       },
       error: err => {
-        console.warn("err", err);
+        console.warn("Error:", err);
       },
       complete: () => {
-        console.log("complete");
+        console.log("Tilt Down command complete.");
       }
     });
   }
-
+  
   panLeft = (cam: Camera) => {
     console.log("panning left", cam.panLeft);
     if (!cam.panLeft) {
       return;
     }
-
-    this.http.get(cam.panLeft).pipe(
-      tap(data => console.log("panLeft response:", data))
-    ).subscribe({
+      this.sendCamCommand(cam.panLeft, this.code).subscribe({
       next: data => {
-        console.log("data", data);
+        console.log("Pan Left response:", data);
       },
       error: err => {
-        console.warn("err", err);
+        console.warn("Error:", err);
       },
       complete: () => {
-        console.log("complete");
+        console.log("Pan Left command complete.");
       }
     });
   }
-
+  
   panRight = (cam: Camera) => {
     console.log("panning right", cam.panRight);
     if (!cam.panRight) {
       return;
     }
-
-    this.http.get(cam.panRight).pipe(
-      tap(data => console.log("panRight response:", data))
-    ).subscribe({
+      this.sendCamCommand(cam.panRight, this.code).subscribe({
       next: data => {
-        console.log("data", data);
+        console.log("Pan Right response:", data);
       },
       error: err => {
-        console.warn("err", err);
+        console.warn("Error:", err);
       },
       complete: () => {
-        console.log("complete");
+        console.log("Pan Right command complete.");
       }
     });
   }
@@ -124,115 +112,102 @@ export class CameraControlComponent implements OnInit, AfterViewInit {
       return;
     }
 
-    this.http.get(cam.panTiltStop).pipe(
-      tap(data => console.log("panTiltStop response:", data))
-    ).subscribe({
+    this.sendCamCommand(cam.panTiltStop, this.code).subscribe({
       next: data => {
-        console.log("data", data);
+        console.log("Pan Stop response:", data);
       },
       error: err => {
-        console.warn("err", err);
+        console.warn("Error:", err);
       },
       complete: () => {
-        console.log("complete");
+        console.log("Pan Stop command complete.");
       }
     });
   }
-
+  
   zoomIn = (cam: Camera) => {
     console.log("zooming in", cam.zoomIn);
     if (!cam.zoomIn) {
       return;
     }
-
-    this.http.get(cam.zoomIn).pipe(
-      tap(data => console.log("zoomIn response:", data))
-    ).subscribe({
+      this.sendCamCommand(cam.zoomIn, this.code).subscribe({
       next: data => {
-        console.log("data", data);
+        console.log("Zoom In response:", data);
       },
       error: err => {
-        console.warn("err", err);
+        console.warn("Error:", err);
       },
       complete: () => {
-        console.log("complete");
+        console.log("Zoom In command complete.");
       }
     });
   }
-
+  
   zoomOut = (cam: Camera) => {
     console.log("zooming out", cam.zoomOut);
     if (!cam.zoomOut) {
       return;
     }
-
-    this.http.get(cam.zoomOut).pipe(
-      tap(data => console.log("zoomOut response:", data))
-    ).subscribe({
+      this.sendCamCommand(cam.zoomOut, this.code).subscribe({
       next: data => {
-        console.log("data", data);
+        console.log("Zoom Out response:", data);
       },
       error: err => {
-        console.warn("err", err);
+        console.warn("Error:", err);
       },
       complete: () => {
-        console.log("complete");
+        console.log("Zoom Out command complete.");
       }
     });
   }
-
+  
   zoomStop = (cam: Camera) => {
     console.log("stopping zoom", cam.zoomStop);
     if (!cam.zoomStop) {
       return;
     }
-
-    this.http.get(cam.zoomStop).pipe(
-      tap(data => console.log("zoomStop response:", data))
-    ).subscribe({
+      this.sendCamCommand(cam.zoomStop, this.code).subscribe({
       next: data => {
-        console.log("data", data);
+        console.log("Zoom Stop response:", data);
       },
       error: err => {
-        console.warn("err", err);
+        console.warn("Error:", err);
       },
       complete: () => {
-        console.log("complete");
+        console.log("Zoom Stop command complete.");
       }
     });
   }
-
+  
   selectPreset = (preset: CameraPreset) => {
     console.log("selecting preset", preset.displayName, preset.setPreset);
     if (!preset.setPreset) {
       return;
     }
-
-    this.http.get(preset.setPreset).pipe(
-      tap(data => console.log("selectPreset response:", data))
-    ).subscribe({
+      this.sendCamCommand(preset.setPreset, this.code).subscribe({
       next: data => {
-        console.log("data", data);
+        console.log("Select Preset response:", data);
       },
       error: err => {
-        console.warn("err", err);
+        console.warn("Error:", err);
       },
       complete: () => {
-        console.log("complete");
+        console.log("Select Preset command complete.");
       }
     });
   }
+  
 
   getControlKey = () => {
-    this.http.get(window.location.protocol + "//" + window.location.host + "/control-key/" + this.room + "/" + this.preset.name)
-      .pipe(
+    this.http.get(window.location.protocol + "//localhost:8000/control-key/" + this.room + "/" + this.preset.name)
+    .pipe(
         tap(data => console.log("getControlKey response:", data))
       )
       .subscribe({
         next: data => {
           console.log("data", data);
-          this.code = data["ControlKey"];
-          document.cookie = `control-key=${this.code}; path=/;`;
+          this.code = Number(data["ControlKey"]);
+          document.cookie = `control-key=${this.code}; `;
         },
         error: err => {
           console.warn("err", err);
@@ -242,5 +217,14 @@ export class CameraControlComponent implements OnInit, AfterViewInit {
         }
       });
   }
+
+  sendCamCommand(url: string, code: number): Observable<any> {
+    const body = { url, code };
+    return this.http.post(APIService.localurl + "/camera-control", body).pipe(
+      tap(response => console.log("response from backend:", response)),
+      map(response => response)
+      );
+  }
+  
 }
  

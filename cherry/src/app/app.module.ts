@@ -1,6 +1,6 @@
 import { BrowserModule } from "@angular/platform-browser";
 import { NgModule } from "@angular/core";
-import { HTTP_INTERCEPTORS, HttpClientModule } from "@angular/common/http";
+import {  HttpClientModule } from "@angular/common/http";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { MatTabsModule } from "@angular/material/tabs";
 import { MatSliderModule } from "@angular/material/slider";
@@ -34,7 +34,6 @@ import { CameraControlComponent } from './components/camera-control/camera-contr
 import { RecordingComponent } from './components/recording/recording.component';
 import { NgxSliderModule } from '@angular-slider/ngx-slider';
 
-import { AuthInterceptor } from "./interceptors/auth.interceptor";
 @NgModule({
   declarations: [
     AppComponent,
@@ -70,12 +69,7 @@ import { AuthInterceptor } from "./interceptors/auth.interceptor";
     DataService,
     GraphService,
     SocketService,
-    ThemeService,
-    {
-    provide: HTTP_INTERCEPTORS,
-      useClass: AuthInterceptor,
-      multi: true
-    }
+    ThemeService
   ],
   bootstrap: [AppComponent]
 })
