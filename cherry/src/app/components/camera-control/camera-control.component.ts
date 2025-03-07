@@ -1,8 +1,8 @@
-import {Component, OnInit, Input, AfterViewInit, ViewChild} from '@angular/core';
-import {HttpClient} from "@angular/common/http";
-import {MatTabsModule} from '@angular/material/tabs';
-import { map, Observable, tap} from 'rxjs';
-import {Camera, CameraPreset, Preset} from "../../objects/objects";
+import { Component, OnInit, Input, AfterViewInit, ViewChild } from '@angular/core';
+import { HttpClient } from "@angular/common/http";
+import { MatTabsModule } from '@angular/material/tabs';
+import { map, Observable, tap } from 'rxjs';
+import { Camera, CameraPreset, Preset } from "../../objects/objects";
 import { APIService } from '../../services/api.service';
 
 @Component({
@@ -39,7 +39,7 @@ export class CameraControlComponent implements OnInit, AfterViewInit {
     if (!cam.tiltUp) {
       return;
     }
-        this.sendCamCommand(cam.tiltUp, this.code).subscribe({
+    this.sendCamCommand(cam.tiltUp, this.code).subscribe({
       next: data => {
         console.log("Tilt Up response:", data);
       },
@@ -51,13 +51,13 @@ export class CameraControlComponent implements OnInit, AfterViewInit {
       }
     });
   }
-  
+
   tiltDown = (cam: Camera) => {
     console.log("tilting down", cam.tiltDown);
     if (!cam.tiltDown) {
       return;
     }
-      this.sendCamCommand(cam.tiltDown, this.code).subscribe({
+    this.sendCamCommand(cam.tiltDown, this.code).subscribe({
       next: data => {
         console.log("Tilt Down response:", data);
       },
@@ -69,13 +69,13 @@ export class CameraControlComponent implements OnInit, AfterViewInit {
       }
     });
   }
-  
+
   panLeft = (cam: Camera) => {
     console.log("panning left", cam.panLeft);
     if (!cam.panLeft) {
       return;
     }
-      this.sendCamCommand(cam.panLeft, this.code).subscribe({
+    this.sendCamCommand(cam.panLeft, this.code).subscribe({
       next: data => {
         console.log("Pan Left response:", data);
       },
@@ -87,13 +87,13 @@ export class CameraControlComponent implements OnInit, AfterViewInit {
       }
     });
   }
-  
+
   panRight = (cam: Camera) => {
     console.log("panning right", cam.panRight);
     if (!cam.panRight) {
       return;
     }
-      this.sendCamCommand(cam.panRight, this.code).subscribe({
+    this.sendCamCommand(cam.panRight, this.code).subscribe({
       next: data => {
         console.log("Pan Right response:", data);
       },
@@ -124,13 +124,13 @@ export class CameraControlComponent implements OnInit, AfterViewInit {
       }
     });
   }
-  
+
   zoomIn = (cam: Camera) => {
     console.log("zooming in", cam.zoomIn);
     if (!cam.zoomIn) {
       return;
     }
-      this.sendCamCommand(cam.zoomIn, this.code).subscribe({
+    this.sendCamCommand(cam.zoomIn, this.code).subscribe({
       next: data => {
         console.log("Zoom In response:", data);
       },
@@ -142,13 +142,13 @@ export class CameraControlComponent implements OnInit, AfterViewInit {
       }
     });
   }
-  
+
   zoomOut = (cam: Camera) => {
     console.log("zooming out", cam.zoomOut);
     if (!cam.zoomOut) {
       return;
     }
-      this.sendCamCommand(cam.zoomOut, this.code).subscribe({
+    this.sendCamCommand(cam.zoomOut, this.code).subscribe({
       next: data => {
         console.log("Zoom Out response:", data);
       },
@@ -160,13 +160,13 @@ export class CameraControlComponent implements OnInit, AfterViewInit {
       }
     });
   }
-  
+
   zoomStop = (cam: Camera) => {
     console.log("stopping zoom", cam.zoomStop);
     if (!cam.zoomStop) {
       return;
     }
-      this.sendCamCommand(cam.zoomStop, this.code).subscribe({
+    this.sendCamCommand(cam.zoomStop, this.code).subscribe({
       next: data => {
         console.log("Zoom Stop response:", data);
       },
@@ -178,13 +178,13 @@ export class CameraControlComponent implements OnInit, AfterViewInit {
       }
     });
   }
-  
+
   selectPreset = (preset: CameraPreset) => {
     console.log("selecting preset", preset.displayName, preset.setPreset);
     if (!preset.setPreset) {
       return;
     }
-      this.sendCamCommand(preset.setPreset, this.code).subscribe({
+    this.sendCamCommand(preset.setPreset, this.code).subscribe({
       next: data => {
         console.log("Select Preset response:", data);
       },
@@ -196,13 +196,12 @@ export class CameraControlComponent implements OnInit, AfterViewInit {
       }
     });
   }
-  
+
 
   getControlKey = () => {
-    this.http.get(window.location.protocol + "//localhost:8000/control-key/" + this.room + "/" + this.preset.name)
-    .pipe(
-        tap(data => console.log("getControlKey response:", data))
-      )
+    this.http.get(window.location.protocol + "//" + window.location.host + "/control-key/" + this.room + "/" + this.preset.name).pipe(
+      tap(data => console.log("getControlKey response:", data))
+    )
       .subscribe({
         next: data => {
           console.log("data", data);
@@ -223,8 +222,7 @@ export class CameraControlComponent implements OnInit, AfterViewInit {
     return this.http.post(APIService.localurl + "/camera-control", body).pipe(
       tap(response => console.log("response from backend:", response)),
       map(response => response)
-      );
+    );
   }
-  
+
 }
- 
