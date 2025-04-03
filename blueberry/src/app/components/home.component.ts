@@ -290,6 +290,7 @@ export class HomeComponent implements OnInit {
 
             const event = new Event();
 
+            event.Timestamp = new Date(),
             event.User = from.name;
             event.EventTags = ["ui-communication"];
             event.AffectedRoom = new BasicRoomInfo(
@@ -328,6 +329,7 @@ export class HomeComponent implements OnInit {
 
         const event = new Event();
         event.User = from.name;
+        event.Timestamp = new Date(),
         event.EventTags = ["ui-communication"];
         event.AffectedRoom = new BasicRoomInfo(
           APIService.building + "-" + APIService.roomName
@@ -363,6 +365,7 @@ export class HomeComponent implements OnInit {
         // tell panels mirroring me to show that they are mirroring them too
         const event = new Event();
         event.User = this.defaultPreset.name;
+        event.Timestamp = new Date(),
         event.EventTags = ["ui-communication"];
         event.AffectedRoom = new BasicRoomInfo(
           APIService.building + "-" + APIService.roomName
@@ -421,6 +424,7 @@ export class HomeComponent implements OnInit {
         this.command.powerOnDefault(this.defaultPreset).subscribe(success => {
           const event = new Event();
           event.User = this.defaultPreset.name;
+          event.Timestamp = new Date(),
           event.EventTags = ["ui-communication"];
           event.AffectedRoom = new BasicRoomInfo(
             APIService.building + "-" + APIService.roomName
@@ -585,6 +589,7 @@ export class HomeComponent implements OnInit {
                   if (presetsToMirror.length > 0) {
                     const eve = new Event();
                     eve.User = this.defaultPreset.name;
+                    eve.Timestamp = new Date(),
                     eve.EventTags = ["ui-communication"];
                     eve.AffectedRoom = new BasicRoomInfo(
                       APIService.building + "-" + APIService.roomName
