@@ -1,6 +1,6 @@
 import { BrowserModule } from "@angular/platform-browser";
 import { NgModule } from "@angular/core";
-import { HttpClientModule } from "@angular/common/http";
+import {  HttpClientModule } from "@angular/common/http";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { MatTabsModule } from "@angular/material/tabs";
 import { MatSliderModule } from "@angular/material/slider";
@@ -33,6 +33,7 @@ import { StreamModalComponent } from "./dialogs/streammodal/streammodal.componen
 import { CameraControlComponent } from './components/camera-control/camera-control.component';
 import { RecordingComponent } from './components/recording/recording.component';
 import { NgxSliderModule } from '@angular-slider/ngx-slider';
+
 @NgModule({
   declarations: [
     AppComponent,

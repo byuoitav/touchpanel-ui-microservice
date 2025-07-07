@@ -304,6 +304,7 @@ export class CommandService {
         const event = new Event();
 
         event.User = APIService.piHostname;
+        event.Timestamp = new Date(),
         event.EventTags = ["ui-communication"];
         event.AffectedRoom = new BasicRoomInfo(
           APIService.building + "-" + APIService.roomName
@@ -355,6 +356,7 @@ export class CommandService {
 
         event.User = APIService.piHostname;
         event.EventTags = ["ui-communication"];
+        event.Timestamp = new Date(),
         event.AffectedRoom = new BasicRoomInfo(
           APIService.building + "-" + APIService.roomName
         );
@@ -404,6 +406,7 @@ export class CommandService {
 
         event.User = APIService.piHostname;
         event.EventTags = ["ui-communication"];
+        event.Timestamp = new Date(),
         event.AffectedRoom = new BasicRoomInfo(
           APIService.building + "-" + APIService.roomName
         );
@@ -452,6 +455,7 @@ export class CommandService {
 
         event.User = APIService.piHostname;
         event.EventTags = ["ui-communication"];
+        event.Timestamp = new Date(),
         event.AffectedRoom = new BasicRoomInfo(
           APIService.building + "-" + APIService.roomName + "-" + a.name
         );
