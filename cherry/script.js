@@ -1,8 +1,9 @@
 document.addEventListener('DOMContentLoaded', async () => {
     window.VolumeSlider = VolumeSlider;
-    currentComponent = 'display'; // Set the current component to display
+    currentComponent = 'cameraControl'; // Set the current component to display
     await loadComponent(currentComponent);
 });
+document.addEventListener('click', (e))
 
 async function loadComponent(componentName, divQuerySelector = `.component-container`) {
     // Only call cleanup if the primary component, won't call cleanup on smaller components
