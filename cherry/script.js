@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', async () => {
-    await loadComponent('display');
-
-
+    window.VolumeSlider = VolumeSlider;
+    currentComponent = 'display'; // Set the current component to display
+    await loadComponent(currentComponent);
 });
 
 async function loadComponent(componentName, divQuerySelector = `.component-container`) {
