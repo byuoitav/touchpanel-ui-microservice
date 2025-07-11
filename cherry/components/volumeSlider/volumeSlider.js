@@ -34,22 +34,30 @@ class VolumeSlider {
     }
 
     render() {
-        this.container.innerHTML = `
-            <div class="volume-title">${this.options.title}</div>
-            <div class="volume-slide-container">
-                <input type="range" min="${this.options.min}" max="${this.options.max}" value="${this.options.value}" class="volume-slider">
-                <div class="slider-label">${this.options.value}</div>
-            </div>
-            <button class="mute-button">${this.options.muteText}</button>
-        `;
+        let sliderCode = `
+        <div class="volume-title">${this.options.title}</div>
+        <div class="volume-slide-container">
+            <input type="range" min="${this.options.min}" max="${this.options.max}" value="${this.options.value}" class="volume-slider">
+            <div class="slider-label">${this.options.value}</div>
+        </div>
+        <button class="mute-button">${this.options.muteText}</button>
+    `;
+        // append to container
+        this.sliderHTML = document.createElement('div');
+        this.sliderHTML.innerHTML = sliderCode;
+        this.sliderHTML.classList.add("volume-container");
+        this.container.appendChild(this.sliderHTML);
     }
 
+
     cacheElements() {
-        this.slider = this.container.querySelector(".volume-slider");
-        this.label = this.container.querySelector(".slider-label");
-        this.slideContainer = this.container.querySelector(".volume-slide-container");
-        this.muteButton = this.container.querySelector(".mute-button");
+        this.slider = this.sliderHTML.querySelector(".volume-slider");
+        this.label = this.sliderHTML.querySelector(".slider-label");
+        this.slideContainer = this.sliderHTML.querySelector(".volume-slide-container");
+        this.muteButton = this.sliderHTML.querySelector(".mute-button");
     }
+
+
 
     setSliderWidth() {
         this.slider.style.width = `${this.container.clientHeight * 0.7}px`;
@@ -69,7 +77,7 @@ class VolumeSlider {
 
         const containerRect = this.slideContainer.getBoundingClientRect();
         const sliderRect = this.slider.getBoundingClientRect();
-        const offsetTop = (sliderRect.top - containerRect.top) + thumbCenter - 13; // adjusted upward 5px
+        const offsetTop = (sliderRect.top - containerRect.top) + thumbCenter - 13; // adjusted upward 13px
 
         this.label.style.position = "absolute";
         this.label.style.left = `${this.slideContainer.clientWidth / 2 + 30}px`;
@@ -77,3 +85,5 @@ class VolumeSlider {
         this.label.textContent = this.slider.value;
     }
 }
+
+
