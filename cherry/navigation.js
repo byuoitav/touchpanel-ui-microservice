@@ -1,4 +1,8 @@
 document.addEventListener('DOMContentLoaded', () => {
+    const displayTab = document.querySelector('.display-tab');
+    const audioControlTab = document.querySelector('.audio-control-tab');
+    const cameraControlTab = document.querySelector('.camera-control-tab');
+
     const componentView = document.querySelector('.component-container');
     const SWIPE_THRESHOLD = 150; // increase to make harder to swipe
     const VERTICAL_THRESHOLD = 5; // threshold to detect vertical scroll vs horizontal swipe
@@ -12,6 +16,27 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentTranslate = 0;
     let prevTranslate = 0;
     const slideCount = componentView.children.length;
+
+
+    // Clicking tabs moves to the right view
+    document.querySelectorAll('.tab').forEach((tab, index) => {
+        tab.addEventListener('click', () => {
+            currentView = index;
+            setViewPosition();
+            updateActiveTab(index);
+        });
+    });
+
+    function updateActiveTab(index) {
+        document.querySelectorAll('.tab').forEach((tab, i) => {
+            if (i === index) {
+                tab.classList.add('active-tab');
+            } else {
+                tab.classList.remove('active-tab');
+            }
+        });
+    }
+
 
     function setViewPosition(animate = true) {
         if (animate) {
@@ -65,13 +90,15 @@ document.addEventListener('DOMContentLoaded', () => {
         isDragging = false;
         const dx = x - startX;
 
-        if (dx < -(SWIPE_THRESHOLD) && currentView < slideCount - 1) {
+        if (dx < -SWIPE_THRESHOLD && currentView < slideCount - 1) {
             currentView++;
         } else if (dx > SWIPE_THRESHOLD && currentView > 0) {
             currentView--;
         }
         setViewPosition();
+        updateActiveTab(currentView);
     }
+
 
     // Mouse
     componentView.addEventListener('mousedown', e => touchStart(e.pageX));
