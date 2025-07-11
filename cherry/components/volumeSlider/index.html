@@ -1,0 +1,55 @@
+
+<div class="topbar">
+  My Topbar
+</div>
+
+<div class="slider-container">
+  <div class="slider">
+    <div class="slide">Page 1</div>
+    <div class="slide">Page 2</div>
+    <div class="slide">Page 3</div>
+  </div>
+</div>
+
+
+<style>
+body {
+  margin: 0;
+  font-family: sans-serif;
+  overflow: hidden; /* prevent scrollbars */
+}
+
+.topbar {
+  height: 60px;
+  background: #333;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+}
+
+.slider-container {
+  position: relative;
+  width: 100%;
+  height: calc(100vh - 60px); /* below topbar */
+  overflow: hidden;
+}
+
+.slider {
+  display: flex;
+  height: 100%;
+  transition: transform 0.3s ease;
+}
+
+.slide {
+  min-width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  padding: 20px;
+  background: #eee;
+  border-right: 1px solid #ccc;
+}
+
+  </style>
+
+  <script src="./volumeSlider.js"></script>

@@ -1,30 +1,33 @@
 :root {
     --background-color: #263238;
     --top-bar-color: #455a64;
-    --background-color-accent:#0091ea;
+    --background-color-accent: #0091ea;
     --dpad-color: #e3e3e3;
     --dpad-press: #777777;
-    --cam-preset-color:#455a64;
+    --cam-preset-color: #455a64;
     --cam-preset-press: blue;
     --show-cam-text: none;
-    --volume-slider-color:#0091ea;
+    --volume-slider-color: #0091ea;
     --help-button-color: #a1c8c3;
     --text-color: white;
     --font-name: 'Source Sans 3', sans-serif;
     font-size: .85em;
 }
 
-html, body {
+html,
+body {
     background-color: var(--background-color);
     margin: 0;
     height: 100%;
+    overflow-x: hidden;
 }
 
 .header {
     background-color: var(--top-bar-color);
     height: 60px;
     display: flex;
-    flex-direction: row;;
+    flex-direction: row;
+    ;
     align-items: center;
     justify-content: space-between;
     width: 100%;
@@ -32,13 +35,13 @@ html, body {
     box-sizing: border-box;
 }
 
-.header > button {
+.header>button {
     border: none;
     border-radius: 5px;
     height: 48px;
     width: 200px;
     cursor: pointer;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.25), 0 1.5px 0 rgba(255,255,255,0.08) inset;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25), 0 1.5px 0 rgba(255, 255, 255, 0.08) inset;
 }
 
 .power-off-btn {
@@ -90,52 +93,87 @@ html, body {
 }
 
 .component-container {
+    display: flex;
+    flex-direction: row;
     height: calc(100% - 60px);
+    width: 100%;
+    /* 3 slides, adjust if you add more */
+    transition: transform 0.3s ease;
+}
+
+.component {
+    min-width: 100%;
     box-sizing: border-box;
+    height: 100%;
 }
 
 /* Volume Sliders */
+.volume-container {
+    background-color: var(--background-color);
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    text-align: center;
+    color: var(--text-color);
+    font-size: 1.2em;
+    font-weight: bold;
+}
+
 .volume-slide-container {
-  position: relative;           /* enable absolute positioning */
-  height: 100%;                /* desired height for vertical slider */
-  width: 40px;                  /* width just enough for the thumb */
-  display: flex;
-  align-items: center;
-  justify-content: center;
+    position: relative;
+    /* enable absolute positioning */
+    height: 100%;
+    /* desired height for vertical slider */
+    width: 40px;
+    /* width just enough for the thumb */
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .volume-slider {
-  -webkit-appearance: none;
-  appearance: none;
-  
-  position: absolute;           /* position absolutely inside container */
-  top: 50%;                      /* align top */
-  left: 50%;                   /* center horizontally */
-  transform: translateX(-50%) rotate(-90deg);  /* center and rotate */
-  width: 440px;                /* slider length before rotation (will be vertical length) */
-  height: 5px;                /* thickness of slider track */
-  border-radius: 5px;
-  background: linear-gradient(to right, var(--volume-slider-color) 50%, #d3d3d3 50%);
-  outline: none;
-  transition: background 0.3s;
+    -webkit-appearance: none;
+    appearance: none;
+
+    position: absolute;
+    /* position absolutely inside container */
+    top: 50%;
+    /* align top */
+    left: 50%;
+    /* center horizontally */
+    transform: translateX(-50%) rotate(-90deg);
+    /* center and rotate */
+    width: 440px;
+    /* slider length before rotation (will be vertical length) */
+    height: 5px;
+    /* thickness of slider track */
+    border-radius: 5px;
+    background: linear-gradient(to right, var(--volume-slider-color) 50%, #d3d3d3 50%);
+    outline: none;
+    transition: background 0.3s;
 }
 
 .volume-slider::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background: var(--volume-slider-color);
-  cursor: pointer;
+    -webkit-appearance: none;
+    appearance: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--volume-slider-color);
+    cursor: pointer;
 }
 
 .volume-slider::-moz-range-thumb {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background: var(--volume-slider-color);
-  cursor: pointer;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--volume-slider-color);
+    cursor: pointer;
 }
 
 .mute-button {
@@ -147,7 +185,7 @@ html, body {
     font-size: 1.2em;
     font-weight: bold;
     cursor: pointer;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.25), 0 1.5px 0 rgba(255,255,255,0.08) inset;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25), 0 1.5px 0 rgba(255, 255, 255, 0.08) inset;
 
 }
 
@@ -156,6 +194,7 @@ html, body {
     font-size: 1.3em;
     font-weight: bold;
     color: var(--text-color);
-    pointer-events: none; /* so it doesn't block slider interaction */
+    pointer-events: none;
+    /* so it doesn't block slider interaction */
 
 }

@@ -4,7 +4,7 @@ window.components.display = {
   loadPage: function () {
     const VolumeSliderClass = window.VolumeSlider || (window.components && window.components.VolumeSlider);
     
-    const MasterVolume = new VolumeSliderClass(document.querySelector('.volume-container'), {
+    const MasterVolume = new VolumeSliderClass(document.querySelector('.volume-control-container'), {
       title: "Master Display Volume 2",
       value: 37
     });
