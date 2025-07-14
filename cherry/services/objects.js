@@ -1,4 +1,4 @@
-export class Room {
+class Room {
   constructor() {
     this.config = null;
     this.status = null;
@@ -6,7 +6,7 @@ export class Room {
   }
 }
 
-export class RoomConfiguration {
+class RoomConfiguration {
   constructor() {
     this._id = "";
     this.name = "";
@@ -20,7 +20,7 @@ export class RoomConfiguration {
   }
 }
 
-export class DeviceConfiguration {
+class DeviceConfiguration {
   constructor() {
     this._id = "";
     this.name = "";
@@ -40,7 +40,7 @@ export class DeviceConfiguration {
   }
 }
 
-export class DeviceTypeConfiguration {
+class DeviceTypeConfiguration {
   constructor() {
     this._id = "";
     this.description = "";
@@ -48,7 +48,7 @@ export class DeviceTypeConfiguration {
   }
 }
 
-export class RoleConfiguration {
+class RoleConfiguration {
   constructor() {
     this._id = "";
     this.description = "";
@@ -56,14 +56,14 @@ export class RoleConfiguration {
   }
 }
 
-export class RoomStatus {
+class RoomStatus {
   constructor() {
     this.displays = [];
     this.audioDevices = [];
   }
 }
 
-export class UIConfiguration {
+class UIConfiguration {
   constructor() {
     this.panels = [];
     this.presets = [];
@@ -75,7 +75,7 @@ export class UIConfiguration {
   }
 }
 
-export class Camera {
+class Camera {
   constructor() {
     this.displayName = "";
 
@@ -95,14 +95,14 @@ export class Camera {
   }
 }
 
-export class CameraPreset {
+class CameraPreset {
   constructor() {
     this.displayName = "";
     this.setPreset = "";
   }
 }
 
-export class Recording {
+class Recording {
   constructor() {
     this.start = "";
     this.stop = "";
@@ -110,7 +110,7 @@ export class Recording {
   }
 }
 
-export class ConfigCommands {
+class ConfigCommands {
   constructor() {
     this.powerOn = [];
     this.powerOff = [];
@@ -119,7 +119,7 @@ export class ConfigCommands {
   }
 }
 
-export class ConfigCommand {
+class ConfigCommand {
   constructor() {
     this.method = "";
     this.port = 0;
@@ -129,21 +129,21 @@ export class ConfigCommand {
   }
 }
 
-export class PseudoInput {
+class PseudoInput {
   constructor() {
     this.displayname = "";
     this.config = [];
   }
 }
 
-export class PseudoInputConfig {
+class PseudoInputConfig {
   constructor() {
     this.input = "";
     this.outputs = [];
   }
 }
 
-export class PanelConfiguration {
+class PanelConfiguration {
   constructor() {
     this.hostname = "";
     this.uipath = "";
@@ -152,7 +152,7 @@ export class PanelConfiguration {
   }
 }
 
-export class PresetConfiguration {
+class PresetConfiguration {
   constructor() {
     this.name = "";
     this.icon = "";
@@ -169,7 +169,7 @@ export class PresetConfiguration {
   }
 }
 
-export class AudioConfiguration {
+class AudioConfiguration {
   constructor() {
     this.display = "";
     this.audioDevices = [];
@@ -177,7 +177,7 @@ export class AudioConfiguration {
   }
 }
 
-export class AudioConfig {
+class AudioConfig {
   constructor(display, audioDevices, roomWide) {
     this.display = display;
     this.audioDevices = audioDevices;
@@ -185,7 +185,7 @@ export class AudioConfig {
   }
 }
 
-export class IOConfiguration {
+class IOConfiguration {
   constructor() {
     this.name = "";
     this.icon = "";
@@ -194,7 +194,7 @@ export class IOConfiguration {
   }
 }
 
-export class DeviceStatus {
+class DeviceStatus {
   constructor() {
     this.name = "";
     this.power = "";
@@ -209,7 +209,7 @@ export class DeviceStatus {
   }
 }
 
-export class Preset {
+class Preset {
   constructor(
     name,
     icon,
@@ -245,7 +245,7 @@ export class Preset {
   }
 }
 
-export class Panel {
+class Panel {
   constructor(hostname, uipath, preset, features) {
     this.hostname = hostname;
     this.uipath = uipath;

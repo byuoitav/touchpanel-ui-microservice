@@ -1,11 +1,23 @@
 document.addEventListener('DOMContentLoaded', async () => {
     window.themeService = new ThemeService();
-    await window.themeService?.fetchTheme(); // Fetch and apply theme styles
-    window.VolumeSlider = VolumeSlider;
-    currentComponent = 'display'; // Set the current component to display
-    await loadComponent(currentComponent, `.display-component`);
-    await loadComponent('audioControl', `.audio-control-component`);
-    await loadComponent('cameraControl', `.camera-control-component`);
+    window.SocketService = new SocketService();
+    window.APIService = new APIService(window.themeService);
+
+    // Wait for APIService to finish loading configs before creating DataService
+    window.APIService.addEventListener('loaded', async () => {
+        window.DataService = new DataService();
+        window.VolumeSlider = VolumeSlider;
+        window.GraphService = new GraphService(window.DataService, window.SocketService);
+
+        window.GraphService.addEventListener("displayList", e => {
+            console.log("Updated display list:", Array.from(e.detail));
+        });
+
+        currentComponent = 'display'; // Set the current component to display
+        await loadComponent(currentComponent, `.display-component`);
+        await loadComponent('audioControl', `.audio-control-component`);
+        await loadComponent('cameraControl', `.camera-control-component`);
+    }, { once: true });
 });
 
 async function loadComponent(componentName, divQuerySelector = `.component-container`) {
@@ -26,7 +38,7 @@ async function loadComponent(componentName, divQuerySelector = `.component-conta
     }
 
     document.body.appendChild(stylesheet);
-  
+
     // load the html
     const componentContainer = document.querySelector(divQuerySelector);
     componentContainer.classList.add('loading'); // hide before loading
