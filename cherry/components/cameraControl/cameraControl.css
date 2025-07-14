@@ -65,8 +65,9 @@
     grid-template-columns: repeat(2, 1fr);
     gap: 10px;
 }
+
 .preset-btn {
-    background-color: var(--top-bar-color);
+    background-color: var(--cam-preset-color);
     color: var(--text-color);
     border-radius: 5px;
     height: 75px;
@@ -74,6 +75,20 @@
     cursor: pointer;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25), 0 1.5px 0 rgba(255, 255, 255, 0.08) inset;
     border: none;
+    outline: none;
+    transition: background-color 0.15s, box-shadow 0.15s;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.preset-btn:focus {
+    outline: none;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25), 0 1.5px 0 rgba(255, 255, 255, 0.08) inset;
+}
+
+.preset-btn:active {
+    outline: none;
+    background-color: var(--cam-preset-press);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.18);
 }
 
 .zoom-controls {
@@ -88,6 +103,7 @@
     width: 125px;
     height: 75px;
     border: none;
+    background-color: var(--dpad-color);
     border-radius: 5px;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25), 0 1.5px 0 rgba(255, 255, 255, 0.08) inset;
 }
@@ -136,7 +152,7 @@
     transform: translate(-50%, -50%);
     width: 66.6%;
     height: 66.6%;
-    background: #e3e3e3;
+    background: var(--dpad-color);
 }
 
 .d-pad:after {
@@ -148,14 +164,14 @@
     height: 20%;
     top: 50%;
     left: 50%;
-    background: #e3e3e3;
+    background: var(--dpad-color);
     border-radius: 50%;
     transform: translate(-50%, -50%);
     transition: all 0.25s;
     cursor: pointer;
 }
 
-.d-pad:hover:after {
+.d-pad:active:after {
     width: 30%;
     height: 30%;
 }
@@ -168,12 +184,12 @@
     height: 43%;
     line-height: 40%;
     color: var(--background-color);
-    background: #e3e3e3;
+    background: var(--dpad-color);
     text-align: center;
 }
 
-.d-pad a:hover {
-    background: #eee;
+.d-pad a:active {
+    background: var(--dpad-press);
 }
 
 .d-pad a:before {
@@ -192,7 +208,6 @@
     width: 102%;
     height: 78%;
     background: var(--background-color);
-    );
     border-radius: 20%;
 }
 
@@ -215,8 +230,8 @@
     border-radius: 17% 17% 50% 50%;
 }
 
-.d-pad a.up:hover {
-    background: linear-gradient(0deg, #e3e3e3 0%, #eee 50%);
+.d-pad a.up:active {
+    background: linear-gradient(0deg, var(--dpad-color) 0%, var(--dpad-press) 50%);
 }
 
 .d-pad a.up:after {
@@ -239,7 +254,7 @@
     border-bottom-color: #333;
 }
 
-.d-pad a.up:hover:before {
+.d-pad a.up:active:before {
     top: 35%;
 }
 
@@ -250,8 +265,8 @@
     border-radius: 50% 50% 17% 17%;
 }
 
-.d-pad a.down:hover {
-    background: linear-gradient(180deg, #e3e3e3 0%, #eee 50%);
+.d-pad a.down:active {
+    background: linear-gradient(180deg, var(--dpad-color) 0%, var(--dpad-press) 50%);
 }
 
 .d-pad a.down:after {
@@ -274,7 +289,7 @@
     border-top-color: #333;
 }
 
-.d-pad a.down:hover:before {
+.d-pad a.down:active:before {
     bottom: 35%;
 }
 
@@ -285,8 +300,8 @@
     border-radius: 17% 50% 50% 17%;
 }
 
-.d-pad a.left:hover {
-    background: linear-gradient(-90deg, #e3e3e3 0%, #eee 50%);
+.d-pad a.left:active {
+    background: linear-gradient(-90deg, var(--dpad-color) 0%, var(--dpad-press) 50%);
 }
 
 .d-pad a.left:after {
@@ -309,7 +324,7 @@
     border-right-color: #333;
 }
 
-.d-pad a.left:hover:before {
+.d-pad a.left:active:before {
     left: 35%;
 }
 
@@ -320,8 +335,8 @@
     border-radius: 50% 17% 17% 50%;
 }
 
-.d-pad a.right:hover {
-    background: linear-gradient(90deg, #e3e3e3 0%, #eee 50%);
+.d-pad a.right:active {
+    background: linear-gradient(90deg, var(--dpad-color) 0%, var(--dpad-press) 50%);
 }
 
 .d-pad a.right:after {
@@ -344,7 +359,7 @@
     border-left-color: #333;
 }
 
-.d-pad a.right:hover:before {
+.d-pad a.right:active:before {
     right: 35%;
 }
 

@@ -31,7 +31,7 @@ window.components.audioControl = {
 
         const CameraVolume = new VolumeSliderClass(document.querySelector('.audio-controls'), {
             title: "Camera",
-            value: 60
+            value: 37
         });
 
         const ComputerVolume = new VolumeSliderClass(document.querySelector('.audio-controls'), {
