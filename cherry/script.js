@@ -1,4 +1,6 @@
 document.addEventListener('DOMContentLoaded', async () => {
+    window.themeService = new ThemeService();
+    await window.themeService?.fetchTheme(); // Fetch and apply theme styles
     window.VolumeSlider = VolumeSlider;
     currentComponent = 'display'; // Set the current component to display
     await loadComponent(currentComponent, `.display-component`);
