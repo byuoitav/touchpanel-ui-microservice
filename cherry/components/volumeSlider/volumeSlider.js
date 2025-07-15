@@ -57,8 +57,6 @@ class VolumeSlider {
         this.muteButton = this.sliderHTML.querySelector(".mute-button");
     }
 
-
-
     setSliderWidth() {
         this.slider.style.width = `${this.container.clientHeight * 0.7}px`;
     }

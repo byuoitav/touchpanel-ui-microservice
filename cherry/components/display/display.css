@@ -24,6 +24,23 @@
     gap: 10px;
 }
 
+.outputs-page {
+    align-items: center;
+    justify-content: center;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+    height: 50%;
+}
+
+.outputs-row {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    gap: 10px;
+}
 .output {
     background-color: var(--background-color);
     border-radius: 5px;
@@ -49,7 +66,7 @@
 .inputs-container {
     background-color: var(--background-color);
     width: 100%;
-    height: 25%;
+    height: 50%;
     display: flex;
     flex-direction: row;
     box-sizing: border-box;
@@ -58,11 +75,29 @@
     gap: 10px;
 }
 
+.inputs-page {
+    align-items: center;
+    justify-content: center;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+    height: 50%;
+}
+
+.inputs-row {
+    width: 100%;
+    justify-content: center;
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+}
+
 .input {
     background-color: var(--background-color);
     border-radius: 5px;
-    width: 100px;
-    height: 100px;
+    width: 105px;
+    height: 105px;
     box-sizing: border-box;
     display: flex;
     align-items: center;
@@ -71,14 +106,14 @@
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
     flex-direction: column;
     gap: 10px;
-    font-size: .9em;
+    font-size: 1em;
     text-align: center;
     padding: 5px;
 }
 
 .input img {
-    width: 40px;
-    height: 40px;
+    width: 45px;
+    height: 45px;
 }
 
 .volume-control-container {
@@ -114,3 +149,84 @@
 }
 
 
+/* Carousel styles for inputs */
+.inputs-carousel-container {
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+    height: 50%;
+}
+
+.outputs-carousel-container {
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+    height: 35%;
+}
+
+.inputs-carousel-track {
+    display: flex;
+    transition: transform 0.3s;
+    width: 100%;
+    height: 100%;
+}
+
+.outputs-carousel-track {
+    display: flex;
+    transition: transform 0.3s;
+    width: 100%;
+    height: 100%;
+}
+
+.inputs-page {
+    min-width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.outputs-page {
+    min-width: 100%;
+    height: 100%; /* Adjust height to fit within the container */
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.carousel-arrow {
+    position: absolute;
+    text-align: center;
+    height: 48px;
+    width: 48px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    font-size: 2em;
+    z-index: 2;
+    user-select: none;
+    color: var(--text-color, #fff);
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 100%;
+    padding: 0.3em 0.3em;
+    transition: background 0.2s;
+}
+
+.carousel-arrow-left {
+    left: .5em;
+}
+
+.carousel-arrow-right {
+    right: 0.2em;
+}
+
+.outputs-carousel-arrow-left {
+    left: .5em;
+}
+
+.outputs-carousel-arrow-right {
+    right: 0.2em;
+}

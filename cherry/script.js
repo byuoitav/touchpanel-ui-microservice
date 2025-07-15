@@ -1,24 +1,25 @@
-document.addEventListener('DOMContentLoaded', async () => {
+document.addEventListener('DOMContentLoaded', () => {
     window.themeService = new ThemeService();
     window.SocketService = new SocketService();
     window.APIService = new APIService(window.themeService);
 
     // Wait for APIService to finish loading configs before creating DataService
-    window.APIService.addEventListener('loaded', async () => {
-        window.DataService = new DataService();
-        window.VolumeSlider = VolumeSlider;
-        window.GraphService = new GraphService(window.DataService, window.SocketService);
-
-        window.GraphService.addEventListener("displayList", e => {
-            console.log("Updated display list:", Array.from(e.detail));
-        });
-
-        currentComponent = 'display'; // Set the current component to display
-        await loadComponent(currentComponent, `.display-component`);
-        await loadComponent('audioControl', `.audio-control-component`);
-        await loadComponent('cameraControl', `.camera-control-component`);
+    window.APIService.addEventListener('loaded', () => {
+        window.DataService = new DataService(window.APIService);
+        window.DataService.init();
+        
+        // wait for DataService to be fully initialized (after dispatchEvent)
+        window.DataService.addEventListener('loaded', async () => {
+            window.VolumeSlider = VolumeSlider;
+            currentComponent = 'display';
+            await loadComponent(currentComponent, `.display-component`);
+            await loadComponent('audioControl', `.audio-control-component`);
+            await loadComponent('cameraControl', `.camera-control-component`);
+        }, { once: true });
     }, { once: true });
+    
 });
+
 
 async function loadComponent(componentName, divQuerySelector = `.component-container`) {
     const htmlPath = `./components/${componentName}/${componentName}.html`;
