@@ -13,11 +13,11 @@ window.components.display = {
   },
 
   render: function () {
-    const dataService = window.DataService;
+    const preset = window.DataService.panel.preset;
     const container = document.querySelector('.inputs-outputs-container');
     container.innerHTML = `
-      ${this.renderOutputs(dataService.displays)}
-      ${this.renderInputs(dataService.inputs)}
+      ${this.renderOutputs(preset.displays)}
+      ${this.renderInputs(preset.inputs)}
       ${this.renderRecording()}
     `;
 
