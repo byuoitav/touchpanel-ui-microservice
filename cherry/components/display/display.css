@@ -58,9 +58,20 @@
     font-weight: bold;
 }
 
-.output img {
+.output svg {
     width: 60px;
     height: 60px;
+}
+
+
+.selected-io {
+    color: var(--background-color-accent) !important;
+    font-weight: bold;
+    border-style: solid;
+    border-width: 2px;
+}
+.selected-io svg {
+    fill: var(--background-color-accent) !important;
 }
 
 .inputs-container {
@@ -111,9 +122,14 @@
     padding: 5px;
 }
 
-.input img {
+.input svg {
     width: 45px;
     height: 45px;
+}
+
+.unselectable {
+    pointer-events: none;
+    opacity: 0.3;
 }
 
 .volume-control-container {

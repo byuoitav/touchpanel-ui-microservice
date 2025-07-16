@@ -1,3 +1,6 @@
+// Houses the navigation logic for transitioning between the three different components
+// (display, audioControl, cameraControl) in the main view.
+// also controls the swipe gestures for changing views
 document.addEventListener('DOMContentLoaded', () => {
     const componentView = document.querySelector('.component-container');
     const SWIPE_THRESHOLD = 200; // how far must swipe to change slide

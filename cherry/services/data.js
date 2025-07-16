@@ -148,12 +148,14 @@ class DataService extends EventTarget {
     async setCurrentPreset() {
         if (!this.panel.features.includes("preset-switch")) return;
 
-        const url = `http://${this.dividerSensor.address}:10000/divider/preset/${window.APIService.piHostname}`;
+        const url = `http://localhost:8000/divider/preset/${APIService.piHostname}`;
+        // const url = `http://${this.dividerSensor.address}:10000/divider/preset/${APIService.piHostname}`;
         try {
             const response = await fetch(url);
             if (!response.ok) throw new Error("HTTP error");
-            const presetName = await response.text();
-            const preset = this.presets.find(p => p.name.toLowercase() === presetName.toLowercase());
+            let presetName = await response.text();
+            if (typeof presetName !== 'string') presetName = String(presetName);
+            const preset = this.presets.find(p => typeof p.name === 'string' && p.name.toLowerCase() === presetName.toLowerCase());
             if (preset) {
                 console.log("setting initial preset to", preset);
                 this.panel.preset = preset;
@@ -183,8 +185,8 @@ class DataService extends EventTarget {
                     this.updateMasterState(e.Key, e.Value, e.Data);
                     break;
                 case "preset-switch":
-                    if (window.APIService.piHostname.toLowercase() === e.TargetDevice.DeviceID.toLowercase()) {
-                        const preset = this.presets.find(p => p.name.toLowercase() === e.Value.toLowercase());
+                    if (window.APIService.piHostname.toLowerCase() === e.TargetDevice.DeviceID.toLowerCase()) {
+                        const preset = this.presets.find(p => p.name.toLowerCase() === e.Value.toLowerCase());
                         if (preset) {
                             console.log("switching preset to", preset);
                             this.panel.preset = preset;
@@ -205,10 +207,10 @@ class DataService extends EventTarget {
             }
         } else if (key === "blanked") {
             const display = this.displays.find(d => d.name === deviceName);
-            if (display) display.blanked = value.toLowercase() === "true";
+            if (display) display.blanked = value.toLowerCase() === "true";
         } else if (key === "muted") {
             const audioDevice = this.audioDevices.find(a => a.name === deviceName);
-            if (audioDevice) audioDevice.muted = value.toLowercase() === "true";
+            if (audioDevice) audioDevice.muted = value.toLowerCase() === "true";
         } else if (key === "volume") {
             const audioDevice = this.audioDevices.find(a => a.name === deviceName);
             if (audioDevice) audioDevice.volume = parseInt(value, 10);
@@ -222,7 +224,7 @@ class DataService extends EventTarget {
                     p.masterVolume = parseInt(value, 10);
                     p.masterMute = false;
                 } else if (key === "master-mute") {
-                    p.masterMute = value.toLowercase() === "true";
+                    p.masterMute = value.toLowerCase() === "true";
                 }
             }
         }

@@ -7,7 +7,8 @@ document.addEventListener('DOMContentLoaded', () => {
     window.APIService.addEventListener('loaded', () => {
         window.DataService = new DataService(window.APIService);
         window.DataService.init();
-        
+        window.CommandService = new CommandService(http, window.DataService, window.APIService, null);
+
         // wait for DataService to be fully initialized (after dispatchEvent)
         window.DataService.addEventListener('loaded', async () => {
             window.VolumeSlider = VolumeSlider;
@@ -17,7 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
             await loadComponent('cameraControl', `.camera-control-component`);
         }, { once: true });
     }, { once: true });
-    
+
 });
 
 
@@ -64,4 +65,12 @@ async function loadComponent(componentName, divQuerySelector = `.component-conta
         componentContainer.classList.remove('loading'); // finally show it
     };
     document.body.appendChild(script);
+}
+
+function loadSvg(id, path) {
+    fetch(path)
+        .then(response => response.text())
+        .then(svg => {
+            document.getElementById(id).innerHTML = svg;
+        });
 }
