@@ -89,7 +89,7 @@ window.components.display = {
 
     this.renderSvgs(this.displays, this.inputs);
 
-    // expanded carousel logic
+    // carousel logic for possible overflow
     this.setupCarousel(container.querySelector('.inputs-carousel-container'), '.inputs-page');
     this.setupCarousel(container.querySelector('.outputs-carousel-container'), '.outputs-page');
 

@@ -19,8 +19,11 @@ document.addEventListener('DOMContentLoaded', () => {
         }, { once: true });
     }, { once: true });
 
+    // listener for power button
+    document.querySelector('.power-off-btn').addEventListener('click', () => {
+        window.CommandService.powerOff(window.DataService.panel.preset);
+    });
 });
-
 
 async function loadComponent(componentName, divQuerySelector = `.component-container`) {
     const htmlPath = `./components/${componentName}/${componentName}.html`;
