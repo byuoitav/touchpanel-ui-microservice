@@ -28,15 +28,12 @@ class DataService extends EventTarget {
         if (this.dividerSensor != null) {
             this.setCurrentPreset();
         }
-
-        this.update();
         console.log("DataService initialized with inputs, outputs, presets, and panels.");
         // Emit loaded event after all async setup is done
         setTimeout(() => {
             this.dispatchEvent(new CustomEvent("loaded", { detail: true }));
         }, 0);
     }
-
 
     createInputs() {
         const uiconfig = APIService.room.uiconfig;
@@ -54,8 +51,6 @@ class DataService extends EventTarget {
         }
         console.info("Inputs:", this.inputs);
     }
-
-
 
     createOutputs() {
         const status = APIService.room.status;
@@ -77,7 +72,7 @@ class DataService extends EventTarget {
                 }
             }
         }
-
+        
         // AudioDevices
         if (status.audioDevices) {
             for (const s of status.audioDevices) {
@@ -166,48 +161,61 @@ class DataService extends EventTarget {
         }
     }
 
-    update() {
-        window.SocketService.getEventListener().addEventListener("message", event => {
-            // Your Event.fromJson sets it as `detail`
-            const e = event.detail;
-            let target = (e.TargetDevice && e.TargetDevice.DeviceID || "").split("-");
-            if (!target || target.length < 3) return;
-            switch (e.Key) {
-                case "power":
-                case "input":
-                case "blanked":
-                case "muted":
-                case "volume":
-                    this.updateDeviceState(e.Key, e.Value, target[2]);
-                    break;
-                case "master-volume":
-                case "master-mute":
-                    this.updateMasterState(e.Key, e.Value, e.Data);
-                    break;
-                case "preset-switch":
-                    if (window.APIService.piHostname.toLowerCase() === e.TargetDevice.DeviceID.toLowerCase()) {
-                        const preset = this.presets.find(p => p.name.toLowerCase() === e.Value.toLowerCase());
-                        if (preset) {
-                            console.log("switching preset to", preset);
-                            this.panel.preset = preset;
-                        }
+    update(event) {
+        console.log("Received event for update:", event.key, event.value, event["target-device"].deviceID);
+        // Your Event.fromJson sets it as `detail`
+        const e = event;
+        console.log("e.key:", e.key);
+        switch (e.key) {
+            case "power":
+            case "input":
+                console.log("Updating device state:", e.key, e.value, e["target-device"].deviceID.split("-")[2]);
+                this.updateDeviceState(e.key, e.value, e["target-device"].deviceID.split("-")[2]);
+                break;
+            case "blanked":
+                this.updateDeviceState(e.key, e.value, e["target-device"].deviceID.split("-")[2]);
+
+            case "muted":
+            case "volume":
+                // this.updateDeviceState(e.key, e.value, e["target-device"].deviceID);
+                break;
+            case "master-volume":
+            case "master-mute":
+                // this.updateMasterState(e.key, e.value, e.data);
+                break;
+            case "preset-switch":
+                if (window.APIService.piHostname.toLowerCase() === e["target-device"].deviceID.toLowerCase()) {
+                    const preset = this.presets.find(p => p.name.toLowerCase() === e.value.toLowerCase());
+                    if (preset) {
+                        console.log("switching preset to", preset);
+                        this.panel.preset = preset;
                     }
-                    break;
-            }
-        });
+                }
+                break;
+        }
     }
 
-
     updateDeviceState(key, value, deviceName) {
+        console.log("Updating device state:", key, value, deviceName);
         if (key === "power" || key === "input") {
             let device = this.displays.find(d => d.name === deviceName) || this.audioDevices.find(a => a.name === deviceName);
+            console.log("Found device:", device);
             if (device) {
                 if (key === "power") device.power = value;
-                if (key === "input") device.input = Input.getInput(value, this.inputs);
+                if (key === "input") {
+                    device.input = Input.getInput(value, this.inputs);
+                    console.log(device.input);
+                    window.components.display.updateUI(device.name, device.input ? device.input.name : "BLANK");
+                }
             }
         } else if (key === "blanked") {
             const display = this.displays.find(d => d.name === deviceName);
-            if (display) display.blanked = value.toLowerCase() === "true";
+            if (display) {
+                display.blanked = value.toLowerCase() === "true";
+            }
+            if (display && display.blanked) {
+                window.components.display.updateUI(display.name, "BLANK");
+            }
         } else if (key === "muted") {
             const audioDevice = this.audioDevices.find(a => a.name === deviceName);
             if (audioDevice) audioDevice.muted = value.toLowerCase() === "true";

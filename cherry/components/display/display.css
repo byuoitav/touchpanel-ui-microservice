@@ -45,7 +45,7 @@
     background-color: var(--background-color);
     border-radius: 5px;
     width: 145px;
-    height: 125px;
+    height: 150px;
     box-sizing: border-box;
     display: flex;
     align-items: center;
@@ -56,6 +56,7 @@
     gap: 10px;
     font-size: 1.4em;
     font-weight: bold;
+    padding: 5px;
 }
 
 .output svg {
@@ -63,6 +64,9 @@
     height: 60px;
 }
 
+.current-input-name {
+    font-size: .8em;
+}
 
 .selected-io {
     color: var(--background-color-accent) !important;
@@ -170,14 +174,14 @@
     position: relative;
     overflow: hidden;
     width: 100%;
-    height: 50%;
+    height: 45%;
 }
 
 .outputs-carousel-container {
     position: relative;
     overflow: hidden;
     width: 100%;
-    height: 35%;
+    height: 40%;
 }
 
 .inputs-carousel-track {

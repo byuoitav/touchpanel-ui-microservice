@@ -55,6 +55,7 @@ async function loadComponent(componentName, divQuerySelector = `.component-conta
     const script = document.createElement('script');
     script.src = jsPath;
     script.id = 'component-script';
+    
     // call loadPage on the new component
     script.onload = () => {
         const module = window.components?.[componentName];

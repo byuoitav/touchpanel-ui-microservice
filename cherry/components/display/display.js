@@ -12,10 +12,8 @@ window.components.display = {
     this.displays = preset.displays;
     this.inputs = preset.inputs;
     this.inputsAvailableForCurrentDisplay = [];
-
     this.render();
     this.updateDisplaysAndInputs();
-
   },
 
   cleanup: function () {
@@ -31,15 +29,37 @@ window.components.display = {
       // Automatically select the first display if none are selected
       if (this.displays.length > 0 && this.selectedDisplays.length === 0) {
         this.toggleDisplay(this.displays[0]);
+        this.selectInput(this.displays[0].input ? this.displays[0].input.name : "BLANK");
       }
     }
+  },
+
+  updateUI: function (displayName, inputName) {
+    // check if display is blanked
+    const display = this.displays.find(d => d.name === displayName);
+    this.selectOutput(displayName);
+    this.selectInput(inputName);
+
+    // update the display's input text
+    const inputText = document.getElementById(`${displayName}-input`);
+    if (inputText) {
+
+      input = this.inputs.find(i => i.name === inputName);
+      console.log(input);
+      inputText.textContent = input ? input.displayname : inputName;
+    }
+
+    // update the display's icon
+    const inputIcon = this.inputs.find(i => i.name === inputName)?.icon || "blank";
+    console.log("Input icon for", inputName, "is", inputIcon);
+    loadSvg(`${displayName}-image`, `./assets/${inputIcon}.svg`);
   },
 
   toggleDisplay: function (display) {
     console.log("Toggling display:", display);
     this.selectedDisplays = [];
     this.selectedDisplays.push(display);
-    this.getinputsAvailableForCurrentDisplay(display);
+    this.getInputsForCurrentDisplay(display);
     this.selectOutput(display.name);
   },
 
@@ -52,10 +72,9 @@ window.components.display = {
     } else {
       window.CommandService.setInput(window.DataService.panel.preset, input, this.selectedDisplays);
     }
-
   },
 
-  getinputsAvailableForCurrentDisplay: function (display) {
+  getInputsForCurrentDisplay: function (display) {
     const tempInputs = [];
     console.log("Getting inputs for display:", display.name);
     console.log("inputReachability:", window.DataService.inputReachability);
@@ -66,6 +85,7 @@ window.components.display = {
       }
     }
     console.log("Inputs for display:", tempInputs);
+
     this.inputsAvailableForCurrentDisplay = tempInputs;
 
     // for all inputs, if it is not in the current display's inputs, add the unselectable class, otherwise remove it
@@ -80,10 +100,12 @@ window.components.display = {
   },
 
   render: function () {
+    const separateInputs = this.separateInputs(window.DataService.panel);
+
     const container = document.querySelector('.inputs-outputs-container');
     container.innerHTML = `
       ${this.renderOutputs(this.displays)}
-      ${this.renderInputs(this.inputs)}
+      ${this.renderInputs(separateInputs ? this.inputs : window.DataService.panel.preset.inputs)}
       ${this.renderRecording()}
     `;
 
@@ -99,7 +121,7 @@ window.components.display = {
     const VolumeSliderClass = window.VolumeSlider || (window.components && window.components.VolumeSlider);
     const MasterVolume = new VolumeSliderClass(document.querySelector('.volume-control-container'), {
       title: "Master Display Volume",
-      value: 37
+      value: 38
     });
   },
 
@@ -108,8 +130,9 @@ window.components.display = {
     outputs.forEach(output => {
       output.addEventListener('click', () => {
         console.log("Selected output:", output.id);
-        this.toggleDisplay(this.displays.find(d => d.name === output.id));
-        window.DataService.updateDeviceState("input", output.id, output.id);
+        const display = this.displays.find(d => d.name === output.id);
+        this.toggleDisplay(display);
+        this.selectInput(display.input ? display.input.name : "BLANK");
       });
     });
 
@@ -117,9 +140,10 @@ window.components.display = {
     inputs.forEach(input => {
       input.addEventListener('click', () => {
         console.log("Selected input:", input.id);
-        this.selectDisplay(input.id);
+        this.selectInput(input.id);
         this.changeInput(this.inputsAvailableForCurrentDisplay.find(i => i.name === input.id) || input);
-        window.DataService.updateDeviceState("input", input.id, input.id);
+        const currentDisplay = this.selectedDisplays[0];
+        window.DataService.updateDeviceState("input", input.id, currentDisplay.name);
       });
     });
 
@@ -128,11 +152,12 @@ window.components.display = {
       let target = (e.TargetDevice && e.TargetDevice.DeviceID || "").split("-");
       if (!target || target.length < 3) return;
     });
-
   },
 
-  selectDisplay: function (inputName) {
+  selectInput: function (inputName) {
     const inputs = document.querySelectorAll('.input');
+    const curDisplay = this.selectedDisplays[0];
+
     inputs.forEach(input => {
       input.classList.remove('selected-io');
     });
@@ -151,6 +176,11 @@ window.components.display = {
     if (selectedOutput) {
       selectedOutput.classList.add('selected-io');
     }
+  },
+
+  // determines if "displaysSeparateInputs" exists in config's features
+  separateInputs: function (panel) {
+    return panel.features.includes("displaysSeparateInputs");
   },
 
   renderSvgs: function (displays, inputs) {
@@ -177,6 +207,7 @@ window.components.display = {
         <div class="output" id="${output.name}">
         <div class="output-title">${output.displayname}</div>
         <div id="${output.name}-image" alt="${output.displayname}" class="output-image"></div>
+        <div class="current-input-name" id="${output.name}-input">${output.input ? output.input.displayname : ''}</div>
         </div>
       `).join('')}
       </div>

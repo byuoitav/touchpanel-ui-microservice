@@ -13,7 +13,7 @@ class SocketService extends EventTarget {
     this.ws.onclose = () => {
       console.log("WebSocket closed");
       this.dispatchEvent(new CustomEvent("close"));
-    };
+    }; 
 
     this.ws.onmessage = (msg) => {
       this.handleMessage(msg.data);
@@ -40,21 +40,17 @@ class SocketService extends EventTarget {
       } else {
         let data = message;
         if (typeof data === "string") {
-          try { data = JSON.parse(data); } catch (_) {}
+          try { data = JSON.parse(data); } catch (_) { }
         }
         if (typeof data === "string") {
-          try { data = JSON.parse(data); } catch (_) {}
+          try { data = JSON.parse(data); } catch (_) { }
         }
-
-        const event = Event.fromJson(data);
-        this.dispatchEvent(new CustomEvent("message", { detail: event }));
+        if (data.key && !data.key.includes("Error")) {
+          window.DataService.update(data);
+        }
       }
     } catch (err) {
       console.error("Error handling message:", err);
     }
-  }
-
-  getEventListener() {
-    return this;
   }
 }
