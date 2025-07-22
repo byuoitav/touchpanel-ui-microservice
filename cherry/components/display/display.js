@@ -21,9 +21,7 @@ window.components.display = {
   },
 
   updateDisplaysAndInputs: function () {
-    console.log("Updating displays and inputs");
     if (window.DataService.panel && window.DataService.panel.preset) {
-      console.log("Updating displays and inputs from preset");
       this.displays = [...window.DataService.panel.preset.displays.filter((d) => !d.hidden)];
 
       // Automatically select the first display if none are selected
@@ -45,18 +43,15 @@ window.components.display = {
     if (inputText) {
 
       input = this.inputs.find(i => i.name === inputName);
-      console.log(input);
       inputText.textContent = input ? input.displayname : inputName;
     }
 
     // update the display's icon
     const inputIcon = this.inputs.find(i => i.name === inputName)?.icon || "blank";
-    console.log("Input icon for", inputName, "is", inputIcon);
     loadSvg(`${displayName}-image`, `./assets/${inputIcon}.svg`);
   },
 
   toggleDisplay: function (display) {
-    console.log("Toggling display:", display);
     this.selectedDisplays = [];
     this.selectedDisplays.push(display);
     this.getInputsForCurrentDisplay(display);
@@ -66,7 +61,6 @@ window.components.display = {
   changeInput(input) {
     // TODO: if it has subInputs do the StreamModalComponent thingy
     if (input.id === "BLANK") {
-      console.log("Blanking displays:", this.selectedDisplays);
       window.CommandService.setBlank(true, this.selectedDisplays);
       return;
     } else {
@@ -76,15 +70,12 @@ window.components.display = {
 
   getInputsForCurrentDisplay: function (display) {
     const tempInputs = [];
-    console.log("Getting inputs for display:", display.name);
-    console.log("inputReachability:", window.DataService.inputReachability);
-
+  
     for (const [key, value] of Object.entries(window.DataService.inputReachability)) {
       if (value.includes(display.name)) {
         tempInputs.push(window.DataService.panel.preset.inputs.find((i) => i.name === key));
       }
     }
-    console.log("Inputs for display:", tempInputs);
 
     this.inputsAvailableForCurrentDisplay = tempInputs;
 
@@ -121,15 +112,26 @@ window.components.display = {
     const VolumeSliderClass = window.VolumeSlider || (window.components && window.components.VolumeSlider);
     const MasterVolume = new VolumeSliderClass(document.querySelector('.volume-control-container'), {
       title: "Master Display Volume",
-      value: 38
+      value: 30,
+      onChange: (val) => {
+        console.log("Master volume changed to:", val);
+        window.CommandService.setMasterVolume(val, window.DataService.panel.preset);
+      },
+      muteFunction: () => {
+        if (MasterVolume.muteButton.classList.contains("muted")) {
+          window.CommandService.setMasterMute(true, window.DataService.panel.preset);
+        } else {
+          window.CommandService.setMasterMute(false, window.DataService.panel.preset);
+        }
+      }
     });
+
   },
 
   addOutputInputListeners: function () {
     const outputs = document.querySelectorAll('.output');
     outputs.forEach(output => {
       output.addEventListener('click', () => {
-        console.log("Selected output:", output.id);
         const display = this.displays.find(d => d.name === output.id);
         this.toggleDisplay(display);
         this.selectInput(display.input ? display.input.name : "BLANK");
@@ -139,7 +141,6 @@ window.components.display = {
     const inputs = document.querySelectorAll('.input');
     inputs.forEach(input => {
       input.addEventListener('click', () => {
-        console.log("Selected input:", input.id);
         this.selectInput(input.id);
         this.changeInput(this.inputsAvailableForCurrentDisplay.find(i => i.name === input.id) || input);
         const currentDisplay = this.selectedDisplays[0];

@@ -3,6 +3,8 @@ class VolumeSlider {
         this.container = container;
         this.options = {
             title: "Master Display Volume",
+            onChange: null,
+            muteFunction: null,
             min: 0,
             max: 100,
             value: 50,
@@ -22,22 +24,43 @@ class VolumeSlider {
         });
 
         this.muteButton.addEventListener("click", () => {
-            this.slider.value = this.options.min;
-            this.updateSliderFill(this.slider.value);
-            this.updateLabelPosition();
+            this.muteButton.classList.toggle("muted");
+            if (this.muteButton.classList.contains("muted")) {
+                this.muteButton.textContent = "Unmute";
+                this.options.muteFunction();
+            } else {
+                this.muteButton.textContent = this.options.muteText;
+                this.options.muteFunction();
+            }
         });
 
         window.addEventListener("resize", () => {
             this.setSliderWidth();
             this.updateLabelPosition();
         });
+
+        this.slider.addEventListener("input", () => {
+            let val = Math.round(this.slider.value / 5) * 5;
+            this.slider.value = val;
+            this.updateSliderFill(val);
+            this.updateLabelPosition();
+        });
+
+        // Trigger callback only when user releases the slider
+        this.slider.addEventListener("change", () => {
+            const finalVal = parseInt(this.slider.value);
+            if (typeof this.options.onChange === "function") {
+                this.options.onChange(finalVal);
+            }
+        });
+
     }
 
     render() {
         let sliderCode = `
         <div class="volume-title">${this.options.title}</div>
         <div class="volume-slide-container">
-            <input type="range" min="${this.options.min}" max="${this.options.max}" value="${this.options.value}" class="volume-slider">
+            <input type="range" step="5" min="${this.options.min}" max="${this.options.max}" value="${this.options.value}" class="volume-slider">
             <div class="slider-label">${this.options.value}</div>
         </div>
         <button class="mute-button">${this.options.muteText}</button>
@@ -82,6 +105,19 @@ class VolumeSlider {
         this.label.style.top = `${offsetTop}px`;
         this.label.textContent = this.slider.value;
     }
+
+    setValue(newValue, triggerCallback = true) {
+        // Round to nearest multiple of 5
+        const roundedValue = Math.max(this.options.min, Math.min(this.options.max, Math.round(newValue / 5) * 5));
+        this.slider.value = roundedValue;
+        this.updateSliderFill(roundedValue);
+        this.updateLabelPosition();
+
+        if (triggerCallback && typeof this.options.onChange === "function") {
+            this.options.onChange(roundedValue);
+        }
+    }
+
 }
 
 

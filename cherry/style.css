@@ -189,6 +189,10 @@ body {
 
 }
 
+.muted {
+    background-color: #e74945 !important;
+    color: white;
+}
 .slider-label {
     position: absolute;
     font-size: 1.3em;

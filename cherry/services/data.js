@@ -199,12 +199,10 @@ class DataService extends EventTarget {
         console.log("Updating device state:", key, value, deviceName);
         if (key === "power" || key === "input") {
             let device = this.displays.find(d => d.name === deviceName) || this.audioDevices.find(a => a.name === deviceName);
-            console.log("Found device:", device);
             if (device) {
                 if (key === "power") device.power = value;
                 if (key === "input") {
                     device.input = Input.getInput(value, this.inputs);
-                    console.log(device.input);
                     window.components.display.updateUI(device.name, device.input ? device.input.name : "BLANK");
                 }
             }

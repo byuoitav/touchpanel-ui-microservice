@@ -54,3 +54,86 @@ class SocketService extends EventTarget {
     }
   }
 }
+
+
+// BasicRoomInfo
+class BasicRoomInfo {
+    constructor(roomID) {
+        this.BuildingID = "";
+        this.RoomID = "";
+
+        if (roomID == null || roomID === undefined) return;
+
+        const split = roomID.split("-");
+        if (split.length === 2) {
+            this.BuildingID = split[0];
+            this.RoomID = split[0] + "-" + split[1];
+        }
+    }
+}
+
+// BasicDeviceInfo
+class BasicDeviceInfo {
+    constructor(deviceID) {
+        this.BuildingID = "";
+        this.RoomID = "";
+        this.DeviceID = "";
+
+        if (deviceID == null || deviceID === undefined) return;
+
+        const split = deviceID.split("-");
+        if (split.length === 3) {
+            this.BuildingID = split[0];
+            this.RoomID = split[0] + "-" + split[1];
+            this.DeviceID = split[0] + "-" + split[1] + "-" + split[2];
+        }
+    }
+}
+
+// DateConverter
+class DateConverter {
+    static serialize(date) {
+        function pad(n) {
+            return n < 10 ? "0" + n : n;
+        }
+
+        return (
+            date.getUTCFullYear() +
+            "-" +
+            pad(date.getUTCMonth() + 1) +
+            "-" +
+            pad(date.getUTCDate()) +
+            "T" +
+            pad(date.getUTCHours()) +
+            ":" +
+            pad(date.getUTCMinutes()) +
+            ":" +
+            pad(date.getUTCSeconds()) +
+            "Z"
+        );
+    }
+
+    static deserialize(dateStr) {
+        return new Date(dateStr);
+    }
+}
+
+// Event
+class Event {
+    constructor() {
+        this.GeneratingSystem = "";
+        this.Timestamp = undefined;  // Date
+        this.EventTags = [];         // Array of strings
+        this.TargetDevice = new BasicDeviceInfo(undefined);
+        this.AffectedRoom = new BasicRoomInfo(undefined);
+        this.Key = "";
+        this.Value = "";
+        this.User = "";
+        this.Data = undefined;       // any
+    }
+
+    hasTag(tag) {
+        return this.EventTags.includes(tag);
+    }
+}
+
