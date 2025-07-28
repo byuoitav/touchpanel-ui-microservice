@@ -134,6 +134,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
+    margin-bottom: 10px;
 }
 
 .volume-slider {
@@ -148,7 +149,7 @@ body {
     /* center horizontally */
     transform: translateX(-50%) rotate(-90deg);
     /* center and rotate */
-    width: 440px;
+    width: 300px;
     /* slider length before rotation (will be vertical length) */
     height: 5px;
     /* thickness of slider track */
@@ -201,4 +202,11 @@ body {
     pointer-events: none;
     /* so it doesn't block slider interaction */
 
+}
+
+.volume-icon {
+    width: 30px;
+    height: 30px;
+    margin: 0;
+    vertical-align: middle;
 }

@@ -3,6 +3,7 @@ class VolumeSlider {
         this.container = container;
         this.options = {
             title: "Master Display Volume",
+            icon: null,
             onChange: null,
             muteFunction: null,
             min: 0,
@@ -59,6 +60,7 @@ class VolumeSlider {
     render() {
         let sliderCode = `
         <div class="volume-title">${this.options.title}</div>
+        ${this.options.icon ? `<img src="${this.options.icon}" alt="Icon" class="volume-icon">` : ''}
         <div class="volume-slide-container">
             <input type="range" step="5" min="${this.options.min}" max="${this.options.max}" value="${this.options.value}" class="volume-slider">
             <div class="slider-label">${this.options.value}</div>

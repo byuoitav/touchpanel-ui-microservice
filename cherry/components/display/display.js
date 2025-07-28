@@ -142,7 +142,10 @@ window.components.display = {
     inputs.forEach(input => {
       input.addEventListener('click', () => {
         this.selectInput(input.id);
+        console.log("Inputs Available for Current Display:", this.inputsAvailableForCurrentDisplay);
+        console.log("Selected Input:", input.id);
         this.changeInput(this.inputsAvailableForCurrentDisplay.find(i => i.name === input.id) || input);
+
         const currentDisplay = this.selectedDisplays[0];
         window.DataService.updateDeviceState("input", input.id, currentDisplay.name);
       });

@@ -1,3 +1,17 @@
+
+.audio-control-component {
+    display: flex;
+    flex-direction: row;
+}
+
+.audio-controls-container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 95%;
+    box-sizing: border-box;
+}
+
 .audio-tabs-container {
     display: flex;
     flex-direction: row;
@@ -26,17 +40,10 @@
     cursor: pointer;
 }
 
-.audio-controls-container {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    height: calc(100% - 60px);
-    box-sizing: border-box;
-}
 
 .audio-controls {
-    width: 80%;
-    height: calc(100%);
+    width: 100%;
+    height: 100%;
     box-sizing: border-box;
     display: flex;
     flex-direction: row;
@@ -46,5 +53,17 @@
     width: 20%;
     height: 100%;
     display: flex;
-    border-left: 24px solid var(--border-color);
+    border-left: 2px solid var(--background-color-accent);
+    border-radius: 300px;
+}
+
+.hidden {
+    display: none !important;
+}
+
+.audio-controls-content {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    height: 100%;
 }

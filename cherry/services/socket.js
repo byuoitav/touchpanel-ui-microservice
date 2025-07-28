@@ -47,14 +47,13 @@ class SocketService extends EventTarget {
         }
         if (data.key && !data.key.includes("Error")) {
           window.DataService.update(data);
-        }
+        } 
       }
     } catch (err) {
       console.error("Error handling message:", err);
     }
   }
 }
-
 
 // BasicRoomInfo
 class BasicRoomInfo {
