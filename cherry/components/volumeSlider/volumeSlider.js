@@ -83,7 +83,7 @@ class VolumeSlider {
     }
 
     setSliderWidth() {
-        this.slider.style.width = `${this.container.clientHeight * 0.7}px`;
+        this.slider.style.width = `${this.container.clientHeight * 0.65}px`;
     }
 
     updateSliderFill(value) {

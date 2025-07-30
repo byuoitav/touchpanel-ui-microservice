@@ -41,6 +41,7 @@
     justify-content: center;
     gap: 10px;
 }
+
 .output {
     background-color: var(--background-color);
     border-radius: 5px;

@@ -1,4 +1,3 @@
-
 .audio-control-component {
     display: flex;
     flex-direction: row;
@@ -66,4 +65,52 @@
     flex-direction: row;
     width: 100%;
     height: 100%;
+}
+
+/* Pagination Styles */
+.paginated-container {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    overflow: hidden;
+    width: 100%;
+    justify-content: center;
+}
+
+.paginated-container>* {
+    flex: 0 0 25%;
+    /* 4 sliders per row */
+    box-sizing: border-box;
+
+}
+
+.audio-controls-content-wrapper {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    align-items: center;
+}
+
+.arrow {
+    margin: 0 10px;
+    text-align: center;
+    height: 48px;
+    width: 48px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    font-size: 2em;
+    z-index: 2;
+    user-select: none;
+    color: var(--text-color, #fff);
+    padding: 0.3em 0.3em;
+    -webkit-tap-highlight-color: transparent;
+
+}
+
+/* Remove outline/focus styles when clicked/focused */
+.arrow:focus,
+.arrow:active {
+    outline: none;
+    box-shadow: none;
 }

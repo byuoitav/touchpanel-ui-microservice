@@ -8,6 +8,7 @@ window.components.audioControl = {
         this.populateMasterVolume();
         this.populateDisplayVolumes();
         this.populateMicrophoneVolumes();
+        this.initPagination();
 
         // tab listeners
         document.querySelector('.displays-tab').addEventListener('click', () => {
@@ -19,12 +20,9 @@ window.components.audioControl = {
 
         document.querySelector('.microphones-tab').addEventListener('click', () => {
             if (!document.querySelector('.microphones-tab').classList.contains('active-audio-tab')) {
-                this.toggleDisplaysMicrophones();
+                this.toggleDisplaysMicrophones()
             }
         });
-
-
-
     },
 
     cleanup: function () {
@@ -54,12 +52,10 @@ window.components.audioControl = {
     },
 
     populateDisplayVolumes: function () {
+        console.log("Preset", window.DataService.panel.preset);
         const VolumeSliderClass = window.VolumeSlider || (window.components && window.components.VolumeSlider);
-
         const displaysTab = document.querySelector('.displays-tab');
-
         const displaysAudioControls = document.querySelector('.displays-audio-controls');
-
 
         if (window.DataService.panel.preset.displays.length === 0) {
             displaysTab.classList.add('hidden');
@@ -80,7 +76,7 @@ window.components.audioControl = {
             console.log("Adding volume slider for display device:", device);
             const volumeSlider = new VolumeSliderClass(document.querySelector('.displays-audio-controls'), {
                 title: device.displayname,
-                value: 30,
+                value: device.mixlevel,
                 icon: `./assets/${device.icon}.svg` || null,
                 onChange: (val) => {
                     console.log(`Volume for ${device.displayname} changed to:`, val);
@@ -95,8 +91,11 @@ window.components.audioControl = {
                     }
                 }
             });
-
             this.sliders.push(volumeSlider);
+            if (device.muted) {
+                volumeSlider.muteButton.classList.add("muted");
+                volumeSlider.muteButton.textContent = "Unmute";
+            }
         }
     },
 
@@ -113,56 +112,119 @@ window.components.audioControl = {
 
         const VolumeSliderClass = window.VolumeSlider || (window.components && window.components.VolumeSlider);
 
-        for (const device of window.DataService.panel.preset.independentAudioDevices) {
-            console.log("Adding volume slider for microphone:", device);
+        for (const microphone of window.DataService.panel.preset.independentAudioDevices) {
+            console.log("Adding volume slider for microphone:", microphone);
+
             const volumeSlider = new VolumeSliderClass(microphonesAudioControls, {
-                title: device.displayname,
-                value: 30,
-                icon: `./assets/${device.icon}.svg` || null,
+                title: microphone.displayname,
+                value: microphone.volume,
+                icon: `./assets/${microphone.icon}.svg` || null,
                 onChange: (val) => {
-                    console.log(`Volume for ${device.displayname} changed to:`, val);
-                    window.CommandService.setMixLevel(val, device, window.DataService.panel.preset);
-                    window.CommandService.setMixMute(false, device, window.DataService.panel.preset);
+                    console.log(`Volume for ${microphone.displayname} changed to:`, val);
+                    window.CommandService.setMixLevel(val, microphone, window.DataService.panel.preset);
+                    window.CommandService.setMixMute(false, microphone, window.DataService.panel.preset);
                 },
                 muteFunction: () => {
                     if (volumeSlider.muteButton.classList.contains("muted")) {
-                        window.CommandService.setMixMute(true, device, window.DataService.panel.preset);
+                        window.CommandService.setMixMute(true, microphone, window.DataService.panel.preset);
                     } else {
-                        window.CommandService.setMixMute(false, device, window.DataService.panel.preset);
+                        window.CommandService.setMixMute(false, microphone, window.DataService.panel.preset);
                     }
                 }
             });
 
             this.sliders.push(volumeSlider);
+            if (microphone.muted) {
+                volumeSlider.muteButton.classList.add("muted");
+                volumeSlider.muteButton.textContent = "Unmute";
+            }
         }
-
     },
 
     // navigates the audio control component between displays and microphones
     toggleDisplaysMicrophones: function () {
         const displaysTab = document.querySelector('.displays-tab');
         const microphonesTab = document.querySelector('.microphones-tab');
-        if (displaysTab && microphonesTab) {
-            displaysTab.classList.toggle('active-audio-tab');
-            microphonesTab.classList.toggle('active-audio-tab');
+
+        const displaysWrapper = document.querySelector('.displays-audio-controls-wrapper');
+        const microphonesWrapper = document.querySelector('.microphones-audio-controls-wrapper');
+
+        if (!displaysTab || !microphonesTab || !displaysWrapper || !microphonesWrapper) return;
+
+        // Toggle tab highlight
+        displaysTab.classList.toggle('active-audio-tab');
+        microphonesTab.classList.toggle('active-audio-tab');
+
+        // Toggle content visibility
+        if (microphonesWrapper.classList.contains('hidden')) {
+            microphonesWrapper.classList.remove('hidden');
+            displaysWrapper.classList.add('hidden');
+        } else {
+            displaysWrapper.classList.remove('hidden');
+            microphonesWrapper.classList.add('hidden');
         }
 
-        if (document.querySelector('.microphones-audio-controls').classList.contains('hidden')) {
-            document.querySelector('.microphones-audio-controls').classList.remove('hidden');
-            document.querySelector('.displays-audio-controls').classList.add('hidden');
-            this.resetVolumeSliderHeights();
-        } else {
-            document.querySelector('.displays-audio-controls').classList.remove('hidden');
-            document.querySelector('.microphones-audio-controls').classList.add('hidden');
-            this.resetVolumeSliderHeights();
-        }
+        this.resetVolumeSliderHeights();
+    },
+
+    paginationState: {
+        displays: 0,
+        microphones: 0
+    },
+
+    initPagination: function () {
+        ['displays', 'microphones'].forEach(type => {
+            const wrapper = document.querySelector(`.${type}-audio-controls-wrapper`);
+            const container = wrapper.querySelector(`.${type}-audio-controls`);
+            const leftArrow = wrapper.querySelector('.left-arrow');
+            const rightArrow = wrapper.querySelector('.right-arrow');
+
+            const updatePagination = () => {
+                const children = Array.from(container.children);
+                const total = children.length;
+                const pageSize = 4;
+                const pageIndex = this.paginationState[type];
+
+                // Hide or show arrows
+                leftArrow.classList.toggle('hidden', pageIndex === 0);
+                rightArrow.classList.toggle('hidden', (pageIndex + 1) * pageSize >= total);
+
+                // Show only current page items
+                children.forEach((child, i) => {
+                    const start = pageIndex * pageSize;
+                    const end = start + pageSize;
+                    child.style.display = (i >= start && i < end) ? 'flex' : 'none';
+                });
+            };
+
+            leftArrow.addEventListener('click', () => {
+                if (this.paginationState[type] > 0) {
+                    this.paginationState[type]--;
+                    updatePagination();
+                    this.resetVolumeSliderHeights();
+                }
+            });
+
+            rightArrow.addEventListener('click', () => {
+                const total = container.children.length;
+                const maxPage = Math.floor((total - 1) / 4);
+                if (this.paginationState[type] < maxPage) {
+                    this.paginationState[type]++;
+                    updatePagination();
+                    this.resetVolumeSliderHeights();
+                }
+            });
+
+            // Initial visibility check
+            setTimeout(updatePagination, 100);
+        });
     },
 
     // volume sliders' appearance calculations need to be reset when switching tabs
     resetVolumeSliderHeights: function () {
         this.sliders.forEach(slider => {
-            slider.setSliderWidth();
-            slider.updateLabelPosition();
+            slider.setSliderWidth()
+            slider.updateLabelPosition()
         });
     }
 };
