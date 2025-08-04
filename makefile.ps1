@@ -68,13 +68,6 @@ function Deps {
         Invoke-Expression "cd .."
         Write-Output "Exiting \blueberry"
     }
-    if (Test-Path "cherry") {
-        Set-Location "cherry"
-        Write-Output "Entering \cherry"
-        Invoke-Expression "npm install -g @angular/cli@6.0.8"
-        Invoke-Expression "cd .."
-        Write-Output "Exiting \cherry"
-    }
 }
 
 function Build {
@@ -114,15 +107,6 @@ function Build {
     }
 
     Write-Output "*****************************************"
-    Write-Output "Building cherry"
-    if (Test-Path "cherry") {
-        Set-Location "cherry"
-        Write-Output "Entering \cherry"
-        Invoke-Expression "ng build --configuration production --aot --build-optimizer --base-href='./cherry/'"
-        Invoke-Expression "cd .."
-        Write-Output "Exiting \cherry and moving files to \dist"
-        Move-Item "$location\cherry\dist\" -Destination "$location\dist\cherry-dist\"
-    }
 }
 
 function Cleanup {

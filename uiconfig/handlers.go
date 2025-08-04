@@ -8,7 +8,7 @@ import (
 	"strings"
 
 	"github.com/byuoitav/common/status"
-	"github.com/labstack/echo"
+	"github.com/gin-gonic/gin"
 )
 
 type APIHost struct {
@@ -22,66 +22,64 @@ func init() {
 	version, _ = status.GetMicroserviceVersion()
 }
 
-func GetAPI(context echo.Context) error {
+func GetAPI(c *gin.Context) {
 	config, err := getUIConfig()
 	if err != nil {
-		return context.JSON(http.StatusInternalServerError, err.Error())
+		c.JSON(http.StatusInternalServerError, err.Error())
+		return
 	}
-
 	if len(config.Api) <= apiNum {
 		apiNum = 0
 	}
-
-	return context.JSON(http.StatusOK, &APIHost{Hostname: config.Api[apiNum]})
+	c.JSON(http.StatusOK, &APIHost{Hostname: config.Api[apiNum]})
 }
 
-func NextAPI(context echo.Context) error {
+func NextAPI(c *gin.Context) {
 	apiNum++
-
-	return GetAPI(context)
+	GetAPI(c)
 }
 
-func GetUIConfig(context echo.Context) error {
+func GetUIConfig(c *gin.Context) {
 	j, err := getUIConfig()
 	if err != nil {
-		return context.JSON(http.StatusInternalServerError, err.Error())
+		c.JSON(http.StatusInternalServerError, err.Error())
+		return
 	}
-
-	return context.JSON(http.StatusOK, j)
+	c.JSON(http.StatusOK, j)
 }
 
-func GetThemeConfig(context echo.Context) error {
+func GetThemeConfig(c *gin.Context) {
 	j, err := getThemeConfig()
 	if err != nil {
-		return context.JSON(http.StatusInternalServerError, err.Error())
+		c.JSON(http.StatusInternalServerError, err.Error())
+		return
 	}
-	return context.JSON(http.StatusOK, j)
+	c.JSON(http.StatusOK, j)
 }
 
-func GetLogo(context echo.Context) error {
+func GetLogo(c *gin.Context) {
 	j, err := getLogo()
 	if err != nil {
-		return context.JSON(http.StatusInternalServerError, err.Error())
+		c.JSON(http.StatusInternalServerError, err.Error())
+		return
 	}
-	return context.Blob(http.StatusOK, "image/svg+xml", j)
+	c.Data(http.StatusOK, "image/svg+xml", j)
 }
 
-func GetUIPath(context echo.Context) error {
+func GetUIPath(c *gin.Context) {
 	config, err := getUIConfig()
 	if err != nil {
-		return context.JSON(http.StatusInternalServerError, err.Error())
+		c.JSON(http.StatusInternalServerError, err.Error())
+		return
 	}
-
 	hostname := os.Getenv("SYSTEM_ID")
 	for _, panel := range config.Panels {
 		if strings.EqualFold(hostname, panel.Hostname) {
-			//we also want to generate a query parameter to add to the end each time it refreshes.
 			str := GenRandString(8)
 			queryString := fmt.Sprintf("?%s=%s", url.QueryEscape(version), url.QueryEscape(str))
-
-			return context.JSON(http.StatusOK, &APIHost{Hostname: panel.UIPath + queryString})
+			c.JSON(http.StatusOK, &APIHost{Hostname: panel.UIPath + queryString})
+			return
 		}
 	}
-
-	return context.JSON(http.StatusInternalServerError, &APIHost{Hostname: "/404.html"})
+	c.JSON(http.StatusInternalServerError, &APIHost{Hostname: "/404.html"})
 }

@@ -59,6 +59,7 @@ window.components.cameraControl = {
     },
 
     sendCamCommand: async function (url, code) {
+        console.log("Sending camera command to URL:", url, "with code:", code);
         const body = { url, code };
 
         return fetch("http://localhost:8888/camera-control", {
@@ -68,9 +69,10 @@ window.components.cameraControl = {
             },
             body: JSON.stringify(body)
         })
-            .then(response => {
+            .then(async response => {
                 if (!response.ok) {
-                    throw new Error(`HTTP error! Status: ${response.status}`);
+                    const responseBody = await response.json();
+                    throw new Error(`Error: ${responseBody}`);
                 }
                 return response.json();
             })
@@ -235,7 +237,7 @@ window.components.cameraControl = {
 
 
 
-        await this.sendCamCommand(camera.presets[presetIndex], this.controlKey);
+        await this.sendCamCommand(camera.presets[presetIndex].setPreset, this.controlKey);
     },
 
     addCameraControlListeners: function () {
@@ -271,9 +273,9 @@ window.components.cameraControl = {
                     this.stopCameraAction(index, stopKeyMap[dir], movementMap[dir]);
                 };
 
+                // Only trigger on click/press, not hover
                 element.addEventListener('mousedown', start);
                 element.addEventListener('mouseup', stop);
-                element.addEventListener('mouseleave', stop);
 
                 // Add touch support
                 element.addEventListener('touchstart', e => {
