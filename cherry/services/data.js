@@ -11,6 +11,7 @@ class DataService extends EventTarget {
         this.panels = [];
         this.inputReachability = new Map();
         this.dividerSensor = null;
+        this.camLink = null;
     }
 
     init() {

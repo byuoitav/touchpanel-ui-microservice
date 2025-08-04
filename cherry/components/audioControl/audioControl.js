@@ -73,7 +73,6 @@ window.components.audioControl = {
         }
 
         for (const device of audioDevices) {
-            console.log("Adding volume slider for display device:", device);
             const volumeSlider = new VolumeSliderClass(document.querySelector('.displays-audio-controls'), {
                 title: device.displayname,
                 value: device.mixlevel,
@@ -113,8 +112,6 @@ window.components.audioControl = {
         const VolumeSliderClass = window.VolumeSlider || (window.components && window.components.VolumeSlider);
 
         for (const microphone of window.DataService.panel.preset.independentAudioDevices) {
-            console.log("Adding volume slider for microphone:", microphone);
-
             const volumeSlider = new VolumeSliderClass(microphonesAudioControls, {
                 title: microphone.displayname,
                 value: microphone.volume,

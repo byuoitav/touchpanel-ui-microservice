@@ -138,7 +138,7 @@ func HandleCameraControl(ctx echo.Context) error {
 	// Create the GET request to the specified URL
 	req, err := http.NewRequest(http.MethodGet, request.URL, nil)
 	if err != nil {
-		return ctx.JSON(http.StatusInternalServerError, "Error creating GET request")
+		return ctx.JSON(http.StatusInternalServerError, "Error creating GET request to camera")
 	}
 
 	// Add the cookie to the request
@@ -151,7 +151,7 @@ func HandleCameraControl(ctx echo.Context) error {
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
-		return ctx.JSON(http.StatusInternalServerError, "Error making GET request")
+		return ctx.JSON(http.StatusInternalServerError, "Error doing GET request to camera")
 	}
 	defer resp.Body.Close()
 

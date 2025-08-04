@@ -1,6 +1,8 @@
 class ThemeService {
   constructor() {
     this.localUrl = "http://localhost:8888";
+    this.camLink = null;
+    this.phoneNumber = null;
   }
 
   async getLogo() {
@@ -72,9 +74,9 @@ class ThemeService {
           document.documentElement.style.setProperty('--show-cam-text', 'none');
         }
 
-        // Set camera link and phone number on global APIService
-        APIService.camLink = data['cam-link'];
-        APIService.phoneNumber = data['phone-number'];
+        // Set camera link and phone number
+        this.camLink = data['cam-link'];
+        this.phoneNumber = data['phone-number'];
 
       } else {
         console.log("Error: No theme configuration received. Using default values.");
