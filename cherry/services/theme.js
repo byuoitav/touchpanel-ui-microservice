@@ -3,7 +3,8 @@ class ThemeService {
     this.localUrl = "http://localhost:8888";
     this.camLink = null;
     this.phoneNumber = null;
-  }
+    this.logo = null;
+      }
 
   async getLogo() {
     try {
@@ -14,7 +15,7 @@ class ThemeService {
         }
       });
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        throw new Error(`HTTP status error: ${response.status}`);
       }
       return await response.text();
     } catch (error) {
@@ -27,7 +28,7 @@ class ThemeService {
     try {
       const response = await fetch(`${this.localUrl}/themeconfig`);
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        throw new Error(`HTTP status error: ${response.status}`);
       }
       return await response.json();
     } catch (error) {
@@ -77,6 +78,9 @@ class ThemeService {
         // Set camera link and phone number
         this.camLink = data['cam-link'];
         this.phoneNumber = data['phone-number'];
+
+        // get logo
+        this.logo = await this.getLogo();          
 
       } else {
         console.log("Error: No theme configuration received. Using default values.");

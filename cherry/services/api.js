@@ -21,13 +21,12 @@ class APIService extends EventTarget {
         APIService.options = null;
     }
 
-    constructor(themeService) {
+    constructor() {
         super();
-        this.init(themeService);
+        this.init();
     }
 
-    async init(themeService) {
-        await themeService.fetchTheme();
+    async init() {
         console.log("OPTIONS: ", APIService.options);
         await this.setupHostname();
     }

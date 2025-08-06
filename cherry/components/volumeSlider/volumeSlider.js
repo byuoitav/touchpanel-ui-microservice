@@ -10,6 +10,7 @@ class VolumeSlider {
             max: 100,
             value: 50,
             muteText: "Mute",
+            id: null,
             ...options
         };
 
@@ -65,7 +66,7 @@ class VolumeSlider {
             <input type="range" step="5" min="${this.options.min}" max="${this.options.max}" value="${this.options.value}" class="volume-slider">
             <div class="slider-label">${this.options.value}</div>
         </div>
-        <button class="mute-button">${this.options.muteText}</button>
+        <button class="mute-button" id="${this.options.id}-mute">${this.options.muteText}</button>
     `;
         // append to container
         this.sliderHTML = document.createElement('div');

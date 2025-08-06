@@ -21,6 +21,7 @@ import (
 	"github.com/byuoitav/touchpanel-ui-microservice/handlers"
 	"github.com/byuoitav/touchpanel-ui-microservice/socket"
 	"github.com/byuoitav/touchpanel-ui-microservice/uiconfig"
+	"github.com/gin-contrib/cors"
 )
 
 var (
@@ -58,6 +59,20 @@ func main() {
 
 	port := ":8888"
 	router := gin.Default()
+
+	// TODO: Remove CORS later
+	// CORS configuration
+	corsConfig := cors.Config{
+		AllowOrigins:     []string{"*"}, // Allow all origins, or specify allowed origins
+		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowHeaders:     []string{"Origin", "Content-Type", "Accept", "Authorization"},
+		ExposeHeaders:    []string{"Content-Length"},
+		AllowCredentials: true,
+		MaxAge:           12 * time.Hour,
+	}
+
+	// Apply the CORS middleware
+	router.Use(cors.New(corsConfig))
 
 	// Static file serving for blueberry
 	router.Use(static.Serve("/blueberry", static.LocalFile("blueberry-dist", true)))
@@ -116,14 +131,14 @@ func main() {
 	router.GET("/blueberry/db/:attachment", getCouchAttachment("blueberry"))
 	// router.GET("/cherry/db/:attachment", getCouchAttachment("cherry"))
 
-	router.StaticFS("/vanilla-cherry", http.FS(subFS))
+	router.StaticFS("/cherry", http.FS(subFS))
 
 	// Static file serving for root and 404
 	router.StaticFile("/", "redirect.html")
 	router.NoRoute(func(c *gin.Context) {
 		if c.Request.URL.Path == "/" {
-			c.Redirect(http.StatusFound, "/vanilla-cherry/")
-		} else if len(c.Request.URL.Path) >= 5 && c.Request.URL.Path[:5] == "/vanilla-cherry/" {
+			c.Redirect(http.StatusFound, "/cherry/")
+		} else if len(c.Request.URL.Path) >= 5 && c.Request.URL.Path[:5] == "/cherry/" {
 			c.FileFromFS("index.html", http.FS(subFS))
 		} else {
 			c.String(http.StatusNotFound, "Not found")

@@ -1,28 +1,57 @@
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
     window.themeService = new ThemeService();
-    window.SocketService = new SocketService();
-    window.APIService = new APIService(window.themeService);
+    await window.themeService.fetchTheme();
 
-    // Wait for APIService to finish loading configs before creating DataService
-    window.APIService.addEventListener('loaded', () => {
-        window.DataService = new DataService(window.APIService);
-        window.DataService.init();
-        window.CommandService = new CommandService(http, window.DataService, window.APIService, null);
+    await loadComponent('startingScreen', '.starting-screen')
 
-        // wait for DataService to be fully initialized (after dispatchEvent)
-        window.DataService.addEventListener('loaded', async () => {
-            window.VolumeSlider = VolumeSlider;
-            currentComponent = 'display';
-            await loadComponent(currentComponent, `.display-component`);
-            await loadComponent('audioControl', `.audio-control-component`);
-            await loadComponent('cameraControl', `.camera-control-component`);
+    // when user clicks on starting screen, it emits 'starting' event
+    window.components.startingScreen.addEventListener('starting', async () => {
+        console.log("Starting screen clicked, loading components...");
+        window.themeService = new ThemeService();
+        window.SocketService = new SocketService();
+        window.APIService = new APIService();
+
+
+        // Wait for APIService to finish loading configs before creating DataService
+        window.APIService.addEventListener('loaded', () => {
+            window.DataService = new DataService(window.APIService);
+            window.DataService.init();
+            window.CommandService = new CommandService(http, window.DataService, window.APIService, null);
+
+            // wait for DataService to be fully initialized (after dispatchEvent)
+            window.DataService.addEventListener('loaded', async () => {
+                window.VolumeSlider = VolumeSlider;
+                currentComponent = 'display';
+                await loadComponent(currentComponent, `.display-component`);
+                await loadComponent('audioControl', `.audio-control-component`);
+                await loadComponent('cameraControl', `.camera-control-component`);
+               
+                //remove the starting screen
+                const startingScreen = document.querySelector('.starting-screen');
+                startingScreen.classList.add('hidden');
+            }, { once: true });
         }, { once: true });
-    }, { once: true });
 
-    // listener for power button
-    document.querySelector('.power-off-btn').addEventListener('click', () => {
-        window.CommandService.powerOff(window.DataService.panel.preset);
+        // listener for power button
+        document.querySelector('.power-off-btn').addEventListener('click', async () => {
+            // show the starting screen with power off message
+            const startingScreenMessage = document.querySelector('.starting-screen-message');
+            startingScreenMessage.innerHTML = `
+            <div class="loading-circle"></div>
+            Powering Off...`;
+            const startingScreen = document.querySelector('.starting-screen');
+            startingScreen.classList.remove('hidden');
+
+            // call power off command
+            await window.CommandService.powerOff(window.DataService.panel.preset);
+            
+            // return starting screen to initial state
+            startingScreenMessage.innerHTML = `Touch Anywhere to Start`;
+        });
+
+
     });
+
 });
 
 async function loadComponent(componentName, divQuerySelector = `.component-container`) {
@@ -55,20 +84,24 @@ async function loadComponent(componentName, divQuerySelector = `.component-conta
     const script = document.createElement('script');
     script.src = jsPath;
     script.id = 'component-script';
-    
+
     // call loadPage on the new component
-    script.onload = () => {
-        const module = window.components?.[componentName];
-        if (module?.loadPage) {
-            module.loadPage();
-            if (divQuerySelector === `.component-container`) {
-                // If it's the main component, track the current component
-                currentComponent = componentName;
+    await new Promise((resolve, reject) => {
+        script.onload = () => {
+            const module = window.components?.[componentName];
+            if (module?.loadPage) {
+                module.loadPage();
+                if (divQuerySelector === `.component-container`) {
+                    // If it's the main component, track the current component
+                    currentComponent = componentName;
+                }
             }
-        }
-        componentContainer.classList.remove('loading'); // finally show it
-    };
-    document.body.appendChild(script);
+            componentContainer.classList.remove('loading'); // finally show it
+            resolve();
+        };
+        script.onerror = reject;
+        document.body.appendChild(script);
+    });
 }
 
 function loadSvg(id, path) {

@@ -17,7 +17,6 @@ window.components.display = {
   },
 
   cleanup: function () {
-    // optional cleanup
   },
 
   updateDisplaysAndInputs: function () {
@@ -123,7 +122,8 @@ window.components.display = {
         } else {
           window.CommandService.setMasterMute(false, window.DataService.panel.preset);
         }
-      }
+      },
+      id: "master-volume-slider"
     });
 
   },

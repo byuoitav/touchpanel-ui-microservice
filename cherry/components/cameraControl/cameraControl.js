@@ -85,9 +85,9 @@ window.components.cameraControl = {
     updateCode: async function () {
         await this.getControlKey();
         const codeElements = document.querySelectorAll('.camera-code');
-        console.log("Control Key Received:", this.controlKey);
+        // console.log("Control Key Received:", this.controlKey);
         if (codeElements) {
-            console.log("Updating camera code elements with control key:", this.controlKey);
+            // console.log("Updating camera code elements with control key:", this.controlKey);
             codeElements.forEach(codeElement => {
                 codeElement.innerHTML = `
                     <p class="camera-code"> For room control, go to ${window.themeService.camLink} </p>
