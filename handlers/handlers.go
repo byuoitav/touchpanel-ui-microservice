@@ -90,13 +90,15 @@ func GetControlKey(c *gin.Context) {
 	room := c.Param("room")
 	group := c.Param("controlGroup")
 	keyServiceAddr := os.Getenv("KEY_SERVICE_ADDR")
-
+	fmt.Println("Key service address:", keyServiceAddr)
+	fmt.Println("Room:", room, "Group:", group)
 	if keyServiceAddr == "" {
 		c.Status(http.StatusInternalServerError)
 		return
 	}
 
 	url := fmt.Sprintf("https://%s/%s %s/getControlKey", keyServiceAddr, room, group)
+	fmt.Println("Requesting control key from:", url)
 	ctx, cancel := context.WithTimeout(c.Request.Context(), 3*time.Second)
 	defer cancel()
 

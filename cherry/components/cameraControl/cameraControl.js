@@ -17,14 +17,14 @@ window.components.cameraControl = {
 
         console.log(this.cameraMap);
         // Get control key
-        await this.updateCode();
+        await this.updateControlKey();
 
         this.addCameraControlListeners();
         this.addPresetListeners();
 
         // reload code every minute
         setInterval(async () => {
-            await this.updateCode();
+            await this.updateControlKey();
         }, 1 * 60 * 1000);
     },
 
@@ -38,14 +38,14 @@ window.components.cameraControl = {
     },
 
     getControlKey: async function () {
-        this.controlKey = "756637";
-        return; // for testing purposes, return a static key
+        // this.controlKey = "756637";
+        // return; // TODO: for testing purposes, return a static key
         // const url = `${window.location.protocol}//${window.location.host}/control-key/${this.room}/${this.preset.name}`;
-        const url = "http://itb-1106-cp1.byu.edu:8888/control-key/ITB-1106/ITB%201106";
+        const url = "http://localhost:8888/control-key/ITB-1106/ITB%201106";
         try {
             const response = await fetch(url);
             if (!response.ok) {
-                throw new Error(`HTTP error! Status: ${response.status}`);
+                throw new Error(`HTTP Status Error: ${response.status}`);
             }
             const data = await response.json();
             this.controlKey = data["ControlKey"];
@@ -82,7 +82,7 @@ window.components.cameraControl = {
             });
     },
 
-    updateCode: async function () {
+    updateControlKey: async function () {
         await this.getControlKey();
         const codeElements = document.querySelectorAll('.camera-code');
         // console.log("Control Key Received:", this.controlKey);
@@ -234,8 +234,6 @@ window.components.cameraControl = {
         const [cameraIndex, presetIndex] = presetId.split('-').slice(1).map(Number);
         const camera = this.cameraMap.get(cameraIndex);
         if (!camera) return;
-
-
 
         await this.sendCamCommand(camera.presets[presetIndex].setPreset, this.controlKey);
     },
@@ -407,7 +405,4 @@ window.components.cameraControl = {
             this.sendCamCommand(camera.zoomStop, this.controlKey);
         }
     },
-
-
-
 }

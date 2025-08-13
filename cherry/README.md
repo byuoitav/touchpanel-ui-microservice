@@ -53,3 +53,11 @@ Just a bunch of objects for storing the various device types and their propertie
 
 ### ThemeService
 The `ThemeService` gets the theme from couch and applies it to the UI.
+
+## Startup Process
+The start process consists of the following steps:
+1. The ThemeService is initialized to get the theme from couch and apply it to the UI.
+2. The start screen component appears
+3. When the start screen is clicked, the ThemeService is reloaded, the SocketService starts, and the APIService is initialized.
+4. The APIService retrieves the UIConfig and other necessary data, when it is done, the CommandService and the DataService start to initialize
+5. The UI controls appear ready for user interaction

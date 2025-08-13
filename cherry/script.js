@@ -6,8 +6,10 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // when user clicks on starting screen, it emits 'starting' event
     window.components.startingScreen.addEventListener('starting', async () => {
-        console.log("Starting screen clicked, loading components...");
-        window.themeService = new ThemeService();
+        console.log("Starting screen clicked, powering on...");
+
+        await window.themeService.fetchTheme();
+
         window.SocketService = new SocketService();
         window.APIService = new APIService();
 
@@ -20,12 +22,14 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             // wait for DataService to be fully initialized (after dispatchEvent)
             window.DataService.addEventListener('loaded', async () => {
+                await window.CommandService.powerOnDefault(window.DataService.panel.preset);
                 window.VolumeSlider = VolumeSlider;
                 currentComponent = 'display';
                 await loadComponent(currentComponent, `.display-component`);
                 await loadComponent('audioControl', `.audio-control-component`);
                 await loadComponent('cameraControl', `.camera-control-component`);
-               
+
+
                 //remove the starting screen
                 const startingScreen = document.querySelector('.starting-screen');
                 startingScreen.classList.add('hidden');
@@ -34,6 +38,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         // listener for power button
         document.querySelector('.power-off-btn').addEventListener('click', async () => {
+            window.resetViewPosition(); // reset view position to display component
             // show the starting screen with power off message
             const startingScreenMessage = document.querySelector('.starting-screen-message');
             startingScreenMessage.innerHTML = `
@@ -44,7 +49,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             // call power off command
             await window.CommandService.powerOff(window.DataService.panel.preset);
-            
+
             // return starting screen to initial state
             startingScreenMessage.innerHTML = `Touch Anywhere to Start`;
         });

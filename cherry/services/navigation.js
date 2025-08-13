@@ -64,7 +64,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 isScrolling = true; // mostly vertical, ignore horizontal swipe
                 return;
             } else {
-                isScrolling = false; // mostly horizontal
+                isScrolling = false; // mostly horizontal                
             }
         }
 
@@ -104,4 +104,13 @@ document.addEventListener('DOMContentLoaded', () => {
     componentView.addEventListener('touchstart', e => touchStart(e.touches[0].clientX, e.touches[0].clientY));
     componentView.addEventListener('touchmove', e => touchMove(e.touches[0].clientX, e.touches[0].clientY));
     componentView.addEventListener('touchend', e => touchEnd(e.changedTouches[0].clientX));
+
+    function resetViewPosition() {
+        currentView = 0;
+        setViewPosition();
+        updateActiveTab(currentView);
+    }
+
+    // Export the function for use in other parts of the app
+    window.resetViewPosition = resetViewPosition;
 });

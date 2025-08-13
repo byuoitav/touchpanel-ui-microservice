@@ -73,7 +73,6 @@ class CommandService {
     };
 
     const changeInputReq = new CommandRequest({ method: "PUT", url: APIService.apiurl, body }, 0);
-    // const changeInputReq = new CommandRequest({ method: "PUT", url: "http://itb-1106-cp1.byu.edu:8000/buildings/ITB/rooms/1106", body }, 0);
     const requests = [changeInputReq];
 
     const commandsToUse = preset.displays.some(
@@ -264,6 +263,7 @@ class CommandService {
   }
 
   async powerOnDefault(preset) {
+    console.log("Powering on default preset:", preset.name);
     const body = {
       displays: preset.displays.map(d => ({
         name: d.name,
@@ -394,6 +394,7 @@ class CommandService {
         const result = await this.withTimeout(this.http.request(req.req), timeOut);
         return true;
       } catch (err) {
+        console.error("Error executing request:", req.req, err);
         this.handleError("executeRequest", err);
         maxTries--;
         if (maxTries > 0) {
