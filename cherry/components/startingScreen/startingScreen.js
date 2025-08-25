@@ -14,21 +14,15 @@ class StartingScreen extends EventTarget {
     addLogo() {
         const logoContainer = document.querySelector('.logo-container');
         if (logoContainer && window.themeService.logo) {
-            // Remove any existing logo
+            // Clear existing content
             logoContainer.innerHTML = '';
 
-            // If logo is an SVG string, insert it as HTML
-            if (window.themeService.logo.trim().startsWith('<svg')) {
-                logoContainer.innerHTML = window.themeService.logo;
-            } else {
-                // Fallback: treat as image URL
-                const img = document.createElement('img');
-                img.src = window.themeService.logo;
-                img.alt = "Logo";
-                logoContainer.appendChild(img);
-            }
+            // Insert SVG directly
+            logoContainer.innerHTML = window.themeService.logo.trim();
         }
     }
+
+
 
     addTouchListener() {
         const container = document.querySelector('.starting-screen-container');

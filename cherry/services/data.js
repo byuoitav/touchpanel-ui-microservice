@@ -73,7 +73,7 @@ class DataService extends EventTarget {
                 }
             }
         }
-        
+
         // AudioDevices
         if (status.audioDevices) {
             for (const s of status.audioDevices) {
@@ -204,7 +204,8 @@ class DataService extends EventTarget {
                 if (key === "power") device.power = value;
                 if (key === "input") {
                     device.input = Input.getInput(value, this.inputs);
-                    window.components.display.updateUI(device.name, device.input ? device.input.name : "BLANK");
+                    console.log("Updated device input:", device.input);
+                    window.components.display.updateUI(device.name, device.input ? device.input.displayname : "BLANK", device.input ? device.input.icon : "blank");
                 }
             }
         } else if (key === "blanked") {

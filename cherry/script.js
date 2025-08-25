@@ -29,7 +29,6 @@ document.addEventListener('DOMContentLoaded', async () => {
                 await loadComponent('audioControl', `.audio-control-component`);
                 await loadComponent('cameraControl', `.camera-control-component`);
 
-
                 //remove the starting screen
                 const startingScreen = document.querySelector('.starting-screen');
                 startingScreen.classList.add('hidden');

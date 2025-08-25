@@ -31,22 +31,21 @@ window.components.display = {
     }
   },
 
-  updateUI: function (displayName, inputName) {
+  updateUI: function (displayName, inputDisplayName, inputIcon) {
     // check if display is blanked
     const display = this.displays.find(d => d.name === displayName);
     this.selectOutput(displayName);
-    this.selectInput(inputName);
 
     // update the display's input text
     const inputText = document.getElementById(`${displayName}-input`);
     if (inputText) {
-
-      input = this.inputs.find(i => i.name === inputName);
-      inputText.textContent = input ? input.displayname : inputName;
+      inputText.textContent = inputDisplayName;
+      // input = this.inputs.find(i => i.name === inputName);
+      // inputText.textContent = input ? input.displayname : inputName;
     }
 
     // update the display's icon
-    const inputIcon = this.inputs.find(i => i.name === inputName)?.icon || "blank";
+    console.log("Input icon:", inputIcon);
     loadSvg(`${displayName}-image`, `./assets/${inputIcon}.svg`);
   },
 
@@ -69,10 +68,13 @@ window.components.display = {
 
   getInputsForCurrentDisplay: function (display) {
     const tempInputs = [];
-  
+
     for (const [key, value] of Object.entries(window.DataService.inputReachability)) {
       if (value.includes(display.name)) {
-        tempInputs.push(window.DataService.panel.preset.inputs.find((i) => i.name === key));
+        tempInput = window.DataService.panel.preset.inputs.find((i) => i.name === key);
+        if (tempInput) {
+          tempInputs.push(tempInput);
+        }
       }
     }
 
@@ -96,8 +98,10 @@ window.components.display = {
     container.innerHTML = `
       ${this.renderOutputs(this.displays)}
       ${this.renderInputs(separateInputs ? this.inputs : window.DataService.panel.preset.inputs)}
-      ${this.renderRecording()}
+
     `;
+    // add this above to put recording back in
+    // ${this.renderRecording()}
 
     this.renderSvgs(this.displays, this.inputs);
 
@@ -141,13 +145,33 @@ window.components.display = {
     const inputs = document.querySelectorAll('.input');
     inputs.forEach(input => {
       input.addEventListener('click', () => {
-        this.selectInput(input.id);
-        console.log("Inputs Available for Current Display:", this.inputsAvailableForCurrentDisplay);
-        console.log("Selected Input:", input.id);
-        this.changeInput(this.inputsAvailableForCurrentDisplay.find(i => i.name === input.id) || input);
 
-        const currentDisplay = this.selectedDisplays[0];
-        window.DataService.updateDeviceState("input", input.id, currentDisplay.name);
+        console.log("Inputs Available for Current Display:", this.inputsAvailableForCurrentDisplay);
+        console.log("Selected Input:", input);
+
+        selectedInput = this.inputsAvailableForCurrentDisplay.find(i => i.name === input.id) || input;
+
+        // if it has subInputs, bring up the modal and let them choose a stream source
+        if (selectedInput.subInputs && selectedInput.subInputs.length > 0) {
+          window.StreamInputsModal = new StreamInputsModal();
+          window.StreamInputsModal.open(selectedInput.subInputs, selected => {
+            this.changeInput(selected);
+            this.selectInput(input.id);
+
+            const currentDisplay = this.selectedDisplays[0];
+            window.DataService.updateDeviceState("input", selected.name, currentDisplay.name);
+          });
+        }
+        // if it doesn't have subInputs, just change the input normally
+        else {
+          this.selectInput(input.id);
+
+          this.changeInput(selectedInput);
+          const currentDisplay = this.selectedDisplays[0];
+          window.DataService.updateDeviceState("input", input.id, currentDisplay.name);
+        }
+
+
       });
     });
 
@@ -160,7 +184,6 @@ window.components.display = {
 
   selectInput: function (inputName) {
     const inputs = document.querySelectorAll('.input');
-    const curDisplay = this.selectedDisplays[0];
 
     inputs.forEach(input => {
       input.classList.remove('selected-io');

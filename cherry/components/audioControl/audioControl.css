@@ -75,6 +75,7 @@
     overflow: hidden;
     width: 100%;
     justify-content: center;
+    padding-top: 2px; /* stops it from slightly bumping the tab headers */
 }
 
 .paginated-container>* {
