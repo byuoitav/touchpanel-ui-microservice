@@ -57,7 +57,6 @@ window.components.display = {
   },
 
   changeInput(input) {
-    // TODO: if it has subInputs do the StreamModalComponent thingy
     if (input.id === "BLANK") {
       window.CommandService.setBlank(true, this.selectedDisplays);
       return;

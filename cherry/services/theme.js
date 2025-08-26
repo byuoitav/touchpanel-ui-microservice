@@ -1,6 +1,6 @@
 class ThemeService {
   constructor() {
-    this.localUrl = "http://localhost:8888";
+    this.localUrl = window.location.protocol + "//" + window.location.host;
     this.camLink = null;
     this.phoneNumber = null;
     this.logo = null;

@@ -10,7 +10,7 @@ class APIService extends EventTarget {
 
     static room = new Room();
     static apihost = null;
-    static localurl = "http://localhost:8888";
+    static localurl = window.location.protocol + "//" + window.location.host;
     static options = {
         headers: { "Content-Type": "application/json" }
     };
@@ -78,7 +78,7 @@ class APIService extends EventTarget {
             if (!data.hostname.includes("localhost")) {
                 APIService.apihost = "http://" + data.hostname;
             }
-            APIService.apiurl = `http://localhost:8000/buildings/${APIService.building}/rooms/${APIService.roomName}`;
+            APIService.apiurl = APIService.apihost + `:8000/buildings/${APIService.building}/rooms/${APIService.roomName}`;
             console.info("API url:", APIService.apiurl);
 
             if (!next) {
@@ -94,6 +94,7 @@ class APIService extends EventTarget {
         try {
             const data = await this.getJSON(APIService.localurl + "/uiconfig");
             APIService.room.uiconfig = new UIConfiguration();
+            window.room = data._id;
             Object.assign(APIService.room.uiconfig, data);
             console.info("UI Configuration:", APIService.room.uiconfig);
 

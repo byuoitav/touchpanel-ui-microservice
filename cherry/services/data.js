@@ -146,8 +146,7 @@ class DataService extends EventTarget {
     async setCurrentPreset() {
         if (!this.panel.features.includes("preset-switch")) return;
 
-        const url = `http://localhost:8000/divider/preset/${APIService.piHostname}`;
-        // const url = `http://${this.dividerSensor.address}:10000/divider/preset/${APIService.piHostname}`;
+        const url = `${window.location.protocol}//${window.location.host}:8000/divider/preset/${APIService.piHostname}`;
         try {
             const response = await fetch(url);
             if (!response.ok) throw new Error("HTTP error");

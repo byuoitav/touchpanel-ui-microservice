@@ -37,10 +37,9 @@ window.components.cameraControl = {
     },
 
     getControlKey: async function () {
-        // this.controlKey = "756637";
-        // return; // TODO: for testing purposes, return a static key
-        // const url = `${window.location.protocol}//${window.location.host}/control-key/${this.room}/${this.preset.name}`;
-        const url = "http://localhost:8888/control-key/ITB-1106/ITB%201106";
+        const presetName = encodeURIComponent(window.DataService.panel.preset.name);
+        const url = window.location.protocol + "//" + window.location.host + "/control-key/" + window.room + "/" + presetName;
+        console.log(url);
         try {
             const response = await fetch(url);
             if (!response.ok) {
@@ -61,7 +60,7 @@ window.components.cameraControl = {
         console.log("Sending camera command to URL:", url, "with code:", code);
         const body = { url, code };
 
-        return fetch("http://localhost:8888/camera-control", {
+        return fetch(window.location.protocol + "//" + window.location.host + "/camera-control", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
