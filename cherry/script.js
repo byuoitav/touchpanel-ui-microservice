@@ -47,6 +47,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 //remove the starting screen
                 const startingScreen = document.querySelector('.starting-screen');
                 document.dispatchEvent(new window.Event("UILoaded"));
+                document.querySelector('.header').style.display = 'flex';
                 startingScreen.classList.add('hidden');
             }, { once: true });
         }, { once: true });

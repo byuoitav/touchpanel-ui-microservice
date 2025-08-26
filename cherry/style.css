@@ -25,9 +25,8 @@ body {
 .header {
     background-color: var(--top-bar-color);
     height: 60px;
-    display: flex;
+    display: none; /*will change to flex when loaded  by script.js*/
     flex-direction: row;
-    ;
     align-items: center;
     justify-content: space-between;
     width: 100%;

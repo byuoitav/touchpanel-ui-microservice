@@ -60,4 +60,5 @@ The start process consists of the following steps:
 2. The start screen component appears
 3. When the start screen is clicked, the ThemeService is reloaded, the SocketService starts, and the APIService is initialized.
 4. The APIService retrieves the UIConfig and other necessary data, when it is done, the CommandService and the DataService start to initialize
-5. The UI controls appear ready for user interaction
+5. The DataService checks if there is a divider sensor and retrieves the current preset. The preset is used to determine what appears on the UI.
+6. The UI controls appear ready for user interaction
