@@ -5,7 +5,6 @@ window.components.cameraControl = {
     controlKey: "",
     movementPromises: new Map(), // cameraIndex -> { [direction]: Promise }
 
-
     loadPage: async function () {
         this.cameraMap.clear();
         this.renderCameras();

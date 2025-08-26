@@ -26,9 +26,11 @@ class DataService extends EventTarget {
         this.dividerSensor = APIService.room.config.devices.find(d =>
             deviceHasRole(d, "DividerSensor")
         );
+
         if (this.dividerSensor != null) {
             this.setCurrentPreset();
         }
+
         console.log("DataService initialized with inputs, outputs, presets, and panels.");
         // Emit loaded event after all async setup is done
         setTimeout(() => {

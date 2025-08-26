@@ -27,10 +27,26 @@ document.addEventListener('DOMContentLoaded', async () => {
                 currentComponent = 'display';
                 await loadComponent(currentComponent, `.display-component`);
                 await loadComponent('audioControl', `.audio-control-component`);
-                await loadComponent('cameraControl', `.camera-control-component`);
+                isCameras = window.DataService.panel.preset.cameras.length > 0;
+                if (isCameras) {
+                    await loadComponent('cameraControl', `.camera-control-component`);
+                } else {
+                    console.log("No cameras in preset, skipping camera component load");
+                    // hide the camera-control-component and camera tab
+                    const cameraControlComponent = document.querySelector('.camera-control-component');
+                    if (cameraControlComponent) {
+                        cameraControlComponent.classList.add('hidden');
+                    }
+                    const cameraTab = document.querySelector('.camera-control-tab');
+                    if (cameraTab) {
+                        cameraTab.classList.add('hidden');
+                        cameraTab.classList.remove('tab');
+                    }
+                }
 
                 //remove the starting screen
                 const startingScreen = document.querySelector('.starting-screen');
+                document.dispatchEvent(new window.Event("UILoaded"));
                 startingScreen.classList.add('hidden');
             }, { once: true });
         }, { once: true });
@@ -52,10 +68,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             // return starting screen to initial state
             startingScreenMessage.innerHTML = `Touch Anywhere to Start`;
         });
-
-
     });
-
 });
 
 async function loadComponent(componentName, divQuerySelector = `.component-container`) {

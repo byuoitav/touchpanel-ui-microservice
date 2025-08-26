@@ -34,12 +34,12 @@ class StreamInputsModal {
         color: var(--text-color);
         box-shadow: 0 4px 10px rgba(0,0,0,0.2);
 
-        display: flex;               /* NEW */
-        flex-direction: column;      /* NEW */
+        display: flex;              
+        flex-direction: column;      
       }
 
       .stream-options {
-        flex: 1;                     /* make this section fill remaining space */
+        flex: 1;                     
         display: flex;
         flex-direction: column;
         gap: 10px;

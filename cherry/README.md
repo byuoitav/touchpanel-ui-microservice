@@ -11,7 +11,7 @@ window
 ├── DataService: DataService {}
 ├── SocketService: {}
 ├── VolumeSlider: class VolumeSlider
-├── -
+├── StreamInputsModal: class StreamInputsModal
 └── components
     ├── audioControl
     ├── cameraControl

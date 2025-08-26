@@ -1,7 +1,7 @@
 // Houses the navigation logic for transitioning between the three different components
 // (display, audioControl, cameraControl) in the main view.
 // also controls the swipe gestures for changing views
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener("UILoaded", () => {
     const componentView = document.querySelector('.component-container');
     const SWIPE_THRESHOLD = 200; // how far must swipe to change slide
     const SLOPE_THRESHOLD = 0.5; // ratio: vertical/horizontal movement; <0.5 means mostly horizontal
@@ -13,10 +13,13 @@ document.addEventListener('DOMContentLoaded', () => {
     let isScrolling = undefined;
     let currentTranslate = 0;
     let prevTranslate = 0;
-    const slideCount = componentView.children.length;
+
+
 
     // Clicking tabs moves to the right view
     document.querySelectorAll('.tab').forEach((tab, index) => {
+        if (tab.classList.contains('hidden')) return; // skip hidden tabs
+        console.log("tabs");
         tab.addEventListener('click', () => {
             currentView = index;
             setViewPosition();
@@ -24,8 +27,15 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
+    function getVisibleSlides() {
+        return Array.from(componentView.children).filter(
+            slide => !slide.classList.contains("hidden")
+        );
+    }
+
     function updateActiveTab(index) {
         document.querySelectorAll('.tab').forEach((tab, i) => {
+            if (tab.classList.contains('hidden')) return; // skip hidden tabs
             if (i === index) {
                 tab.classList.add('active-tab');
             } else {
@@ -35,9 +45,19 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function setViewPosition(animate = true) {
-        componentView.style.transition = animate ? 'transform 0.3s ease' : 'none';
-        componentView.style.transform = `translateX(-${currentView * 100}%)`;
+        const visibleSlides = Array.from(componentView.children).filter(
+            slide => !slide.classList.contains("hidden")
+        );
+
+        const targetSlide = visibleSlides[currentView];
+        if (!targetSlide) return;
+
+        const offset = targetSlide.offsetLeft;
+
+        componentView.style.transition = animate ? "transform 0.3s ease" : "none";
+        componentView.style.transform = `translateX(-${offset}px)`;
     }
+
 
     // Touch and drag events
     function touchStart(x, y) {
@@ -79,11 +99,13 @@ document.addEventListener('DOMContentLoaded', () => {
     function touchEnd(x) {
         if (!isDragging) return;
         isDragging = false;
-        if (isScrolling) return; // was vertical scroll, do nothing
+        if (isScrolling) return;
 
         const dx = x - startX;
+        const visibleSlides = getVisibleSlides();
+        const maxIndex = visibleSlides.length - 1;
 
-        if (dx < -SWIPE_THRESHOLD && currentView < slideCount - 1) {
+        if (dx < -SWIPE_THRESHOLD && currentView < maxIndex) {
             currentView++;
         } else if (dx > SWIPE_THRESHOLD && currentView > 0) {
             currentView--;
@@ -91,7 +113,6 @@ document.addEventListener('DOMContentLoaded', () => {
         setViewPosition();
         updateActiveTab(currentView);
     }
-
     // Mouse
     componentView.addEventListener('mousedown', e => touchStart(e.pageX, e.pageY));
     componentView.addEventListener('mousemove', e => touchMove(e.pageX, e.pageY));
