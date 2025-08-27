@@ -5,77 +5,89 @@ document.addEventListener('DOMContentLoaded', async () => {
     await loadComponent('startingScreen', '.starting-screen')
 
     // when user clicks on starting screen, it emits 'starting' event
-    window.components.startingScreen.addEventListener('starting', async () => {
-        console.log("Starting screen clicked, powering on...");
+    if (!window._startingScreenListenerAdded) {
+        window._startingScreenListenerAdded = true;
 
-        await window.themeService.fetchTheme();
+        window.components.startingScreen.addEventListener('starting', async () => {
+            console.log("Starting screen clicked, powering on...");
 
-        window.SocketService = new SocketService();
-        window.APIService = new APIService();
+            await window.themeService.fetchTheme();
 
+            window.SocketService = new SocketService();
+            window.APIService = new APIService();
 
-        // Wait for APIService to finish loading configs before creating DataService
-        window.APIService.addEventListener('loaded', () => {
-            window.DataService = new DataService(window.APIService);
-            window.DataService.init();
-            window.CommandService = new CommandService(http, window.DataService, window.APIService, null);
+            // Wait for APIService to finish loading configs before creating DataService
+            window.APIService.addEventListener('loaded', () => {
+                window.DataService = new DataService(window.APIService);
+                window.DataService.init();
+                window.CommandService = new CommandService(http, window.DataService, window.APIService, null);
 
-            // wait for DataService to be fully initialized (after dispatchEvent)
-            window.DataService.addEventListener('loaded', async () => {
-                await window.CommandService.powerOnDefault(window.DataService.panel.preset);
-                window.VolumeSlider = VolumeSlider;
-                currentComponent = 'display';
-                await loadComponent(currentComponent, `.display-component`);
-                await loadComponent('audioControl', `.audio-control-component`);
-                isCameras = window.DataService.panel.preset.cameras.length > 0;
-                if (isCameras) {
-                    await loadComponent('cameraControl', `.camera-control-component`);
-                } else {
-                    console.log("No cameras in preset, skipping camera component load");
-                    // hide the camera-control-component and camera tab
-                    const cameraControlComponent = document.querySelector('.camera-control-component');
-                    if (cameraControlComponent) {
-                        cameraControlComponent.classList.add('hidden');
+                // wait for DataService to be fully initialized (after dispatchEvent)
+                window.DataService.addEventListener('loaded', async () => {
+                    await window.CommandService.powerOnDefault(window.DataService.panel.preset);
+                    window.VolumeSlider = VolumeSlider;
+                    currentComponent = 'display';
+                    await loadComponent(currentComponent, `.display-component`);
+                    await loadComponent('audioControl', `.audio-control-component`);
+                    isCameras = window.DataService.panel.preset.cameras.length > 0;
+                    if (isCameras) {
+                        await loadComponent('cameraControl', `.camera-control-component`);
+                    } else {
+                        console.log("No cameras in preset, skipping camera component load");
+                        // hide the camera-control-component and camera tab
+                        const cameraControlComponent = document.querySelector('.camera-control-component');
+                        if (cameraControlComponent) {
+                            cameraControlComponent.classList.add('hidden');
+                        }
+                        const cameraTab = document.querySelector('.camera-control-tab');
+                        if (cameraTab) {
+                            cameraTab.classList.add('hidden');
+                            cameraTab.classList.remove('tab');
+                        }
                     }
-                    const cameraTab = document.querySelector('.camera-control-tab');
-                    if (cameraTab) {
-                        cameraTab.classList.add('hidden');
-                        cameraTab.classList.remove('tab');
-                    }
-                }
 
-                //remove the starting screen
-                const startingScreen = document.querySelector('.starting-screen');
-                document.dispatchEvent(new window.Event("UILoaded"));
-                document.querySelector('.header').style.display = 'flex';
-                startingScreen.classList.add('hidden');
+                    //remove the starting screen
+                    const startingScreen = document.querySelector('.starting-screen');
+                    document.dispatchEvent(new window.Event("UILoaded"));
+                    document.querySelector('.header').style.display = 'flex';
+                    startingScreen.classList.add('hidden');
+                }, { once: true });
             }, { once: true });
-        }, { once: true });
 
-        // listener for power button
-        document.querySelector('.power-off-btn').addEventListener('click', async () => {
-            window.resetViewPosition(); // reset view position to display component
-            // show the starting screen with power off message
-            const startingScreenMessage = document.querySelector('.starting-screen-message');
-            startingScreenMessage.innerHTML = `
-            <div class="loading-circle"></div>
-            Powering Off...`;
-            const startingScreen = document.querySelector('.starting-screen');
-            startingScreen.classList.remove('hidden');
+            // listener for power button
+            document.querySelector('.power-off-btn').addEventListener('click', async () => {
+                window.resetViewPosition(); // reset view position to display component
+                // show the starting screen with power off message
+                const startingScreenMessage = document.querySelector('.starting-screen-message');
+                startingScreenMessage.innerHTML = `
+                <div class="loading-circle"></div>
+                Powering Off...`;
+                const startingScreen = document.querySelector('.starting-screen');
+                startingScreen.classList.remove('hidden');
 
-            // call power off command
-            await window.CommandService.powerOff(window.DataService.panel.preset);
+                // call power off command
+                await window.CommandService.powerOff(window.DataService.panel.preset);
 
-            // return starting screen to initial state
-            startingScreenMessage.innerHTML = `Touch Anywhere to Start`;
+                // return starting screen to initial state
+                startingScreenMessage.innerHTML = `Touch Anywhere to Start`;
+
+                // reset help button
+                const helpBtn = document.querySelector('.help-btn');
+                helpBtn.removeEventListener('click', handleHelpClick);
+            });
+
+            const helpBtn = document.querySelector('.help-btn');
+
+            function handleHelpClick() {
+                const helpModal = new HelpModal();
+                helpModal.open();
+            }
+
+            helpBtn.addEventListener('click', handleHelpClick);
+
+
         });
-
-        // listener for help button
-        document.querySelector('.help-btn').addEventListener('click', () => {
-            const helpModal = new HelpModal();
-            helpModal.open();
-        });
-    });
+    }
 });
 
 async function loadComponent(componentName, divQuerySelector = `.component-container`) {
