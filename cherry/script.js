@@ -69,6 +69,12 @@ document.addEventListener('DOMContentLoaded', async () => {
             // return starting screen to initial state
             startingScreenMessage.innerHTML = `Touch Anywhere to Start`;
         });
+
+        // listener for help button
+        document.querySelector('.help-btn').addEventListener('click', () => {
+            const helpModal = new HelpModal();
+            helpModal.open();
+        });
     });
 });
 

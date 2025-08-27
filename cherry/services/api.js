@@ -169,18 +169,21 @@ class APIService extends EventTarget {
             room: APIService.roomName
         };
 
+        let resp;
+
         try {
             switch (type) {
                 case "help":
                     console.log("sending help request");
-                    await this.postJSON(APIService.localurl + "/help", body);
-                    break;
+                    resp = await this.post(APIService.localurl + "/help", body);
+                    console.log("resp", resp);
+                    return resp;
                 case "confirm":
-                    await this.postJSON(APIService.localurl + "/confirmhelp", body);
-                    break;
+                    resp = await this.post(APIService.localurl + "/confirmhelp", body);
+                    return resp;
                 case "cancel":
-                    await this.postJSON(APIService.localurl + "/cancelhelp", body);
-                    break;
+                    resp = await this.post(APIService.localurl + "/cancelhelp", body);
+                    return resp;
             }
         } catch (err) {
             console.error(`Help request failed for ${type}`, err);
@@ -193,13 +196,13 @@ class APIService extends EventTarget {
         return await response.json();
     }
 
-    async postJSON(url, body) {
+    async post(url, body) {
         const response = await fetch(url, {
             method: "POST",
             headers: APIService.options.headers,
             body: JSON.stringify(body)
         });
-        if (!response.ok) throw new Error(`HTTP ${response.status}`);
-        return await response.json();
+        // if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        return await response;
     }
 }
