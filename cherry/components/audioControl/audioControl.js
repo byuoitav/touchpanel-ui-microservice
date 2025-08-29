@@ -34,10 +34,17 @@ window.components.audioControl = {
 
         const MasterVolume = new VolumeSliderClass(document.querySelector('.master-volume-container'), {
             title: "Master Display Volume",
+            id: "master",
             value: 30,
             onChange: (val) => {
                 console.log("Master volume changed to:", val);
                 window.CommandService.setMasterVolume(val, window.DataService.panel.preset);
+                // Update the master volume slider on the audio control page
+                const masterVolume = window.components.display.masterVolume;
+                if (masterVolume) {
+                    masterVolume.setValue(val);
+                }
+
             },
             muteFunction: () => {
                 if (MasterVolume.muteButton.classList.contains("muted")) {

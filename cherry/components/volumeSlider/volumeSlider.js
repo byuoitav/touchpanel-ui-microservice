@@ -55,7 +55,6 @@ class VolumeSlider {
                 this.options.onChange(finalVal);
             }
         });
-
     }
 
     render() {
@@ -83,7 +82,7 @@ class VolumeSlider {
         this.muteButton = this.sliderHTML.querySelector(".mute-button");
     }
 
-    setSliderWidth() {
+    setSliderWidth() { 
         this.slider.style.width = `${this.container.clientHeight * 0.65}px`;
     }
 

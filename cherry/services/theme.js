@@ -4,7 +4,7 @@ class ThemeService {
     this.camLink = null;
     this.phoneNumber = null;
     this.logo = null;
-      }
+  }
 
   async getLogo() {
     try {
@@ -43,6 +43,7 @@ class ThemeService {
       console.log("Theme Config:", data);
 
       if (data && Array.isArray(data) ? data.length !== 0 : data['background-color'] !== undefined) {
+        // set the css variables
         document.documentElement.style.setProperty('--background-color', data['background-color']);
         document.documentElement.style.setProperty('--top-bar-color', data['top-bar-color']);
         document.documentElement.style.setProperty('--background-color-accent', data['background-color-accent']);
@@ -80,7 +81,7 @@ class ThemeService {
         this.phoneNumber = data['phone-number'];
 
         // get logo
-        this.logo = await this.getLogo();          
+        this.logo = await this.getLogo();
 
       } else {
         console.log("Error: No theme configuration received. Using default values.");

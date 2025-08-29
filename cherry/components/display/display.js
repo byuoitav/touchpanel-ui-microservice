@@ -6,6 +6,7 @@ window.components.display = {
   selectedInputs: [],
   displays: [],
   inputs: [],
+  masterVolume: null,
 
   loadPage: function () {
     const preset = window.DataService.panel.preset;
@@ -114,10 +115,16 @@ window.components.display = {
     const VolumeSliderClass = window.VolumeSlider || (window.components && window.components.VolumeSlider);
     const MasterVolume = new VolumeSliderClass(document.querySelector('.volume-control-container'), {
       title: "Master Display Volume",
+      id: "master",
       value: 30,
       onChange: (val) => {
         console.log("Master volume changed to:", val);
         window.CommandService.setMasterVolume(val, window.DataService.panel.preset);
+        // Update the master volume slider on the audio control page
+        masterVolume = window.components.audioControl.sliders.find(slider => slider.id === "master");
+        if (masterVolume) {
+          masterVolume.setValue(val);
+        }
       },
       muteFunction: () => {
         if (MasterVolume.muteButton.classList.contains("muted")) {
@@ -126,8 +133,9 @@ window.components.display = {
           window.CommandService.setMasterMute(false, window.DataService.panel.preset);
         }
       },
-      id: "master-volume-slider"
     });
+
+    this.masterVolume = MasterVolume;
 
   },
 
