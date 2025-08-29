@@ -64,6 +64,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 Powering Off...`;
                 const startingScreen = document.querySelector('.starting-screen');
                 startingScreen.classList.remove('hidden');
+                createZPattern();
 
                 // call power off command
                 await window.CommandService.powerOff(window.DataService.panel.preset);
@@ -84,8 +85,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
 
             helpBtn.addEventListener('click', handleHelpClick);
-
-
         });
     }
 });

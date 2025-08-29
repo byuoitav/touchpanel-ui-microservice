@@ -54,7 +54,43 @@
 }
 
 @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
 }
 
+/* v Z-Pattern Styling v */
+.square {
+    position: absolute;
+    width: 128px;
+    height: 128px;
+    background-color: black;
+    opacity: 0;
+    transition: opacity 0.1s;
+    touch-action: manipulation;
+    z-index: 100000;
+}
+
+.top-left {
+    top: 0;
+    left: 0;
+}
+
+.top-right {
+    top: 0;
+    right: 0;
+}
+
+.bottom-left {
+    bottom: 0;
+    left: 0;
+}
+
+.bottom-right {
+    bottom: 0;
+    right: 0;
+}
