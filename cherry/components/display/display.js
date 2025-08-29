@@ -121,9 +121,9 @@ window.components.display = {
         console.log("Master volume changed to:", val);
         window.CommandService.setMasterVolume(val, window.DataService.panel.preset);
         // Update the master volume slider on the audio control page
-        masterVolume = window.components.audioControl.sliders.find(slider => slider.id === "master");
+        const masterVolume = window.components.audioControl.sliders.find(slider => slider.options.id === "master");
         if (masterVolume) {
-          masterVolume.setValue(val);
+          masterVolume.setValue(val, false);
         }
       },
       muteFunction: () => {

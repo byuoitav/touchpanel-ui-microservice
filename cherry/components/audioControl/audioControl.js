@@ -39,10 +39,10 @@ window.components.audioControl = {
             onChange: (val) => {
                 console.log("Master volume changed to:", val);
                 window.CommandService.setMasterVolume(val, window.DataService.panel.preset);
-                // Update the master volume slider on the audio control page
+                // Update the master volume slider on the display page
                 const masterVolume = window.components.display.masterVolume;
                 if (masterVolume) {
-                    masterVolume.setValue(val);
+                    masterVolume.setValue(val, false);
                 }
 
             },
