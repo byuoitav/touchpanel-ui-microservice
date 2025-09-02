@@ -29,6 +29,10 @@ class DataService extends EventTarget {
 
         if (this.dividerSensor != null) {
             this.setCurrentPreset();
+            // Poll for preset changes every 30 seconds
+            setInterval(() => {
+                this.setCurrentPreset(true);
+            }, 30000);
         }
 
         console.log("DataService initialized with inputs, outputs, presets, and panels.");
@@ -143,10 +147,11 @@ class DataService extends EventTarget {
         this.panel = this.panels.find(p => p.hostname === APIService.piHostname);
     }
 
-    async setCurrentPreset() {
+    async setCurrentPreset(reload=false) {
         if (!this.panel.features.includes("preset-switch")) return;
 
-        const url = `${window.location.protocol}//${window.location.host}:8000/divider/preset/${APIService.piHostname}`;
+        const url = `http://${this.dividerSensor.address}:10000/divider/preset/${APIService.piHostname}`;
+
         try {
             const response = await fetch(url);
             if (!response.ok) throw new Error("HTTP error");
@@ -154,8 +159,15 @@ class DataService extends EventTarget {
             if (typeof presetName !== 'string') presetName = String(presetName);
             const preset = this.presets.find(p => typeof p.name === 'string' && p.name.toLowerCase() === presetName.toLowerCase());
             if (preset) {
-                console.log("setting initial preset to", preset);
+                const prevPreset = this.panel.preset;
+                console.log("setting preset to", preset);
                 this.panel.preset = preset;
+                // Reloads the UI if the divider sensor response changed the preset
+                if (prevPreset.name !== preset.name && reload) {
+                    console.log("refreshing");
+                    location.assign("http://" + location.hostname + ":8888/");
+                }
+
             }
         } catch (err) {
             console.error("Failed to get preset, retrying...", err);
