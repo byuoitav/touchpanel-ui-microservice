@@ -209,3 +209,8 @@ body {
     margin: 0;
     vertical-align: middle;
 }
+
+/* simple button click animation */
+.btn:active {
+  transform: scale(0.92);
+}

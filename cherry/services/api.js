@@ -30,6 +30,7 @@ class APIService extends EventTarget {
         console.log("OPTIONS: ", APIService.options);
         await this.setupHostname();
     }
+    
     emitLoaded(value) {
         this.dispatchEvent(new CustomEvent('loaded', { detail: value }));
     }

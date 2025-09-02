@@ -95,7 +95,7 @@ class HelpModal {
         actions.className = "help-modal-actions";
 
         const cancelBtn = document.createElement("button");
-        cancelBtn.className = "help-btn cancel-btn";
+        cancelBtn.className = "help-btn cancel-btn btn";
         if (!this.isAfterHours()) {
             cancelBtn.textContent = "Cancel"
         } else {
@@ -106,7 +106,7 @@ class HelpModal {
 
         if (!this.isAfterHours()) {
             const requestBtn = document.createElement("button");
-            requestBtn.className = "help-btn request-btn";
+            requestBtn.className = "help-btn request-btn btn";
             requestBtn.textContent = "Request Help";
             requestBtn.addEventListener("click", async () => {
                 let resp = await this.requestHelp();
@@ -142,7 +142,7 @@ class HelpModal {
         actions.innerHTML = "";
 
         const confirmBtn = document.createElement("button");
-        confirmBtn.className = "help-btn confirm-btn request-btn";
+        confirmBtn.className = "help-btn confirm-btn request-btn btn";
         confirmBtn.textContent = "Confirm Request";
         confirmBtn.addEventListener("click", async () => {
             let resp = await this.APIService.help("confirm");
@@ -151,7 +151,7 @@ class HelpModal {
             } else {
                 message.textContent = "Your help request has been confirmed.";
             }
-            
+
             // pause for user to read message
             setTimeout(() => {
                 this.close();
@@ -159,7 +159,7 @@ class HelpModal {
         });
 
         const cancelBtn = document.createElement("button");
-        cancelBtn.className = "help-btn cancel-btn";
+        cancelBtn.className = "help-btn cancel-btn btn";
         cancelBtn.textContent = "Cancel Request";
         cancelBtn.addEventListener("click", async () => {
             let resp = await this.APIService.help("cancel");

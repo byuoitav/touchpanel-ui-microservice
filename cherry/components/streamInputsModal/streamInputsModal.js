@@ -64,6 +64,7 @@ class StreamInputsModal {
         background: var(--background-color-accent);
         transform: scale(1.02);
       }
+
       .cancel-btn {
         background: #ff0000ff;
         color: white;
@@ -73,6 +74,7 @@ class StreamInputsModal {
         cursor: pointer;
         transition: background 0.2s;
       }
+
       .cancel-btn:hover { background: #888; }
     `;
     document.head.appendChild(style);
@@ -93,7 +95,7 @@ class StreamInputsModal {
 
     const actions = document.createElement("div");
     const cancelBtn = document.createElement("button");
-    cancelBtn.className = "cancel-btn";
+    cancelBtn.className = "cancel-btn btn";
     cancelBtn.textContent = "Cancel";
     cancelBtn.addEventListener("click", () => this.close());
 
@@ -112,7 +114,7 @@ class StreamInputsModal {
 
     streams.forEach(stream => {
       const option = document.createElement("div");
-      option.className = "stream-option";
+      option.className = "stream-option btn";
       option.textContent = stream.displayname || stream.name;
       option.addEventListener("click", () => {
         this.close();

@@ -95,7 +95,9 @@ function removeZPattern() {
         if (sq && sq.parentElement) sq.remove();
     });
     topLeft = topRight = bottomLeft = bottomRight = null;
-}
 
+    // remove by class
+    document.querySelectorAll('.square').forEach(sq => sq.remove());
+}
 
 window.components.startingScreen = new StartingScreen();

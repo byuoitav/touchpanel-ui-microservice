@@ -51,6 +51,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     document.dispatchEvent(new window.Event("UILoaded"));
                     document.querySelector('.header').style.display = 'flex';
                     startingScreen.classList.add('hidden');
+                    insertOffsetImage('assets/zcosmo.png');
                 }, { once: true });
             }, { once: true });
 
@@ -68,6 +69,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
                 // call power off command
                 await window.CommandService.powerOff(window.DataService.panel.preset);
+                removeComponentAssets();
 
                 // return starting screen to initial state
                 startingScreenMessage.innerHTML = `Touch Anywhere to Start`;
@@ -146,3 +148,41 @@ function loadSvg(id, path) {
             document.getElementById(id).innerHTML = svg;
         });
 }
+
+function removeComponentAssets() {
+    document.querySelectorAll("#component-stylesheet, #component-script")
+        .forEach(el => {
+            if (el.href && el.href.includes('startingScreen')) return; // never remove starting screen assets
+            if (el.src && el.src.includes('startingScreen')) return; // never remove starting screen assets
+            el.remove();
+        });
+}
+
+
+function insertOffsetImage(imgSrc) {
+    const displayComponent = document.querySelector('.display-component');
+    if (!displayComponent) return;
+
+    // Ensure the display component can anchor absolutely positioned children
+    displayComponent.style.position = 'relative';
+
+    // Create the image
+    const img = document.createElement('img');
+    img.src = imgSrc;
+    img.style.position = 'absolute';
+
+    // Position offset to the left by 90% of the display component’s width
+    img.style.left = '-90%';
+
+    // Center vertically relative to the display component
+    img.style.top = '50%';
+    img.style.transform = 'translateY(-50%) rotate(90deg)';
+
+    img.style.height = '500px';
+    img.style.width = 'auto';
+
+    displayComponent.appendChild(img);
+}
+
+
+

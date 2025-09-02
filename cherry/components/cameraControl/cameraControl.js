@@ -203,7 +203,7 @@ window.components.cameraControl = {
             return `<p class="no-presets">No presets available for this camera.</p>`;
         }
         const presetButtons = presets.map((preset, index) => {
-            return `<button class="preset-btn" data-preset-id="preset-${cameraIndex}-${index}">${preset.displayName}</button>`;
+            return `<button class="preset-btn btn" data-preset-id="preset-${cameraIndex}-${index}">${preset.displayName}</button>`;
         }).join('');
 
         const presetsHTML = `
