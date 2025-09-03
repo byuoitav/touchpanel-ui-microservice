@@ -143,6 +143,7 @@ window.components.display = {
     const outputs = document.querySelectorAll('.output');
     outputs.forEach(output => {
       output.addEventListener('click', () => {
+        window.CommandService.buttonPress(`clicked output ${output.id}`, {});
         const display = this.displays.find(d => d.name === output.id);
         this.toggleDisplay(display);
         this.selectInput(display.input ? display.input.name : "BLANK");
@@ -152,6 +153,7 @@ window.components.display = {
     const inputs = document.querySelectorAll('.input');
     inputs.forEach(input => {
       input.addEventListener('click', () => {
+        window.CommandService.buttonPress(`clicked input ${input.id}`, {});
 
         console.log("Inputs Available for Current Display:", this.inputsAvailableForCurrentDisplay);
         console.log("Selected Input:", input);
@@ -177,8 +179,6 @@ window.components.display = {
           const currentDisplay = this.selectedDisplays[0];
           window.DataService.updateDeviceState("input", input.id, currentDisplay.name);
         }
-
-
       });
     });
 
@@ -342,9 +342,11 @@ window.components.display = {
       updateArrows();
     }
     leftArrow.addEventListener('click', () => {
+      window.CommandService.buttonPress(`clicked left arrow on ${carouselContainer.classList.contains('outputs-carousel-container') ? 'outputs' : 'inputs'} carousel`, {});
       if (currentPage > 0) goToPage(currentPage - 1);
     });
     rightArrow.addEventListener('click', () => {
+      window.CommandService.buttonPress(`clicked right arrow on ${carouselContainer.classList.contains('outputs-carousel-container') ? 'outputs' : 'inputs'} carousel`, {});
       if (currentPage < pages.length - 1) goToPage(currentPage + 1);
     });
     updateArrows();

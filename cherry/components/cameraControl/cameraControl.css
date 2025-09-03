@@ -42,7 +42,7 @@
     display: flex;
     flex-direction: row;
     align-items: center;
-    height: calc(100% - 60px);
+    height: calc(100% - 61px);
     box-sizing: border-box;
 }
 

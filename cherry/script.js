@@ -56,13 +56,18 @@ document.addEventListener('DOMContentLoaded', async () => {
             }, { once: true });
 
             // listener for power button
-            document.querySelector('.power-off-btn').addEventListener('click', async () => {
+            const powerBtn = document.querySelector('.power-off-btn');
+            powerBtn.addEventListener('click', handlePowerClick);
+
+            async function handlePowerClick() {
+                window.CommandService.buttonPress(`clicked power off button`, {});
                 window.resetViewPosition(); // reset view position to display component
+
                 // show the starting screen with power off message
                 const startingScreenMessage = document.querySelector('.starting-screen-message');
                 startingScreenMessage.innerHTML = `
-                <div class="loading-circle"></div>
-                Powering Off...`;
+        <div class="loading-circle"></div>
+        Powering Off...`;
                 const startingScreen = document.querySelector('.starting-screen');
                 startingScreen.classList.remove('hidden');
                 createZPattern();
@@ -77,11 +82,16 @@ document.addEventListener('DOMContentLoaded', async () => {
                 // reset help button
                 const helpBtn = document.querySelector('.help-btn');
                 helpBtn.removeEventListener('click', handleHelpClick);
-            });
+
+                // reset power button (remove this handler)
+                const powerBtn = document.querySelector('.power-off-btn');
+                powerBtn.removeEventListener('click', handlePowerClick);
+            }
 
             const helpBtn = document.querySelector('.help-btn');
 
             function handleHelpClick() {
+                window.CommandService.buttonPress(`clicked help button`, {});
                 const helpModal = new HelpModal();
                 helpModal.open();
             }
@@ -90,6 +100,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     }
 });
+
 
 async function loadComponent(componentName, divQuerySelector = `.component-container`) {
     const htmlPath = `./components/${componentName}/${componentName}.html`;
@@ -150,6 +161,7 @@ function loadSvg(id, path) {
 }
 
 function removeComponentAssets() {
+    document.querySelectorAll('.help-modal').forEach(el => el.remove());
     document.querySelectorAll("#component-stylesheet, #component-script")
         .forEach(el => {
             if (el.href && el.href.includes('startingScreen')) return; // never remove starting screen assets
@@ -171,14 +183,14 @@ function insertOffsetImage(imgSrc) {
     img.src = imgSrc;
     img.style.position = 'absolute';
 
-    // Position offset to the left by 90% of the display component’s width
-    img.style.left = '-90%';
+    // Position offset to the left by 120% of the display component’s width
+    img.style.left = '-120%';
 
     // Center vertically relative to the display component
     img.style.top = '50%';
     img.style.transform = 'translateY(-50%) rotate(90deg)';
 
-    img.style.height = '500px';
+    img.style.height = '1000px';
     img.style.width = 'auto';
 
     displayComponent.appendChild(img);

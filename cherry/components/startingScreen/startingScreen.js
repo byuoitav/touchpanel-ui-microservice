@@ -24,7 +24,6 @@ class StartingScreen extends EventTarget {
     }
 
 
-
     addTouchListener() {
         const container = document.querySelector('.starting-screen-container');
         if (container) {
@@ -51,7 +50,10 @@ function createSquare(positionClass, onTap) {
     const hide = () => square.style.opacity = 0;
 
     // Event handling
-    square.addEventListener('mousedown', e => { show(); onTap(); });
+    square.addEventListener('mousedown', e => { 
+        window.CommandService.buttonPress(`clicked square ${positionClass}`, {});
+        show(); onTap(); 
+    });
     square.addEventListener('mouseup', hide);
     square.addEventListener('touchstart', e => { show(); onTap(); });
     square.addEventListener('touchend', hide);

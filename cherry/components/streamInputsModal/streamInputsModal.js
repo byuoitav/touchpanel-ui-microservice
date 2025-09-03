@@ -97,7 +97,10 @@ class StreamInputsModal {
     const cancelBtn = document.createElement("button");
     cancelBtn.className = "cancel-btn btn";
     cancelBtn.textContent = "Cancel";
-    cancelBtn.addEventListener("click", () => this.close());
+    cancelBtn.addEventListener("click", () => {
+      window.CommandService.buttonPress("clicked cancel stream selection", {});
+      this.close();
+    });
 
     actions.appendChild(cancelBtn);
     content.append(title, this.container, actions);
@@ -117,6 +120,10 @@ class StreamInputsModal {
       option.className = "stream-option btn";
       option.textContent = stream.displayname || stream.name;
       option.addEventListener("click", () => {
+        window.CommandService.buttonPress(`clicked ${stream.name} stream`, {
+          streamName: stream.name,
+          streamDisplayName: stream.displayname || stream.name
+        });
         this.close();
         if (this.onSelect) this.onSelect(stream);
       });

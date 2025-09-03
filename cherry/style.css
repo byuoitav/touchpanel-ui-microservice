@@ -94,7 +94,7 @@ body {
 .component-container {
     display: flex;
     flex-direction: row;
-    height: calc(100% - 60px);
+    height: calc(100% - 61px);
     width: 100%;
     /* 3 slides, adjust if you add more */
     transition: transform 0.3s ease;

@@ -12,6 +12,7 @@ window.components.audioControl = {
 
         // tab listeners
         document.querySelector('.displays-tab').addEventListener('click', () => {
+            window.CommandService.buttonPress(`clicked displays tab on audio control`, {});
             if (!(document.querySelector('.displays-tab').classList.contains('active-audio-tab'))) {
                 this.toggleDisplaysMicrophones();
             }
@@ -19,6 +20,7 @@ window.components.audioControl = {
         });
 
         document.querySelector('.microphones-tab').addEventListener('click', () => {
+            window.CommandService.buttonPress(`clicked microphones tab on audio control`, {});
             if (!document.querySelector('.microphones-tab').classList.contains('active-audio-tab')) {
                 this.toggleDisplaysMicrophones()
             }
@@ -202,6 +204,7 @@ window.components.audioControl = {
             };
 
             leftArrow.addEventListener('click', () => {
+                window.CommandService.buttonPress(`clicked left arrow on ${type} audio controls`, {});
                 if (this.paginationState[type] > 0) {
                     this.paginationState[type]--;
                     updatePagination();
@@ -210,6 +213,7 @@ window.components.audioControl = {
             });
 
             rightArrow.addEventListener('click', () => {
+                window.CommandService.buttonPress(`clicked right arrow on ${type} audio controls`, {});
                 const total = container.children.length;
                 const maxPage = Math.floor((total - 1) / 4);
                 if (this.paginationState[type] < maxPage) {

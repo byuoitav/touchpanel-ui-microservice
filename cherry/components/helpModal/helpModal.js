@@ -102,13 +102,17 @@ class HelpModal {
             cancelBtn.textContent = "Close"
         }
 
-        cancelBtn.addEventListener("click", () => this.close());
+        cancelBtn.addEventListener("click", () => {
+            window.CommandService.buttonPress("clicked close help modal", {});
+            this.close();
+        });
 
         if (!this.isAfterHours()) {
             const requestBtn = document.createElement("button");
             requestBtn.className = "help-btn request-btn btn";
             requestBtn.textContent = "Request Help";
             requestBtn.addEventListener("click", async () => {
+                window.CommandService.buttonPress("clicked request help", {});
                 let resp = await this.requestHelp();
                 if (resp.status != 200) {
                     message.textContent = "Failed to request help, call " + window.themeService.phoneNumber + " for support.";
@@ -145,6 +149,7 @@ class HelpModal {
         confirmBtn.className = "help-btn confirm-btn request-btn btn";
         confirmBtn.textContent = "Confirm Request";
         confirmBtn.addEventListener("click", async () => {
+            window.CommandService.buttonPress("clicked confirm help request", {});
             let resp = await this.APIService.help("confirm");
             if (resp.status != 200) {
                 message.textContent = "Failed to confirm help request, call " + window.themeService.phoneNumber;
@@ -162,6 +167,7 @@ class HelpModal {
         cancelBtn.className = "help-btn cancel-btn btn";
         cancelBtn.textContent = "Cancel Request";
         cancelBtn.addEventListener("click", async () => {
+            window.CommandService.buttonPress("clicked cancel help request", {});
             let resp = await this.APIService.help("cancel");
             if (resp.status != 200) {
                 message.textContent = "Failed to cancel help request, call " + window.themeService.phoneNumber;

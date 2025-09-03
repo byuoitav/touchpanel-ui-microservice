@@ -99,6 +99,7 @@ window.components.cameraControl = {
         const cameraTabs = document.querySelectorAll('.camera-tab');
         cameraTabs.forEach((tab, index) => {
             tab.addEventListener('click', () => {
+                window.CommandService.buttonPress(`clicked camera tab ${index}`, {});
                 // Remove active class from all tabs
                 cameraTabs.forEach(t => t.classList.remove('active-camera-tab'));
                 // Add active class to clicked tab
@@ -222,6 +223,7 @@ window.components.cameraControl = {
         const presetButtons = document.querySelectorAll('.preset-btn');
         presetButtons.forEach(button => {
             button.addEventListener('click', (event) => {
+                window.CommandService.buttonPress(`clicked preset button`, {presetId: event.currentTarget.dataset.presetId});
                 const presetId = event.currentTarget.dataset.presetId;
                 this.handlePresetClick(presetId);
             });
@@ -262,10 +264,12 @@ window.components.cameraControl = {
                 if (!element) return;
 
                 const start = () => {
+                    window.CommandService.buttonPress(`clicked camera ${index} ${dir} button`, {});
                     this.startCameraAction(index, movementMap[dir]);
                 };
 
                 const stop = () => {
+                    window.CommandService.buttonPress(`released camera ${index} ${dir} button`, {});
                     this.stopCameraAction(index, stopKeyMap[dir], movementMap[dir]);
                 };
 
@@ -275,16 +279,19 @@ window.components.cameraControl = {
 
                 // Add touch support
                 element.addEventListener('touchstart', e => {
+                    window.CommandService.buttonPress(`clicked camera ${index} ${dir} button`, {});
                     e.preventDefault(); // Prevents simulated mouse events
                     start();
                 }, { passive: false });
 
                 element.addEventListener('touchend', e => {
+                    window.CommandService.buttonPress(`released camera ${index} ${dir} button`, {});
                     e.preventDefault();
                     stop();
                 });
 
                 element.addEventListener('touchcancel', e => {
+                    window.CommandService.buttonPress(`released camera ${index} ${dir} button`, {});
                     e.preventDefault();
                     stop();
                 });
@@ -341,6 +348,7 @@ window.components.cameraControl = {
 
 
     handleUp: function (cameraIndex) {
+        window.CommandService.buttonPress(`clicked camera ${cameraIndex} up button`, {});
         console.log("Handling Up for camera index:", cameraIndex);
         const camera = this.cameraMap.get(cameraIndex);
         if (camera) {
@@ -349,6 +357,7 @@ window.components.cameraControl = {
     },
 
     handleDown: function (cameraIndex) {
+        window.CommandService.buttonPress(`clicked camera ${cameraIndex} down button`, {});
         console.log("Handling Down for camera index:", cameraIndex);
         const camera = this.cameraMap.get(cameraIndex);
         if (camera) {
@@ -357,6 +366,7 @@ window.components.cameraControl = {
     },
 
     handleLeft: function (cameraIndex) {
+        window.CommandService.buttonPress(`clicked camera ${cameraIndex} left button`, {});
         console.log("Handling Left for camera index:", cameraIndex);
         const camera = this.cameraMap.get(cameraIndex);
         if (camera) {
@@ -365,6 +375,7 @@ window.components.cameraControl = {
     },
 
     handleRight: function (cameraIndex) {
+        window.CommandService.buttonPress(`clicked camera ${cameraIndex} right button`, {});
         console.log("Handling Right for camera index:", cameraIndex);
         const camera = this.cameraMap.get(cameraIndex);
         if (camera) {
@@ -373,6 +384,7 @@ window.components.cameraControl = {
     },
 
     handleZoomIn: async function (cameraIndex) {
+        window.CommandService.buttonPress(`clicked camera ${cameraIndex} zoom in button`, {});
         console.log("Handling Zoom In for camera index:", cameraIndex);
         const camera = this.cameraMap.get(cameraIndex);
         if (camera) {
@@ -381,6 +393,7 @@ window.components.cameraControl = {
     },
 
     handleZoomOut: function (cameraIndex) {
+        window.CommandService.buttonPress(`clicked camera ${cameraIndex} zoom out button`, {});
         console.log("Handling Zoom Out for camera index:", cameraIndex);
         const camera = this.cameraMap.get(cameraIndex);
         if (camera) {

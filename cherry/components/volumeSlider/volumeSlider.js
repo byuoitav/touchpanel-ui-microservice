@@ -26,6 +26,7 @@ class VolumeSlider {
         });
 
         this.muteButton.addEventListener("click", () => {
+            window.CommandService.buttonPress(`clicked mute button on ${this.options.title}`, {mute: !this.muteButton.classList.contains("muted")});
             this.muteButton.classList.toggle("muted");
             if (this.muteButton.classList.contains("muted")) {
                 this.muteButton.textContent = "Unmute";
@@ -51,6 +52,7 @@ class VolumeSlider {
         // Trigger callback only when user releases the slider
         this.slider.addEventListener("change", () => {
             const finalVal = parseInt(this.slider.value);
+            window.CommandService.buttonPress(`clicked volume slider on ${this.options.title}`, {volume: finalVal});
             if (typeof this.options.onChange === "function") {
                 this.options.onChange(finalVal);
             }

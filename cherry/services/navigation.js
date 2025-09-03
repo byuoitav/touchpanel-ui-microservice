@@ -21,6 +21,7 @@ document.addEventListener("UILoaded", () => {
         if (tab.classList.contains('hidden')) return; // skip hidden tabs
         console.log("tabs");
         tab.addEventListener('click', () => {
+            window.CommandService.buttonPress(`clicked ${tab.textContent} tab`, {});
             currentView = index;
             setViewPosition();
             updateActiveTab(index);
