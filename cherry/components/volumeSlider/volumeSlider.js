@@ -27,14 +27,8 @@ class VolumeSlider {
 
         this.muteButton.addEventListener("click", () => {
             window.CommandService.buttonPress(`clicked mute button on ${this.options.title}`, {mute: !this.muteButton.classList.contains("muted")});
-            this.muteButton.classList.toggle("muted");
-            if (this.muteButton.classList.contains("muted")) {
-                this.muteButton.textContent = "Unmute";
-                this.options.muteFunction();
-            } else {
-                this.muteButton.textContent = this.options.muteText;
-                this.options.muteFunction();
-            }
+            this.options.muteFunction();
+            this.toggleMuteAppearance();
         });
 
         window.addEventListener("resize", () => {
@@ -57,6 +51,15 @@ class VolumeSlider {
                 this.options.onChange(finalVal);
             }
         });
+    }
+
+    toggleMuteAppearance() {
+        this.muteButton.classList.toggle("muted");
+        if (this.muteButton.classList.contains("muted")) {
+            this.muteButton.textContent = "Unmute";
+        } else {
+            this.muteButton.textContent = this.options.muteText;
+        }
     }
 
     render() {

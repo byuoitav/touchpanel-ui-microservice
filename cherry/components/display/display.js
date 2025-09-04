@@ -129,8 +129,12 @@ window.components.display = {
       muteFunction: () => {
         if (MasterVolume.muteButton.classList.contains("muted")) {
           window.CommandService.setMasterMute(true, window.DataService.panel.preset);
+          // update mute button on the audio control page
+          window.components.audioControl.sliders.find(slider => slider.options.id === "master").toggleMuteAppearance();
         } else {
           window.CommandService.setMasterMute(false, window.DataService.panel.preset);
+          // update mute button on the audio control page
+          window.components.audioControl.sliders.find(slider => slider.options.id === "master").toggleMuteAppearance();
         }
       },
     });

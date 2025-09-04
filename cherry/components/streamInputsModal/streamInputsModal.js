@@ -65,17 +65,18 @@ class StreamInputsModal {
         transform: scale(1.02);
       }
 
-      .cancel-btn {
+      .cancel-stream-btn {
         background: #ff0000ff;
         color: white;
         border: none;
-        padding: 10px 16px;
+        padding: 20px 26px;
         border-radius: 8px;
         cursor: pointer;
+        font-size: 1.2rem;
         transition: background 0.2s;
       }
 
-      .cancel-btn:hover { background: #888; }
+      .cancel-stream-btn:hover { background: #888; }
     `;
     document.head.appendChild(style);
   }
@@ -95,7 +96,7 @@ class StreamInputsModal {
 
     const actions = document.createElement("div");
     const cancelBtn = document.createElement("button");
-    cancelBtn.className = "cancel-btn btn";
+    cancelBtn.className = "cancel-stream-btn btn";
     cancelBtn.textContent = "Cancel";
     cancelBtn.addEventListener("click", () => {
       window.CommandService.buttonPress("clicked cancel stream selection", {});
