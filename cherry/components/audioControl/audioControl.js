@@ -8,22 +8,33 @@ window.components.audioControl = {
         this.populateMasterVolume();
         this.populateDisplayVolumes();
         this.populateMicrophoneVolumes();
+        this.populateAudioGroupings();
         this.initPagination();
 
-        // tab listeners
-        document.querySelector('.displays-tab').addEventListener('click', () => {
-            window.CommandService.buttonPress(`clicked displays tab on audio control`, {});
-            if (!(document.querySelector('.displays-tab').classList.contains('active-audio-tab'))) {
-                this.toggleDisplaysMicrophones();
-            }
+        // Generic tab listeners for all audio tabs
+        document.querySelectorAll('.audio-tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                window.CommandService.buttonPress(`clicked ${tab.textContent} tab on audio control`, {});
+                // Remove active class from all tabs
+                document.querySelectorAll('.audio-tab').forEach(t => t.classList.remove('active-audio-tab'));
+                tab.classList.add('active-audio-tab');
 
-        });
+                // Hide all content sections
+                document.querySelectorAll('.audio-controls-content-wrapper').forEach(section => section.classList.add('hidden'));
 
-        document.querySelector('.microphones-tab').addEventListener('click', () => {
-            window.CommandService.buttonPress(`clicked microphones tab on audio control`, {});
-            if (!document.querySelector('.microphones-tab').classList.contains('active-audio-tab')) {
-                this.toggleDisplaysMicrophones()
-            }
+                // Show the content section corresponding to this tab
+                // For displays and microphones, use their wrappers
+                let contentClass = tab.className.split(' ').find(cls => cls.endsWith('-tab'));
+                if (contentClass) {
+                    let base = contentClass.replace('-tab', '');
+                    let contentSelector = `.${base}-audio-controls-wrapper`;
+                    let contentSection = document.querySelector(contentSelector);
+                    if (contentSection) {
+                        contentSection.classList.remove('hidden');
+                    }
+                }
+                this.resetVolumeSliderHeights();
+            });
         });
     },
 
@@ -149,33 +160,79 @@ window.components.audioControl = {
                 volumeSlider.muteButton.textContent = "Unmute";
             }
         }
+
     },
 
-    // navigates the audio control component between displays and microphones
-    toggleDisplaysMicrophones: function () {
-        const displaysTab = document.querySelector('.displays-tab');
-        const microphonesTab = document.querySelector('.microphones-tab');
-
-        const displaysWrapper = document.querySelector('.displays-audio-controls-wrapper');
-        const microphonesWrapper = document.querySelector('.microphones-audio-controls-wrapper');
-
-        if (!displaysTab || !microphonesTab || !displaysWrapper || !microphonesWrapper) return;
-
-        // Toggle tab highlight
-        displaysTab.classList.toggle('active-audio-tab');
-        microphonesTab.classList.toggle('active-audio-tab');
-
-        // Toggle content visibility
-        if (microphonesWrapper.classList.contains('hidden')) {
-            microphonesWrapper.classList.remove('hidden');
-            displaysWrapper.classList.add('hidden');
-        } else {
-            displaysWrapper.classList.remove('hidden');
-            microphonesWrapper.classList.add('hidden');
+    populateAudioGroupings: function () {
+        if (!window.DataService.panel.preset.audioGroups || window.DataService.panel.preset.audioGroups.length === 0) {
+            console.warn("No audio groups found in the preset.");
+            return;
         }
 
-        this.resetVolumeSliderHeights();
+        const audioGroups = window.DataService.panel.preset.audioGroups;
+        console.log("Audio Groups:", audioGroups);
+
+        for (const [groupName, groupDevices] of Object.entries(audioGroups)) {
+            // create the tab button
+            const audioTabsContainer = document.querySelector('.audio-tabs-container');
+            const tabButton = document.createElement('div');
+            tabButton.className = `${groupName.toLowerCase()}-tab audio-tab`;
+            tabButton.textContent = groupName;
+            audioTabsContainer.appendChild(tabButton);
+
+            // Build the HTML for the content section
+            let html = `
+                <div class="arrow left-arrow hidden">
+                    <img class="carousel-arrow outputs-carousel-arrow-left" src="assets/arrow_left.svg" alt="Previous">
+                </div>
+                <div class="${groupName.toLowerCase()}-audio-controls audio-controls-content paginated-container"></div>
+                <div class="arrow right-arrow hidden">
+                    <img class="carousel-arrow outputs-carousel-arrow-right" src="assets/arrow_right.svg" alt="Next">
+                </div>
+            `;
+            const contentContainer = document.querySelector('.audio-controls');
+            const contentSection = document.createElement('div');
+            contentSection.className = `${groupName.toLowerCase()}-audio-controls-wrapper audio-controls-content-wrapper hidden`;
+            contentSection.innerHTML = html;
+            contentContainer.appendChild(contentSection);
+
+            // Add volume sliders for each device in groupDevices to controlsDiv
+            const controlsDiv = contentSection.querySelector(`.${groupName.toLowerCase()}-audio-controls`);
+            const VolumeSliderClass = window.VolumeSlider || (window.components && window.components.VolumeSlider);
+            for (const device of groupDevices) {
+                const audioDevices = window.DataService.panel.preset.audioDevices;
+                const independentAudioDevices = window.DataService.panel.preset.independentAudioDevices;
+                const audioDevice = audioDevices.find(d => d.name === device) || independentAudioDevices.find(d => d.name === device);
+
+                const volumeSlider = new VolumeSliderClass(controlsDiv, {
+                    title: audioDevice.displayname || audioDevice.name || audioDevice,
+                    value: audioDevice.mixlevel || audioDevice.volume || 30,
+                    icon: audioDevice.icon ? `./assets/${audioDevice.icon}.svg` : null,
+                    onChange: (val) => {
+                        console.log(`Volume for ${audioDevice.displayname || audioDevice.name || audioDevice} changed to:`, val);
+                        window.CommandService.setMixLevel(val, audioDevice, window.DataService.panel.preset);
+                        window.CommandService.setMixMute(false, audioDevice, window.DataService.panel.preset);
+                    },
+                    muteFunction: function () {
+                        if (volumeSlider.muteButton.classList.contains("muted")) {
+                            window.CommandService.setMixMute(true, audioDevice, window.DataService.panel.preset);
+                        } else {
+                            window.CommandService.setMixMute(false, audioDevice, window.DataService.panel.preset);
+                        }
+                    },
+                    id: audioDevice.name || audioDevice.displayname || audioDevice
+                });
+                window.components.audioControl.sliders.push(volumeSlider);
+                if (audioDevice.muted) {
+                    volumeSlider.muteButton.classList.add("muted");
+                    volumeSlider.muteButton.textContent = "Unmute";
+                }
+            }
+        }
     },
+
+
+    // Removed toggleDisplaysMicrophones: now handled by generic tab logic
 
     paginationState: {
         displays: 0,

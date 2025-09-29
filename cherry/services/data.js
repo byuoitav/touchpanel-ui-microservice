@@ -131,8 +131,8 @@ class DataService extends EventTarget {
 
             this.presets.push(new Preset(
                 p.name, p.icon, displays, audioDevices, inputs,
-                p.shareableDisplays, independentAudioDevices, audioTypes,
-                30, 30, p.commands, p.volumeMatches, p.cameras, p.recording
+                p.shareableDisplays, independentAudioDevices, audioTypes, 
+                30, 30, p.commands, p.volumeMatches, p.cameras, p.recording, p.audioGroups
             ));
         }
     }

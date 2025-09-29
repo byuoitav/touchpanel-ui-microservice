@@ -224,7 +224,8 @@ class Preset {
     commands,
     matches,
     cameras,
-    recording
+    recording,
+    audioGroups
   ) {
     this.name = name;
     this.icon = icon;
@@ -242,6 +243,7 @@ class Preset {
     this.cameras = cameras || [];
     this.recording = recording || new Recording();
     this.masterMute = false;
+    this.audioGroups = audioGroups || [];
   }
 }
 

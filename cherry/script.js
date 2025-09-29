@@ -152,8 +152,16 @@ async function loadComponent(componentName, divQuerySelector = `.component-conta
 }
 
 function loadSvg(id, path) {
+    // make path all lower case
+    path = path.toLowerCase();
     fetch(path)
-        .then(response => response.text())
+        .then(response => {
+            if (!response.ok && response.status === 404) {
+                // Fallback to blank.svg if not found
+                return fetch('assets/blank.svg').then(blankRes => blankRes.text());
+            }
+            return response.text();
+        })
         .then(svg => {
             document.getElementById(id).innerHTML = svg;
         });
