@@ -87,9 +87,6 @@ function createZPattern() {
             topRight = bottomLeft = bottomRight = null;
         }, 20000);
     });
-
-
-
 }
 
 function removeZPattern() {

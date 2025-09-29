@@ -98,10 +98,9 @@ window.components.display = {
     container.innerHTML = `
       ${this.renderOutputs(this.displays)}
       ${this.renderInputs(separateInputs ? this.inputs : window.DataService.panel.preset.inputs)}
-
+      ${this.renderRecording()}
     `;
-    // add this above to put recording back in
-    // ${this.renderRecording()}
+    
 
     this.renderSvgs(this.displays, this.inputs);
 
@@ -320,12 +319,31 @@ window.components.display = {
 
   // makes the recording button in the bottom left corner
   renderRecording: function () {
+    if (!window.DataService.panel.preset.recording.start) return '';
     return `
       <div class="recording-container">
-        <img class="record-btn" src="assets/record_button.svg" alt="Record">
+        <img class="record-btn" src="assets/record_button.svg" alt="Record" onclick="window.components.display.toggleRecording()">
         <p class="recording-text">Record</p>
       </div>
     `;
+  },
+
+  // toggle recording 
+  toggleRecording: function () {
+    console.log("Toggling recording");
+    const recordBtn = document.querySelector('.record-btn');
+    const recordText = document.querySelector('.recording-text');
+    if (recordBtn.classList.contains('recording')) {
+      window.CommandService.stopRecording();
+      recordBtn.classList.remove('recording');
+      recordText.textContent = 'Record';
+      recordBtn.src = 'assets/record_button.svg';
+    } else {
+      window.CommandService.startRecording();
+      recordBtn.classList.add('recording');
+      recordText.textContent = 'Recording...';
+      recordBtn.src = 'assets/record_button_square.svg';
+    }
   },
 
   // if there are a ton of outputs or inputs, this makes a carousel that can carry them all

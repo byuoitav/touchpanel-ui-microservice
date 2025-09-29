@@ -32,8 +32,8 @@
 }
 
 .starting-screen-message {
-    height: 40vh;
-    font-size: 2rem;
+    height: 35vh;
+    font-size: 1.8rem;
     font-weight: bold;
     color: var(--text-color);
     display: flex;
@@ -41,7 +41,7 @@
     align-items: center;
     justify-content: center;
     text-align: center;
-    gap: 20px;
+    gap: 15px;
 }
 
 .loading-circle {
@@ -66,8 +66,8 @@
 /* v Z-Pattern Styling v */
 .square {
     position: absolute;
-    width: 128px;
-    height: 128px;
+    width: 100px;
+    height: 100px;
     background-color: black;
     opacity: 0;
     transition: opacity 0.1s;

@@ -24,7 +24,7 @@ body {
 
 .header {
     background-color: var(--top-bar-color);
-    height: 60px;
+    height: 55px;
     display: none; /*will change to flex when loaded  by script.js*/
     flex-direction: row;
     align-items: center;
@@ -37,7 +37,7 @@ body {
 .header>button {
     border: none;
     border-radius: 5px;
-    height: 48px;
+    height: 45px;
     width: 200px;
     cursor: pointer;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25), 0 1.5px 0 rgba(255, 255, 255, 0.08) inset;
@@ -48,7 +48,7 @@ body {
     color: white;
     font-weight: bold;
     font-family: var(--font-name);
-    font-size: 1.2em;
+    font-size: 1em;
 }
 
 .help-btn {
@@ -56,7 +56,7 @@ body {
     color: var(--text-color);
     font-weight: bold;
     font-family: var(--font-name);
-    font-size: 1.2em;
+    font-size: 1em;
 }
 
 .tabs-container {
@@ -76,7 +76,7 @@ body {
     border-radius: 5px;
     cursor: pointer;
     font-family: var(--font-name);
-    font-size: 1.3em;
+    font-size: 1.2em;
     font-weight: bold;
     max-height: 100%;
     height: 100%;
@@ -94,7 +94,7 @@ body {
 .component-container {
     display: flex;
     flex-direction: row;
-    height: calc(100% - 61px);
+    height: calc(100% - 55px);
     width: 100%;
     /* 3 slides, adjust if you add more */
     transition: transform 0.3s ease;
@@ -107,6 +107,10 @@ body {
 }
 
 /* Volume Sliders */
+.volume-title {
+    font-size: .8em;
+}
+
 .volume-container {
     background-color: var(--background-color);
     width: 100%;
@@ -116,7 +120,7 @@ body {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 20px;
+    padding: 17px;
     text-align: center;
     color: var(--text-color);
     font-size: 1.2em;
@@ -161,16 +165,16 @@ body {
 .volume-slider::-webkit-slider-thumb {
     -webkit-appearance: none;
     appearance: none;
-    width: 40px;
-    height: 40px;
+    width: 35px;
+    height: 35px;
     border-radius: 50%;
     background: var(--volume-slider-color);
     cursor: pointer;
 }
 
 .volume-slider::-moz-range-thumb {
-    width: 40px;
-    height: 40px;
+    width: 35px;
+    height: 35px;
     border-radius: 50%;
     background: var(--volume-slider-color);
     cursor: pointer;
@@ -182,7 +186,7 @@ body {
     color: white;
     padding: 10px 20px;
     border: none;
-    font-size: 1.2em;
+    font-size: .95em;
     font-weight: bold;
     cursor: pointer;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25), 0 1.5px 0 rgba(255, 255, 255, 0.08) inset;
@@ -193,6 +197,7 @@ body {
     background-color: #e74945 !important;
     color: white;
 }
+
 .slider-label {
     position: absolute;
     font-size: 1.3em;

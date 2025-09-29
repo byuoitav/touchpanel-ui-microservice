@@ -105,7 +105,7 @@ function Build {
         Write-Output "Exiting \blueberry and moving files to \dist"
         Move-Item "$location\blueberry\dist\" -Destination "$location\dist\blueberry-dist\"
     }
-
+ 
     Write-Output "*****************************************"
 }
 

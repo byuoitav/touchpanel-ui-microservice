@@ -29,7 +29,7 @@ class StreamInputsModal {
         border-radius: 12px;
         height: 70%;
         max-width: 900px;
-        width: 100%;
+        width: 90%;
         text-align: center;
         color: var(--text-color);
         box-shadow: 0 4px 10px rgba(0,0,0,0.2);
@@ -69,11 +69,12 @@ class StreamInputsModal {
         background: #ff0000ff;
         color: white;
         border: none;
-        padding: 20px 26px;
+        padding: 10px 26px;
         border-radius: 8px;
         cursor: pointer;
         font-size: 1.2rem;
         transition: background 0.2s;
+        font-weight: bold;
       }
 
       .cancel-stream-btn:hover { background: #888; }

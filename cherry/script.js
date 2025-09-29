@@ -51,7 +51,6 @@ document.addEventListener('DOMContentLoaded', async () => {
                     document.dispatchEvent(new window.Event("UILoaded"));
                     document.querySelector('.header').style.display = 'flex';
                     startingScreen.classList.add('hidden');
-                    insertOffsetImage('assets/zcosmo.png');
                 }, { once: true });
             }, { once: true });
 
@@ -168,32 +167,6 @@ function removeComponentAssets() {
             if (el.src && el.src.includes('startingScreen')) return; // never remove starting screen assets
             el.remove();
         });
-}
-
-
-function insertOffsetImage(imgSrc) {
-    const displayComponent = document.querySelector('.display-component');
-    if (!displayComponent) return;
-
-    // Ensure the display component can anchor absolutely positioned children
-    displayComponent.style.position = 'relative';
-
-    // Create the image
-    const img = document.createElement('img');
-    img.src = imgSrc;
-    img.style.position = 'absolute';
-
-    // Position offset to the left by 120% of the display component’s width
-    img.style.left = '-120%';
-
-    // Center vertically relative to the display component
-    img.style.top = '50%';
-    img.style.transform = 'translateY(-50%) rotate(90deg)';
-
-    img.style.height = '1000px';
-    img.style.width = 'auto';
-
-    displayComponent.appendChild(img);
 }
 
 

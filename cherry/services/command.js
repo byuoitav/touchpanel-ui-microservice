@@ -331,6 +331,30 @@ class CommandService {
     return await this.executeRequests(requests, 1, 20 * 1000);
   }
 
+  async stopRecording() {
+    const url = window.DataService.panel.preset.recording.stop;
+    console.log(url);
+    try {
+      const result = await this.http.request({ method: "GET", url });
+      return true;
+    } catch (err) {
+      this.handleError("stopRecording", err);
+      return false;
+    }
+  }
+
+  async startRecording() {
+    const url = window.DataService.panel.preset.recording.start;
+    console.log(url);
+    try {
+      const result = await this.http.request({ method: "GET", url });
+      return true;
+    } catch (err) {
+      this.handleError("startRecording", err);
+      return false;
+    }
+  }
+
   async powerOffAll() {
     const body = { power: "standby" };
     const result = await this.put(body);
@@ -447,3 +471,5 @@ const http = {
     return response.json();
   }
 };
+
+
