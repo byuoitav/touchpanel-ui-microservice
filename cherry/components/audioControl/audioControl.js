@@ -4,7 +4,6 @@ window.components.audioControl = {
     sliders: [],
 
     loadPage: function () {
-
         this.populateMasterVolume();
         this.populateDisplayVolumes();
         this.populateMicrophoneVolumes();
@@ -182,11 +181,11 @@ window.components.audioControl = {
 
             // Build the HTML for the content section
             let html = `
-                <div class="arrow left-arrow hidden">
+                <div class="arrow left-arrow hidden" style="display:none;">
                     <img class="carousel-arrow outputs-carousel-arrow-left" src="assets/arrow_left.svg" alt="Previous">
                 </div>
                 <div class="${groupName.toLowerCase()}-audio-controls audio-controls-content paginated-container"></div>
-                <div class="arrow right-arrow hidden">
+                <div class="arrow right-arrow hidden" style="display:none;">
                     <img class="carousel-arrow outputs-carousel-arrow-right" src="assets/arrow_right.svg" alt="Next">
                 </div>
             `;

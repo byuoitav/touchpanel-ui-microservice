@@ -1,8 +1,18 @@
 document.addEventListener('DOMContentLoaded', async () => {
     window.themeService = new ThemeService();
     await window.themeService.fetchTheme();
-
     await loadComponent('startingScreen', '.starting-screen')
+    window.SocketService = new SocketService();
+    window.APIService = new APIService();
+
+    // Wait for APIService to finish loading configs before creating DataService
+    window.APIService.addEventListener('loaded', async () => {
+        window.VolumeSlider = VolumeSlider;
+        window.DataService = new DataService(window.APIService);
+        window.DataService.init();
+        window.CommandService = new CommandService(http, window.DataService, window.APIService, null);
+        window.components.startingScreen.addIndependentAudioButton();
+    });
 
     // when user clicks on starting screen, it emits 'starting' event
     if (!window._startingScreenListenerAdded) {
@@ -25,7 +35,6 @@ document.addEventListener('DOMContentLoaded', async () => {
                 // wait for DataService to be fully initialized (after dispatchEvent)
                 window.DataService.addEventListener('loaded', async () => {
                     await window.CommandService.powerOnDefault(window.DataService.panel.preset);
-                    window.VolumeSlider = VolumeSlider;
                     currentComponent = 'display';
                     await loadComponent(currentComponent, `.display-component`);
                     await loadComponent('audioControl', `.audio-control-component`);
@@ -100,8 +109,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 });
 
-
 async function loadComponent(componentName, divQuerySelector = `.component-container`) {
+    console.log(`Loading component: ${componentName} into ${divQuerySelector}`);
     const htmlPath = `./components/${componentName}/${componentName}.html`;
     const jsPath = `./components/${componentName}/${componentName}.js`;
     const cssPath = `./components/${componentName}/${componentName}.css`;
@@ -175,6 +184,12 @@ function removeComponentAssets() {
             if (el.src && el.src.includes('startingScreen')) return; // never remove starting screen assets
             el.remove();
         });
+    document.querySelector('.display-component').innerHTML = '';
+    document.querySelector('.audio-control-component').innerHTML = '';
+    document.querySelector('.camera-control-component').innerHTML = '';
+    document.querySelector('.header').style.display = 'none';
+    currentComponent = null;
+    isCameras = false;
 }
 
 

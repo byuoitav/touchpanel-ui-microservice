@@ -2,7 +2,7 @@ window.components = window.components || {};
 
 class StartingScreen extends EventTarget {
     loadPage() {
-        this.addLogo();
+        this.addLogo();``
         this.addTouchListener();
         this.dispatchEvent(new CustomEvent("componentReady", { detail: true }));
         createZPattern();
@@ -23,9 +23,8 @@ class StartingScreen extends EventTarget {
         }
     }
 
-
     addTouchListener() {
-        const container = document.querySelector('.starting-screen-container');
+        const container = document.querySelector('.starting-screen-content');
         if (container) {
             container.addEventListener('click', () => {
                 // Replace the contents of .starting-screen-message with a loading circle
@@ -36,6 +35,20 @@ class StartingScreen extends EventTarget {
                     removeZPattern();
                 }
             });
+        }
+    }
+
+    addIndependentAudioButton() {
+        const button = document.querySelector('.independent-audio-button');
+        const independentAudioModal = new IndependentAudioModal();
+        if (window.DataService.panel.preset.independentAudioDevices.length > 0) {
+            button.classList.remove('hidden');
+            button.addEventListener('click', async () => {
+                window.CommandService.buttonPress('clicked independent audio button', {});
+                independentAudioModal.open();
+            });
+        } else {
+            button.classList.add('hidden');
         }
     }
 }

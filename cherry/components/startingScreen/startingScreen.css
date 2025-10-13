@@ -13,7 +13,17 @@
     right: 0;
     bottom: 0;
     width: 100vw;
-    z-index: 9999;
+    z-index: 500;
+}
+
+.starting-screen {
+    display: flex;
+    height: 100vh;
+    width: 100vw;
+    z-index: 500;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 }
 
 .logo-container {
@@ -26,7 +36,7 @@
     margin-top: 60px;
 }
 
-.logo-container > svg {
+.logo-container>svg {
     width: 100%;
     height: 100%;
 }
@@ -53,6 +63,22 @@
     animation: spin .75s linear infinite;
 }
 
+.independent-audio-button {
+    z-index: 1000;
+    padding: 15px;
+    border-radius: 40px;
+    border: none;
+    background-color: var(--background-color-accent);
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+}
+
+.independent-audio-button img {
+    width: 40px;
+    height: 40px;
+}
+
 @keyframes spin {
     0% {
         transform: rotate(0deg);
@@ -72,7 +98,7 @@
     opacity: 0;
     transition: opacity 0.1s;
     touch-action: manipulation;
-    z-index: 100000;
+    z-index: 1000;
 }
 
 .top-left {
