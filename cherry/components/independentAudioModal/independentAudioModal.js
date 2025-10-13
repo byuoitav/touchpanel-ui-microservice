@@ -27,7 +27,7 @@ class IndependentAudioModal {
         padding: 10px;
         border-radius: 12px;
         width: 95vw;
-        height: 90vh;
+        height: 94vh;
         text-align: center;
         color: var(--text-color);
         box-shadow: 0 4px 10px rgba(0,0,0,0.2);
@@ -54,6 +54,7 @@ class IndependentAudioModal {
       .independent-audio-modal-title {
         font-size: 1.5em;
         margin-bottom: 0px;
+        font-weight: bold;
       }
 
       .independent-audio-modal-actions {

@@ -202,29 +202,30 @@ window.components.audioControl = {
                 const audioDevices = window.DataService.panel.preset.audioDevices;
                 const independentAudioDevices = window.DataService.panel.preset.independentAudioDevices;
                 const audioDevice = audioDevices.find(d => d.name === device) || independentAudioDevices.find(d => d.name === device);
-
-                const volumeSlider = new VolumeSliderClass(controlsDiv, {
-                    title: audioDevice.displayname || audioDevice.name || audioDevice,
-                    value: audioDevice.mixlevel || audioDevice.volume || 30,
-                    icon: audioDevice.icon ? `./assets/${audioDevice.icon}.svg` : null,
-                    onChange: (val) => {
-                        console.log(`Volume for ${audioDevice.displayname || audioDevice.name || audioDevice} changed to:`, val);
-                        window.CommandService.setMixLevel(val, audioDevice, window.DataService.panel.preset);
-                        window.CommandService.setMixMute(false, audioDevice, window.DataService.panel.preset);
-                    },
-                    muteFunction: function () {
-                        if (volumeSlider.muteButton.classList.contains("muted")) {
-                            window.CommandService.setMixMute(true, audioDevice, window.DataService.panel.preset);
-                        } else {
+                if (audioDevice) {
+                    const volumeSlider = new VolumeSliderClass(controlsDiv, {
+                        title: audioDevice.displayname || audioDevice.name || audioDevice,
+                        value: audioDevice.mixlevel || audioDevice.volume || 30,
+                        icon: audioDevice.icon ? `./assets/${audioDevice.icon}.svg` : null,
+                        onChange: (val) => {
+                            console.log(`Volume for ${audioDevice.displayname || audioDevice.name || audioDevice} changed to:`, val);
+                            window.CommandService.setMixLevel(val, audioDevice, window.DataService.panel.preset);
                             window.CommandService.setMixMute(false, audioDevice, window.DataService.panel.preset);
-                        }
-                    },
-                    id: audioDevice.name || audioDevice.displayname || audioDevice
-                });
-                window.components.audioControl.sliders.push(volumeSlider);
-                if (audioDevice.muted) {
-                    volumeSlider.muteButton.classList.add("muted");
-                    volumeSlider.muteButton.textContent = "Unmute";
+                        },
+                        muteFunction: function () {
+                            if (volumeSlider.muteButton.classList.contains("muted")) {
+                                window.CommandService.setMixMute(true, audioDevice, window.DataService.panel.preset);
+                            } else {
+                                window.CommandService.setMixMute(false, audioDevice, window.DataService.panel.preset);
+                            }
+                        },
+                        id: audioDevice.name || audioDevice.displayname || audioDevice
+                    });
+                    window.components.audioControl.sliders.push(volumeSlider);
+                    if (audioDevice.muted) {
+                        volumeSlider.muteButton.classList.add("muted");
+                        volumeSlider.muteButton.textContent = "Unmute";
+                    }
                 }
             }
         }
