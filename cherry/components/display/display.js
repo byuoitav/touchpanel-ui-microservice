@@ -301,6 +301,9 @@ window.components.display = {
       inputPages.push(inputRows.slice(i, i + 2));
     }
 
+    // if there is more than one row, align pages to start; otherwise center
+    const inputsPageJustifyContent = inputRows.length > 1 ? 'start' : 'center';
+
     // Carousel HTML structure
     return `
       <div class="inputs-carousel-container">
@@ -308,7 +311,7 @@ window.components.display = {
         <img class="carousel-arrow carousel-arrow-right" src="assets/arrow_right.svg" alt="Next" style="${inputPages.length > 1 ? '' : 'display:none;'}">
         <div class="inputs-carousel-track">
           ${inputPages.map((page, idx) => `
-            <div class="inputs-page">
+            <div class="inputs-page" style="justify-content: ${inputsPageJustifyContent};">
               ${page.join('')}
             </div>
           `).join('')}
