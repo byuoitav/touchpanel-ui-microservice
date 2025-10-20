@@ -187,14 +187,14 @@
     position: relative;
     overflow: hidden;
     width: 100%;
-    height: 40%;
+    height: 55%;
 }
 
 .outputs-carousel-container {
     position: relative;
     overflow: hidden;
     width: 100%;
-    height: 50%;
+    height: 45%;
 }
 
 .inputs-carousel-track {
@@ -217,7 +217,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
+    justify-content: start;
 }
 
 .outputs-page {
@@ -257,7 +257,7 @@
 }
 
 .outputs-carousel-arrow-left {
-    left: .5em;
+    left: .25em;
 }
 
 .outputs-carousel-arrow-right {
