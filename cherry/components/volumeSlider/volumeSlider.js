@@ -64,14 +64,14 @@ class VolumeSlider {
 
     render() {
         let sliderCode = `
-        <div class="volume-title">${this.options.title}</div>
-        ${this.options.icon ? `<img src="${this.options.icon}" alt="Icon" class="volume-icon">` : ''}
+        <div class="volume-title">${(this.options.title)}</div>
+        ${this.options.icon ? `<img src="${String(this.options.icon).toLowerCase()}" alt="icon" class="volume-icon">` : ''}
         <div class="volume-slide-container">
             <input type="range" step="5" min="${this.options.min}" max="${this.options.max}" value="${this.options.value}" class="volume-slider">
-            <div class="slider-label">${this.options.value}</div>
+            <div class="slider-label">${String(this.options.value).toLowerCase()}</div>
         </div>
-        <button class="mute-button" id="${this.options.id}-mute">${this.options.muteText}</button>
-    `;
+        <button class="mute-button" id="${String(this.options.id || '').toLowerCase()}-mute">${String(this.options.muteText).toLowerCase()}</button>
+        `;
         // append to container
         this.sliderHTML = document.createElement('div');
         this.sliderHTML.innerHTML = sliderCode;
