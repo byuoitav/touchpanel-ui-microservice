@@ -54,20 +54,20 @@ function Lint {
 }
 
 function Deps {
-    # Write-Output "Downloading Dependencies"
-    # Invoke-Expression "go mod download"
+    Write-Output "Downloading Dependencies"
+    Invoke-Expression "go mod download"
 
-    # Write-Output "Setting up Node"
-    # if (Test-Path "blueberry") {
-    #     Set-Location "blueberry"
-    #     Write-Output "Entering \blueberry"
-    #     Invoke-Expression "npm install -g @angular/cli@6.0.8"
-    #     #npm i @angular/compiler-cli@6.0.8 is what worked for my PC - Jake
-    #     #npm install --save rxjs-compat also helped solve issues
+    Write-Output "Setting up Node"
+    if (Test-Path "blueberry") {
+        Set-Location "blueberry"
+        Write-Output "Entering \blueberry"
+        Invoke-Expression "npm install -g @angular/cli@6.0.8"
+        #npm i @angular/compiler-cli@6.0.8 is what worked for my PC - Jake
+        #npm install --save rxjs-compat also helped solve issues
 
-    #     Invoke-Expression "cd .."
-    #     Write-Output "Exiting \blueberry"
-    # }
+        Invoke-Expression "cd .."
+        Write-Output "Exiting \blueberry"
+    }
 }
 
 function Build {
@@ -97,17 +97,17 @@ function Build {
     Invoke-Expression "go build -v -o dist/${NAME}-arm"
 
     Write-Output "*****************************************"
-    # Write-Output "Building blueberry"
-    # if (Test-Path "blueberry") {
-    #     Set-Location "blueberry"
-    #     Write-Output "Entering \blueberry"
-    #     Invoke-Expression "ng build --configuration production --aot --build-optimizer --base-href='./blueberry/'"
-    #     Invoke-Expression "cd .."
-    #     Write-Output "Exiting \blueberry and moving files to \dist"
-    #     Move-Item "$location\blueberry\dist\" -Destination "$location\dist\blueberry-dist\"
-    # }
+    Write-Output "Building blueberry"
+    if (Test-Path "blueberry") {
+        Set-Location "blueberry"
+        Write-Output "Entering \blueberry"
+        Invoke-Expression "ng build --configuration production --aot --build-optimizer --base-href='./blueberry/'"
+        Invoke-Expression "cd .."
+        Write-Output "Exiting \blueberry and moving files to \dist"
+        Move-Item "$location\blueberry\dist\" -Destination "$location\dist\blueberry-dist\"
+    }
  
-    # Write-Output "*****************************************"
+    Write-Output "*****************************************"
 }
 
 function Cleanup {
