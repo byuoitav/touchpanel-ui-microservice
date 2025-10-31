@@ -48,6 +48,12 @@ window.components.display = {
     // update the display's icon
     console.log("Input icon:", inputIcon);
     loadSvg(`${displayName}-image`, `./assets/${inputIcon}.svg`);
+
+    // select the display
+    this.selectOutput(displayName);
+
+    // select the input
+    this.selectInput(window.components.display.inputs.find(i => i.displayname === inputDisplayName).name);
   },
 
   toggleDisplay: function (display) {

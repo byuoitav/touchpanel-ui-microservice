@@ -32,7 +32,6 @@ class StartingScreen extends EventTarget {
                 if (message) {
                     message.innerHTML = '<div class="loading-circle"></div>';
                     this.dispatchEvent(new CustomEvent("starting", { detail: true }));
-                    removeZPattern();
                 }
             });
         }

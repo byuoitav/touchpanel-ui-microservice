@@ -20,7 +20,9 @@ body {
     margin: 0;
     height: 100%;
     overflow-x: hidden;
+    user-select: none;
 }
+
 
 .header {
     background-color: var(--top-bar-color);
@@ -125,6 +127,7 @@ body {
     color: var(--text-color);
     font-size: 1.2em;
     font-weight: bold;
+    z-index: 100000;
 }
 
 .volume-slide-container {

@@ -1,3 +1,5 @@
+window.TOUCHPANEL_STATE = "OFF"
+
 document.addEventListener('DOMContentLoaded', async () => {
     window.themeService = new ThemeService();
     await window.themeService.fetchTheme();
@@ -34,77 +36,9 @@ document.addEventListener('DOMContentLoaded', async () => {
 
                 // wait for DataService to be fully initialized (after dispatchEvent)
                 window.DataService.addEventListener('loaded', async () => {
-                    await window.CommandService.powerOnDefault(window.DataService.panel.preset);
-                    currentComponent = 'display';
-                    await loadComponent(currentComponent, `.display-component`);
-                    await loadComponent('audioControl', `.audio-control-component`);
-                    isCameras = window.DataService.panel.preset.cameras.length > 0;
-                    if (isCameras) {
-                        await loadComponent('cameraControl', `.camera-control-component`);
-                    } else {
-                        console.log("No cameras in preset, skipping camera component load");
-                        // hide the camera-control-component and camera tab
-                        const cameraControlComponent = document.querySelector('.camera-control-component');
-                        if (cameraControlComponent) {
-                            cameraControlComponent.classList.add('hidden');
-                        }
-                        const cameraTab = document.querySelector('.camera-control-tab');
-                        if (cameraTab) {
-                            cameraTab.classList.add('hidden');
-                            cameraTab.classList.remove('tab');
-                        }
-                    }
-
-                    //remove the starting screen
-                    const startingScreen = document.querySelector('.starting-screen');
-                    document.dispatchEvent(new window.Event("UILoaded"));
-                    document.querySelector('.header').style.display = 'flex';
-                    startingScreen.classList.add('hidden');
+                    await powerOnUI();
                 }, { once: true });
             }, { once: true });
-
-            // listener for power button
-            const powerBtn = document.querySelector('.power-off-btn');
-            powerBtn.addEventListener('click', handlePowerClick);
-
-            async function handlePowerClick() {
-                window.CommandService.buttonPress(`clicked power off button`, {});
-                window.resetViewPosition(); // reset view position to display component
-
-                // show the starting screen with power off message
-                const startingScreenMessage = document.querySelector('.starting-screen-message');
-                startingScreenMessage.innerHTML = `
-        <div class="loading-circle"></div>
-        Powering Off...`;
-                const startingScreen = document.querySelector('.starting-screen');
-                startingScreen.classList.remove('hidden');
-                createZPattern();
-
-                // call power off command
-                await window.CommandService.powerOff(window.DataService.panel.preset);
-                removeComponentAssets();
-
-                // return starting screen to initial state
-                startingScreenMessage.innerHTML = `Touch Anywhere to Start`;
-
-                // reset help button
-                const helpBtn = document.querySelector('.help-btn');
-                helpBtn.removeEventListener('click', handleHelpClick);
-
-                // reset power button (remove this handler)
-                const powerBtn = document.querySelector('.power-off-btn');
-                powerBtn.removeEventListener('click', handlePowerClick);
-            }
-
-            const helpBtn = document.querySelector('.help-btn');
-
-            function handleHelpClick() {
-                window.CommandService.buttonPress(`clicked help button`, {});
-                const helpModal = new HelpModal();
-                helpModal.open();
-            }
-
-            helpBtn.addEventListener('click', handleHelpClick);
         });
     }
 });
@@ -192,5 +126,86 @@ function removeComponentAssets() {
     isCameras = false;
 }
 
+async function handlePowerOffClick(updateUIOnly = false) {
+    if (window.TOUCHPANEL_STATE === "OFF") { return; }
+    window.TOUCHPANEL_STATE = "OFF";
+    window.resetViewPosition(); // reset view position to display component
 
+    // show the starting screen with power off message
+    const startingScreenMessage = document.querySelector('.starting-screen-message');
+    startingScreenMessage.innerHTML = `
+        <div class="loading-circle"></div>
+        Powering Off...`;
+    const startingScreen = document.querySelector('.starting-screen');
+    startingScreen.classList.remove('hidden');
+    createZPattern();
 
+    // call power off command
+    if (!updateUIOnly) {
+        await window.CommandService.powerOff(window.DataService.panel.preset);
+    }
+    removeComponentAssets();
+
+    // return starting screen to initial state
+    startingScreenMessage.innerHTML = `Touch Anywhere to Start`;
+
+    // reset help button
+    const helpBtn = document.querySelector('.help-btn');
+    helpBtn.removeEventListener('click', handleHelpClick);
+
+    // reset power button (remove this handler)
+    const powerBtn = document.querySelector('.power-off-btn');
+    powerBtn.removeEventListener('click', handlePowerOffClick);
+}
+
+async function powerOnUI(skipPowerCommand = false) {
+    if (window.TOUCHPANEL_STATE === "ON") { return; }
+    window.TOUCHPANEL_STATE = "ON";
+    console.log("Powering on UI");
+    if (!skipPowerCommand) {
+        await window.CommandService.powerOnDefault(window.DataService.panel.preset);
+    }
+    removeZPattern();
+    currentComponent = 'display';
+    await loadComponent(currentComponent, `.display-component`);
+    await loadComponent('audioControl', `.audio-control-component`);
+    isCameras = window.DataService.panel.preset.cameras.length > 0;
+    if (isCameras) {
+        await loadComponent('cameraControl', `.camera-control-component`);
+    } else {
+        console.log("No cameras in preset, skipping camera component load");
+        // hide the camera-control-component and camera tab
+        const cameraControlComponent = document.querySelector('.camera-control-component');
+        if (cameraControlComponent) {
+            cameraControlComponent.classList.add('hidden');
+        }
+        const cameraTab = document.querySelector('.camera-control-tab');
+        if (cameraTab) {
+            cameraTab.classList.add('hidden');
+            cameraTab.classList.remove('tab');
+        }
+    }
+
+    //remove the starting screen
+    const startingScreen = document.querySelector('.starting-screen');
+    document.dispatchEvent(new window.Event("UILoaded"));
+    document.querySelector('.header').style.display = 'flex';
+    startingScreen.classList.add('hidden');
+
+    // listener for power button
+    const powerBtn = document.querySelector('.power-off-btn');
+    powerBtn.addEventListener('click', () => {
+        window.CommandService.buttonPress(`clicked power off button`, {});
+        handlePowerOffClick();
+    });
+
+    const helpBtn = document.querySelector('.help-btn');
+
+    function handleHelpClick() {
+        window.CommandService.buttonPress(`clicked help button`, {});
+        const helpModal = new HelpModal();
+        helpModal.open();
+    }
+
+    helpBtn.addEventListener('click', handleHelpClick);
+}

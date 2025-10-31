@@ -182,20 +182,21 @@ class DataService extends EventTarget {
         console.log("e.key:", e.key);
         switch (e.key) {
             case "power":
+                this.updateDeviceState(e.key, e.value, e["target-device"].deviceID);
+                break;
             case "input":
-                console.log("Updating device state:", e.key, e.value, e["target-device"].deviceID.split("-")[2]);
                 this.updateDeviceState(e.key, e.value, e["target-device"].deviceID.split("-")[2]);
                 break;
             case "blanked":
                 this.updateDeviceState(e.key, e.value, e["target-device"].deviceID.split("-")[2]);
-
+                break;
             case "muted":
             case "volume":
-                // this.updateDeviceState(e.key, e.value, e["target-device"].deviceID);
+                this.updateDeviceState(e.key, e.value, e["target-device"].deviceID);
                 break;
             case "master-volume":
             case "master-mute":
-                // this.updateMasterState(e.key, e.value, e.data);
+                this.updateMasterState(e.key, e.value, e.data);
                 break;
             case "preset-switch":
                 if (window.APIService.piHostname.toLowerCase() === e["target-device"].deviceID.toLowerCase()) {
@@ -212,9 +213,15 @@ class DataService extends EventTarget {
     updateDeviceState(key, value, deviceName) {
         console.log("Updating device state:", key, value, deviceName);
         if (key === "power" || key === "input") {
+            // Update the UI power button state if the power state changes
+            if (key === "power" && value == "standby") { handlePowerOffClick(true); }
+            if (key === "power" && value == "on") { powerOnUI(true); }
             let device = this.displays.find(d => d.name === deviceName) || this.audioDevices.find(a => a.name === deviceName);
             if (device) {
-                if (key === "power") device.power = value;
+                if (key === "power") {
+                    console.log("Updating device power state:", value);
+                    device.power = value;
+                }
                 if (key === "input") {
                     device.input = Input.getInput(value, this.inputs);
                     console.log("Updated device input:", device.input);
@@ -244,6 +251,9 @@ class DataService extends EventTarget {
                 if (key === "master-volume") {
                     p.masterVolume = parseInt(value, 10);
                     p.masterMute = false;
+                    // update UI
+                    window.components.display.masterVolume.setValue(p.masterVolume, false);
+                    window.components.audioControl.sliders.find(slider => slider.options.id === "master").setValue(p.masterVolume, false);
                 } else if (key === "master-mute") {
                     p.masterMute = value.toLowerCase() === "true";
                 }
