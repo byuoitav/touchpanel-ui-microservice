@@ -19,7 +19,7 @@ class HelpModal {
         display: flex;
         justify-content: center;
         align-items: center;
-        z-index: 100000;
+        z-index: 10000;
       }
       .help-modal.hidden { display: none; }
 
@@ -33,7 +33,6 @@ class HelpModal {
         color: var(--text-color);
         box-shadow: 0 4px 10px rgba(0,0,0,0.2);
         font-size: 1.4rem;
-
         display: flex;
         flex-direction: column;
         gap: 20px;
@@ -235,11 +234,69 @@ class HelpModal {
     open() {
         if (!this.modal) this._createModal();
         this.modal.classList.remove("hidden");
+        createZPattern();
     }
 
     close() {
         if (this.modal) this.modal.classList.add("hidden");
+        removeZPattern();
     }
+}
+
+function createSquare(positionClass, onTap) {
+    console.log(`Creating square at position: ${positionClass}`);
+    const square = document.createElement('div');
+    square.className = `square ${positionClass}`;
+
+    // Show the square on touch or mouse down
+    const show = () => square.style.opacity = 0.2;
+    const hide = () => square.style.opacity = 0;
+
+    // Event handling
+    square.addEventListener('mousedown', e => { 
+        window.CommandService.buttonPress(`clicked square ${positionClass}`, {});
+        show(); onTap(); 
+    });
+    square.addEventListener('mouseup', hide);
+    square.addEventListener('touchstart', e => { show(); onTap(); });
+    square.addEventListener('touchend', hide);
+    document.body.appendChild(square);
+    return square;
+}
+
+function createZPattern() {
+    topLeft = createSquare('top-left', () => {
+        if (!topRight) {
+            topRight = createSquare('top-right', () => {
+                if (!bottomLeft) {
+                    bottomLeft = createSquare('bottom-left', () => {
+                        if (!bottomRight) {
+                            bottomRight = createSquare('bottom-right', () => {
+                                window.location.href = "http://" + location.hostname + ':10000/dashboard/overview';
+                            });
+                        }
+                    });
+                }
+            });
+        }
+        // Clean up all but topLeft after 20 seconds
+        setTimeout(() => {
+            [topRight, bottomLeft, bottomRight].forEach(sq => {
+                if (sq && sq.parentElement) sq.remove();
+            });
+            topRight = bottomLeft = bottomRight = null;
+        }, 20000);
+    });
+}
+
+function removeZPattern() {
+    [topLeft, topRight, bottomLeft, bottomRight].forEach(sq => {
+        if (sq && sq.parentElement) sq.remove();
+    });
+    topLeft = topRight = bottomLeft = bottomRight = null;
+
+    // remove by class
+    document.querySelectorAll('.square').forEach(sq => sq.remove());
 }
 
 // Example usage:
