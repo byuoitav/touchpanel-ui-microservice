@@ -84,7 +84,7 @@ function createZPattern() {
                     bottomLeft = createSquare('bottom-left', () => {
                         if (!bottomRight) {
                             bottomRight = createSquare('bottom-right', () => {
-                                window.location.href = 'http://localhost:10000/dashboard/overview';
+                                window.location.href = "http://" + location.hostname + ':10000/dashboard/overview';
                             });
                         }
                     });
