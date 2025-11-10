@@ -14,6 +14,16 @@ document.addEventListener('DOMContentLoaded', async () => {
         window.DataService.init();
         window.CommandService = new CommandService(http, window.DataService, window.APIService, null);
         window.components.startingScreen.addIndependentAudioButton();
+
+        // check if the room is already on
+        for (const display of APIService.room.status.displays) {
+            if ((display.power || "").toLowerCase() === "on") {
+                window.DataService.addEventListener('loaded', async () => {
+                    await powerOnUI(true);
+                }, { once: true });
+                break;
+            }
+        }
     });
 
     // when user clicks on starting screen, it emits 'starting' event
