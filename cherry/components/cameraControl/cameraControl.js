@@ -256,6 +256,7 @@ window.components.cameraControl = {
             'zoom-in': 'zoomStop',
             'zoom-out': 'zoomStop'
         };
+        const supportsPointerEvents = !!window.PointerEvent;
 
         for (let index = 0; index < this.cameraMap.size; index++) {
             Object.keys(movementMap).forEach(dir => {
@@ -273,28 +274,121 @@ window.components.cameraControl = {
                     this.stopCameraAction(index, stopKeyMap[dir], movementMap[dir]);
                 };
 
-                // Only trigger on click/press, not hover
-                element.addEventListener('mousedown', start);
-                element.addEventListener('mouseup', stop);
+                let isPressing = false;
 
-                // Add touch support
-                element.addEventListener('touchstart', e => {
-                    window.CommandService.buttonPress(`clicked camera ${index} ${dir} button`, {});
-                    e.preventDefault(); // Prevents simulated mouse events
+                const beginPress = () => {
+                    if (isPressing) {
+                        return;
+                    }
+                    isPressing = true;
                     start();
-                }, { passive: false });
+                };
 
-                element.addEventListener('touchend', e => {
-                    window.CommandService.buttonPress(`released camera ${index} ${dir} button`, {});
-                    e.preventDefault();
+                const endPress = () => {
+                    if (!isPressing) {
+                        return;
+                    }
+                    isPressing = false;
                     stop();
-                });
+                };
 
-                element.addEventListener('touchcancel', e => {
-                    window.CommandService.buttonPress(`released camera ${index} ${dir} button`, {});
-                    e.preventDefault();
-                    stop();
-                });
+                if (supportsPointerEvents) {
+                    let activePointerId = null;
+
+                    const releasePointerCapture = (event) => {
+                        if (!element.releasePointerCapture || typeof event.pointerId === 'undefined') {
+                            return;
+                        }
+                        if (element.hasPointerCapture && !element.hasPointerCapture(event.pointerId)) {
+                            return;
+                        }
+                        try {
+                            element.releasePointerCapture(event.pointerId);
+                        } catch (err) {
+                            // Ignore if pointer capture is no longer active.
+                        }
+                    };
+
+                    const handlePointerRelease = (event) => {
+                        if (activePointerId === null || event.pointerId !== activePointerId) {
+                            return;
+                        }
+                        activePointerId = null;
+                        releasePointerCapture(event);
+                        endPress();
+                    };
+
+                    element.addEventListener('pointerdown', event => {
+                        if (event.pointerType === 'mouse' && event.button !== 0) {
+                            return;
+                        }
+                        event.preventDefault();
+                        activePointerId = event.pointerId;
+                        beginPress();
+                        if (element.setPointerCapture && typeof event.pointerId !== 'undefined') {
+                            try {
+                                element.setPointerCapture(event.pointerId);
+                            } catch (err) {
+                                // Ignore capture failures; fallback handlers will clean up.
+                            }
+                        }
+                    });
+
+                    element.addEventListener('pointerup', handlePointerRelease);
+                    element.addEventListener('pointercancel', handlePointerRelease);
+                    window.addEventListener('pointerup', handlePointerRelease);
+                    window.addEventListener('pointercancel', handlePointerRelease);
+                    element.addEventListener('lostpointercapture', handlePointerRelease);
+                } else {
+                    let mouseActive = false;
+                    let activeTouchId = null;
+
+                    const handleMouseUp = () => {
+                        if (!mouseActive) {
+                            return;
+                        }
+                        mouseActive = false;
+                        endPress();
+                    };
+
+                    element.addEventListener('mousedown', event => {
+                        if (event.button !== 0) {
+                            return;
+                        }
+                        event.preventDefault();
+                        mouseActive = true;
+                        beginPress();
+                    });
+
+                    document.addEventListener('mouseup', handleMouseUp);
+
+                    element.addEventListener('touchstart', event => {
+                        if (isPressing) {
+                            return;
+                        }
+                        const touch = event.changedTouches && event.changedTouches[0];
+                        if (!touch) {
+                            return;
+                        }
+                        activeTouchId = touch.identifier;
+                        event.preventDefault(); // Prevents simulated mouse events
+                        beginPress();
+                    }, { passive: false });
+
+                    const handleTouchRelease = event => {
+                        if (activeTouchId === null) {
+                            return;
+                        }
+                        const released = Array.from(event.changedTouches || []).some(touch => touch.identifier === activeTouchId);
+                        if (released) {
+                            activeTouchId = null;
+                            endPress();
+                        }
+                    };
+
+                    document.addEventListener('touchend', handleTouchRelease);
+                    document.addEventListener('touchcancel', handleTouchRelease);
+                }
             });
         }
     },

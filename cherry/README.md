@@ -17,12 +17,21 @@ window
     ├── cameraControl
     ├── display
     └── startingScreen
+APIService
 ```
 
 Example: 
 If one wanted to retrieve the hostname in the DataService, one could use:
 ```javascript
 const hostname = window.APIService.piHostname.toLowerCase();
+```
+
+The APIService also stands alone as a static class separate from its instances, so accessing its static variables would not be `window.APIService.room` but simply
+
+```
+> APIService.room
+
+Room {config: RoomConfiguration, status: RoomStatus, uiconfig: UIConfiguration}
 ```
 
 ## Components
