@@ -27,8 +27,10 @@ window.components.display = {
       // Automatically select the first display if none are selected
       if (this.displays.length > 0 && this.selectedDisplays.length === 0) {
         this.toggleDisplay(this.displays[0]);
-        this.selectInput(this.displays[0].input ? this.displays[0].input.name : "BLANK");
+        this.selectInput((this.displays[0].input && !this.displays[0].blanked) ? this.displays[0].input.name : "BLANK");
       }
+
+      // 
     }
   },
 
@@ -41,8 +43,6 @@ window.components.display = {
     const inputText = document.getElementById(`${displayName}-input`);
     if (inputText) {
       inputText.textContent = inputDisplayName;
-      // input = this.inputs.find(i => i.name === inputName);
-      // inputText.textContent = input ? input.displayname : inputName;
     }
 
     // update the display's icon
@@ -53,7 +53,14 @@ window.components.display = {
     this.selectOutput(displayName);
 
     // select the input
-    this.selectInput(window.components.display.inputs.find(i => i.displayname === inputDisplayName).name);
+    if (inputDisplayName === "BLANK") {
+      this.selectInput("BLANK");
+      return;
+    } else {
+      this.selectInput(window.components.display.inputs.find(i => i.displayname === inputDisplayName).name);
+    }
+
+
   },
 
   toggleDisplay: function (display) {
