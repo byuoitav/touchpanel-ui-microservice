@@ -27,15 +27,6 @@ class CommandService {
     }
   }
 
-  async putWithCustomTimeout(data, customTimeout) {
-    try {
-      return await this.withTimeout(this.http.put(APIService.apiurl, data, this.options), customTimeout);
-    } catch (err) {
-      this.handleError('putWithCustomTimeout', err);
-      return null;
-    }
-  }
-
   async setPower(p, displays) {
     console.log('Setting power to', p, 'on', displays);
     const prev = Display.getPower(displays);

@@ -29,12 +29,10 @@ window.components.display = {
         this.toggleDisplay(this.displays[0]);
         this.selectInput((this.displays[0].input && !this.displays[0].blanked) ? this.displays[0].input.name : "BLANK");
       }
-
-      // 
     }
   },
 
-  updateUI: function (displayName, inputDisplayName, inputIcon) {
+  updateDisplayUI: function (displayName, inputDisplayName, inputIcon) {
     // check if display is blanked
     const display = this.displays.find(d => d.name === displayName);
     this.selectOutput(displayName);
@@ -59,9 +57,9 @@ window.components.display = {
     } else {
       this.selectInput(window.components.display.inputs.find(i => i.displayname === inputDisplayName).name);
     }
-
-
   },
+
+
 
   toggleDisplay: function (display) {
     this.selectedDisplays = [];
@@ -97,7 +95,7 @@ window.components.display = {
     const allInputs = document.querySelectorAll('.input');
     allInputs.forEach(input => {
       if (!tempInputs.some(i => i && i.name === input.id) && input.id !== "BLANK") {
-        input.classList.add('unselectable');
+        // input.classList.add('unselectable'); // Removed to allow all inputs to be clickable
       } else {
         input.classList.remove('unselectable');
       }
@@ -140,19 +138,17 @@ window.components.display = {
       },
       muteFunction: () => {
         if (MasterVolume.muteButton.classList.contains("muted")) {
-          window.CommandService.setMasterMute(true, window.DataService.panel.preset);
+          window.CommandService.setMasterMute(false, window.DataService.panel.preset);
           // update mute button on the audio control page
           window.components.audioControl.sliders.find(slider => slider.options.id === "master").toggleMuteAppearance();
         } else {
-          window.CommandService.setMasterMute(false, window.DataService.panel.preset);
+          window.CommandService.setMasterMute(true, window.DataService.panel.preset);
           // update mute button on the audio control page
           window.components.audioControl.sliders.find(slider => slider.options.id === "master").toggleMuteAppearance();
         }
       },
     });
-
     this.masterVolume = MasterVolume;
-
   },
 
   addOutputInputListeners: function () {

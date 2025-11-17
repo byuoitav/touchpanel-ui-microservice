@@ -168,6 +168,12 @@ async function handlePowerOffClick(updateUIOnly = false) {
     powerBtn.removeEventListener('click', handlePowerOffClick);
 }
 
+function handleHelpClick() {
+    window.CommandService.buttonPress(`clicked help button`, {});
+    const helpModal = new HelpModal();
+    helpModal.open();
+}
+
 async function powerOnUI(skipPowerCommand = false) {
     if (window.TOUCHPANEL_STATE === "ON") { return; }
     window.TOUCHPANEL_STATE = "ON";
@@ -210,12 +216,6 @@ async function powerOnUI(skipPowerCommand = false) {
     });
 
     const helpBtn = document.querySelector('.help-btn');
-
-    function handleHelpClick() {
-        window.CommandService.buttonPress(`clicked help button`, {});
-        const helpModal = new HelpModal();
-        helpModal.open();
-    }
 
     helpBtn.addEventListener('click', handleHelpClick);
 }

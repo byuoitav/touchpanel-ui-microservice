@@ -97,18 +97,6 @@ class Output extends Device {
   static setInput(i, outputs) {
     outputs.forEach(o => o.input = i);
   }
-
-  getInputIcon() {
-    return this.input ? this.input.icon : this.icon;
-  }
-
-  onPowerChange(callback) {
-    this.events.addEventListener("power", callback);
-  }
-
-  emitPowerChange() {
-    this.events.dispatchEvent(new Event("power"));
-  }
 }
 
 class Display extends Output {
@@ -118,22 +106,12 @@ class Display extends Output {
     this.hidden = hidden;
   }
 
-  static getDisplayListFromNames(names, displaysSource) {
-    return displaysSource.filter(d => names.includes(d.name));
-  }
-
   static getBlank(displays) {
     return displays.every(d => d.blanked);
   }
 
   static setBlank(b, displays) {
     displays.forEach(d => d.blanked = b);
-  }
-
-  getAudioConfiguration() {
-    return window.APIService?.constructor?.room?.uiconfig?.audioConfiguration?.find(
-      a => a.display === this.name
-    );
   }
 }
 

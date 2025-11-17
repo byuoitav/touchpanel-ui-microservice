@@ -19,7 +19,7 @@ class HelpModal {
         display: flex;
         justify-content: center;
         align-items: center;
-        z-index: 10000;
+        z-index: 100000;
       }
       .help-modal.hidden { display: none; }
 

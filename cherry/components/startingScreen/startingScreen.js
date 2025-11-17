@@ -2,7 +2,7 @@ window.components = window.components || {};
 
 class StartingScreen extends EventTarget {
     loadPage() {
-        this.addLogo();``
+        this.addLogo();
         this.addTouchListener();
         this.dispatchEvent(new CustomEvent("componentReady", { detail: true }));
         createZPattern();
@@ -30,7 +30,9 @@ class StartingScreen extends EventTarget {
                 // Replace the contents of .starting-screen-message with a loading circle
                 const message = document.querySelector('.starting-screen-message');
                 if (message) {
-                    message.innerHTML = '<div class="loading-circle"></div>';
+                    message.innerHTML = `
+        <div class="loading-circle"></div>
+        Powering On...`;
                     this.dispatchEvent(new CustomEvent("starting", { detail: true }));
                 }
             });
@@ -62,9 +64,9 @@ function createSquare(positionClass, onTap) {
     const hide = () => square.style.opacity = 0;
 
     // Event handling
-    square.addEventListener('mousedown', e => { 
+    square.addEventListener('mousedown', e => {
         window.CommandService.buttonPress(`clicked square ${positionClass}`, {});
-        show(); onTap(); 
+        show(); onTap();
     });
     square.addEventListener('mouseup', hide);
     square.addEventListener('touchstart', e => { show(); onTap(); });

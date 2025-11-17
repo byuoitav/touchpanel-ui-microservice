@@ -225,7 +225,7 @@ class DataService extends EventTarget {
                 if (key === "input") {
                     device.input = Input.getInput(value, this.inputs);
                     console.log("Updated device input:", device.input);
-                    window.components.display.updateUI(device.name, device.input ? device.input.displayname : "BLANK", device.input ? device.input.icon : "blank");
+                    window.components.display.updateDisplayUI(device.name, device.input ? device.input.displayname : "BLANK", device.input ? device.input.icon : "blank");
                 }
             }
         } else if (key === "blanked") {
@@ -234,11 +234,12 @@ class DataService extends EventTarget {
                 display.blanked = value.toLowerCase() === "true";
             }
             if (display && display.blanked) {
-                window.components.display.updateUI(display.name, "BLANK");
+                window.components.display.updateDisplayUI(display.name, "BLANK");
             }
         } else if (key === "muted") {
             const audioDevice = this.audioDevices.find(a => a.name === deviceName);
             if (audioDevice) audioDevice.muted = value.toLowerCase() === "true";
+
         } else if (key === "volume") {
             const audioDevice = this.audioDevices.find(a => a.name === deviceName);
             if (audioDevice) audioDevice.volume = parseInt(value, 10);
@@ -261,13 +262,6 @@ class DataService extends EventTarget {
         }
     }
 
-    getAudioConfigurations(displays) {
-        return displays.map(d => this.audioConfig.get(d)).filter(Boolean);
-    }
-
-    hasRoomWide(audioConfigs) {
-        return audioConfigs.some(config => config.roomWide);
-    }
 
     getInputConfiguration(input) {
         return APIService.room.config.devices.find(d => d.name === input.name);
