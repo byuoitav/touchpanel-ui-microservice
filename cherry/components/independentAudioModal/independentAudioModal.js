@@ -18,7 +18,7 @@ class IndependentAudioModal {
         display: flex;
         justify-content: center;
         align-items: center;
-        z-index: 10000;
+        z-index: 1000000;
       }
       .independent-audio-modal.hidden { display: none; }
 

@@ -127,7 +127,6 @@ body {
     color: var(--text-color);
     font-size: 1.2em;
     font-weight: bold;
-    z-index: 100;
 }
 
 .volume-slide-container {
