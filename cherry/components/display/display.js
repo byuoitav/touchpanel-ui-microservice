@@ -78,28 +78,28 @@ window.components.display = {
   },
 
   getInputsForCurrentDisplay: function (display) {
-    const tempInputs = [];
+    // const tempInputs = [];
 
-    for (const [key, value] of Object.entries(window.DataService.inputReachability)) {
-      if (value.includes(display.name)) {
-        tempInput = window.DataService.panel.preset.inputs.find((i) => i.name === key);
-        if (tempInput) {
-          tempInputs.push(tempInput);
-        }
-      }
-    }
+    // for (const [key, value] of Object.entries(window.DataService.inputReachability)) {
+    //   if (value.includes(display.name)) {
+    //     tempInput = window.DataService.panel.preset.inputs.find((i) => i.name === key);
+    //     if (tempInput) {
+    //       tempInputs.push(tempInput);
+    //     }
+    //   }
+    // }
 
-    this.inputsAvailableForCurrentDisplay = tempInputs;
-
+    // this.inputsAvailableForCurrentDisplay = tempInputs;
+    this.inputsAvailableForCurrentDisplay = window.DataService.panel.preset.inputs;
     // for all inputs, if it is not in the current display's inputs, add the unselectable class, otherwise remove it
-    const allInputs = document.querySelectorAll('.input');
-    allInputs.forEach(input => {
-      if (!tempInputs.some(i => i && i.name === input.id) && input.id !== "BLANK") {
+    // const allInputs = document.querySelectorAll('.input');
+    // allInputs.forEach(input => {
+    //   if (!tempInputs.some(i => i && i.name === input.id) && input.id !== "BLANK") {
         // input.classList.add('unselectable'); // Removed to allow all inputs to be clickable
-      } else {
-        input.classList.remove('unselectable');
-      }
-    });
+    //   } else {
+    //     input.classList.remove('unselectable');
+    //   }
+    // });
   },
 
   render: function () {
