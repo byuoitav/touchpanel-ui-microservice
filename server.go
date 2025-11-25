@@ -119,9 +119,9 @@ func main() {
 	router.GET("/api", func(c *gin.Context) { uiconfig.GetAPI(c) })
 	router.GET("/nextapi", func(c *gin.Context) { uiconfig.NextAPI(c) })
 	router.GET("/control-key/:room/:controlGroup", func(c *gin.Context) { handlers.GetControlKey(c) })
-	router.POST("/help", func(c *gin.Context) { handlers.GenerateHelpFunction("request", messenger) })
-	router.POST("/confirmhelp", func(c *gin.Context) { handlers.GenerateHelpFunction("confirm", messenger) })
-	router.POST("/cancelhelp", func(c *gin.Context) { handlers.GenerateHelpFunction("cancel", messenger) })
+	router.POST("/help", handlers.GenerateHelpFunction("request", messenger))
+	router.POST("/confirmhelp", handlers.GenerateHelpFunction("confirm", messenger))
+	router.POST("/cancelhelp", handlers.GenerateHelpFunction("cancel", messenger))
 
 	router.POST("/camera-control", func(c *gin.Context) { handlers.HandleCameraControl(logger, c) })
 

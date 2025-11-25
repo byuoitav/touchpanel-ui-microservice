@@ -75,7 +75,7 @@ func GenerateHelpFunction(value string, messenger *messenger.Messenger) func(ctx
 			AffectedRoom: events.GenerateBasicRoomInfo(deviceInfo.RoomID),
 			Key:          "help-request",
 			Value:        value,
-			User:         ctx.ClientIP(),
+			User:         ctx.RemoteIP(),
 			Data:         nil,
 		}
 

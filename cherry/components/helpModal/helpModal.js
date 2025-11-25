@@ -154,6 +154,7 @@ class HelpModal {
                 message.textContent = "Failed to confirm help request, call " + window.themeService.phoneNumber;
             } else {
                 message.textContent = "Your help request has been confirmed.";
+                actions.innerHTML = "";
             }
 
             // pause for user to read message
@@ -172,6 +173,7 @@ class HelpModal {
                 message.textContent = "Failed to cancel help request, call " + window.themeService.phoneNumber;
             } else {
                 message.textContent = "Your help request has been canceled.";
+                actions.innerHTML = "";
             }
 
             // pause for user to read message
@@ -238,7 +240,11 @@ class HelpModal {
     }
 
     close() {
-        if (this.modal) this.modal.classList.add("hidden");
+        if (this.modal) { 
+            // remove it from dom
+            this.modal.remove();
+            this.modal = null;
+        }
         removeZPattern();
     }
 }
