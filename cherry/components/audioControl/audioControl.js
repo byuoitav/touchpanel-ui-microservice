@@ -60,11 +60,11 @@ window.components.audioControl = {
             },
             muteFunction: () => {
                 if (MasterVolume.muteButton.classList.contains("muted")) {
-                    window.CommandService.setMasterMute(true, window.DataService.panel.preset);
+                    window.CommandService.setMasterMute(false, window.DataService.panel.preset);
                     // update mute button on the displays page
                     window.components.display.masterVolume.toggleMuteAppearance();
                 } else {
-                    window.CommandService.setMasterMute(false, window.DataService.panel.preset);
+                    window.CommandService.setMasterMute(true, window.DataService.panel.preset);
                     // update mute button on the displays page
                     window.components.display.masterVolume.toggleMuteAppearance();
                 }
@@ -107,9 +107,9 @@ window.components.audioControl = {
                 },
                 muteFunction: () => {
                     if (volumeSlider.muteButton.classList.contains("muted")) {
-                        window.CommandService.setMixMute(true, device, window.DataService.panel.preset);
-                    } else {
                         window.CommandService.setMixMute(false, device, window.DataService.panel.preset);
+                    } else {
+                        window.CommandService.setMixMute(true, device, window.DataService.panel.preset);
                     }
                 }
             });
@@ -146,9 +146,9 @@ window.components.audioControl = {
                 },
                 muteFunction: () => {
                     if (volumeSlider.muteButton.classList.contains("muted")) {
-                        window.CommandService.setMixMute(true, microphone, window.DataService.panel.preset);
-                    } else {
                         window.CommandService.setMixMute(false, microphone, window.DataService.panel.preset);
+                    } else {
+                        window.CommandService.setMixMute(true, microphone, window.DataService.panel.preset);
                     }
                 }
             });
@@ -214,9 +214,9 @@ window.components.audioControl = {
                         },
                         muteFunction: function () {
                             if (volumeSlider.muteButton.classList.contains("muted")) {
-                                window.CommandService.setMixMute(true, audioDevice, window.DataService.panel.preset);
-                            } else {
                                 window.CommandService.setMixMute(false, audioDevice, window.DataService.panel.preset);
+                            } else {
+                                window.CommandService.setMixMute(true, audioDevice, window.DataService.panel.preset);
                             }
                         },
                         id: audioDevice.name || audioDevice.displayname || audioDevice

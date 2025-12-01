@@ -120,7 +120,7 @@ class HelpModal {
                     cancelBtn.textContent = "Close";
                 } else {
                     message.textContent = "Your help request has been received; A member of our support staff is on their way.";
-                    this.createConfirmationButtons();
+                    this.createCloseButton();
                 }
             });
 
@@ -137,52 +137,21 @@ class HelpModal {
         document.body.appendChild(this.modal);
     }
 
-    createConfirmationButtons() {
+    createCloseButton() {
         const actions = document.querySelector(".help-modal-actions");
-        const message = document.querySelector(".help-modal-content p");
 
         // clear old buttons
         actions.innerHTML = "";
 
-        const confirmBtn = document.createElement("button");
-        confirmBtn.className = "help-btn confirm-btn request-btn btn";
-        confirmBtn.textContent = "Confirm Request";
-        confirmBtn.addEventListener("click", async () => {
-            window.CommandService.buttonPress("clicked confirm help request", {});
-            let resp = await this.APIService.help("confirm");
-            if (resp.status != 200) {
-                message.textContent = "Failed to confirm help request, call " + window.themeService.phoneNumber;
-            } else {
-                message.textContent = "Your help request has been confirmed.";
-                actions.innerHTML = "";
-            }
-
-            // pause for user to read message
-            setTimeout(() => {
-                this.close();
-            }, 2500);
+        const closeBtn = document.createElement("button");
+        closeBtn.className = "help-btn cancel-btn btn";
+        closeBtn.textContent = "Close";
+        closeBtn.addEventListener("click", async () => {
+            window.CommandService.buttonPress("clicked close help request", {});
+            this.close();
         });
 
-        const cancelBtn = document.createElement("button");
-        cancelBtn.className = "help-btn cancel-btn btn";
-        cancelBtn.textContent = "Cancel Request";
-        cancelBtn.addEventListener("click", async () => {
-            window.CommandService.buttonPress("clicked cancel help request", {});
-            let resp = await this.APIService.help("cancel");
-            if (resp.status != 200) {
-                message.textContent = "Failed to cancel help request, call " + window.themeService.phoneNumber;
-            } else {
-                message.textContent = "Your help request has been canceled.";
-                actions.innerHTML = "";
-            }
-
-            // pause for user to read message
-            setTimeout(() => {
-                this.close();
-            }, 2500);
-        });
-
-        actions.append(cancelBtn, confirmBtn);
+        actions.append(closeBtn);
     }
 
     isAfterHours() {
@@ -230,6 +199,10 @@ class HelpModal {
     async requestHelp() {
         console.log("requesting help");
         let resp = await this.APIService.help("help");
+        if (!resp) {
+            return { status: 500 };
+        }   
+        resp = await this.APIService.help("confirm");
         return resp;
     }
 
