@@ -3,7 +3,7 @@ window.components = window.components || {};
 class StartingScreen extends EventTarget {
     loadPage() {
         this.addLogo();
-        this.addTouchListener();
+        this.initLoadingScreen();
         this.dispatchEvent(new CustomEvent("componentReady", { detail: true }));
         createZPattern();
     }
@@ -36,6 +36,25 @@ class StartingScreen extends EventTarget {
                     this.dispatchEvent(new CustomEvent("starting", { detail: true }));
                 }
             });
+        }
+    }
+
+    initLoadingScreen() {
+        const message = document.querySelector('.starting-screen-message');
+        if (message) {
+            message.innerHTML = `
+        <div class="loading-circle"></div>
+        Retrieving Room State...`;
+        }
+    }
+
+    initLoadedScreen() {
+        this.addTouchListener();
+        const message = document.querySelector('.starting-screen-message');
+        if (message) {
+            message.innerHTML = `
+                    Touch Anywhere to Start
+        `;
         }
     }
 

@@ -9,6 +9,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // Wait for APIService to finish loading configs before creating DataService
     window.APIService.addEventListener('loaded', async () => {
+        window.components.startingScreen.initLoadedScreen();
         window.VolumeSlider = VolumeSlider;
         window.DataService = new DataService(window.APIService);
         window.DataService.init();
@@ -36,19 +37,16 @@ document.addEventListener('DOMContentLoaded', async () => {
             await window.themeService.fetchTheme();
 
             window.SocketService = new SocketService();
-            window.APIService = new APIService();
 
-            // Wait for APIService to finish loading configs before creating DataService
-            window.APIService.addEventListener('loaded', () => {
-                window.DataService = new DataService(window.APIService);
-                window.DataService.init();
-                window.CommandService = new CommandService(http, window.DataService, window.APIService, null);
+            window.DataService = new DataService(window.APIService);
+            window.DataService.init();
+            window.CommandService = new CommandService(http, window.DataService, window.APIService, null);
 
-                // wait for DataService to be fully initialized (after dispatchEvent)
-                window.DataService.addEventListener('loaded', async () => {
-                    await powerOnUI();
-                }, { once: true });
+            // wait for DataService to be fully initialized (after dispatchEvent)
+            window.DataService.addEventListener('loaded', async () => {
+                await powerOnUI();
             }, { once: true });
+
         });
     }
 });
