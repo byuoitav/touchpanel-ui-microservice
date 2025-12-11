@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         window.components.startingScreen.initLoadedScreen();
         window.VolumeSlider = VolumeSlider;
         window.DataService = new DataService(window.APIService);
-        window.DataService.init();
+        await window.DataService.init();
         window.CommandService = new CommandService(http, window.DataService, window.APIService, null);
         window.components.startingScreen.addIndependentAudioButton();
 
@@ -39,7 +39,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             window.SocketService = new SocketService();
 
             window.DataService = new DataService(window.APIService);
-            window.DataService.init();
+            await window.DataService.init();
             window.CommandService = new CommandService(http, window.DataService, window.APIService, null);
 
             // wait for DataService to be fully initialized (after dispatchEvent)
@@ -55,21 +55,21 @@ async function loadComponent(componentName, divQuerySelector = `.component-conta
     console.log(`Loading component: ${componentName} into ${divQuerySelector}`);
     const htmlPath = `./components/${componentName}/${componentName}.html`;
     const jsPath = `./components/${componentName}/${componentName}.js`;
-    const cssPath = `./components/${componentName}/${componentName}.css`;
+    // const cssPath = `./components/${componentName}/${componentName}.css`;
 
     // load the css
-    const stylesheet = document.createElement('link');
-    stylesheet.rel = 'stylesheet';
-    stylesheet.href = cssPath;
-    stylesheet.id = 'component-stylesheet';
-    stylesheet.onload = () => {
-        const module = window.components?.[componentName];
-        if (module?.loadStyles) {
-            module.loadStyles();
-        }
-    }
+    // const stylesheet = document.createElement('link');
+    // stylesheet.rel = 'stylesheet';
+    // stylesheet.href = cssPath;
+    // stylesheet.id = 'component-stylesheet';
+    // stylesheet.onload = () => {
+    //     const module = window.components?.[componentName];
+    //     if (module?.loadStyles) {
+    //         module.loadStyles();
+    //     }
+    // }
 
-    document.body.appendChild(stylesheet);
+    // document.body.appendChild(stylesheet);
 
     // load the html
     const componentContainer = document.querySelector(divQuerySelector);

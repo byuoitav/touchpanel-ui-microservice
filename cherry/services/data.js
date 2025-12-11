@@ -14,7 +14,7 @@ class DataService extends EventTarget {
         this.camLink = null;
     }
 
-    init() {
+    async init() {
         this.createInputs();
         this.createOutputs();
         this.createPseudoInputs();
@@ -28,7 +28,7 @@ class DataService extends EventTarget {
         );
 
         if (this.dividerSensor != null) {
-            this.setCurrentPreset();
+            await this.setCurrentPreset();
             // Poll for preset changes every 30 seconds
             setInterval(() => {
                 this.setCurrentPreset(true);
