@@ -184,13 +184,11 @@ class HelpModal {
             }
             // Friday
             case 5: {
-                if (CurrentHour < 7 || CurrentHour >= 20) { return true; }
+                if (CurrentHour < 7 || CurrentHour >= 19) { return true; }
                 else { return false; }
             }
             // Saturday
-            case 6: {
-                if (CurrentHour < 8 || CurrentHour >= 12) { return true; }
-                else { return false; }
+            case 6: {{ return true; }
             }
             default: { return false; }
         }
