@@ -240,6 +240,9 @@ window.components.display = {
   },
 
   renderOutputs: function (outputs) {
+    // remove every output that is hidden 
+    outputs = outputs.filter(output => !output.hidden);
+    
     // Group outputs into rows of 4
     const outputGroups = [];
     for (let i = 0; i < outputs.length; i += 4) {
