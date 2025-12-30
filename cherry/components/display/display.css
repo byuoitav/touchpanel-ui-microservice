@@ -1,0 +1,264 @@
+.display-container {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+}
+
+.inputs-outputs-container {
+    background-color: var(--background-color);
+    width: 85%;
+    height: 100%;
+    box-sizing: border-box;
+}
+
+.outputs-container {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    height: 35%;
+    box-sizing: border-box;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.outputs-page {
+    align-items: center;
+    justify-content: center;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+    height: 50%;
+}
+
+.outputs-row {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    gap: 10px;
+}
+
+.output {
+    background-color: var(--background-color);
+    border-radius: 5px;
+    width: 130px;
+    height: 140px;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+    flex-direction: column;
+    font-size: 1.2em;
+    font-weight: bold;
+    gap: 6px;
+    padding: 5px;
+    text-align: center;
+}
+
+.output svg {
+    width: 60px;
+    height: 60px;
+}
+
+.current-input-name {
+    font-size: .8em;
+}
+
+.selected-io {
+    color: var(--background-color-accent) !important;
+    font-weight: bold;
+    border-style: solid;
+    border-width: 2px;
+}
+.selected-io svg {
+    fill: var(--background-color-accent) !important;
+}
+
+.inputs-container {
+    background-color: var(--background-color);
+    width: 100%;
+    height: 50%;
+    display: flex;
+    flex-direction: row;
+    box-sizing: border-box;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.inputs-page {
+    align-items: center;
+    justify-content: center;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+    height: 50%;
+}
+
+.inputs-row {
+    width: 100%;
+    justify-content: center;
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+}
+
+.input {
+    background-color: var(--background-color);
+    border-radius: 5px;
+    width: 90px;
+    height: 105px;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+    flex-direction: column;
+    gap: 2px;
+    font-size: .9em;
+    text-align: center;
+    padding: 5px;
+}
+
+.input svg {
+    width: 45px;
+    height: 45px;
+}
+
+.unselectable {
+    pointer-events: none;
+    opacity: 0.3;
+}
+
+.volume-control-container {
+    display: flex;
+    height: 100%;
+    width: 15%;
+}
+
+.recording {
+    animation: recordingBlink 1.5s infinite;
+}
+
+@keyframes recordingBlink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
+.recording-container {
+    height: 64px;
+    width: 100%;
+    margin: 0;
+    padding: 10px;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    box-sizing: border-box;
+    position: fixed;
+    bottom: 0;
+}
+
+.record-btn {
+    height: 100%;
+    max-height: 70px;
+}
+
+.recording-text {
+    color: var(--text-color);
+    font-size: 1.5em;
+    font-weight: bold;
+    font-family: var(--font-name);
+    margin-left: 10px;
+    margin-bottom: 0;
+    margin-top: 0;
+}
+
+/* Carousel styles for inputs */
+.inputs-carousel-container {
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+    height: 55%;
+}
+
+.outputs-carousel-container {
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+    height: 45%;
+}
+
+.inputs-carousel-track {
+    display: flex;
+    transition: transform 0.3s;
+    width: 100%;
+    height: 100%;
+}
+
+.outputs-carousel-track {
+    display: flex;
+    transition: transform 0.3s;
+    width: 100%;
+    height: 100%;
+}
+
+.inputs-page {
+    min-width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.outputs-page {
+    min-width: 100%;
+    height: 100%; /* Adjust height to fit within the container */
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.carousel-arrow {
+    position: absolute;
+    text-align: center;
+    height: 40px;
+    width: 40px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    font-size: 2em;
+    z-index: 2;
+    user-select: none;
+    color: var(--text-color, #fff);
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 100%;
+    padding: 0.3em 0.3em;
+    transition: background 0.2s;
+}
+
+.carousel-arrow-left {
+    left: .1em;
+}
+
+.carousel-arrow-right {
+    right: 0.1em;
+}
+
+.outputs-carousel-arrow-left {
+    left: .25em;
+}
+
+.outputs-carousel-arrow-right {
+    right: 0.2em;
+}

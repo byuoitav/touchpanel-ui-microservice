@@ -15,7 +15,7 @@ import (
 	"github.com/byuoitav/common/v2/events"
 	"github.com/byuoitav/device-monitoring/localsystem"
 	"github.com/fatih/color"
-	"github.com/labstack/echo"
+	"github.com/gin-gonic/gin"
 )
 
 // H is the socket hub
@@ -55,8 +55,8 @@ func SetMessenger(m *messenger.Messenger) {
 }
 
 // GetStatus returns the status of the hub along with the program
-func GetStatus(context echo.Context) error {
-	log.Printf("Status request from %v", context.Request().RemoteAddr)
+func GetStatus(context *gin.Context) {
+	log.Printf("Status request from %v", context.Request.RemoteAddr)
 
 	var err error
 	stat := status.NewStatus()
@@ -68,7 +68,8 @@ func GetStatus(context echo.Context) error {
 	if err != nil {
 		stat.StatusCode = status.Sick
 		stat.Info["error"] = "failed to open version.txt"
-		return context.JSON(http.StatusInternalServerError, stat)
+		context.JSON(http.StatusInternalServerError, stat)
+		return
 	}
 
 	stat.StatusCode = status.Healthy
@@ -98,7 +99,7 @@ func GetStatus(context echo.Context) error {
 
 	stat.Info["websocket-info"] = wsInfo
 
-	return context.JSON(http.StatusOK, stat)
+	context.JSON(http.StatusOK, stat)
 }
 
 func (h *hub) WriteToSockets(message interface{}) {

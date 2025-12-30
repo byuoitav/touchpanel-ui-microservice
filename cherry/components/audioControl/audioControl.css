@@ -1,0 +1,117 @@
+.audio-control-component {
+    display: flex;
+    flex-direction: row;
+}
+
+.audio-controls-container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 95%;
+    box-sizing: border-box;
+}
+
+.audio-tabs-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    width: 100%;
+    height: 50px;
+    gap: 10px;
+    color: var(--text-color);
+}
+
+.active-audio-tab {
+    color: var(--background-color-accent);
+    border-bottom: 2px solid var(--background-color-accent);
+    border-radius: 0;
+}
+
+.audio-tab {
+    width: 150px;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1em;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+
+.audio-controls {
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: row;
+}
+
+.master-volume-container {
+    width: 20%;
+    height: 100%;
+    display: flex;
+    border-left: 2px solid var(--background-color-accent);
+    border-radius: 300px;
+}
+
+.hidden {
+    display: none !important;
+}
+
+.audio-controls-content {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    height: 100%;
+}
+
+/* Pagination Styles */
+.paginated-container {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    overflow: hidden;
+    width: 100%;
+    justify-content: center;
+    padding-top: 2px; /* stops it from slightly bumping the tab headers */
+}
+
+.paginated-container>* {
+    flex: 0 0 25%;
+    /* 4 sliders per row */
+    box-sizing: border-box;
+
+}
+
+.audio-controls-content-wrapper {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    align-items: center;
+}
+
+.arrow {
+    margin: 0 10px;
+    text-align: center;
+    height: 40px;
+    width: 40px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    font-size: 1.8em;
+    z-index: 2;
+    user-select: none;
+    color: var(--text-color, #fff);
+    padding: 0.3em 0.3em;
+    -webkit-tap-highlight-color: transparent;
+
+}
+
+/* Remove outline/focus styles when clicked/focused */
+.arrow:focus,
+.arrow:active {
+    outline: none;
+    box-shadow: none;
+}

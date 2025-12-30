@@ -1,0 +1,400 @@
+.camera-tabs-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    width: 100%;
+    height: 50px;
+    gap: 10px;
+    color: var(--text-color);
+}
+
+.active-camera-tab {
+    color: var(--background-color-accent);
+    border-bottom: 2px solid var(--background-color-accent);
+    border-radius: 0;
+}
+
+.camera-tab {
+    width: 150px;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1em;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.camera-controls-wrapper {
+    display: flex;
+    flex-direction: row;
+    position: relative;
+    overflow: hidden;
+    min-width: 100%;
+    height: 100%;
+    
+}
+
+.camera-controls-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    height: calc(100% - 56px);
+    box-sizing: border-box;
+}
+
+.camera-controls {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 50%;
+    height: 100%;
+    box-sizing: border-box;
+}
+
+.camera-presets-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 50%;
+    height: 100%;
+    box-sizing: border-box;
+}
+
+.presets-title {
+    font-size: 1.8rem;
+    color: var(--text-color);
+    font-weight: bold;
+    margin-bottom: 10px;
+    margin-top: 0px;
+}
+
+.presets-container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+}
+
+.preset-btn {
+    background-color: var(--cam-preset-color);
+    color: var(--text-color);
+    border-radius: 5px;
+    height: 50px;
+    width: 150px;
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25), 0 1.5px 0 rgba(255, 255, 255, 0.08) inset;
+    border: none;
+    outline: none;
+    transition: background-color 0.15s, box-shadow 0.15s;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.preset-btn:focus {
+    outline: none;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25), 0 1.5px 0 rgba(255, 255, 255, 0.08) inset;
+}
+
+.preset-btn:active {
+    outline: none;
+    background-color: var(--cam-preset-press);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.18);
+}
+
+.zoom-controls {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 65%;
+    margin-bottom: 10px;
+}
+
+.zoom-btn {
+    padding: 10px;
+    width: 115px;
+    height: 60px;
+    border: none;
+    background-color: var(--dpad-color);
+    border-radius: 5px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25), 0 1.5px 0 rgba(255, 255, 255, 0.08) inset;
+}
+
+.zoom-btn img {
+    width: 70%;
+    height: 70%;
+    filter: brightness(40%) saturate(100%) invert(30%) sepia(0%) saturate(0%) hue-rotate(0deg);
+}
+
+.camera-code {
+    color: white;
+    font-size: 1em;
+    text-align: center;
+    margin: 0;
+}
+
+
+
+
+/* D-Pad CSS */
+.set {
+    overflow: hidden;
+    text-align: center;
+}
+
+.set .d-pad {
+    display: inline-block;
+    margin-bottom: 20px;
+}
+
+.set.setbg {
+    background: #222;
+}
+
+.set.setbg2 {
+    background: #358000;
+}
+
+.d-pad {
+    position: relative;
+    width: 200px;
+    height: 200px;
+    border-radius: 48%;
+    overflow: hidden;
+}
+
+.d-pad:before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    border-radius: 5%;
+    transform: translate(-50%, -50%);
+    width: 66.6%;
+    height: 66.6%;
+    background: var(--dpad-color);
+}
+
+.d-pad:after {
+    content: "";
+    position: absolute;
+    display: none;
+    z-index: 2;
+    width: 20%;
+    height: 20%;
+    top: 50%;
+    left: 50%;
+    background: var(--dpad-color);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    transition: all 0.25s;
+    cursor: pointer;
+}
+
+.d-pad:active:after {
+    width: 30%;
+    height: 30%;
+}
+
+.d-pad a {
+    display: block;
+    position: absolute;
+    -webkit-tap-highlight-color: rgba(255, 255, 255, 0);
+    width: 33.3%;
+    height: 43%;
+    line-height: 40%;
+    color: var(--background-color);
+    background: var(--dpad-color);
+    text-align: center;
+}
+
+.d-pad a:active {
+    background: var(--dpad-press);
+}
+
+.d-pad a:before {
+    content: "";
+    position: absolute;
+    width: 0;
+    height: 0;
+    border-radius: 5px;
+    border-style: solid;
+    transition: all 0.25s;
+}
+
+.d-pad a:after {
+    content: "";
+    position: absolute;
+    width: 102%;
+    height: 78%;
+    background: var(--background-color);
+    border-radius: 20%;
+}
+
+.d-pad a.left,
+.d-pad a.right {
+    width: 43%;
+    height: 33%;
+}
+
+.d-pad a.left:after,
+.d-pad a.right:after {
+    width: 78%;
+    height: 102%;
+}
+
+.d-pad a.up {
+    top: 0;
+    left: 50%;
+    transform: translate(-50%, 0);
+    border-radius: 17% 17% 50% 50%;
+}
+
+.d-pad a.up:active {
+    background: linear-gradient(0deg, var(--dpad-color) 0%, var(--dpad-press) 50%);
+}
+
+.d-pad a.up:after {
+    left: 0;
+    top: 0;
+    transform: translate(-100%, 0);
+    border-top-left-radius: 50%;
+    pointer-events: none;
+}
+
+.d-pad a.up:before {
+    top: 40%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border-width: 0 13px 19px 13px;
+    border-color: transparent transparent #aaa transparent;
+}
+
+.d-pad a.up:active:before {
+    border-bottom-color: #333;
+}
+
+.d-pad a.up:active:before {
+    top: 35%;
+}
+
+.d-pad a.down {
+    bottom: 0;
+    left: 50%;
+    transform: translate(-50%, 0);
+    border-radius: 50% 50% 17% 17%;
+}
+
+.d-pad a.down:active {
+    background: linear-gradient(180deg, var(--dpad-color) 0%, var(--dpad-press) 50%);
+}
+
+.d-pad a.down:after {
+    right: 0;
+    bottom: 0;
+    transform: translate(100%, 0);
+    border-bottom-right-radius: 50%;
+    pointer-events: none;
+}
+
+.d-pad a.down:before {
+    bottom: 40%;
+    left: 50%;
+    transform: translate(-50%, 50%);
+    border-width: 19px 13px 0px 13px;
+    border-color: #aaa transparent transparent transparent;
+}
+
+.d-pad a.down:active:before {
+    border-top-color: #333;
+}
+
+.d-pad a.down:active:before {
+    bottom: 35%;
+}
+
+.d-pad a.left {
+    top: 50%;
+    left: 0;
+    transform: translate(0, -50%);
+    border-radius: 17% 50% 50% 17%;
+}
+
+.d-pad a.left:active {
+    background: linear-gradient(-90deg, var(--dpad-color) 0%, var(--dpad-press) 50%);
+}
+
+.d-pad a.left:after {
+    left: 0;
+    bottom: 0;
+    transform: translate(0, 100%);
+    border-bottom-left-radius: 50%;
+    pointer-events: none;
+}
+
+.d-pad a.left:before {
+    left: 40%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    border-width: 13px 19px 13px 0;
+    border-color: transparent #aaa transparent transparent;
+}
+
+.d-pad a.left:active:before {
+    border-right-color: #333;
+}
+
+.d-pad a.left:active:before {
+    left: 35%;
+}
+
+.d-pad a.right {
+    top: 50%;
+    right: 0;
+    transform: translate(0, -50%);
+    border-radius: 50% 17% 17% 50%;
+}
+
+.d-pad a.right:active {
+    background: linear-gradient(90deg, var(--dpad-color) 0%, var(--dpad-press) 50%);
+}
+
+.d-pad a.right:after {
+    right: 0;
+    top: 0;
+    transform: translate(0, -100%);
+    border-top-right-radius: 50%;
+    pointer-events: none;
+}
+
+.d-pad a.right:before {
+    right: 40%;
+    top: 50%;
+    transform: translate(50%, -50%);
+    border-width: 13px 0 13px 19px;
+    border-color: transparent transparent transparent #aaa;
+}
+
+.d-pad a.right:active:before {
+    border-left-color: #333;
+}
+
+.d-pad a.right:active:before {
+    right: 35%;
+}
+
+.d-pad.up a.up:before {
+    border-bottom-color: #333;
+}
+
+.d-pad.down a.down:before {
+    border-top-color: #333;
+}
+
+.d-pad.left a.left:before {
+    border-right-color: #333;
+}
+
+.d-pad.right a.right:before {
+    border-left-color: #333;
+}

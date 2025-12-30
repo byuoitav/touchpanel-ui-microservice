@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Cherry</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- Import all of the services -->
+    <script src="./services/objects.js"></script>
+    <script src="./services/status.objects.js"></script>
+    <script src="./services/navigation.js"></script>
+    <script src="./services/api.js"></script>
+    <script src="./services/theme.js"></script>
+    <script src="./services/data.js"></script>
+    <script src="./services/command.js"></script>
+    <script src="components/volumeSlider/volumeSlider.js"></script>
+    <script src="components/streamInputsModal/streamInputsModal.js"></script>
+    <script src="components/helpModal/helpModal.js"></script>
+    <script src="components/independentAudioModal/independentAudioModal.js"></script>
+    <script src="./services/socket.js"></script>
+
+
+    <script src="script.js"></script>
+
+    <link rel="icon" type="image/x-icon" href="favicon.ico" />
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="components/display/display.css" />
+    <link rel="stylesheet" href="components/audioControl/audioControl.css" />
+    <link rel="stylesheet" href="components/cameraControl/cameraControl.css" />
+    <link rel="stylesheet" href="components/startingScreen/startingScreen.css" />
+</head>
+
+<body>
+    <div class="starting-screen">
+        <!-- The Starting Screen Component is Inserted Here -->
+    </div>
+
+    <div class="header">
+        <button class="power-off-btn btn">Power Off</button>
+        <div class="tabs-container">
+            <div class="tab active-tab display-tab" data-tab="display-tab">Display</div>
+            <div class="tab audio-control-tab" data-tab="audio-control-tab">Audio Control</div>
+            <div class="tab camera-control-tab" data-tab="camera-control-tab">Camera Control</div>
+        </div>
+        <button class="help-btn btn">Help</button>
+    </div>
+
+    <div class="component-container">
+        <div class="component display-component"></div>
+        <div class="component audio-control-component"></div>
+        <div class="component camera-control-component"></div>
+    </div>
+</body>
+
+</html>

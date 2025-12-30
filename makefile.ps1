@@ -3,7 +3,7 @@ $COMMAND = $args[0]
 $NAME = "touchpanel-ui-microservice"
 $OWNER = "byuoitav"
 $PKG = "github.com/$OWNER/$NAME"
-$DOCKER_URL = "docker.pkg.github.com"
+$DOCKER_URL = "ghcr.io"
 $DOCKER_PKG = "$DOCKER_URL/$OWNER/$NAME"
 
 Write-Output "PKG: $PKG"
@@ -68,13 +68,6 @@ function Deps {
         Invoke-Expression "cd .."
         Write-Output "Exiting \blueberry"
     }
-    if (Test-Path "cherry") {
-        Set-Location "cherry"
-        Write-Output "Entering \cherry"
-        Invoke-Expression "npm install -g @angular/cli@6.0.8"
-        Invoke-Expression "cd .."
-        Write-Output "Exiting \cherry"
-    }
 }
 
 function Build {
@@ -99,7 +92,8 @@ function Build {
     Write-Output "Building touchpanel microservice for linux-arm"
     Set-Item -Path env:CGO_ENABLED -Value 0
     Set-Item -Path env:GOOS -Value "linux"
-    Set-Item -Path env:GOARCH -Value "arm"
+    Set-Item -Path env:GOARCH -Value "arm64"
+    Set-Item -Path env:GOARM -Value 8
     Invoke-Expression "go build -v -o dist/${NAME}-arm"
 
     Write-Output "*****************************************"
@@ -112,17 +106,8 @@ function Build {
         Write-Output "Exiting \blueberry and moving files to \dist"
         Move-Item "$location\blueberry\dist\" -Destination "$location\dist\blueberry-dist\"
     }
-
+ 
     Write-Output "*****************************************"
-    Write-Output "Building cherry"
-    if (Test-Path "cherry") {
-        Set-Location "cherry"
-        Write-Output "Entering \cherry"
-        Invoke-Expression "ng build --configuration production --aot --build-optimizer --base-href='./cherry/'"
-        Invoke-Expression "cd .."
-        Write-Output "Exiting \cherry and moving files to \dist"
-        Move-Item "$location\cherry\dist\" -Destination "$location\dist\cherry-dist\"
-    }
 }
 
 function Cleanup {
@@ -142,17 +127,17 @@ function DockerFunc {   #can not just be docker because it creates an infinite l
         Write-Output "Building dev containers with tag $COMMIT_HASH"
 
         Write-Output "Building container $DOCKER_PKG/$NAME-dev:$COMMIT_HASH"
-        Invoke-Expression "docker build -f Dockerfile --build-arg NAME=$NAME-arm -t $DOCKER_PKG/$NAME-dev:$COMMIT_HASH dist"
+        Invoke-Expression "docker build --platform linux/arm64/v8 -f Dockerfile --build-arg NAME=$NAME-arm -t $DOCKER_PKG/$NAME-dev:$COMMIT_HASH dist"
     } elseif ($TAG -match $DEV_TAG_REGEX) {
         Write-Output "Building dev containers with tag $TAG"
 
     	Write-Output "Building container $DOCKER_PKG/$NAME-dev:$TAG"
-    	Invoke-Expression "docker build -f Dockerfile --build-arg NAME=$NAME-arm -t $DOCKER_PKG/$NAME-dev:$TAG dist"
+    	Invoke-Expression "docker build --platform linux/arm64/v8 -f Dockerfile --build-arg NAME=$NAME-arm -t $DOCKER_PKG/$NAME-dev:$TAG dist"
     } elseif ($TAG -match $PRD_TAG_REGEX) {
         Write-Output "Building prd containers with tag $TAG"
 
     	Write-Output "Building container $DOCKER_PKG/${NAME}:$TAG"
-    	Invoke-Expression "docker build -f Dockerfile --build-arg NAME=$NAME-arm -t $DOCKER_PKG/${NAME}:$TAG dist"
+    	Invoke-Expression "docker build -f Dockerfile --platform linux/arm64/v8 --build-arg NAME=$NAME-arm -t $DOCKER_PKG/${NAME}:$TAG dist"
     } else {
         Write-Output "Docker function quit unexpectedly. Commit Hash: $COMMIT_HASH     Tag: $TAG"
     }
