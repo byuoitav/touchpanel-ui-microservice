@@ -131,7 +131,7 @@ class DataService extends EventTarget {
 
             this.presets.push(new Preset(
                 p.name, p.icon, displays, audioDevices, inputs,
-                p.shareableDisplays, independentAudioDevices, audioTypes, 
+                p.shareableDisplays, independentAudioDevices, audioTypes,
                 30, 30, p.commands, p.volumeMatches, p.cameras, p.recording, p.audioGroups
             ));
         }
@@ -147,7 +147,7 @@ class DataService extends EventTarget {
         this.panel = this.panels.find(p => p.hostname === APIService.piHostname);
     }
 
-    async setCurrentPreset(reload=false) {
+    async setCurrentPreset(reload = false) {
         if (!this.panel.features.includes("preset-switch")) return;
 
         const url = `http://${this.dividerSensor.address}:10000/divider/preset/${APIService.piHostname}`;
@@ -213,6 +213,14 @@ class DataService extends EventTarget {
     updateDeviceState(key, value, deviceName) {
         console.log("Updating device state:", key, value, deviceName);
         if (key === "power" || key === "input") {
+            // check if the device is in the preset
+            const deviceNameSuffix = deviceName.split("-")[2];
+            const presetDeviceNames = [...this.panel.preset.displays.map(d => d.name), ...this.panel.preset.audioDevices.map(a => a.name)];
+            if (!presetDeviceNames.includes(deviceNameSuffix) && !presetDeviceNames.includes(deviceName)) {
+                console.log("Device", deviceName, deviceNameSuffix, "not in current preset, ignoring update.");
+                return;
+            }
+
             // Update the UI power button state if the power state changes
             if (key === "power" && value == "standby") { handlePowerOffClick(true); }
             if (key === "power" && value == "on") { powerOnUI(true); }

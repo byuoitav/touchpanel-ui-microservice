@@ -18,6 +18,11 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         // check if the room is already on
         for (const display of APIService.room.status.displays) {
+            //check if display is in preset and powered on
+            const presetDisplayNames = window.DataService.panel.preset.displays.map(d => d.name);
+            if (!presetDisplayNames.includes(display.name)) {
+                continue;
+            }
             if ((display.power || "").toLowerCase() === "on") {
                 window.DataService.addEventListener('loaded', async () => {
                     await powerOnUI(true);
