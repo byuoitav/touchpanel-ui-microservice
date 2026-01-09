@@ -145,7 +145,7 @@ window.components.audioControl = {
                 icon: `./assets/${microphone.icon}.svg` || null,
                 onChange: (val) => {
                     console.log(`Volume for ${microphone.displayname} changed to:`, val);
-                    window.CommandService.setMixLevel(val, microphone, window.DataService.panel.preset);
+                    window.CommandService.setVolume(val, [microphone]);
                     window.CommandService.setMixMute(false, microphone, window.DataService.panel.preset);
                 },
                 muteFunction: () => {
