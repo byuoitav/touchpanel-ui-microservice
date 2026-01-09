@@ -42,15 +42,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             await window.themeService.fetchTheme();
 
             window.SocketService = new SocketService();
-
-            window.DataService = new DataService(window.APIService);
-            await window.DataService.init();
-            window.CommandService = new CommandService(http, window.DataService, window.APIService, null);
-
-            // wait for DataService to be fully initialized (after dispatchEvent)
-            window.DataService.addEventListener('loaded', async () => {
-                await powerOnUI();
-            }, { once: true });
+            await powerOnUI();
 
         });
     }

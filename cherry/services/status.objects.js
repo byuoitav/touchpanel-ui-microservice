@@ -134,10 +134,22 @@ class AudioDevice extends Output {
   }
 
   static setVolume(v, audioDevices) {
-    audioDevices.forEach(a => a.volume = v);
+    console.log("Setting local volume to:", v, "on devices:", audioDevices);
+    const names = new Set((audioDevices || []).map(a => a.name));
+    window.DataService.panel.preset.independentAudioDevices.forEach(a => {
+      if (names.has(a.name)) {
+        a.volume = v;
+      }
+    });
   }
 
   static setMute(m, audioDevices) {
     audioDevices.forEach(a => a.muted = m);
+    const names = new Set((audioDevices || []).map(a => a.name));
+    window.DataService.panel.preset.independentAudioDevices.forEach(a => {
+      if (names.has(a.name)) {
+        a.muted = m;
+      }
+    });
   }
 }
