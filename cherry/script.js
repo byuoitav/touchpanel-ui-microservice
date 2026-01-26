@@ -38,6 +38,10 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         window.components.startingScreen.addEventListener('starting', async () => {
             console.log("Starting screen clicked, powering on...");
+            // Log the very first user interaction when powering on
+            if (window.CommandService && typeof window.CommandService.buttonPress === "function") {
+                window.CommandService.buttonPress('clicked starting screen to power on', {});
+            }
 
             await window.themeService.fetchTheme();
 
@@ -100,8 +104,14 @@ async function loadComponent(componentName, divQuerySelector = `.component-conta
 }
 
 function loadSvg(id, path) {
+    // If no path or an undefined icon is provided, use the blank placeholder
+    if (!path || String(path).toLowerCase().includes("undefined")) {
+        path = "assets/blank.svg";
+    }
+
     // make path all lower case
-    path = path.toLowerCase();
+    path = String(path).toLowerCase();
+
     fetch(path)
         .then(response => {
             if (!response.ok && response.status === 404) {
@@ -112,6 +122,12 @@ function loadSvg(id, path) {
         })
         .then(svg => {
             document.getElementById(id).innerHTML = svg;
+        })
+        .catch(() => {
+            // On any other fetch error, fall back to blank.svg
+            fetch('assets/blank.svg')
+                .then(blankRes => blankRes.text())
+                .then(svg => { document.getElementById(id).innerHTML = svg; });
         });
 }
 
@@ -160,7 +176,7 @@ async function handlePowerOffClick(updateUIOnly = false) {
 
     // reset power button (remove this handler)
     const powerBtn = document.querySelector('.power-off-btn');
-    powerBtn.removeEventListener('click', handlePowerOffClick);
+    powerBtn.removeEventListener('click', onPowerButtonClick);
 }
 
 function handleHelpClick() {
@@ -168,6 +184,12 @@ function handleHelpClick() {
     const helpModal = new HelpModal();
     helpModal.open();
 }
+
+// Keep a stable reference so we can add/remove without duplication
+const onPowerButtonClick = () => {
+    window.CommandService.buttonPress(`clicked power off button`, {});
+    handlePowerOffClick();
+};
 
 async function powerOnUI(skipPowerCommand = false) {
     if (window.TOUCHPANEL_STATE === "ON") { return; }
@@ -205,10 +227,7 @@ async function powerOnUI(skipPowerCommand = false) {
 
     // listener for power button
     const powerBtn = document.querySelector('.power-off-btn');
-    powerBtn.addEventListener('click', () => {
-        window.CommandService.buttonPress(`clicked power off button`, {});
-        handlePowerOffClick();
-    });
+    powerBtn.addEventListener('click', onPowerButtonClick);
 
     const helpBtn = document.querySelector('.help-btn');
 

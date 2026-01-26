@@ -2,6 +2,10 @@
 // (display, audioControl, cameraControl) in the main view.
 // also controls the swipe gestures for changing views
 document.addEventListener("UILoaded", () => {
+    // Prevent re-registering listeners every time the UI powers on
+    if (window._navigationInitialized) return;
+    window._navigationInitialized = true;
+
     const componentView = document.querySelector('.component-container');
     const SWIPE_THRESHOLD = 200; // how far must swipe to change slide
     const SLOPE_THRESHOLD = 0.5; // ratio: vertical/horizontal movement; <0.5 means mostly horizontal
