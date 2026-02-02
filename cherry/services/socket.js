@@ -50,7 +50,7 @@ class SocketService extends EventTarget {
         } 
       }
     } catch (err) {
-      console.error("Error handling message:", err);
+      console.error("Error handling message:", err, "raw message:", message);
     }
   }
 }
