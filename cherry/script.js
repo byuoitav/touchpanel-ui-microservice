@@ -1,4 +1,6 @@
 window.TOUCHPANEL_STATE = "OFF"
+// Block power-on interactions while a power-off sequence is running
+window.POWERING_OFF = false;
 
 document.addEventListener('DOMContentLoaded', async () => {
     window.themeService = new ThemeService();
@@ -103,6 +105,35 @@ async function loadComponent(componentName, divQuerySelector = `.component-conta
     });
 }
 
+// Ensure DataService is fully initialized before we try to use panel data.
+// This prevents the display component from rendering with undefined presets/displays
+// when the user taps the starting screen before initialization finishes.
+async function waitForDataServiceReady() {
+    const ready = () => window.DataService && window.DataService.panel && window.DataService.panel.preset;
+
+    if (ready()) return;
+
+    // Prefer the DataService 'loaded' event when available; otherwise poll briefly.
+    await new Promise((resolve) => {
+        if (window.DataService && typeof window.DataService.addEventListener === "function") {
+            const onLoaded = () => {
+                if (ready()) {
+                    window.DataService.removeEventListener('loaded', onLoaded);
+                    resolve();
+                }
+            };
+            window.DataService.addEventListener('loaded', onLoaded, { once: true });
+        } else {
+            const interval = setInterval(() => {
+                if (ready()) {
+                    clearInterval(interval);
+                    resolve();
+                }
+            }, 50);
+        }
+    });
+}
+
 function loadSvg(id, path) {
     // If no path or an undefined icon is provided, use the blank placeholder
     if (!path || String(path).toLowerCase().includes("undefined")) {
@@ -149,6 +180,7 @@ function removeComponentAssets() {
 
 async function handlePowerOffClick(updateUIOnly = false) {
     if (window.TOUCHPANEL_STATE === "OFF") { return; }
+    if (!updateUIOnly) { window.POWERING_OFF = true; }
     window.TOUCHPANEL_STATE = "OFF";
     window.resetViewPosition(); // reset view position to display component
 
@@ -177,6 +209,8 @@ async function handlePowerOffClick(updateUIOnly = false) {
     // reset power button (remove this handler)
     const powerBtn = document.querySelector('.power-off-btn');
     powerBtn.removeEventListener('click', onPowerButtonClick);
+
+    if (!updateUIOnly) { window.POWERING_OFF = false; }
 }
 
 function handleHelpClick() {
@@ -193,8 +227,12 @@ const onPowerButtonClick = () => {
 
 async function powerOnUI(skipPowerCommand = false) {
     if (window.TOUCHPANEL_STATE === "ON") { return; }
+    if (window.POWERING_OFF) { return; }
     window.TOUCHPANEL_STATE = "ON";
     console.log("Powering on UI");
+
+    await waitForDataServiceReady();
+
     if (!skipPowerCommand) {
         await window.CommandService.powerOnDefault(window.DataService.panel.preset);
     }
