@@ -13,6 +13,7 @@ import (
 
 	"github.com/byuoitav/central-event-system/messenger"
 	"github.com/byuoitav/common/v2/events"
+	"github.com/byuoitav/touchpanel-ui-microservice/db"
 	"github.com/byuoitav/touchpanel-ui-microservice/helpers"
 	"github.com/byuoitav/touchpanel-ui-microservice/structs"
 	"github.com/gin-gonic/gin"
@@ -179,4 +180,20 @@ func HandleCameraControl(logger *slog.Logger, ctx *gin.Context) {
 	}
 
 	ctx.JSON(resp.StatusCode, fmt.Sprintf("Response: %s, Response Body: %s", resp.Status, string(body)))
+}
+
+// GetHelpSchedule returns a help/support schedule by id. Defaults to "default-schedule" if no id is provided.
+func GetHelpSchedule(ctx *gin.Context) {
+	id := ctx.Query("id")
+	if id == "" {
+		id = "default-schedule"
+	}
+
+	schedule, err := db.GetDB().GetHelpSchedule(id)
+	if err != nil {
+		ctx.String(http.StatusInternalServerError, fmt.Sprintf("failed to get help schedule %s: %v", id, err))
+		return
+	}
+
+	ctx.JSON(http.StatusOK, schedule)
 }
