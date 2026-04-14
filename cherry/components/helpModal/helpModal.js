@@ -1,7 +1,6 @@
 class HelpModal {
     constructor() {
         this.modal = null;
-        this._injectStyles();
         this.APIService = new APIService();
     }
 
@@ -161,73 +160,6 @@ class HelpModal {
         if (!from || !to) return false;
         // Simple lexicographic compare works with HH:MM strings
         return current >= from && current < to;
-    }
-
-    _injectStyles() {
-        if (document.getElementById("helpModalStyles")) return;
-
-        const style = document.createElement("style");
-        style.id = "helpModalStyles";
-        style.textContent = `
-      .help-modal {
-        position: fixed;
-        top: 0; left: 0;
-        width: 100%; height: 100%;
-        background-color: rgba(0,0,0,0.6);
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        z-index: 100000;
-      }
-      .help-modal.hidden { display: none; }
-
-      .help-modal-content {
-        background: var(--background-color);
-        padding: 20px;
-        border-radius: 12px;
-        max-width: 500px;
-        width: 100%;
-        text-align: center;
-        color: var(--text-color);
-        box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-        font-size: 1.4rem;
-        display: flex;
-        flex-direction: column;
-        gap: 20px;
-      }
-
-      .help-modal-title {
-        font-size: 1.5em;
-        margin-bottom: 0px;
-      }
-
-      .help-modal-actions {
-        display: flex;
-        justify-content: center;
-        gap: 10px;
-        font-size: 1.4rem;
-      }
-
-      .help-btn {
-        padding: 10px 16px;
-        border-radius: 8px;
-        border: none;
-        cursor: pointer;
-        font-weight: bold;
-        transition: background 0.2s;
-      }
-
-      .cancel-btn {
-        background: #ff0000ff;
-        color: white;
-      }
-
-      .request-btn {
-        background: var(--background-color-accent);
-        color: var(--text-color);
-      }
-    `;
-        document.head.appendChild(style);
     }
 
 }
