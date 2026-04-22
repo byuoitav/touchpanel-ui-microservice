@@ -12,6 +12,7 @@ class DataService extends EventTarget {
         this.inputReachability = new Map();
         this.dividerSensor = null;
         this.camLink = null;
+        this._reloading = false;
     }
 
     async init() {
@@ -157,17 +158,22 @@ class DataService extends EventTarget {
             if (!response.ok) throw new Error("HTTP error");
             let presetName = await response.text();
             if (typeof presetName !== 'string') presetName = String(presetName);
+            presetName = presetName.trim();
+            console.log("[setCurrentPreset] fetched preset name:", JSON.stringify(presetName));
             const preset = this.presets.find(p => typeof p.name === 'string' && p.name.toLowerCase() === presetName.toLowerCase());
             if (preset) {
                 const prevPreset = this.panel.preset;
-                console.log("setting preset to", preset);
+                console.log("[setCurrentPreset] setting preset to", preset.name);
                 this.panel.preset = preset;
                 // Reloads the UI if the divider sensor response changed the preset
-                if (prevPreset.name !== preset.name && reload) {
-                    console.log("refreshing");
+                if (prevPreset?.name !== preset.name && reload) {
+                    if (this._reloading) return;
+                    this._reloading = true;
+                    console.log("[setCurrentPreset] refreshing");
                     location.assign("http://" + location.hostname + ":8888/");
                 }
-
+            } else {
+                console.warn("[setCurrentPreset] preset not found for name:", JSON.stringify(presetName), "available:", this.presets.map(p => p.name));
             }
         } catch (err) {
             console.error("Failed to get preset, retrying...", err);
@@ -226,8 +232,14 @@ class DataService extends EventTarget {
                     );
 
                     if (preset) {
-                        console.log("switching preset to", preset);
-                        this.panel.preset = preset;
+                        if (this.panel?.preset?.name !== preset.name) {
+                            if (this._reloading) break;
+                            this._reloading = true;
+                            console.log("preset changed from", this.panel?.preset?.name, "to", preset.name, "- reloading page");
+                            location.assign("http://" + location.hostname + ":8888/");
+                        } else {
+                            console.log("[preset-switch] preset unchanged:", preset.name);
+                        }
                     } else {
                         console.warn("[preset-switch] Preset not found:", presetName);
                     }
