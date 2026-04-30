@@ -12,6 +12,7 @@ class DataService extends EventTarget {
         this.inputReachability = new Map();
         this.dividerSensor = null;
         this.camLink = null;
+        this._reloading = false;
     }
 
     async init() {
@@ -141,7 +142,7 @@ class DataService extends EventTarget {
         for (const p of APIService.room.uiconfig.panels) {
             const preset = this.presets.find(pre => pre.name === p.preset);
             const panel = new Panel(p.hostname, p.uipath, preset, p.features);
-            if (p.hostname === window.APIService.piHostname) panel.render = true;
+            if (p.hostname === APIService.piHostname) panel.render = true;
             this.panels.push(panel);
         }
         this.panel = this.panels.find(p => p.hostname === APIService.piHostname);
@@ -157,17 +158,22 @@ class DataService extends EventTarget {
             if (!response.ok) throw new Error("HTTP error");
             let presetName = await response.text();
             if (typeof presetName !== 'string') presetName = String(presetName);
+            presetName = presetName.trim();
+            console.log("[setCurrentPreset] fetched preset name:", JSON.stringify(presetName));
             const preset = this.presets.find(p => typeof p.name === 'string' && p.name.toLowerCase() === presetName.toLowerCase());
             if (preset) {
                 const prevPreset = this.panel.preset;
-                console.log("setting preset to", preset);
+                console.log("[setCurrentPreset] setting preset to", preset.name);
                 this.panel.preset = preset;
                 // Reloads the UI if the divider sensor response changed the preset
-                if (prevPreset.name !== preset.name && reload) {
-                    console.log("refreshing");
+                if (prevPreset?.name !== preset.name && reload) {
+                    if (this._reloading) return;
+                    this._reloading = true;
+                    console.log("[setCurrentPreset] refreshing");
                     location.assign("http://" + location.hostname + ":8888/");
                 }
-
+            } else {
+                console.warn("[setCurrentPreset] preset not found for name:", JSON.stringify(presetName), "available:", this.presets.map(p => p.name));
             }
         } catch (err) {
             console.error("Failed to get preset, retrying...", err);
@@ -198,15 +204,48 @@ class DataService extends EventTarget {
             case "master-mute":
                 this.updateMasterState(e.key, e.value, e.data);
                 break;
-            case "preset-switch":
-                if (window.APIService.piHostname.toLowerCase() === e["target-device"].deviceID.toLowerCase()) {
-                    const preset = this.presets.find(p => p.name.toLowerCase() === e.value.toLowerCase());
+            case "preset-switch": {
+                const host = APIService.piHostname; 
+                // const host = window.APIService.piHostname;
+
+                if (typeof host !== "string" || host.length === 0) {
+                    console.warn("[preset-switch] Missing/invalid APIService.piHostname:", host, "event:", e);
+                    break;
+                }
+
+                const targetDeviceId = e["target-device"].deviceID;
+                if (typeof targetDeviceId !== "string" || targetDeviceId.length === 0) {
+                    console.warn('[preset-switch] Missing/invalid event["target-device"].deviceID:', targetDeviceId, "event:", e);
+                    break;
+                }
+
+                // Only react if this event is for *this* panel
+                if (host.toLowerCase() === targetDeviceId.toLowerCase()) {
+                    const presetName = e?.value;
+                    if (typeof presetName !== "string" || presetName.length === 0) {
+                        console.warn("[preset-switch] Missing/invalid preset name (e.value):", presetName, "event:", e);
+                        break;
+                    }
+
+                    const preset = this.presets.find(
+                        p => typeof p?.name === "string" && p.name.toLowerCase() === presetName.toLowerCase()
+                    );
+
                     if (preset) {
-                        console.log("switching preset to", preset);
-                        this.panel.preset = preset;
+                        if (this.panel?.preset?.name !== preset.name) {
+                            if (this._reloading) break;
+                            this._reloading = true;
+                            console.log("preset changed from", this.panel?.preset?.name, "to", preset.name, "- reloading page");
+                            location.assign("http://" + location.hostname + ":8888/");
+                        } else {
+                            console.log("[preset-switch] preset unchanged:", preset.name);
+                        }
+                    } else {
+                        console.warn("[preset-switch] Preset not found:", presetName);
                     }
                 }
                 break;
+            }
         }
     }
 

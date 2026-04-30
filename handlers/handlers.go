@@ -9,10 +9,12 @@ import (
 	"log/slog"
 	"net/http"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/byuoitav/central-event-system/messenger"
 	"github.com/byuoitav/common/v2/events"
+	"github.com/byuoitav/touchpanel-ui-microservice/db"
 	"github.com/byuoitav/touchpanel-ui-microservice/helpers"
 	"github.com/byuoitav/touchpanel-ui-microservice/structs"
 	"github.com/gin-gonic/gin"
@@ -179,4 +181,79 @@ func HandleCameraControl(logger *slog.Logger, ctx *gin.Context) {
 	}
 
 	ctx.JSON(resp.StatusCode, fmt.Sprintf("Response: %s, Response Body: %s", resp.Status, string(body)))
+}
+
+// GetHelpSchedule returns a help/support schedule, resolving building-specific
+// schedules and following the override chain. The ?id= query param bypasses
+// building lookup and is useful for testing/debugging.
+func GetHelpSchedule(ctx *gin.Context) {
+	id := ctx.Query("id")
+
+	if id == "" {
+		// Derive building ID from SYSTEM_ID (format: BLDG-ROOM-CP1)
+		systemID := os.Getenv("SYSTEM_ID")
+		if parts := strings.SplitN(systemID, "-", 3); len(parts) >= 1 && parts[0] != "" {
+			building, err := db.GetDB().GetBuilding(parts[0])
+			if err != nil {
+				log.Printf("[helpSchedule] failed to get building %s: %v", parts[0], err)
+			} else if building.SupportSchedule != "" {
+				id = building.SupportSchedule
+				log.Printf("[helpSchedule] using building-specific schedule %q for building %s", id, parts[0])
+			} else {
+				log.Printf("[helpSchedule] no support-schedule set for building %s, using default", parts[0])
+			}
+		}
+	} else {
+		log.Printf("[helpSchedule] using explicit schedule id %q from query param", id)
+	}
+
+	if id == "" {
+		id = "default-schedule"
+	}
+
+	schedule, err := resolveSchedule(id)
+	if err != nil {
+		ctx.String(http.StatusInternalServerError, fmt.Sprintf("failed to get help schedule %s: %v", id, err))
+		return
+	}
+
+	log.Printf("[helpSchedule] resolved schedule: %q (requested: %s)", schedule.ID, id)
+	ctx.JSON(http.StatusOK, schedule)
+}
+
+// resolveSchedule fetches a schedule by ID and follows the "over-ride" chain
+// until it finds a schedule with no valid override. If an override references a
+// non-existent schedule, the last valid schedule is returned. A visited set
+// prevents infinite loops from circular override references.
+func resolveSchedule(id string) (structs.HelpSchedule, error) {
+	visited := make(map[string]bool)
+	var last structs.HelpSchedule
+
+	for current := id; current != ""; {
+		if visited[current] {
+			log.Printf("[helpSchedule] cycle detected in override chain at %q, using last valid schedule %q", current, last.ID)
+			return last, nil
+		}
+		visited[current] = true
+
+		schedule, err := db.GetDB().GetHelpSchedule(current)
+		if err != nil {
+			if last.ID != "" {
+				log.Printf("[helpSchedule] override %q not found (from %s), using last valid schedule: %v", current, last.ID, err)
+				return last, nil
+			}
+			return schedule, err
+		}
+
+		last = schedule
+
+		if schedule.Override == "" {
+			log.Printf("[helpSchedule] schedule %q has no override, using it", current)
+			return schedule, nil
+		}
+		log.Printf("[helpSchedule] schedule %q overridden by %q, following chain", current, schedule.Override)
+		current = schedule.Override
+	}
+
+	return last, nil
 }

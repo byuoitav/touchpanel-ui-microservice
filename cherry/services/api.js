@@ -29,10 +29,21 @@ class APIService extends EventTarget {
     async init() {
         console.log("OPTIONS: ", APIService.options);
         await this.setupHostname();
+        await this.setupHelp();
     }
     
     emitLoaded(value) {
         this.dispatchEvent(new CustomEvent('loaded', { detail: value }));
+    }
+
+    async setupHelp() {
+        try {
+            const data = await this.getJSON(APIService.localurl + "/helpSchedule");
+            window.HelpService = new HelpService(data);
+        } catch (err) {
+            console.error("getHelpSchedule failed", err);
+             setTimeout(() => this.setupHelp(), 5000);
+        }
     }
 
     async setupHostname() {

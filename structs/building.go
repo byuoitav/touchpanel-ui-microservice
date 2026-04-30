@@ -4,10 +4,11 @@ import "errors"
 
 // Building - the representation about a building containing a TEC Pi system.
 type Building struct {
-	ID          string   `json:"_id"`
-	Name        string   `json:"name"`
-	Description string   `json:"description"`
-	Tags        []string `json:"tags,omitempty"`
+	ID              string   `json:"_id"`
+	Name            string   `json:"name"`
+	Description     string   `json:"description"`
+	Tags            []string `json:"tags,omitempty"`
+	SupportSchedule string   `json:"support-schedule,omitempty"`
 }
 
 // Validate determines if the current values for the building's attributes are valid or not.

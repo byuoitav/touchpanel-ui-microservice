@@ -1,115 +1,41 @@
 class HelpModal {
     constructor() {
         this.modal = null;
-        this._injectStyles();
         this.APIService = new APIService();
-    }
-
-    _injectStyles() {
-        if (document.getElementById("helpModalStyles")) return;
-
-        const style = document.createElement("style");
-        style.id = "helpModalStyles";
-        style.textContent = `
-      .help-modal {
-        position: fixed;
-        top: 0; left: 0;
-        width: 100%; height: 100%;
-        background-color: rgba(0,0,0,0.6);
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        z-index: 100000;
-      }
-      .help-modal.hidden { display: none; }
-
-      .help-modal-content {
-        background: var(--background-color);
-        padding: 20px;
-        border-radius: 12px;
-        max-width: 500px;
-        width: 100%;
-        text-align: center;
-        color: var(--text-color);
-        box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-        font-size: 1.4rem;
-        display: flex;
-        flex-direction: column;
-        gap: 20px;
-      }
-
-      .help-modal-title {
-        font-size: 1.5em;
-        margin-bottom: 0px;
-      }
-
-      .help-modal-actions {
-        display: flex;
-        justify-content: center;
-        gap: 10px;
-        font-size: 1.4rem;
-      }
-
-      .help-btn {
-        padding: 10px 16px;
-        border-radius: 8px;
-        border: none;
-        cursor: pointer;
-        font-weight: bold;
-        transition: background 0.2s;
-      }
-
-      .cancel-btn {
-        background: #ff0000ff;
-        color: white;
-      }
-
-      .request-btn {
-        background: var(--background-color-accent);
-        color: var(--text-color);
-      }
-    `;
-        document.head.appendChild(style);
     }
 
     _createModal() {
         this.modal = document.createElement("div");
         this.modal.className = "help-modal hidden";
 
+        const { titleText, bodyText, requestEnabled, requestLabel, dismissLabel } = this._resolveMessage();
+
         const content = document.createElement("div");
         content.className = "help-modal-content";
 
         const title = document.createElement("h2");
         title.classList.add("help-modal-title");
-        title.textContent = "Help";
+        title.textContent = titleText || "Help";
 
         const message = document.createElement("p");
-        if (!this.isAfterHours()) {
-            message.textContent = `Please call AV Support at ${window.themeService.phoneNumber} for help, or request help by pressing Request Help to send support staff to you.`;
-        } else {
-            message.textContent = `No technicians are currently available. For emergencies please call ${window.themeService.phoneNumber}.`;
-        }
+        message.textContent = bodyText;
 
         const actions = document.createElement("div");
         actions.className = "help-modal-actions";
 
         const cancelBtn = document.createElement("button");
         cancelBtn.className = "help-btn cancel-btn btn";
-        if (!this.isAfterHours()) {
-            cancelBtn.textContent = "Cancel"
-        } else {
-            cancelBtn.textContent = "Close"
-        }
+        cancelBtn.textContent = dismissLabel || "Close";
 
         cancelBtn.addEventListener("click", () => {
             window.CommandService.buttonPress("clicked close help modal", {});
             this.close();
         });
 
-        if (!this.isAfterHours()) {
+        if (requestEnabled) {
             const requestBtn = document.createElement("button");
             requestBtn.className = "help-btn request-btn btn";
-            requestBtn.textContent = "Request Help";
+            requestBtn.textContent = requestLabel || "Request Help";
             requestBtn.addEventListener("click", async () => {
                 window.CommandService.buttonPress("clicked request help", {});
                 let resp = await this.requestHelp();
@@ -117,7 +43,7 @@ class HelpModal {
                     message.textContent = "Failed to request help, call " + window.themeService.phoneNumber + " for support.";
                     // remove request button and edit text from "cancel" to "close"
                     actions.removeChild(requestBtn);
-                    cancelBtn.textContent = "Close";
+                    cancelBtn.textContent = dismissLabel || "Close";
                 } else {
                     message.textContent = "Your help request has been received; A member of our support staff is on their way.";
                     this.createCloseButton();
@@ -154,46 +80,6 @@ class HelpModal {
         actions.append(closeBtn);
     }
 
-    isAfterHours() {
-        let date = new Date();
-        let DayOfTheWeek = date.getDay();
-        let CurrentHour = date.getHours();
-
-        switch (DayOfTheWeek) {
-            // Sunday
-            case 0: { return true; }
-            // Monday
-            case 1: {
-                if (CurrentHour < 7 || CurrentHour >= 19) { return true; }
-                else { return false; }
-            }
-            // Tuesday
-            case 2: {
-                if (CurrentHour < 7 || CurrentHour >= 21) { return true; }
-                else { return false; }
-            }
-            // Wednesday
-            case 3: {
-                if (CurrentHour < 7 || CurrentHour >= 21) { return true; }
-                else { return false; }
-            }
-            // Thursday
-            case 4: {
-                if (CurrentHour < 7 || CurrentHour >= 21) { return true; }
-                else { return false; }
-            }
-            // Friday
-            case 5: {
-                if (CurrentHour < 7 || CurrentHour >= 19) { return true; }
-                else { return false; }
-            }
-            // Saturday
-            case 6: {{ return true; }
-            }
-            default: { return false; }
-        }
-    }
-
     async requestHelp() {
         console.log("requesting help");
         let resp = await this.APIService.help("help");
@@ -218,6 +104,64 @@ class HelpModal {
         }
         removeZPattern();
     }
+
+    _resolveMessage() {
+        const fallback = {
+            titleText: "Help",
+            bodyText: `Please call AV Support at ${window.themeService?.phoneNumber || ""} for help.`,
+            requestEnabled: true,
+            requestLabel: "Request Help",
+            dismissLabel: "Cancel"
+        };
+
+        const schedule = window.HelpService?.schedule;
+        if (!schedule) return fallback;
+
+        const phone = schedule.phoneNumber || window.themeService?.phoneNumber || "";
+
+        // choose message: open by default, override if within a closure window
+        const closedKey = this._currentClosureMessage(schedule);
+        const msg = closedKey ? schedule.closedMessages[closedKey] : schedule.openMessage;
+        if (!msg) return fallback;
+
+        const body = (msg.message || "").replace("${phoneNumber}", phone);
+
+        return {
+            titleText: msg.title || "Help",
+            bodyText: body,
+            requestEnabled: !!msg.requestButton,
+            requestLabel: msg.requestButtonLabel || "Request Help",
+            dismissLabel: msg.dismissButtonLabel || (msg.requestButton ? "Cancel" : "Close")
+        };
+    }
+
+    _currentClosureMessage(schedule) {
+        const now = new Date();
+        const dayNames = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"];
+        const day = dayNames[now.getDay()];
+        const current = this._timeString(now);
+
+        for (const closure of schedule.closures || []) {
+            if (!closure.days || !closure.days.includes(day)) continue;
+            if (this._timeInRange(current, closure.from, closure.to)) {
+                return closure.message;
+            }
+        }
+        return null;
+    }
+
+    _timeString(d) {
+        const h = String(d.getHours()).padStart(2, "0");
+        const m = String(d.getMinutes()).padStart(2, "0");
+        return `${h}:${m}`;
+    }
+
+    _timeInRange(current, from, to) {
+        if (!from || !to) return false;
+        // Simple lexicographic compare works with HH:MM strings
+        return current >= from && current < to;
+    }
+
 }
 
 function createSquare(positionClass, onTap) {

@@ -63,6 +63,7 @@ type DB interface {
 
 	// schedule configs
 	GetScheduleConfig(roomID string) (structs.ScheduleConfig, error)
+	GetHelpSchedule(id string) (structs.HelpSchedule, error)
 
 	/* bulk functions */
 	GetAllBuildings() ([]structs.Building, error)

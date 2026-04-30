@@ -77,8 +77,9 @@ func main() {
 	// Static file serving for blueberry
 	router.Use(static.Serve("/blueberry", static.LocalFile("blueberry-dist", true)))
 
+	// Health check endpoint
 	router.GET("/status", func(c *gin.Context) {
-		socket.GetStatus(c)
+		c.Status(http.StatusOK)
 	})
 
 	router.POST("/publish", func(c *gin.Context) {
@@ -122,6 +123,7 @@ func main() {
 	router.POST("/help", handlers.GenerateHelpFunction("request", messenger))
 	router.POST("/confirmhelp", handlers.GenerateHelpFunction("confirm", messenger))
 	router.POST("/cancelhelp", handlers.GenerateHelpFunction("cancel", messenger))
+	router.GET("/helpSchedule", handlers.GetHelpSchedule)
 
 	router.POST("/camera-control", func(c *gin.Context) { handlers.HandleCameraControl(logger, c) })
 

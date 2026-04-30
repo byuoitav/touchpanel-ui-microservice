@@ -1,4 +1,6 @@
 window.TOUCHPANEL_STATE = "OFF"
+// Block power-on interactions while a power-off sequence is running
+window.POWERING_OFF = false;
 
 document.addEventListener('DOMContentLoaded', async () => {
     window.themeService = new ThemeService();
@@ -38,6 +40,10 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         window.components.startingScreen.addEventListener('starting', async () => {
             console.log("Starting screen clicked, powering on...");
+            // Log the very first user interaction when powering on
+            if (window.CommandService && typeof window.CommandService.buttonPress === "function") {
+                window.CommandService.buttonPress('clicked starting screen to power on', {});
+            }
 
             await window.themeService.fetchTheme();
 
@@ -99,9 +105,44 @@ async function loadComponent(componentName, divQuerySelector = `.component-conta
     });
 }
 
+// Ensure DataService is fully initialized before we try to use panel data.
+// This prevents the display component from rendering with undefined presets/displays
+// when the user taps the starting screen before initialization finishes.
+async function waitForDataServiceReady() {
+    const ready = () => window.DataService && window.DataService.panel && window.DataService.panel.preset;
+
+    if (ready()) return;
+
+    // Prefer the DataService 'loaded' event when available; otherwise poll briefly.
+    await new Promise((resolve) => {
+        if (window.DataService && typeof window.DataService.addEventListener === "function") {
+            const onLoaded = () => {
+                if (ready()) {
+                    window.DataService.removeEventListener('loaded', onLoaded);
+                    resolve();
+                }
+            };
+            window.DataService.addEventListener('loaded', onLoaded, { once: true });
+        } else {
+            const interval = setInterval(() => {
+                if (ready()) {
+                    clearInterval(interval);
+                    resolve();
+                }
+            }, 50);
+        }
+    });
+}
+
 function loadSvg(id, path) {
+    // If no path or an undefined icon is provided, use the blank placeholder
+    if (!path || String(path).toLowerCase().includes("undefined")) {
+        path = "assets/blank.svg";
+    }
+
     // make path all lower case
-    path = path.toLowerCase();
+    path = String(path).toLowerCase();
+
     fetch(path)
         .then(response => {
             if (!response.ok && response.status === 404) {
@@ -112,6 +153,12 @@ function loadSvg(id, path) {
         })
         .then(svg => {
             document.getElementById(id).innerHTML = svg;
+        })
+        .catch(() => {
+            // On any other fetch error, fall back to blank.svg
+            fetch('assets/blank.svg')
+                .then(blankRes => blankRes.text())
+                .then(svg => { document.getElementById(id).innerHTML = svg; });
         });
 }
 
@@ -133,6 +180,7 @@ function removeComponentAssets() {
 
 async function handlePowerOffClick(updateUIOnly = false) {
     if (window.TOUCHPANEL_STATE === "OFF") { return; }
+    if (!updateUIOnly) { window.POWERING_OFF = true; }
     window.TOUCHPANEL_STATE = "OFF";
     window.resetViewPosition(); // reset view position to display component
 
@@ -160,7 +208,9 @@ async function handlePowerOffClick(updateUIOnly = false) {
 
     // reset power button (remove this handler)
     const powerBtn = document.querySelector('.power-off-btn');
-    powerBtn.removeEventListener('click', handlePowerOffClick);
+    powerBtn.removeEventListener('click', onPowerButtonClick);
+
+    if (!updateUIOnly) { window.POWERING_OFF = false; }
 }
 
 function handleHelpClick() {
@@ -169,10 +219,20 @@ function handleHelpClick() {
     helpModal.open();
 }
 
+// Keep a stable reference so we can add/remove without duplication
+const onPowerButtonClick = () => {
+    window.CommandService.buttonPress(`clicked power off button`, {});
+    handlePowerOffClick();
+};
+
 async function powerOnUI(skipPowerCommand = false) {
     if (window.TOUCHPANEL_STATE === "ON") { return; }
+    if (window.POWERING_OFF) { return; }
     window.TOUCHPANEL_STATE = "ON";
     console.log("Powering on UI");
+
+    await waitForDataServiceReady();
+
     if (!skipPowerCommand) {
         await window.CommandService.powerOnDefault(window.DataService.panel.preset);
     }
@@ -205,10 +265,7 @@ async function powerOnUI(skipPowerCommand = false) {
 
     // listener for power button
     const powerBtn = document.querySelector('.power-off-btn');
-    powerBtn.addEventListener('click', () => {
-        window.CommandService.buttonPress(`clicked power off button`, {});
-        handlePowerOffClick();
-    });
+    powerBtn.addEventListener('click', onPowerButtonClick);
 
     const helpBtn = document.querySelector('.help-btn');
 

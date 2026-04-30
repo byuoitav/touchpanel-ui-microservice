@@ -35,6 +35,7 @@ const (
 	DMPSLIST            = "dmps"
 	LAB_CONFIGS         = "lab-attendance-config"
 	SCHEDULING_CONFIGS  = "scheduling-configs"
+	SUPPORT_SCHEDULES   = "support-schedule"
 
 	deviceMonitoring = "device-monitoring"
 	MENUTREE         = "MenuTree"
