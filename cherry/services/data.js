@@ -43,6 +43,27 @@ class DataService extends EventTarget {
         }, 0);
     }
 
+    rebuildFromStatus() {
+        const currentPresetName = this.panel?.preset?.name;
+
+        this.displays = [];
+        this.audioDevices = [];
+        this.audioConfig = new Map();
+        this.presets = [];
+        this.panels = [];
+
+        this.createOutputs();
+        this.createPresets();
+        this.createPanels();
+
+        if (currentPresetName && this.panel) {
+            const currentPreset = this.presets.find(p => p.name === currentPresetName);
+            if (currentPreset) {
+                this.panel.preset = currentPreset;
+            }
+        }
+    }
+
     createInputs() {
         const uiconfig = APIService.room.uiconfig;
         const config = APIService.room.config;
@@ -251,19 +272,20 @@ class DataService extends EventTarget {
 
     updateDeviceState(key, value, deviceName) {
         console.log("Updating device state:", key, value, deviceName);
+        const shortDeviceName = this.shortDeviceName(deviceName);
         if (key === "power" || key === "input") {
             // check if the device is in the preset
-            const deviceNameSuffix = deviceName.split("-")[2];
             const presetDeviceNames = [...this.panel.preset.displays.map(d => d.name), ...this.panel.preset.audioDevices.map(a => a.name)];
-            if (!presetDeviceNames.includes(deviceNameSuffix) && !presetDeviceNames.includes(deviceName)) {
-                console.log("Device", deviceName, deviceNameSuffix, "not in current preset, ignoring update.");
+            if (!presetDeviceNames.includes(shortDeviceName) && !presetDeviceNames.includes(deviceName)) {
+                console.log("Device", deviceName, shortDeviceName, "not in current preset, ignoring update.");
                 return;
             }
 
             // Update the UI power button state if the power state changes
             if (key === "power" && value == "standby") { handlePowerOffClick(true); }
             if (key === "power" && value == "on") { powerOnUI(true); }
-            let device = this.displays.find(d => d.name === deviceName) || this.audioDevices.find(a => a.name === deviceName);
+            let device = this.displays.find(d => d.name === shortDeviceName || d.name === deviceName) ||
+                this.audioDevices.find(a => a.name === shortDeviceName || a.name === deviceName);
             if (device) {
                 if (key === "power") {
                     console.log("Updating device power state:", value);
@@ -276,7 +298,7 @@ class DataService extends EventTarget {
                 }
             }
         } else if (key === "blanked") {
-            const display = this.displays.find(d => d.name === deviceName);
+            const display = this.displays.find(d => d.name === shortDeviceName || d.name === deviceName);
             if (display) {
                 display.blanked = value.toLowerCase() === "true";
             }
@@ -284,12 +306,29 @@ class DataService extends EventTarget {
                 window.components.display.updateDisplayUI(display.name, "BLANK");
             }
         } else if (key === "muted") {
-            const audioDevice = this.audioDevices.find(a => a.name === deviceName);
-            if (audioDevice) audioDevice.muted = value.toLowerCase() === "true";
+            const audioDevice = this.audioDevices.find(a => a.name === shortDeviceName || a.name === deviceName);
+            if (audioDevice) {
+                audioDevice.muted = value.toLowerCase() === "true";
+                this.updateAudioSliderMuteState(audioDevice.name, audioDevice.muted);
+            }
 
         } else if (key === "volume") {
-            const audioDevice = this.audioDevices.find(a => a.name === deviceName);
+            const audioDevice = this.audioDevices.find(a => a.name === shortDeviceName || a.name === deviceName);
             if (audioDevice) audioDevice.volume = parseInt(value, 10);
+        }
+    }
+
+    shortDeviceName(deviceName) {
+        const parts = String(deviceName || "").split("-");
+        return parts.length >= 3 ? parts.slice(2).join("-") : deviceName;
+    }
+
+    updateAudioSliderMuteState(deviceName, muted) {
+        const sliders = window.components?.audioControl?.sliders || [];
+        for (const slider of sliders) {
+            if (slider.options?.id === deviceName) {
+                slider.setMuted(muted);
+            }
         }
     }
 
@@ -300,10 +339,24 @@ class DataService extends EventTarget {
                     p.masterVolume = parseInt(value, 10);
                     p.masterMute = false;
                     // update UI
-                    window.components.display.masterVolume.setValue(p.masterVolume, false);
-                    window.components.audioControl.sliders.find(slider => slider.options.id === "master").setValue(p.masterVolume, false);
+                    if (window.components.display.masterVolume) {
+                        window.components.display.masterVolume.setValue(p.masterVolume, false);
+                        window.components.display.masterVolume.setMuted(false);
+                    }
+                    const masterVolume = window.components.audioControl.sliders.find(slider => slider.options.id === "master");
+                    if (masterVolume) {
+                        masterVolume.setValue(p.masterVolume, false);
+                        masterVolume.setMuted(false);
+                    }
                 } else if (key === "master-mute") {
                     p.masterMute = value.toLowerCase() === "true";
+                    if (window.components.display.masterVolume) {
+                        window.components.display.masterVolume.setMuted(p.masterMute);
+                    }
+                    const masterVolume = window.components.audioControl.sliders.find(slider => slider.options.id === "master");
+                    if (masterVolume) {
+                        masterVolume.setMuted(p.masterMute);
+                    }
                 }
             }
         }

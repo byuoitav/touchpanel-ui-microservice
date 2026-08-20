@@ -134,17 +134,24 @@ window.components.display = {
         const masterVolume = window.components.audioControl.sliders.find(slider => slider.options.id === "master");
         if (masterVolume) {
           masterVolume.setValue(val, false);
+          masterVolume.setMuted(false);
         }
       },
       muteFunction: () => {
         if (MasterVolume.muteButton.classList.contains("muted")) {
           window.CommandService.setMasterMute(false, window.DataService.panel.preset);
           // update mute button on the audio control page
-          window.components.audioControl.sliders.find(slider => slider.options.id === "master").toggleMuteAppearance();
+          const masterVolume = window.components.audioControl.sliders.find(slider => slider.options.id === "master");
+          if (masterVolume) {
+            masterVolume.setMuted(false);
+          }
         } else {
           window.CommandService.setMasterMute(true, window.DataService.panel.preset);
           // update mute button on the audio control page
-          window.components.audioControl.sliders.find(slider => slider.options.id === "master").toggleMuteAppearance();
+          const masterVolume = window.components.audioControl.sliders.find(slider => slider.options.id === "master");
+          if (masterVolume) {
+            masterVolume.setMuted(true);
+          }
         }
       },
     });

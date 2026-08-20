@@ -235,6 +235,8 @@ async function powerOnUI(skipPowerCommand = false) {
 
     if (!skipPowerCommand) {
         await window.CommandService.powerOnDefault(window.DataService.panel.preset);
+        await window.APIService.refreshRoomStatus();
+        window.DataService.rebuildFromStatus();
     }
     removeZPattern();
     currentComponent = 'display';

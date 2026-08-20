@@ -136,9 +136,7 @@ class APIService extends EventTarget {
 
     async setupRoomStatus() {
         try {
-            const data = await this.getJSON(APIService.apiurl, APIService.roomStatusRequestTimeout);
-            APIService.room.status = new RoomStatus();
-            Object.assign(APIService.room.status, data);
+            await this.refreshRoomStatus();
 
             APIService.loaded = true; // mark that it’s loaded
             this.emitLoaded(true);
@@ -146,6 +144,13 @@ class APIService extends EventTarget {
             console.error("getRoomStatus failed", err);
             setTimeout(() => this.setupRoomStatus(), 5000);
         }
+    }
+
+    async refreshRoomStatus() {
+        const data = await this.getJSON(APIService.apiurl, APIService.roomStatusRequestTimeout);
+        APIService.room.status = new RoomStatus();
+        Object.assign(APIService.room.status, data);
+        return APIService.room.status;
     }
 
 
