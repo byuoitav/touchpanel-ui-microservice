@@ -1,4 +1,7 @@
 class APIService extends EventTarget {
+    static requestTimeout = 15000;
+    static roomConfigRequestTimeout = 75000;
+    static roomStatusRequestTimeout = 310000;
     static loaded = false;
     static building = null;
     static roomName = null;
@@ -119,7 +122,7 @@ class APIService extends EventTarget {
 
     async setupRoomConfig() {
         try {
-            const data = await this.getJSON(`${APIService.apiurl}/configuration`);
+            const data = await this.getJSON(`${APIService.apiurl}/configuration`, APIService.roomConfigRequestTimeout);
             APIService.room.config = new RoomConfiguration();
             Object.assign(APIService.room.config, data);
 
@@ -133,9 +136,7 @@ class APIService extends EventTarget {
 
     async setupRoomStatus() {
         try {
-            const data = await this.getJSON(APIService.apiurl);
-            APIService.room.status = new RoomStatus();
-            Object.assign(APIService.room.status, data);
+            await this.refreshRoomStatus();
 
             APIService.loaded = true; // mark that it’s loaded
             this.emitLoaded(true);
@@ -143,6 +144,13 @@ class APIService extends EventTarget {
             console.error("getRoomStatus failed", err);
             setTimeout(() => this.setupRoomStatus(), 5000);
         }
+    }
+
+    async refreshRoomStatus() {
+        const data = await this.getJSON(APIService.apiurl, APIService.roomStatusRequestTimeout);
+        APIService.room.status = new RoomStatus();
+        Object.assign(APIService.room.status, data);
+        return APIService.room.status;
     }
 
 
@@ -202,10 +210,17 @@ class APIService extends EventTarget {
         }
     }
 
-    async getJSON(url) {
-        const response = await fetch(url);
-        if (!response.ok) throw new Error(`HTTP ${response.status}`);
-        return await response.json();
+    async getJSON(url, timeoutMs = APIService.requestTimeout) {
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), timeoutMs);
+
+        try {
+            const response = await fetch(url, { signal: controller.signal });
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+            return await response.json();
+        } finally {
+            clearTimeout(timeout);
+        }
     }
 
     async post(url, body) {

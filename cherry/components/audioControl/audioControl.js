@@ -55,6 +55,7 @@ window.components.audioControl = {
                 const masterVolume = window.components.display.masterVolume;
                 if (masterVolume) {
                     masterVolume.setValue(val, false);
+                    masterVolume.setMuted(false);
                 }
 
             },
@@ -63,13 +64,13 @@ window.components.audioControl = {
                     window.CommandService.setMasterMute(false, window.DataService.panel.preset);
                     // update mute button on the displays page
                     if (window.components.display && window.components.display.masterVolume) {
-                        window.components.display.masterVolume.toggleMuteAppearance();
+                        window.components.display.masterVolume.setMuted(false);
                     }
                 } else {
                     window.CommandService.setMasterMute(true, window.DataService.panel.preset);
                     // update mute button on the displays page
                     if (window.components.display && window.components.display.masterVolume) {
-                        window.components.display.masterVolume.toggleMuteAppearance();
+                        window.components.display.masterVolume.setMuted(true);
                     }
                 }
             }
@@ -102,6 +103,7 @@ window.components.audioControl = {
         for (const device of audioDevices) {
             const volumeSlider = new VolumeSliderClass(document.querySelector('.displays-audio-controls'), {
                 title: device.displayname,
+                id: device.name,
                 value: device.mixlevel,
                 icon: `./assets/${device.icon}.svg` || null,
                 onChange: (val) => {
@@ -141,6 +143,7 @@ window.components.audioControl = {
         for (const microphone of window.DataService.panel.preset.independentAudioDevices) {
             const volumeSlider = new VolumeSliderClass(microphonesAudioControls, {
                 title: microphone.displayname,
+                id: microphone.name,
                 value: microphone.volume,
                 icon: `./assets/${microphone.icon}.svg` || null,
                 onChange: (val) => {

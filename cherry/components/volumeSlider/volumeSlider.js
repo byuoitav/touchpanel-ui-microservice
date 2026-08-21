@@ -50,12 +50,17 @@ class VolumeSlider {
             if (typeof this.options.onChange === "function") {
                 this.options.onChange(finalVal);
             }
+            this.setMuted(false);
         });
     }
 
     toggleMuteAppearance() {
-        this.muteButton.classList.toggle("muted");
-        if (this.muteButton.classList.contains("muted")) {
+        this.setMuted(!this.muteButton.classList.contains("muted"));
+    }
+
+    setMuted(muted) {
+        this.muteButton.classList.toggle("muted", muted);
+        if (muted) {
             this.muteButton.textContent = "Unmute";
         } else {
             this.muteButton.textContent = this.options.muteText;
