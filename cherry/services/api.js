@@ -146,8 +146,8 @@ class APIService extends EventTarget {
         }
     }
 
-    async refreshRoomStatus() {
-        const data = await this.getJSON(APIService.apiurl, APIService.roomStatusRequestTimeout);
+    async refreshRoomStatus(timeoutMs = APIService.roomStatusRequestTimeout) {
+        const data = await this.getJSON(APIService.apiurl, timeoutMs);
         APIService.room.status = new RoomStatus();
         Object.assign(APIService.room.status, data);
         return APIService.room.status;

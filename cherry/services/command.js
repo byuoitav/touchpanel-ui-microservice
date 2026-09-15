@@ -444,13 +444,33 @@ class CommandService {
 }
 
 const http = {
+  async parseResponse(response) {
+    const text = await response.text();
+    let data = null;
+
+    if (text) {
+      try {
+        data = JSON.parse(text);
+      } catch (err) {
+        if (response.ok) throw err;
+      }
+    }
+
+    if (!response.ok) {
+      const message = data?.error || data?.Error || text || `HTTP ${response.status}`;
+      throw new Error(message);
+    }
+
+    return data;
+  },
+
   async put(url, body, options) {
     const response = await fetch(url, {
       method: 'PUT',
       headers: options.headers,
       body: JSON.stringify(body)
     });
-    return response.json();
+    return this.parseResponse(response);
   },
 
   async request({ method, url, body }) {
@@ -459,7 +479,7 @@ const http = {
       headers: { 'Content-Type': 'application/json' },
       body: body ? JSON.stringify(body) : null
     });
-    return response.json();
+    return this.parseResponse(response);
   }
 };
 

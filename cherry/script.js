@@ -1,6 +1,11 @@
 window.TOUCHPANEL_STATE = "OFF"
 // Block power-on interactions while a power-off sequence is running
 window.POWERING_OFF = false;
+window.POWERING_ON = false;
+window.POWER_ON_ATTEMPT_ID = 0;
+
+const POWER_ON_TIMEOUT_MS = 30 * 1000;
+const POWER_ON_STATUS_TIMEOUT_MS = 5 * 1000;
 
 document.addEventListener('DOMContentLoaded', async () => {
     window.themeService = new ThemeService();
@@ -27,7 +32,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
             if ((display.power || "").toLowerCase() === "on") {
                 window.DataService.addEventListener('loaded', async () => {
-                    await powerOnUI(true);
+                    await startPowerOnAttempt(true);
                 }, { once: true });
                 break;
             }
@@ -39,20 +44,89 @@ document.addEventListener('DOMContentLoaded', async () => {
         window._startingScreenListenerAdded = true;
 
         window.components.startingScreen.addEventListener('starting', async () => {
-            console.log("Starting screen clicked, powering on...");
-            // Log the very first user interaction when powering on
-            if (window.CommandService && typeof window.CommandService.buttonPress === "function") {
-                window.CommandService.buttonPress('clicked starting screen to power on', {});
-            }
+            await startPowerOnAttempt(false, async () => {
+                console.log("Starting screen clicked, powering on...");
+                // Log the very first user interaction when powering on
+                if (window.CommandService && typeof window.CommandService.buttonPress === "function") {
+                    window.CommandService.buttonPress('clicked starting screen to power on', {});
+                }
 
-            await window.themeService.fetchTheme();
+                await window.themeService.fetchTheme();
 
-            window.SocketService = new SocketService();
-            await powerOnUI();
-
+                window.SocketService = new SocketService();
+            });
         });
     }
 });
+
+async function startPowerOnAttempt(skipPowerCommand = false, beforePowerOn = null) {
+    if (window.TOUCHPANEL_STATE === "ON") return;
+    if (window.POWERING_ON || window.POWERING_OFF) return;
+
+    const attemptId = ++window.POWER_ON_ATTEMPT_ID;
+    window.POWERING_ON = true;
+
+    try {
+        await withPowerOnTimeout((async () => {
+            if (beforePowerOn) {
+                await beforePowerOn();
+                assertPowerOnAttemptCurrent(attemptId);
+            }
+
+            await powerOnUI(skipPowerCommand, attemptId);
+        })(), POWER_ON_TIMEOUT_MS);
+    } catch (err) {
+        console.error("Power on attempt failed", err);
+        resetPowerOnAttempt(attemptId);
+    } finally {
+        if (isPowerOnAttemptCurrent(attemptId)) {
+            window.POWERING_ON = false;
+        }
+    }
+}
+
+async function withPowerOnTimeout(promise, timeoutMs) {
+    let timeout;
+    const timeoutPromise = new Promise((_, reject) => {
+        timeout = setTimeout(() => reject(new Error("Power on timed out")), timeoutMs);
+    });
+
+    try {
+        return await Promise.race([promise, timeoutPromise]);
+    } finally {
+        clearTimeout(timeout);
+    }
+}
+
+function isPowerOnAttemptCurrent(attemptId) {
+    return window.POWERING_ON && attemptId === window.POWER_ON_ATTEMPT_ID;
+}
+
+function assertPowerOnAttemptCurrent(attemptId) {
+    if (!isPowerOnAttemptCurrent(attemptId)) {
+        throw new Error("Power on attempt was superseded");
+    }
+}
+
+function resetPowerOnAttempt(attemptId) {
+    if (attemptId !== window.POWER_ON_ATTEMPT_ID) return;
+
+    window.POWER_ON_ATTEMPT_ID++;
+    window.POWERING_ON = false;
+    window.TOUCHPANEL_STATE = "OFF";
+
+    removeComponentAssets();
+    removeZPattern();
+
+    const startingScreen = document.querySelector('.starting-screen');
+    if (startingScreen) startingScreen.classList.remove('hidden');
+
+    if (window.components?.startingScreen) {
+        window.components.startingScreen.resetToLoadedScreen();
+    }
+
+    createZPattern();
+}
 
 async function loadComponent(componentName, divQuerySelector = `.component-container`) {
     console.log(`Loading component: ${componentName} into ${divQuerySelector}`);
@@ -225,26 +299,41 @@ const onPowerButtonClick = () => {
     handlePowerOffClick();
 };
 
-async function powerOnUI(skipPowerCommand = false) {
+async function powerOnUI(skipPowerCommand = false, attemptId = window.POWER_ON_ATTEMPT_ID) {
     if (window.TOUCHPANEL_STATE === "ON") { return; }
     if (window.POWERING_OFF) { return; }
-    window.TOUCHPANEL_STATE = "ON";
     console.log("Powering on UI");
 
     await waitForDataServiceReady();
+    assertPowerOnAttemptCurrent(attemptId);
 
     if (!skipPowerCommand) {
-        await window.CommandService.powerOnDefault(window.DataService.panel.preset);
-        await window.APIService.refreshRoomStatus();
-        window.DataService.rebuildFromStatus();
+        const success = await window.CommandService.powerOnDefault(window.DataService.panel.preset);
+        assertPowerOnAttemptCurrent(attemptId);
+
+        if (!success) {
+            throw new Error("Power on command failed");
+        }
+
+        try {
+            await window.APIService.refreshRoomStatus(POWER_ON_STATUS_TIMEOUT_MS);
+            assertPowerOnAttemptCurrent(attemptId);
+            window.DataService.rebuildFromStatus();
+        } catch (err) {
+            console.warn("Room status refresh failed after power on", err);
+            assertPowerOnAttemptCurrent(attemptId);
+        }
     }
     removeZPattern();
     currentComponent = 'display';
     await loadComponent(currentComponent, `.display-component`);
+    assertPowerOnAttemptCurrent(attemptId);
     await loadComponent('audioControl', `.audio-control-component`);
+    assertPowerOnAttemptCurrent(attemptId);
     isCameras = window.DataService.panel.preset.cameras.length > 0;
     if (isCameras) {
         await loadComponent('cameraControl', `.camera-control-component`);
+        assertPowerOnAttemptCurrent(attemptId);
     } else {
         console.log("No cameras in preset, skipping camera component load");
         // hide the camera-control-component and camera tab
@@ -261,6 +350,8 @@ async function powerOnUI(skipPowerCommand = false) {
 
     //remove the starting screen
     const startingScreen = document.querySelector('.starting-screen');
+    window.TOUCHPANEL_STATE = "ON";
+    window.POWERING_ON = false;
     document.dispatchEvent(new window.Event("UILoaded"));
     document.querySelector('.header').style.display = 'flex';
     startingScreen.classList.add('hidden');

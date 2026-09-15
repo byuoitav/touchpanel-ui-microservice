@@ -24,18 +24,27 @@ class StartingScreen extends EventTarget {
     }
 
     addTouchListener() {
+        if (this.touchListenerAdded) return;
+
         const container = document.querySelector('.starting-screen-content');
         if (container) {
+            this.touchListenerAdded = true;
             container.addEventListener('click', () => {
+                if (window.POWERING_ON || window.POWERING_OFF || window.TOUCHPANEL_STATE === "ON") return;
+
                 // Replace the contents of .starting-screen-message with a loading circle
-                const message = document.querySelector('.starting-screen-message');
-                if (message) {
-                    message.innerHTML = `
+                this.showPoweringOn();
+                this.dispatchEvent(new CustomEvent("starting", { detail: true }));
+            });
+        }
+    }
+
+    showPoweringOn() {
+        const message = document.querySelector('.starting-screen-message');
+        if (message) {
+            message.innerHTML = `
         <div class="loading-circle"></div>
         Powering On...`;
-                    this.dispatchEvent(new CustomEvent("starting", { detail: true }));
-                }
-            });
         }
     }
 
@@ -50,6 +59,10 @@ class StartingScreen extends EventTarget {
 
     initLoadedScreen() {
         this.addTouchListener();
+        this.resetToLoadedScreen();
+    }
+
+    resetToLoadedScreen() {
         const message = document.querySelector('.starting-screen-message');
         if (message) {
             message.innerHTML = `
