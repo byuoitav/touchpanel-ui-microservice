@@ -273,6 +273,7 @@ class CommandService {
     const requests = [
       new CommandRequest({ method: "PUT", url: APIService.apiurl, body })
     ];
+    const cameraRequests = [];
 
     if (preset.commands.powerOn) {
       for (const cmd of preset.commands.powerOn) {
@@ -287,12 +288,20 @@ class CommandService {
     if (preset.cameras) {
       for (const camera of preset.cameras) {
         if (camera.presets[0].setPreset) {
-          requests.push(new CommandRequest({ method: "GET", url: camera.presets[0].setPreset }));
+          cameraRequests.push(new CommandRequest({ method: "GET", url: camera.presets[0].setPreset }));
         }
       }
     }
 
-    return await this.executeRequests(requests, 1, 20 * 1000);
+    const success = await this.executeRequests(requests, 1, 20 * 1000);
+    if (cameraRequests.length) {
+      this.executeRequests(cameraRequests, 1, 20 * 1000)
+        .then(cameraSuccess => {
+          if (!cameraSuccess) console.warn("One or more startup camera preset requests failed");
+        });
+    }
+
+    return success;
   }
 
   async powerOff(preset) {

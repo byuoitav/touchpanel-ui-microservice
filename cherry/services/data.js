@@ -283,7 +283,7 @@ class DataService extends EventTarget {
 
             // Update the UI power button state if the power state changes
             if (key === "power" && value == "standby") { handlePowerOffClick(true); }
-            if (key === "power" && value == "on") { powerOnUI(true); }
+            if (key === "power" && value == "on") { startPowerOnAttempt(true); }
             let device = this.displays.find(d => d.name === shortDeviceName || d.name === deviceName) ||
                 this.audioDevices.find(a => a.name === shortDeviceName || a.name === deviceName);
             if (device) {

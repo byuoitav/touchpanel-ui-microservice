@@ -6,6 +6,7 @@ window.POWER_ON_ATTEMPT_ID = 0;
 
 const POWER_ON_TIMEOUT_MS = 30 * 1000;
 const POWER_ON_STATUS_TIMEOUT_MS = 5 * 1000;
+const DATA_SERVICE_READY_TIMEOUT_MS = 10 * 1000;
 
 document.addEventListener('DOMContentLoaded', async () => {
     window.themeService = new ThemeService();
@@ -65,6 +66,7 @@ async function startPowerOnAttempt(skipPowerCommand = false, beforePowerOn = nul
 
     const attemptId = ++window.POWER_ON_ATTEMPT_ID;
     window.POWERING_ON = true;
+    showPoweringOnScreen();
 
     try {
         await withPowerOnTimeout((async () => {
@@ -98,8 +100,21 @@ async function withPowerOnTimeout(promise, timeoutMs) {
     }
 }
 
+async function withTimeout(promise, timeoutMs, message) {
+    let timeout;
+    const timeoutPromise = new Promise((_, reject) => {
+        timeout = setTimeout(() => reject(new Error(message)), timeoutMs);
+    });
+
+    try {
+        return await Promise.race([promise, timeoutPromise]);
+    } finally {
+        clearTimeout(timeout);
+    }
+}
+
 function isPowerOnAttemptCurrent(attemptId) {
-    return window.POWERING_ON && attemptId === window.POWER_ON_ATTEMPT_ID;
+    return attemptId === window.POWER_ON_ATTEMPT_ID;
 }
 
 function assertPowerOnAttemptCurrent(attemptId) {
@@ -126,6 +141,15 @@ function resetPowerOnAttempt(attemptId) {
     }
 
     createZPattern();
+}
+
+function showPoweringOnScreen() {
+    const startingScreen = document.querySelector('.starting-screen');
+    if (startingScreen) startingScreen.classList.remove('hidden');
+
+    if (window.components?.startingScreen) {
+        window.components.startingScreen.showPoweringOn();
+    }
 }
 
 async function loadComponent(componentName, divQuerySelector = `.component-container`) {
@@ -188,24 +212,40 @@ async function waitForDataServiceReady() {
     if (ready()) return;
 
     // Prefer the DataService 'loaded' event when available; otherwise poll briefly.
-    await new Promise((resolve) => {
-        if (window.DataService && typeof window.DataService.addEventListener === "function") {
-            const onLoaded = () => {
-                if (ready()) {
-                    window.DataService.removeEventListener('loaded', onLoaded);
-                    resolve();
-                }
-            };
-            window.DataService.addEventListener('loaded', onLoaded, { once: true });
-        } else {
-            const interval = setInterval(() => {
+    let interval;
+    let onLoaded;
+
+    try {
+        await withTimeout(new Promise((resolve) => {
+            interval = setInterval(() => {
                 if (ready()) {
                     clearInterval(interval);
+                    interval = null;
                     resolve();
                 }
             }, 50);
+
+            onLoaded = () => {
+                if (ready()) {
+                    clearInterval(interval);
+                    interval = null;
+                    if (window.DataService && typeof window.DataService.removeEventListener === "function") {
+                        window.DataService.removeEventListener('loaded', onLoaded);
+                    }
+                    resolve();
+                }
+            };
+
+            if (window.DataService && typeof window.DataService.addEventListener === "function") {
+                window.DataService.addEventListener('loaded', onLoaded, { once: true });
+            }
+        }), DATA_SERVICE_READY_TIMEOUT_MS, "DataService was not ready in time");
+    } finally {
+        if (interval) clearInterval(interval);
+        if (window.DataService && onLoaded && typeof window.DataService.removeEventListener === "function") {
+            window.DataService.removeEventListener('loaded', onLoaded);
         }
-    });
+    }
 }
 
 function loadSvg(id, path) {
@@ -226,13 +266,19 @@ function loadSvg(id, path) {
             return response.text();
         })
         .then(svg => {
-            document.getElementById(id).innerHTML = svg;
+            const el = document.getElementById(id);
+            if (!el) return;
+            el.innerHTML = svg;
         })
         .catch(() => {
             // On any other fetch error, fall back to blank.svg
             fetch('assets/blank.svg')
                 .then(blankRes => blankRes.text())
-                .then(svg => { document.getElementById(id).innerHTML = svg; });
+                .then(svg => {
+                    const el = document.getElementById(id);
+                    if (!el) return;
+                    el.innerHTML = svg;
+                });
         });
 }
 
