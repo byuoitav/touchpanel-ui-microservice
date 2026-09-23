@@ -3,9 +3,12 @@ window.TOUCHPANEL_STATE = "OFF"
 window.POWERING_OFF = false;
 window.POWERING_ON = false;
 window.POWER_ON_ATTEMPT_ID = 0;
+window.POWER_ON_RECOVERY_CHECK_UNTIL = 0;
 
-const POWER_ON_TIMEOUT_MS = 30 * 1000;
+const POWER_ON_TIMEOUT_MS = 120 * 1000;
 const POWER_ON_STATUS_TIMEOUT_MS = 5 * 1000;
+const POWER_ON_RECOVERY_STATUS_TIMEOUT_MS = 10 * 1000;
+const POWER_ON_RECOVERY_CHECK_WINDOW_MS = 2 * 60 * 1000;
 const DATA_SERVICE_READY_TIMEOUT_MS = 10 * 1000;
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -75,15 +78,74 @@ async function startPowerOnAttempt(skipPowerCommand = false, beforePowerOn = nul
                 assertPowerOnAttemptCurrent(attemptId);
             }
 
-            await powerOnUI(skipPowerCommand, attemptId);
+            let effectiveSkipPowerCommand = skipPowerCommand;
+            if (!effectiveSkipPowerCommand && shouldCheckPowerOnRecovery()) {
+                effectiveSkipPowerCommand = await refreshAndCheckRoomPoweredOn(POWER_ON_RECOVERY_STATUS_TIMEOUT_MS);
+                if (effectiveSkipPowerCommand) {
+                    console.info("Room already reports powered on; loading UI without sending another power command");
+                }
+                assertPowerOnAttemptCurrent(attemptId);
+            }
+
+            await powerOnUI(effectiveSkipPowerCommand, attemptId);
         })(), POWER_ON_TIMEOUT_MS);
     } catch (err) {
         console.error("Power on attempt failed", err);
-        resetPowerOnAttempt(attemptId);
+        const recovered = await recoverPowerOnAttempt(attemptId);
+        if (!recovered) {
+            resetPowerOnAttempt(attemptId);
+        }
     } finally {
         if (isPowerOnAttemptCurrent(attemptId)) {
             window.POWERING_ON = false;
         }
+    }
+}
+
+function shouldCheckPowerOnRecovery() {
+    return Date.now() < window.POWER_ON_RECOVERY_CHECK_UNTIL;
+}
+
+function currentPresetHasPoweredOnDisplay() {
+    const presetDisplays = window.DataService?.panel?.preset?.displays || [];
+    const statusDisplays = APIService.room?.status?.displays || [];
+    const presetDisplayNames = presetDisplays.map(display => display.name);
+
+    return statusDisplays.some(display => {
+        return presetDisplayNames.includes(display.name) && (display.power || "").toLowerCase() === "on";
+    });
+}
+
+async function refreshAndCheckRoomPoweredOn(timeoutMs) {
+    if (!window.APIService || !window.DataService) return false;
+
+    try {
+        await window.APIService.refreshRoomStatus(timeoutMs);
+        window.DataService.rebuildFromStatus();
+        return currentPresetHasPoweredOnDisplay();
+    } catch (err) {
+        console.warn("Unable to confirm room power state after power-on attempt", err);
+        return false;
+    }
+}
+
+async function recoverPowerOnAttempt(attemptId) {
+    if (!isPowerOnAttemptCurrent(attemptId)) return true;
+
+    const poweredOn = await refreshAndCheckRoomPoweredOn(POWER_ON_RECOVERY_STATUS_TIMEOUT_MS);
+    if (!poweredOn) return false;
+
+    const recoveryAttemptId = ++window.POWER_ON_ATTEMPT_ID;
+    window.POWERING_ON = true;
+
+    try {
+        console.info("Power-on attempt failed or timed out, but room reports on; loading UI");
+        await powerOnUI(true, recoveryAttemptId);
+        return true;
+    } catch (err) {
+        console.error("Failed to recover powered-on UI after timeout", err);
+        resetPowerOnAttempt(recoveryAttemptId);
+        return true;
     }
 }
 
@@ -129,6 +191,7 @@ function resetPowerOnAttempt(attemptId) {
     window.POWER_ON_ATTEMPT_ID++;
     window.POWERING_ON = false;
     window.TOUCHPANEL_STATE = "OFF";
+    window.POWER_ON_RECOVERY_CHECK_UNTIL = Date.now() + POWER_ON_RECOVERY_CHECK_WINDOW_MS;
 
     removeComponentAssets();
     removeZPattern();

@@ -273,7 +273,7 @@ class CommandService {
     const requests = [
       new CommandRequest({ method: "PUT", url: APIService.apiurl, body })
     ];
-    const cameraRequests = [];
+    const cameraPresetUrls = [];
 
     if (preset.commands.powerOn) {
       for (const cmd of preset.commands.powerOn) {
@@ -287,21 +287,55 @@ class CommandService {
     }
     if (preset.cameras) {
       for (const camera of preset.cameras) {
-        if (camera.presets[0].setPreset) {
-          cameraRequests.push(new CommandRequest({ method: "GET", url: camera.presets[0].setPreset }));
+        if (camera.presets[0]?.setPreset) {
+          cameraPresetUrls.push(camera.presets[0].setPreset);
         }
       }
     }
 
     const success = await this.executeRequests(requests, 1, 20 * 1000);
-    if (cameraRequests.length) {
-      this.executeRequests(cameraRequests, 1, 20 * 1000)
+    if (cameraPresetUrls.length) {
+      this.executeStartupCameraPresets(preset, cameraPresetUrls)
         .then(cameraSuccess => {
           if (!cameraSuccess) console.warn("One or more startup camera preset requests failed");
         });
     }
 
     return success;
+  }
+
+  async executeStartupCameraPresets(preset, presetUrls) {
+    const controlKey = await this.getCameraControlKey(preset);
+    if (!controlKey) {
+      console.warn("Skipping startup camera preset recall because no control key was returned");
+      return false;
+    }
+
+    const requests = presetUrls.map(url => new CommandRequest({
+      method: "POST",
+      url: `${window.location.protocol}//${window.location.host}/camera-control`,
+      body: { url, code: controlKey }
+    }));
+
+    return this.executeRequests(requests, 1, 20 * 1000);
+  }
+
+  async getCameraControlKey(preset) {
+    const presetName = encodeURIComponent(preset.name);
+    const url = `${window.location.protocol}//${window.location.host}/control-key/${window.room}/${presetName}`;
+
+    try {
+      const response = await this.withTimeout(fetch(url), TIMEOUT);
+      if (!response.ok) {
+        throw new Error(`HTTP Status Error: ${response.status}`);
+      }
+
+      const data = await response.json();
+      return data["ControlKey"];
+    } catch (err) {
+      this.handleError("getCameraControlKey", err);
+      return "";
+    }
   }
 
   async powerOff(preset) {
